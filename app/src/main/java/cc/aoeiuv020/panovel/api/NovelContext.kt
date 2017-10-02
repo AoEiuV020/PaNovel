@@ -14,7 +14,7 @@ import java.net.URL
 abstract class NovelContext {
     companion object {
         @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf()
+        private val contexts: List<NovelContext> = listOf(Piaotian())
         private val contextsMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         fun getNovelContexts(): List<NovelContext> = contexts
         fun getNovelContext(url: String): NovelContext? {
@@ -26,6 +26,8 @@ abstract class NovelContext {
             }
             return contextsMap[host] ?: contexts.firstOrNull { it.check(url) }
         }
+
+        fun getNovelContext(site: NovelSite): NovelContext = getNovelContext(site.baseUrl)!!
     }
 
     @Suppress("MemberVisibilityCanPrivate")
