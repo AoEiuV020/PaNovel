@@ -1,7 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.1.50'
+    ext {
+        build_version = '26.0.1'
+        compile_version = 26
+        min_version = 19
+        target_version = compile_version
+        support_version = '26.1.0'
+        kotlin_version = '1.1.50'
+        anko_version = '0.10.1'
+        junit_version = '4.12'
+        slf4j_version = '1.7.25'
+        jsoup_version = '1.10.3'
+        constraint_layout_version = '1.0.2'
+        glide_version = '4.1.1'
+    }
     repositories {
         google()
         jcenter()
