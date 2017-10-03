@@ -26,7 +26,7 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
         }.async().subscribe({ comicList ->
             view.showNovelList(comicList)
         }, { e ->
-            val message = "加载漫画列表失败，"
+            val message = "加载小说列表失败，"
             error(message, e)
             view.showError(message, e)
         })
@@ -53,15 +53,15 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
             Observable.fromCallable {
                 context.getNovelList(genre.requester)
             }.async().subscribe({ comicList ->
-                debug { "展示漫画列表，数量：${comicList.size}" }
+                debug { "展示小说列表，数量：${comicList.size}" }
                 view.addNovelList(comicList)
             }, { e ->
-                val message = "加载下一页漫画列表失败，"
+                val message = "加载下一页小说列表失败，"
                 error(message, e)
                 view.showError(message, e)
             })
         }, { e ->
-            val message = "加载漫画列表一下页地址失败，"
+            val message = "加载小说列表一下页地址失败，"
             error(message, e)
             view.showError(message, e)
         })

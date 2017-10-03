@@ -22,7 +22,7 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val co
         }.async().subscribe({ comicDetail ->
             view.showNovelDetail(comicDetail)
         }, { e ->
-            val message = "加载漫画详情失败，"
+            val message = "加载小说详情失败，"
             error(message, e)
             view.showError(message, e)
         })
