@@ -3,8 +3,7 @@
 package cc.aoeiuv020.panovel.api
 
 import android.annotation.SuppressLint
-import org.jsoup.Connection
-import org.jsoup.Jsoup
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 
 /**
@@ -57,19 +56,9 @@ class Piaotian : NovelContext() {
         }
     }
 
-    private fun search(key: String, type: String): NovelGenre {
-        return NovelGenre(key, PiaoTianSearchRequest(key, type))
-    }
-
-    class PiaoTianSearchRequest(private val key: String, private val type: String)
-        : ListRequester(SEARCH_PAGE_URL) {
-        override fun request(): Connection.Response = Jsoup.connect(url)
-                .postDataCharset("GBK")
-                .data(mapOf("searchtype" to type, "searchkey" to key))
-                .method(Connection.Method.POST)
-                .execute()
-
-        override fun toString() = "${this.javaClass.simpleName}(key=$key, $type=$type)"
+    private fun search(str: String, type: String): NovelGenre {
+        val key = URLEncoder.encode(str, "GBK")
+        return NovelGenre(str, "$SEARCH_PAGE_URL?searchtype=$type&searchkey=$key")
     }
 
     override fun searchNovelName(name: String) = search(name, "articlename")
@@ -77,7 +66,7 @@ class Piaotian : NovelContext() {
     override fun searchNovelAuthor(author: String) = search(author, "author")
 
     override fun isSearchResult(genre: NovelGenre): Boolean {
-        return genre.requester.url == SEARCH_PAGE_URL
+        return genre.requester.url.startsWith(SEARCH_PAGE_URL)
     }
 
     @SuppressLint("SimpleDateFormat")
