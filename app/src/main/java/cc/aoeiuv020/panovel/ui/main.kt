@@ -116,7 +116,7 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
         }.show()
     }
 
-    private fun showSite(site: NovelSite) {
+    fun showSite(site: NovelSite) {
         this.site = site
         url = site.baseUrl
         openDrawer()

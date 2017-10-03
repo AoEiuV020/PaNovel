@@ -1,6 +1,9 @@
 package cc.aoeiuv020.panovel.presenter
 
+import android.content.Context
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.ui.MainActivity
 import io.reactivex.Observable
@@ -14,7 +17,57 @@ import org.jetbrains.anko.error
  */
 class MainPresenter(private val view: MainActivity) : AnkoLogger {
     fun start() {
+        debug { "读取记住的选择，" }
+        loadSite()?.also { site ->
+            debug { "已有记住网站：${site.name}" }
+            view.showSite(site)
+            loadGenre(site)?.let { genre ->
+                debug { "已有记住分类：${genre.name}" }
+                view.showGenre(genre)
+            } ?: run {
+                debug { "没有记住的分类，" }
+            }
+        } ?: run {
+            debug { "没有记住的网站，弹出网站选择，" }
+            requestSites()
+        }
     }
+
+    /**
+     * 提供记住了的分类选择，
+     */
+    private fun loadGenre(site: NovelSite): NovelGenre? {
+        return App.ctx.getSharedPreferences("genre", Context.MODE_PRIVATE).run {
+            val url = getString("url", null) ?: return null
+            val name = getString("name", "")
+            // 仅当url属于这个site,
+            NovelGenre(name, url).takeIf { NovelContext.getNovelContext(site.baseUrl).check(url) }
+        }
+    }
+
+    /**
+     * 保存记住了的网站选择，
+     */
+    private fun saveSite(site: NovelSite) {
+        App.ctx.getSharedPreferences("site", Context.MODE_PRIVATE)
+                .edit()
+                .putString("baseUrl", site.baseUrl)
+                .apply()
+    }
+
+    /**
+     * 提供记住了的网站选择，
+     */
+    private fun loadSite(): NovelSite? {
+        val baseUrl = App.ctx.getSharedPreferences("site", Context.MODE_PRIVATE)
+                .getString("baseUrl", "")
+        return try {
+            NovelContext.getNovelContext(baseUrl).getNovelSite()
+        } catch (_: Exception) {
+            null
+        }
+    }
+
 
     fun requestSites() {
         NovelContext.getNovelContexts().map { it.getNovelSite() }.let { sites ->
@@ -30,6 +83,7 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
     }
 
     fun requestGenres(site: NovelSite) {
+        saveSite(site)
         Observable.fromCallable {
             NovelContext.getNovelContext(site).getGenres()
         }.async().subscribe({ genres ->

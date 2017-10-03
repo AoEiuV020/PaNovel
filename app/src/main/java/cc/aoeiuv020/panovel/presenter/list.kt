@@ -1,5 +1,7 @@
 package cc.aoeiuv020.panovel.presenter
 
+import android.content.Context
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.ui.NovelListFragment
@@ -17,6 +19,7 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
     private lateinit var genre: NovelGenre
 
     fun requestNovelList(genre: NovelGenre) {
+        saveGenre(genre)
         this.genre = genre
         Observable.fromCallable {
             NovelContext.getNovelContext(genre.requester.url).also { context = it }
@@ -28,6 +31,15 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
             error(message, e)
             view.showError(message, e)
         })
+    }
+
+    private fun saveGenre(genre: NovelGenre) {
+        App.ctx.getSharedPreferences("genre", Context.MODE_PRIVATE)
+                .edit()
+                .putString("name", genre.name)
+                // TODO: 要改成保存requester, 才能确保读的出来，
+                .putString("url", genre.requester.url)
+                .apply()
     }
 
     fun loadNextPage() {
@@ -42,6 +54,7 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
                 return@subscribe
             }
             val genre = genres.first()
+            saveGenre(genre)
             view.showUrl(genre.requester.url)
             Observable.fromCallable {
                 context.getNovelList(genre.requester)
