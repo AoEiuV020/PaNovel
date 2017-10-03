@@ -3,6 +3,8 @@
 package cc.aoeiuv020.panovel.api
 
 import android.annotation.SuppressLint
+import org.jsoup.Connection
+import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 
 /**
@@ -10,17 +12,20 @@ import java.text.SimpleDateFormat
  * Created by AoEiuV020 on 2017.10.02-16:03:02.
  */
 class Piaotian : NovelContext() {
+    companion object {
+        private val SEARCH_PAGE_URL = "http://www.piaotian.com/modules/article/search.php"
+    }
+
     private val site = NovelSite(
             name = "飘天文学",
             baseUrl = "http://www.piaotian.com/",
-            logo = "http://www.piaotian.com/css/logo.gif",
-            charset = "GBK"
+            logo = "http://www.piaotian.com/css/logo.gif"
     )
 
     override fun getNovelSite(): NovelSite = site
 
     override fun getGenres(): List<NovelGenre> {
-        val root = get(site.baseUrl)
+        val root = request(site.baseUrl)
         val elements = root.select("div.navinner > ul > li:not(:nth-last-child(1)):not(:nth-child(1)) > a")
         return elements.map {
             val a = it
@@ -29,14 +34,14 @@ class Piaotian : NovelContext() {
     }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        val root = get(genre.url)
+        val root = request(genre.requester)
         val a = root.select("#pagelink > a.next").first() ?: return null
         val url = a.absHref()
         return NovelGenre(genre.name, url)
     }
 
-    override fun getNovelList(genre: NovelGenre): List<NovelListItem> {
-        val root = post(genre.url, genre.parameters)
+    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
+        val root = request(requester)
         val elements = root.select("#content > table.grid > tbody > tr:not(:nth-child(1))")
         return elements.map {
             val a = it.select("td:nth-child(1) > a").first()
@@ -52,10 +57,19 @@ class Piaotian : NovelContext() {
         }
     }
 
-    private fun search(str: String, type: String): NovelGenre {
-        val url = "http://www.piaotian.com/modules/article/search.php"
-        val key = str
-        return NovelGenre(str, url, mapOf("searchtype" to type, "searchkey" to key))
+    private fun search(key: String, type: String): NovelGenre {
+        return NovelGenre(key, PiaoTianSearchRequest(key, type))
+    }
+
+    class PiaoTianSearchRequest(private val key: String, private val type: String)
+        : ListRequester(SEARCH_PAGE_URL) {
+        override fun request(): Connection.Response = Jsoup.connect(url)
+                .postDataCharset("GBK")
+                .data(mapOf("searchtype" to type, "searchkey" to key))
+                .method(Connection.Method.POST)
+                .execute()
+
+        override fun toString() = "${this.javaClass.simpleName}(key=$key, $type=$type)"
     }
 
     override fun searchNovelName(name: String) = search(name, "articlename")
@@ -63,12 +77,12 @@ class Piaotian : NovelContext() {
     override fun searchNovelAuthor(author: String) = search(author, "author")
 
     override fun isSearchResult(genre: NovelGenre): Boolean {
-        return genre.url.matches(Regex("http://www.piaotian.com/modules/article/search.php"))
+        return genre.requester.url == SEARCH_PAGE_URL
     }
 
     @SuppressLint("SimpleDateFormat")
-    override fun getNovelDetail(novelDetailUrl: NovelDetailUrl): NovelDetail {
-        val root = get(novelDetailUrl.url)
+    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
+        val root = request(requester)
         val tbody1 = root.select("#content > table > tbody").first()
         val tbody2 = tbody1.select("tr:nth-child(1) > td > table > tbody").first()
         val pattern = "" +
@@ -98,7 +112,7 @@ class Piaotian : NovelContext() {
                 .joinToString("\n")
 
         val chapterPageUrl = tbody1.select("tr:nth-child(8) > td > table > caption > a").first().absHref()
-        val chapterRoot = get(chapterPageUrl)
+        val chapterRoot = request(chapterPageUrl)
         val chapterList = chapterRoot.select("div.mainbody > div.centent > ul > li > a").map {
             val a = it
             NovelChapter(a.text(), a.absHref())
@@ -106,8 +120,8 @@ class Piaotian : NovelContext() {
         return NovelDetail(NovelItem(name, author), img, update, status, genre, length, info, stars, chapterList)
     }
 
-    override fun getNovelText(novelChapter: NovelChapter): NovelText {
-        val root = get(novelChapter.url)
+    override fun getNovelText(requester: TextRequester): NovelText {
+        val root = request(requester)
         return NovelText(root.body().textList())
     }
 }

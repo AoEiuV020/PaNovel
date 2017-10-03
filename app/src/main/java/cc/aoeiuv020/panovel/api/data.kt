@@ -6,14 +6,12 @@ import java.io.Serializable
 import java.util.*
 
 /**
+ * 数据类基类，
  * 相关的数据类定义在这文件里，
+ * 不纯粹是数据，
  * Created by AoEiuV020 on 2017.10.02-15:27:52.
  */
-
-/**
- * 基类，
- */
-open class Data : Serializable
+abstract class Data : Serializable
 
 /**
  * 小说网站信息，
@@ -21,15 +19,7 @@ open class Data : Serializable
 data class NovelSite(
         val name: String,
         val baseUrl: String,
-        val logo: String,
-        val charset: String = "UTF-8"
-) : Data()
-
-/**
- * 封装小说详情页地址，
- */
-data class NovelDetailUrl(
-        val url: String
+        val logo: String
 ) : Data()
 
 /**
@@ -38,9 +28,11 @@ data class NovelDetailUrl(
  */
 data class NovelGenre(
         val name: String,
-        val url: String,
-        val parameters: Map<String, String> = emptyMap()
-) : Data()
+        val requester: ListRequester
+) : Data() {
+    constructor(name: String, url: String)
+            : this(name, ListRequester(url))
+}
 
 /**
  * 代表一本小说，由名字和作者唯一决定，
@@ -51,17 +43,16 @@ data class NovelItem(
 )
 
 /**
- * 小说列表中的一个小说，
- * @param detailUrl 该小说详情页地址，
+ * 小说列表中的一本小说，
  */
 data class NovelListItem(
         val novel: NovelItem,
-        val detailUrl: NovelDetailUrl,
+        val requester: DetailRequester,
         // 简介，最新章，或者其他任何有用的信息，
         val info: String = ""
 ) : Data() {
     constructor(novel: NovelItem, detailUrl: String, info: String = "")
-            : this(novel, NovelDetailUrl(detailUrl), info)
+            : this(novel, DetailRequester(detailUrl), info)
 }
 
 /**
@@ -88,15 +79,17 @@ data class NovelDetail(
 
 /**
  * 小说目录，
- * @param url 本章节第一页地址，
  */
 data class NovelChapter(
         /**
          * 章节名不包括小说名，
          */
         val name: String,
-        val url: String
-) : Data()
+        val requester: TextRequester
+) : Data() {
+    constructor(name: String, url: String)
+            : this(name, TextRequester(url))
+}
 
 /**
  * 小说文本，由一个个段落构成，
@@ -104,3 +97,4 @@ data class NovelChapter(
 data class NovelText(
         val textList: List<String>
 ) : Data()
+

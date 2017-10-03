@@ -32,6 +32,9 @@ import org.jetbrains.anko.debug
  * Created by AoEiuV020 on 2017.10.02-21:37:23.
  */
 class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
+    companion object {
+        private val GROUP_ID: Int = 1
+    }
     private val alertDialog: AlertDialog by lazy { AlertDialog.Builder(this).create() }
     private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
     private var url: String = "https://github.com/AoEiuV020/PaNovel"
@@ -74,7 +77,6 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
         return true
     }
 
-    private val GROUP_ID: Int = 1
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -93,13 +95,9 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
         return true
     }
 
-    fun showUrl(url: String) {
-        this.url = url
-    }
-
     fun showGenre(genre: NovelGenre) {
         title = genre.name
-        url = genre.url
+        url = genre.requester.url
         progressDialog.dismiss()
 //        (fragment_container as NovelListFragment).showGenre(genre)
         closeDrawer()
@@ -114,7 +112,7 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
         }.show()
     }
 
-    fun showSite(site: NovelSite) {
+    private fun showSite(site: NovelSite) {
         this.site = site
         url = site.baseUrl
         openDrawer()
@@ -143,7 +141,7 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
     }
 }
 
-class SiteListAdapter(val ctx: Activity, private val sites: List<NovelSite>) : BaseAdapter() {
+class SiteListAdapter(private val ctx: Activity, private val sites: List<NovelSite>) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView ?: View.inflate(ctx, R.layout.site_list_item, null)
         val site = getItem(position)
