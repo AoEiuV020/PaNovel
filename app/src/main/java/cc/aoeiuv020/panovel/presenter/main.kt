@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.presenter
 
-import android.content.Context
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelGenre
@@ -37,11 +36,12 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
      * 提供记住了的分类选择，
      */
     private fun loadGenre(site: NovelSite): NovelGenre? {
-        return App.ctx.getSharedPreferences("genre", Context.MODE_PRIVATE).run {
-            val url = getString("url", null) ?: return null
-            val name = getString("name", "")
-            // 仅当url属于这个site,
-            NovelGenre(name, url).takeIf { NovelContext.getNovelContext(site.baseUrl).check(url) }
+        return try {
+            App.ctx.load<NovelGenre>("genre").takeIf {
+                NovelContext.getNovelContext(site).check(it.requester.url)
+            }
+        } catch (_: Exception) {
+            null
         }
     }
 
@@ -49,20 +49,15 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
      * 保存记住了的网站选择，
      */
     private fun saveSite(site: NovelSite) {
-        App.ctx.getSharedPreferences("site", Context.MODE_PRIVATE)
-                .edit()
-                .putString("baseUrl", site.baseUrl)
-                .apply()
+        App.ctx.save("site", site)
     }
 
     /**
      * 提供记住了的网站选择，
      */
     private fun loadSite(): NovelSite? {
-        val baseUrl = App.ctx.getSharedPreferences("site", Context.MODE_PRIVATE)
-                .getString("baseUrl", "")
         return try {
-            NovelContext.getNovelContext(baseUrl).getNovelSite()
+            App.ctx.load("site")
         } catch (_: Exception) {
             null
         }
