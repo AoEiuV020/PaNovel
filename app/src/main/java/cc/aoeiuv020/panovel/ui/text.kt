@@ -14,11 +14,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.SeekBar
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.api.NovelText
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
+import cc.aoeiuv020.panovel.presenter.load
+import cc.aoeiuv020.panovel.presenter.save
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.novel_text_item.view.*
@@ -27,7 +31,6 @@ import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
-import java.util.*
 
 /**
  *
@@ -74,6 +77,29 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
             }
         })
 
+        val textSize = try {
+            App.ctx.load<Int>("textSize")
+        } catch (_: Exception) {
+            18
+        }
+        debug { "load textSite = $textSize" }
+        textSizeSeekBar.progress = textSize - 12
+        textSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                val size = 12 + progress
+                (viewPager.adapter as NovelTextPagerAdapter).setTextSize(size)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                val size = 12 + seekBar.progress
+                App.ctx.save("textSize", size)
+            }
+
+        })
+
         presenter = NovelTextPresenter(this, novelListItem.requester, index)
         presenter.start()
     }
@@ -115,11 +141,16 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         }
         viewPager.adapter = NovelTextPagerAdapter(this, text)
     }
-
 }
 
 class NovelTextPagerAdapter(val ctx: Activity, private val novelText: NovelText) : PagerAdapter(), AnkoLogger {
-    private val views: LinkedList<View> = LinkedList()
+    private val view: View by lazy {
+        View.inflate(ctx, R.layout.novel_text_page_item, null).apply {
+            textListView.setOnItemClickListener { _, _, _, _ ->
+                (context as NovelTextActivity).toggle()
+            }
+        }
+    }
     private val firstPage: View by lazy {
         View.inflate(ctx, R.layout.novel_text_item_loading, null).apply {
             loadingTextView.setText(R.string.now_loading_previous_issue)
@@ -143,14 +174,7 @@ class NovelTextPagerAdapter(val ctx: Activity, private val novelText: NovelText)
                 return lastPage
             }
         }
-        val root = if (views.isNotEmpty())
-            views.pop()
-        else
-            View.inflate(ctx, R.layout.novel_text_page_item, null).apply {
-                textListView.setOnItemClickListener { _, _, _, _ ->
-                    (context as NovelTextActivity).toggle()
-                }
-            }
+        val root = view
         root.textListView.adapter = NovelTextListAdapter(ctx, novelText.textList)
         container.addView(root)
         return root
@@ -165,7 +189,6 @@ class NovelTextPagerAdapter(val ctx: Activity, private val novelText: NovelText)
             count - 1 -> {
             }
             else -> {
-                views.push(view)
             }
         }
     }
@@ -180,14 +203,30 @@ class NovelTextPagerAdapter(val ctx: Activity, private val novelText: NovelText)
         firstPage.loadingTextView.setText(R.string.no_previous_issue)
         firstPage.loadingProgressBar.hide()
     }
+
+    fun setTextSize(size: Int) {
+        debug { "NovelTextPagerAdapter.setTextSize $size" }
+        (view.textListView.adapter as NovelTextListAdapter).setTextSize(size)
+    }
 }
 
-class NovelTextListAdapter(private val ctx: Context, textList: List<String>) : BaseAdapter() {
+class NovelTextListAdapter(private val ctx: Context, textList: List<String>) : BaseAdapter(), AnkoLogger {
     private val items = textList
+    private var textSize: Int
+
+    init {
+        textSize = try {
+            App.ctx.load("textSize")
+        } catch (_: Exception) {
+            18
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View
             = (convertView ?: LayoutInflater.from(ctx).inflate(R.layout.novel_text_item, parent, false)).apply {
         textView.text = "        " + getItem(position)
+        textView.textSize = textSize.toFloat()
     }
 
     override fun getItem(position: Int) = items[position]
@@ -195,4 +234,9 @@ class NovelTextListAdapter(private val ctx: Context, textList: List<String>) : B
     override fun getItemId(position: Int) = 0L
 
     override fun getCount() = items.size
+    fun setTextSize(size: Int) {
+        debug { "NovelTextListAdapter.setTextSize $size" }
+        this.textSize = size
+        notifyDataSetChanged()
+    }
 }
