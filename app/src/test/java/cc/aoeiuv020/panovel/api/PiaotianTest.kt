@@ -69,6 +69,14 @@ class PiaotianTest {
                 novelItem.novel.name == "斗破苍穹"
             })
         }
+        context.getNovelList(context.searchNovelName("从前").requester).let {
+            it.forEach { novelItem ->
+                println(novelItem)
+            }
+            assertTrue(it.any { novelItem ->
+                novelItem.novel.name == "从前有座灵剑山"
+            })
+        }
     }
 
     @Test

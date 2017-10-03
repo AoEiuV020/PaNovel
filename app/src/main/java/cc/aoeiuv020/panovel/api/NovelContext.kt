@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api
 
+import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -82,7 +83,7 @@ abstract class NovelContext {
     /**
      * 封装网络请求，主要是为了统一打log,
      */
-    protected fun request(requester: Requester): Document {
+    protected fun response(requester: Requester): Connection.Response {
         logger.trace {
             val stack = Thread.currentThread().stackTrace
             stack.drop(2).take(6).joinToString("\n", "stack trace\n") {
@@ -90,7 +91,10 @@ abstract class NovelContext {
             }
         }
         logger.debug { "request $requester" }
-        val response = requester.request()
+        return requester.request()
+    }
+
+    protected fun request(response: Connection.Response): Document {
         val root = response.parse()
         logger.debug { "status code: ${response.statusCode()}" }
         logger.debug { "response url: ${response.url()}" }
@@ -99,6 +103,8 @@ abstract class NovelContext {
         }
         return root
     }
+
+    protected fun request(requester: Requester): Document = request(response(requester))
 
     protected fun request(url: String) = request(Requester(url))
 }

@@ -39,19 +39,27 @@ class Piaotian : NovelContext() {
         return NovelGenre(genre.name, url)
     }
 
+    private fun isDetail(url: String) = url.startsWith("http://www.piaotian.com/bookinfo")
+
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        val root = request(requester)
+        val response = response(requester)
+        if (isDetail(response.url().toString())) {
+            val detail = getNovelDetail(DetailRequester(requester.url))
+            val info = detail.run { "最新章节: ${chaptersAsc.last().name} 字数: $length 更新: ${sdf.format(update)} 状态: $status" }
+            return listOf(NovelListItem(detail.novel, requester.url, info))
+        }
+        val root = request(response)
         val elements = root.select("#content > table.grid > tbody > tr:not(:nth-child(1))")
         return elements.map {
             val a = it.select("td:nth-child(1) > a").first()
             val name = a.text()
             val url = a.absHref()
             val author = it.select("td:nth-child(3)").first().text()
-            val number = it.select(("td:nth-child(4)")).first().text()
+            val length = it.select(("td:nth-child(4)")).first().text()
             val last = it.select("td:nth-child(2) > a").first().text()
             val update = it.select("td:nth-child(5)").first().text()
             val status = it.select("td:nth-child(6)").first().text()
-            val info = "最新章节: $last 字数: $number 更新: $update 状态: $status"
+            val info = "最新章节: $last 字数: $length 更新: $update 状态: $status"
             NovelListItem(NovelItem(name, author), url, info)
         }
     }
@@ -70,6 +78,8 @@ class Piaotian : NovelContext() {
     }
 
     @SuppressLint("SimpleDateFormat")
+    val sdf = SimpleDateFormat("yyyy-MM-dd")
+
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val root = request(requester)
         val tbody1 = root.select("#content > table > tbody").first()
@@ -92,7 +102,7 @@ class Piaotian : NovelContext() {
         val list = tbody2.text().pick(pattern)!!
         val (name, genre, author, _, length) = list
         val (updateString, status, _, _, starsString) = list.drop(5)
-        val update = SimpleDateFormat("yyyy-MM-dd").parse(updateString)
+        val update = sdf.parse(updateString)
         val stars = starsString.toInt()
 
         val td = tbody1.select("tr:nth-child(4) > td > table > tbody > tr > td:nth-child(2)").first()
