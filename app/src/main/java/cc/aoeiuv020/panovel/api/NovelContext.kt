@@ -17,17 +17,17 @@ abstract class NovelContext {
         private val contexts: List<NovelContext> = listOf(Piaotian())
         private val contextsMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         fun getNovelContexts(): List<NovelContext> = contexts
-        fun getNovelContext(url: String): NovelContext? {
+        fun getNovelContext(url: String): NovelContext {
             val host: String
             try {
                 host = URL(url).host
-            } catch (_: Exception) {
-                return null
+            } catch (e: Exception) {
+                throw e
             }
-            return contextsMap[host] ?: contexts.firstOrNull { it.check(url) }
+            return contextsMap[host] ?: contexts.firstOrNull { it.check(url) } ?: throw IllegalArgumentException("网址不支持: $url")
         }
 
-        fun getNovelContext(site: NovelSite): NovelContext = getNovelContext(site.baseUrl)!!
+        fun getNovelContext(site: NovelSite): NovelContext = getNovelContext(site.baseUrl)
     }
 
     @Suppress("MemberVisibilityCanPrivate")

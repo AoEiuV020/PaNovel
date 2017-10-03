@@ -95,11 +95,15 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
         return true
     }
 
+    fun showUrl(url: String) {
+        this.url = url
+    }
+
     fun showGenre(genre: NovelGenre) {
         title = genre.name
         url = genre.requester.url
         progressDialog.dismiss()
-//        (fragment_container as NovelListFragment).showGenre(genre)
+        (fragment_container as NovelListFragment).showGenre(genre)
         closeDrawer()
     }
 
