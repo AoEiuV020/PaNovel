@@ -40,7 +40,7 @@ data class NovelGenre(
 data class NovelItem(
         val name: String,
         val author: String
-)
+) : Data()
 
 /**
  * 小说列表中的一本小说，

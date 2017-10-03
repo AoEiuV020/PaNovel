@@ -19,6 +19,7 @@ import cc.aoeiuv020.panovel.presenter.NovelListPresenter
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.novel_list_item.view.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.startActivity
 
 /**
  *
@@ -46,16 +47,9 @@ class NovelListFragment : Fragment() {
         progressDialog.dismiss()
         listView.run {
             adapter = NovelListAdapter(activity, novelList)
-            setOnItemClickListener { _, view, position, _ ->
-                /*
-                                val item = adapter.getItem(position) as NovelListItem
-                                val intent = context.intentFor<NovelDetailActivity>("novelUrl" to item.detailUrl.url,
-                                        "novelName" to item.name,
-                                        "novelIcon" to view.novel_icon.getTag(R.id.novel_icon))
-                                val options = ActivityOptionsCompat
-                                        .makeSceneTransitionAnimation(activity, view.novel_icon, "image")
-                                startActivity(intent, options.toBundle())
-                */
+            setOnItemClickListener { _, _, position, _ ->
+                val item = adapter.getItem(position) as NovelListItem
+                context.startActivity<NovelDetailActivity>("item" to item)
             }
             setOnScrollListener(object : AbsListView.OnScrollListener {
                 private var lastItem = 0
