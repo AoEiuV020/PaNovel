@@ -5,6 +5,7 @@ package cc.aoeiuv020.panovel.ui
 import android.app.ProgressDialog
 import android.content.Context
 import android.support.v7.app.AlertDialog
+import android.view.View
 import cc.aoeiuv020.panovel.R
 
 /**
@@ -27,5 +28,13 @@ fun Context.alert(dialog: AlertDialog, message: String, title: String? = null) =
         dialog.setTitle(title)
     }
     show()
+}
+
+fun View.hide() {
+    visibility = View.GONE
+}
+
+fun View.show() {
+    visibility = View.VISIBLE
 }
 

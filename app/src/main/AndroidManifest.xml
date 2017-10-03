@@ -27,6 +27,10 @@
         <activity
             android:name=".ui.NovelDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.NovelTextActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/FullscreenTheme" />
     </application>
 
 </manifest>

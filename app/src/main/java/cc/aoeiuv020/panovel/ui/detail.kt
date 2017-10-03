@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.novel_chapter_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.startActivity
 
 /**
  *
@@ -51,7 +52,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         novelUrl = novelListItem.requester.url
 
         recyclerView.adapter = NovelDetailAdapter(this@NovelDetailActivity) { index ->
-            //            startActivity<NovelPageActivity>("novelName" to novelName, "novelUrl" to novelUrl, "issueIndex" to index)
+            startActivity<NovelTextActivity>("item" to novelListItem, "index" to index)
         }
         recyclerView.layoutManager = GridLayoutManager(this@NovelDetailActivity, 3)
 
