@@ -22,12 +22,14 @@ import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
 import kotlinx.android.synthetic.main.activity_novel_text.*
+import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_item.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
 /**
@@ -153,18 +155,34 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         usedHolders.forEach {
             it.setTextSize(size)
         }
+        unusedHolders.forEach {
+            it.setTextSize(size)
+        }
     }
 
     class ViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter, val view: View) : AnkoLogger {
         private val presenter = presenter.subPresenter(this)
+        private val headerView by lazy {
+            View.inflate(ctx, R.layout.novel_text_header, null)
+        }
+        private val textListAdapter = NovelTextListAdapter(ctx)
+
+        init {
+            view.textListView.apply {
+                addHeaderView(headerView)
+            }
+        }
+
         fun apply(chapter: NovelChapter) {
             view.progressBar.show()
+            headerView.chapterNameTextView.text = chapter.name
             view.textListView.adapter = null
             presenter.requestNovelText(chapter)
         }
 
         fun showText(novelText: NovelText) {
-            view.textListView.adapter = NovelTextListAdapter(ctx, novelText)
+            textListAdapter.setNovelText(novelText)
+            view.textListView.adapter = textListAdapter
             view.progressBar.hide()
         }
 
@@ -174,13 +192,13 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
 
         fun setTextSize(size: Int) {
             debug { "NovelTextPagerAdapter.ViewHolder.setTextSize $size" }
-            (view.textListView.adapter as? NovelTextListAdapter)?.setTextSize(size)
+            textListAdapter.setTextSize(size)
         }
     }
 }
 
-class NovelTextListAdapter(private val ctx: Context, novelText: NovelText) : BaseAdapter(), AnkoLogger {
-    private val items = novelText.textList
+class NovelTextListAdapter(private val ctx: Context) : BaseAdapter(), AnkoLogger {
+    private var items = emptyList<String>()
     private var textSize = Settings.textSize
 
     @SuppressLint("SetTextI18n")
@@ -195,9 +213,16 @@ class NovelTextListAdapter(private val ctx: Context, novelText: NovelText) : Bas
     override fun getItemId(position: Int) = 0L
 
     override fun getCount() = items.size
+
     fun setTextSize(size: Int) {
         debug { "NovelTextListAdapter.setTextSize $size" }
         this.textSize = size
+        notifyDataSetChanged()
+    }
+
+    fun setNovelText(novelText: NovelText) {
+        debug { items.size }
+        items = novelText.textList.let { if (it is RandomAccess) it else ArrayList(it) }
         notifyDataSetChanged()
     }
 }
