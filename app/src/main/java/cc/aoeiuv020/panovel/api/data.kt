@@ -35,7 +35,7 @@ data class NovelGenre(
 }
 
 /**
- * 代表一本小说，由名字和作者唯一决定，
+ * 代表一本小说，由小说名和作者唯一决定，
  */
 data class NovelItem(
         val name: String,

@@ -14,10 +14,12 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.NovelListItem
+import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.NovelLocal
 import cc.aoeiuv020.panovel.presenter.NovelDetailPresenter
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_detail.*
@@ -36,7 +38,7 @@ import org.jetbrains.anko.startActivity
 class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     private val alertDialog: AlertDialog by lazy { AlertDialog.Builder(this).create() }
     private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
-    private lateinit var novelUrl: String
+    private lateinit var requester: DetailRequester
     private lateinit var presenter: NovelDetailPresenter
     private var novelDetail: NovelDetail? = null
 
@@ -47,23 +49,23 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        val novelListItem = intent.getSerializableExtra("item") as NovelListItem
-        debug { "receive $novelListItem" }
-        novelUrl = novelListItem.requester.url
+        val novelItem = intent.getSerializableExtra("novel") as NovelItem
+        requester = intent.getSerializableExtra("requester") as DetailRequester
+        debug { "receive $requester" }
 
         recyclerView.adapter = NovelDetailAdapter(this@NovelDetailActivity) { index ->
-            startActivity<NovelTextActivity>("item" to novelListItem, "index" to index)
+            startActivity<NovelTextActivity>("novel" to novelItem, "requester" to requester, "index" to index)
         }
         recyclerView.layoutManager = GridLayoutManager(this@NovelDetailActivity, 3)
 
         loading(progressDialog, R.string.novel_detail)
-        setTitle(novelListItem.novel)
+        setTitle(novelItem)
 
-        fab.setOnClickListener {
-            //            startActivity<NovelPageActivity>("novelName" to novelName, "novelUrl" to novelUrl)
+        fabRead.setOnClickListener {
+            startActivity<NovelTextActivity>("novel" to novelItem, "requester" to requester)
         }
 
-        presenter = NovelDetailPresenter(this, novelListItem)
+        presenter = NovelDetailPresenter(this, requester)
         presenter.start()
     }
 
@@ -75,6 +77,16 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         this.novelDetail = detail
         progressDialog.dismiss()
         setTitle(detail.novel)
+        val novelLocal = NovelLocal(detail.novel, detail.bigImg, requester)
+        fabStar.isChecked = Bookshelf.contains(novelLocal)
+        fabStar.setOnClickListener {
+            fabStar.toggle()
+            if (fabStar.isChecked) {
+                Bookshelf.add(novelLocal)
+            } else {
+                Bookshelf.remove(novelLocal)
+            }
+        }
         // 有可能activity已经销毁，glide会报错，
         if (isDestroyed) return
         Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
@@ -95,7 +107,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_detail, menu)
         menu.findItem(R.id.browse).setOnMenuItemClickListener {
-            browse(novelUrl)
+            browse(requester.url)
         }
         menu.findItem(R.id.info).setOnMenuItemClickListener {
             showNovelAbout()
@@ -105,7 +117,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     }
 }
 
-class NovelDetailAdapter(val ctx: Context, val callback: (Int) -> Unit) : RecyclerView.Adapter<NovelDetailAdapter.Holder>() {
+class NovelDetailAdapter(private val ctx: Context, val callback: (Int) -> Unit) : RecyclerView.Adapter<NovelDetailAdapter.Holder>() {
     private lateinit var detail: NovelDetail
     private var issuesDesc = emptyList<NovelChapter>()
     override fun getItemCount() = issuesDesc.size

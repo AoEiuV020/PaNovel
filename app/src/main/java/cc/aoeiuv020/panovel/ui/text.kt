@@ -15,8 +15,9 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.SeekBar
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelListItem
+import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.NovelText
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
@@ -47,12 +48,13 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val novelListItem = intent.getSerializableExtra("item") as NovelListItem
-        debug { "receive $novelListItem" }
-        novelName = novelListItem.novel.name
+        val novelItem = intent.getSerializableExtra("novel") as NovelItem
+        val requester = intent.getSerializableExtra("requester") as DetailRequester
+        debug { "receive $requester" }
+        novelName = novelItem.name
         index = intent.getIntExtra("index", 0)
 
-        urlTextView.text = novelListItem.requester.url
+        urlTextView.text = requester.url
         urlBar.setOnClickListener {
             browse(urlTextView.text.toString())
         }
@@ -94,7 +96,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
         })
 
-        presenter = NovelTextPresenter(this, novelListItem.requester, index)
+        presenter = NovelTextPresenter(this, requester, index)
         presenter.start()
     }
 

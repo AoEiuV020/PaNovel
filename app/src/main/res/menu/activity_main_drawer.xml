@@ -8,8 +8,8 @@
         android:icon="@drawable/ic_home"
         android:title="@string/site" />
     <item
-        android:id="@+id/settings"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/settings" />
+        android:id="@+id/bookshelf"
+        android:icon="@drawable/ic_bookshelf"
+        android:title="@string/bookshelf" />
 
 </menu>

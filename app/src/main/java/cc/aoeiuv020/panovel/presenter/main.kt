@@ -3,7 +3,7 @@ package cc.aoeiuv020.panovel.presenter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelSite
-import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.local.Selected
 import cc.aoeiuv020.panovel.ui.MainActivity
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
@@ -36,7 +36,7 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
      * 提供记住了的分类选择，
      */
     private fun loadGenre(site: NovelSite): NovelGenre? {
-        return Settings.genre?.takeIf {
+        return Selected.genre?.takeIf {
             NovelContext.getNovelContext(site).check(it.requester.url)
         }
     }
@@ -45,14 +45,14 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
      * 保存记住了的网站选择，
      */
     private fun saveSite(site: NovelSite) {
-        Settings.site = site
+        Selected.site = site
     }
 
     /**
      * 提供记住了的网站选择，
      */
     private fun loadSite(): NovelSite? {
-        return Settings.site
+        return Selected.site
     }
 
 

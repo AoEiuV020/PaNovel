@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.presenter
 
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelGenre
-import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.local.Selected
 import cc.aoeiuv020.panovel.ui.NovelListFragment
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
@@ -33,7 +33,7 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
     }
 
     private fun saveGenre(genre: NovelGenre) {
-        Settings.genre = genre
+        Selected.genre = genre
     }
 
     fun loadNextPage() {

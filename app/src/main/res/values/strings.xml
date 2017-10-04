@@ -26,5 +26,6 @@
     <string name="no_next_issue">没有下一话了</string>
     <string name="now_loading_previous_issue">正在加载上一话</string>
     <string name="now_loading_next_issue">正在加载下一话</string>
+    <string name="bookshelf">书架</string>
 
 </resources>

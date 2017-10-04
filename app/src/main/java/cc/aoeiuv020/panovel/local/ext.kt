@@ -1,6 +1,7 @@
+@file:Suppress("unused")
+
 package cc.aoeiuv020.panovel.local
 
-import android.content.Context
 import cc.aoeiuv020.panovel.App
 import java.io.*
 import kotlin.reflect.KProperty
@@ -11,44 +12,47 @@ import kotlin.reflect.KProperty
  */
 
 class ContextDelegate<T : Serializable>(private val default: T) {
-    private fun name(thisRef: Any, property: KProperty<*>) = "${thisRef.javaClass.name}.${property.name}"
-    operator fun getValue(thisRef: Any, property: KProperty<*>): T {
-        return try {
-            App.ctx.load(name(thisRef, property))!!
-        } catch (_: Exception) {
-            default
-        }
+    operator fun getValue(thisRef: LocalSource, property: KProperty<*>): T {
+        return thisRef.fileLoad(property.name) ?: default
     }
 
-    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-        App.ctx.save(name(thisRef, property), value)
+    operator fun setValue(thisRef: LocalSource, property: KProperty<*>, value: T) {
+        thisRef.fileSave(property.name, value)
     }
 }
 
 class NullableContextDelegate<T : Serializable>(private val default: T? = null) {
-    private fun name(thisRef: Any, property: KProperty<*>) = "${thisRef.javaClass.name}.${property.name}"
-    operator fun getValue(thisRef: Any, property: KProperty<*>): T? {
-        return try {
-            App.ctx.load(name(thisRef, property))!!
-        } catch (_: Exception) {
-            default
-        }
+    operator fun getValue(thisRef: LocalSource, property: KProperty<*>): T? {
+        return thisRef.fileLoad(property.name) ?: default
     }
 
-    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T?) {
-        App.ctx.save(name(thisRef, property), value)
+    operator fun setValue(thisRef: LocalSource, property: KProperty<*>, value: T?) {
+        thisRef.fileSave(property.name, value)
     }
 }
 
-private fun Context.ext() = File(getExternalFilesDir(null), "ext").apply { mkdirs() }
-fun Context.save(name: String, obj: Serializable?) {
-    ObjectOutputStream(FileOutputStream(File(ext(), name))).run {
+private fun LocalSource.externalFile() = File(File(App.ctx.getExternalFilesDir(null), "ext"), this.javaClass.name).apply { mkdirs() }
+fun LocalSource.fileSave(name: String, obj: Serializable?) {
+    ObjectOutputStream(FileOutputStream(File(externalFile(), name))).run {
         writeObject(obj)
         close()
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T> Context.load(name: String): T? = ObjectInputStream(FileInputStream(File(ext(), name))).run {
-    (readObject() as? T).also { close() }
+fun <T> LocalSource.fileLoad(file: File): T? = try {
+    ObjectInputStream(FileInputStream(file)).run {
+        (readObject() as? T).also { close() }
+    }
+} catch (_: Exception) {
+    null
+}
+
+fun <T> LocalSource.fileLoad(name: String): T? = fileLoad(File(externalFile(), name))
+
+fun LocalSource.fileExists(name: String): Boolean = File(externalFile(), name).exists()
+fun LocalSource.fileRemove(name: String): Boolean = File(externalFile(), name).delete()
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> LocalSource.fileList(): List<T> = externalFile().listFiles().mapNotNull { file ->
+    fileLoad<T>(file)
 }

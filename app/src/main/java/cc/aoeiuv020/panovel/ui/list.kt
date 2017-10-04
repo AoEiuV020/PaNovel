@@ -49,7 +49,7 @@ class NovelListFragment : Fragment() {
             adapter = NovelListAdapter(activity, novelList)
             setOnItemClickListener { _, _, position, _ ->
                 val item = adapter.getItem(position) as NovelListItem
-                context.startActivity<NovelDetailActivity>("item" to item)
+                context.startActivity<NovelDetailActivity>("novel" to item.novel, "requester" to item.requester)
             }
             setOnScrollListener(object : AbsListView.OnScrollListener {
                 private var lastItem = 0

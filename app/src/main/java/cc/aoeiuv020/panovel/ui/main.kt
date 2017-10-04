@@ -5,7 +5,6 @@ package cc.aoeiuv020.panovel.ui
 import android.app.Activity
 import android.app.ProgressDialog
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
@@ -15,6 +14,7 @@ import android.widget.BaseAdapter
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelSite
+import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.presenter.MainPresenter
 import cc.aoeiuv020.panovel.ui.base.MainBaseNavigationActivity
 import com.bumptech.glide.Glide
@@ -23,9 +23,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.android.synthetic.main.site_list_item.view.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.browse
-import org.jetbrains.anko.debug
+import org.jetbrains.anko.*
 
 /**
  *
@@ -86,8 +84,12 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
             }
             else -> when (item.itemId) {
                 R.id.select_sites -> presenter.requestSites()
-                R.id.settings -> {
-                    Snackbar.make(drawer_layout, "没实现", Snackbar.LENGTH_SHORT).show()
+                R.id.bookshelf -> {
+                    val list = Bookshelf.list()
+                    selector(getString(R.string.bookshelf), list.map { it.novelItem.name }) { _, i ->
+                        val novelLocal = list[i]
+                        startActivity<NovelDetailActivity>("novel" to novelLocal.novelItem, "requester" to novelLocal.requester)
+                    }
                 }
             }
         }

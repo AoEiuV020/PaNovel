@@ -20,4 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keepnames class cc.aoeiuv020.panovel.local.Settings
+-keepnames class * implements cc.aoeiuv020.panovel.local.LocalSource
