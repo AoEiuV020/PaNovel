@@ -57,13 +57,14 @@ data class NovelListItem(
 
 /**
  * 小说详情页，
- * @param chaptersAsc 升序章节，
  */
 data class NovelDetail(
         val novel: NovelItem,
         val bigImg: String,
         // 最后更新的时间，
         val update: Date,
+        // 最新章节，
+        val lastChapter: NovelChapter,
         // 连载 or 完结，
         val status: String,
         // 所属分类，
@@ -74,8 +75,12 @@ data class NovelDetail(
         val info: String,
         // 收藏人数，
         val stars: Int,
-        val chaptersAsc: List<NovelChapter>
-) : Data()
+        val requester: ChaptersRequester
+) : Data() {
+    constructor(novel: NovelItem, bigImg: String, update: Date, lastChapter: NovelChapter, status: String, genre: String
+                , length: String, info: String, stars: Int, url: String)
+            : this(novel, bigImg, update, lastChapter, status, genre, length, info, stars, ChaptersRequester(url))
+}
 
 /**
  * 小说目录，

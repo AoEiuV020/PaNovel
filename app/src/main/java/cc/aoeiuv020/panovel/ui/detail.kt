@@ -40,6 +40,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
     private lateinit var requester: DetailRequester
     private lateinit var presenter: NovelDetailPresenter
+    private lateinit var chapterAdapter: NovelChaptersAdapter
     private var novelDetail: NovelDetail? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,9 +54,9 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         requester = intent.getSerializableExtra("requester") as DetailRequester
         debug { "receive $requester" }
 
-        recyclerView.adapter = NovelDetailAdapter(this@NovelDetailActivity) { index ->
+        recyclerView.adapter = NovelChaptersAdapter(this@NovelDetailActivity) { index ->
             startActivity<NovelTextActivity>("novel" to novelItem, "requester" to requester, "index" to index)
-        }
+        }.also { chapterAdapter = it }
         recyclerView.layoutManager = GridLayoutManager(this@NovelDetailActivity, 3)
 
         loading(progressDialog, R.string.novel_detail)
@@ -90,7 +91,11 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         // 有可能activity已经销毁，glide会报错，
         if (isDestroyed) return
         Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
-        (recyclerView.adapter as NovelDetailAdapter).setDetail(detail)
+        presenter.requestChapters(detail.requester)
+    }
+
+    fun showNovelChapters(chapters: List<NovelChapter>) {
+        chapterAdapter.setChapters(chapters)
     }
 
     fun showError(message: String, e: Throwable) {
@@ -117,8 +122,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     }
 }
 
-class NovelDetailAdapter(private val ctx: Context, val callback: (Int) -> Unit) : RecyclerView.Adapter<NovelDetailAdapter.Holder>() {
-    private lateinit var detail: NovelDetail
+class NovelChaptersAdapter(private val ctx: Context, val callback: (Int) -> Unit) : RecyclerView.Adapter<NovelChaptersAdapter.Holder>() {
     private var issuesDesc = emptyList<NovelChapter>()
     override fun getItemCount() = issuesDesc.size
 
@@ -132,12 +136,6 @@ class NovelDetailAdapter(private val ctx: Context, val callback: (Int) -> Unit) 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int)
             = Holder(LayoutInflater.from(ctx).inflate(R.layout.novel_chapter_item, parent, false))
 
-    fun setDetail(detail: NovelDetail) {
-        this.detail = detail
-        issuesDesc = detail.chaptersAsc.asReversed()
-        notifyDataSetChanged()
-    }
-
     inner class Holder(val root: View) : RecyclerView.ViewHolder(root), AnkoLogger {
         init {
             root.setOnClickListener {
@@ -145,5 +143,10 @@ class NovelDetailAdapter(private val ctx: Context, val callback: (Int) -> Unit) 
                 callback(issuesDesc.size - 1 - layoutPosition)
             }
         }
+    }
+
+    fun setChapters(chapters: List<NovelChapter>) {
+        issuesDesc = chapters.asReversed()
+        notifyDataSetChanged()
     }
 }

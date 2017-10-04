@@ -45,7 +45,7 @@ class Piaotian : NovelContext() {
         val response = response(requester)
         if (isDetail(response.url().toString())) {
             val detail = getNovelDetail(DetailRequester(requester.url))
-            val info = detail.run { "最新章节: ${chaptersAsc.last().name} 字数: $length 更新: ${sdf.format(update)} 状态: $status" }
+            val info = detail.run { "最新章节: ${lastChapter.name} 字数: $length 更新: ${sdf.format(update)} 状态: $status" }
             return listOf(NovelListItem(detail.novel, requester.url, info))
         }
         val root = request(response)
@@ -110,13 +110,21 @@ class Piaotian : NovelContext() {
         val info = td.select("div").first().textList()
                 .joinToString("\n")
 
-        val chapterPageUrl = tbody1.select("tr:nth-child(8) > td > table > caption > a").first().absHref()
-        val chapterRoot = request(chapterPageUrl)
-        val chapterList = chapterRoot.select("div.mainbody > div.centent > ul > li > a").map {
+        val lastChapter = tbody1.select("tr:nth-child(8) > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > li > a").first().let {
             val a = it
             NovelChapter(a.text(), a.absHref())
         }
-        return NovelDetail(NovelItem(name, author), img, update, status, genre, length, info, stars, chapterList)
+
+        val chapterPageUrl = tbody1.select("tr:nth-child(8) > td > table > caption > a").first().absHref()
+        return NovelDetail(NovelItem(name, author), img, update, lastChapter, status, genre, length, info, stars, chapterPageUrl)
+    }
+
+    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
+        val root = request(requester.url)
+        return root.select("div.mainbody > div.centent > ul > li > a").map {
+            val a = it
+            NovelChapter(a.text(), a.absHref())
+        }
     }
 
     override fun getNovelText(requester: TextRequester): NovelText {

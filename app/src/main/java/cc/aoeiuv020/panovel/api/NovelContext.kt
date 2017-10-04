@@ -71,6 +71,11 @@ abstract class NovelContext {
     abstract fun getNovelDetail(requester: DetailRequester): NovelDetail
 
     /**
+     * 获取小说章节列表，
+     */
+    abstract fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter>
+
+    /**
      * 获取小说章节文本内容，
      */
     abstract fun getNovelText(requester: TextRequester): NovelText

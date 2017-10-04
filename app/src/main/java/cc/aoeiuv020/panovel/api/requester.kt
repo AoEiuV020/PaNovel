@@ -29,6 +29,11 @@ open class ListRequester(url: String) : Requester(url)
 open class DetailRequester(url: String) : Requester(url)
 
 /**
+ * 用来请求小说章节列表，
+ */
+open class ChaptersRequester(url: String) : Requester(url)
+
+/**
  * 用来请求小说文本，
  */
 open class TextRequester(url: String) : Requester(url)

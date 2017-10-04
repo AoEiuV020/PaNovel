@@ -109,9 +109,7 @@ class PiaotianTest {
             println(it.update)
             println(it.status)
             println(it.stars)
-            println(it.chaptersAsc.size)
-            println(it.chaptersAsc.first())
-            println(it.chaptersAsc.last())
+            println(it.lastChapter)
         }
     }
 

@@ -20,9 +20,11 @@ class NovelTextPresenter(private val view: NovelTextActivity, val requester: Det
     fun start() {
         Observable.fromCallable {
             NovelContext.getNovelContext(requester.url).also { context = it }
-                    .getNovelDetail(requester)
-        }.async().subscribe({ detail ->
-            chaptersAsc = detail.chaptersAsc
+                    .getNovelDetail(requester).let {
+                context.getNovelChaptersAsc(it.requester)
+            }
+        }.async().subscribe({ chapters ->
+            chaptersAsc = chapters
             view.showChapters(chaptersAsc)
         }, { e ->
             val message = "加载小说章节列表失败，"
