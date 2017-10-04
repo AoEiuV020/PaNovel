@@ -15,14 +15,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.SeekBar
-import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.api.NovelText
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
-import cc.aoeiuv020.panovel.presenter.load
-import cc.aoeiuv020.panovel.presenter.save
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.novel_text_item.view.*
@@ -77,11 +75,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
             }
         })
 
-        val textSize = try {
-            App.ctx.load<Int>("textSize")
-        } catch (_: Exception) {
-            18
-        }
+        val textSize = Settings.textSize
         debug { "load textSite = $textSize" }
         textSizeSeekBar.progress = textSize - 12
         textSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -95,7 +89,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 val size = 12 + seekBar.progress
-                App.ctx.save("textSize", size)
+                Settings.textSize = size
             }
 
         })
@@ -143,7 +137,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
     }
 }
 
-class NovelTextPagerAdapter(val ctx: Activity, private val novelText: NovelText) : PagerAdapter(), AnkoLogger {
+class NovelTextPagerAdapter(private val ctx: Activity, private val novelText: NovelText) : PagerAdapter(), AnkoLogger {
     private val view: View by lazy {
         View.inflate(ctx, R.layout.novel_text_page_item, null).apply {
             textListView.setOnItemClickListener { _, _, _, _ ->
@@ -212,15 +206,7 @@ class NovelTextPagerAdapter(val ctx: Activity, private val novelText: NovelText)
 
 class NovelTextListAdapter(private val ctx: Context, textList: List<String>) : BaseAdapter(), AnkoLogger {
     private val items = textList
-    private var textSize: Int
-
-    init {
-        textSize = try {
-            App.ctx.load("textSize")
-        } catch (_: Exception) {
-            18
-        }
-    }
+    private var textSize = Settings.textSize
 
     @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View
