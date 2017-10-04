@@ -3,7 +3,6 @@
 package cc.aoeiuv020.panovel.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
@@ -24,11 +23,12 @@ import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.novel_text_item.view.*
-import kotlinx.android.synthetic.main.novel_text_item_loading.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
+import java.util.*
+import kotlin.properties.Delegates
 
 /**
  *
@@ -39,13 +39,16 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
     private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
     private lateinit var presenter: NovelTextPresenter
     private lateinit var novelName: String
+    private lateinit var chaptersAsc: List<NovelChapter>
+    private var index: Int by Delegates.notNull()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val novelListItem = intent.getSerializableExtra("item") as NovelListItem
         debug { "receive $novelListItem" }
         novelName = novelListItem.novel.name
-        val index = intent.getIntExtra("index", 0)
+        index = intent.getIntExtra("index", 0)
 
         urlTextView.text = novelListItem.requester.url
         urlBar.setOnClickListener {
@@ -64,14 +67,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
             override fun onPageSelected(position: Int) {
                 debug { "onPageSelected: $position" }
-                when (position) {
-                    0 -> {
-                        presenter.requestPreviousChapter()
-                    }
-                    viewPager.adapter.count - 1 -> {
-                        presenter.requestNextChapter()
-                    }
-                }
+                val chapter = chaptersAsc[position]
+                title = "$novelName - ${chapter.name}"
+                urlTextView.text = chapter.requester.url
             }
         })
 
@@ -101,111 +99,88 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
     fun showError(message: String, e: Throwable) {
         progressDialog.dismiss()
         alertError(alertDialog, message, e)
+        show()
     }
 
-    fun showPreviousChapter(chapter: NovelChapter, text: NovelText) {
-        showNovelTexts(chapter, text)
-        // 跳到最后一页，
-        viewPager.currentItem = viewPager.adapter.count - 2
-    }
-
-    fun showNextChapter(chapter: NovelChapter, text: NovelText) {
-        showNovelTexts(chapter, text)
-        // 跳到第一页，0页不是漫画，
-        viewPager.currentItem = 1
-    }
-
-    fun showNoPreviousChapter() {
-        (viewPager.adapter as NovelTextPagerAdapter).noPrevious()
-    }
-
-    fun showNoNextChapter() {
-        (viewPager.adapter as NovelTextPagerAdapter).noNext()
-    }
-
-    private fun showNovelTexts(chapter: NovelChapter, text: NovelText) {
-        title = "$novelName - ${chapter.name}"
-        urlTextView.text = chapter.requester.url
+    fun showChapters(chaptersAsc: List<NovelChapter>) {
+        this.chaptersAsc = chaptersAsc
         progressDialog.dismiss()
-        if (text.textList.isEmpty()) {
+        if (chaptersAsc.isEmpty()) {
             alert(alertDialog, R.string.novel_not_support)
             // 无法浏览的情况显示状态栏标题栏导航栏，方便离开，
             show()
             return
         }
-        viewPager.adapter = NovelTextPagerAdapter(this, text)
+        viewPager.adapter = NovelTextPagerAdapter(this, presenter, chaptersAsc)
+        viewPager.currentItem = index
     }
 }
 
-class NovelTextPagerAdapter(private val ctx: Activity, private val novelText: NovelText) : PagerAdapter(), AnkoLogger {
-    private val view: View by lazy {
-        View.inflate(ctx, R.layout.novel_text_page_item, null).apply {
-            textListView.setOnItemClickListener { _, _, _, _ ->
-                (context as NovelTextActivity).toggle()
-            }
-        }
-    }
-    private val firstPage: View by lazy {
-        View.inflate(ctx, R.layout.novel_text_item_loading, null).apply {
-            loadingTextView.setText(R.string.now_loading_previous_issue)
-        }
-    }
-    private val lastPage: View by lazy {
-        View.inflate(ctx, R.layout.novel_text_item_loading, null).apply {
-            loadingTextView.setText(R.string.now_loading_next_issue)
-        }
-    }
-
-    override fun isViewFromObject(view: View, obj: Any) = view === obj
+class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter, private val chaptersAsc: List<NovelChapter>) : PagerAdapter(), AnkoLogger {
+    private val unusedHolders: LinkedList<ViewHolder> = LinkedList()
+    private val usedHolders: LinkedList<ViewHolder> = LinkedList()
+    override fun isViewFromObject(view: View, obj: Any) = (obj as ViewHolder).view === view
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        when (position) {
-            0 -> {
-                container.addView(firstPage)
-                return firstPage
-            }
-            count - 1 -> {
-                container.addView(lastPage)
-                return lastPage
-            }
-        }
-        val root = view
-        root.textListView.adapter = NovelTextListAdapter(ctx, novelText.textList)
-        container.addView(root)
-        return root
+        val holder = if (unusedHolders.isNotEmpty()) {
+            unusedHolders.pop()
+        } else {
+            ViewHolder(ctx, presenter, View.inflate(ctx, R.layout.novel_text_page_item, null).apply {
+                textListView.setOnItemClickListener { _, _, _, _ ->
+                    (context as NovelTextActivity).toggle()
+                }
+            })
+        }.also { usedHolders.push(it) }
+        val chapter = chaptersAsc[position]
+        holder.apply(chapter)
+        container.addView(holder.view)
+        return holder
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any?) {
-        val view = obj as View
+        val holder = obj as ViewHolder
+        val view = holder.view
         container.removeView(view)
-        when (position) {
-            0 -> {
-            }
-            count - 1 -> {
-            }
-            else -> {
-            }
+        holder.let {
+            usedHolders.remove(it)
+            unusedHolders.push(holder)
         }
     }
 
-    override fun getCount() = 1 + 2
-    fun noNext() {
-        lastPage.loadingTextView.setText(R.string.no_next_issue)
-        lastPage.loadingProgressBar.hide()
-    }
-
-    fun noPrevious() {
-        firstPage.loadingTextView.setText(R.string.no_previous_issue)
-        firstPage.loadingProgressBar.hide()
-    }
+    override fun getCount() = chaptersAsc.size
 
     fun setTextSize(size: Int) {
         debug { "NovelTextPagerAdapter.setTextSize $size" }
-        (view.textListView.adapter as NovelTextListAdapter).setTextSize(size)
+        usedHolders.forEach {
+            it.setTextSize(size)
+        }
+    }
+
+    class ViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter, val view: View) : AnkoLogger {
+        private val presenter = presenter.subPresenter(this)
+        fun apply(chapter: NovelChapter) {
+            view.progressBar.show()
+            view.textListView.adapter = null
+            presenter.requestNovelText(chapter)
+        }
+
+        fun showText(novelText: NovelText) {
+            view.textListView.adapter = NovelTextListAdapter(ctx, novelText)
+            view.progressBar.hide()
+        }
+
+        fun showError(message: String, e: Throwable) {
+            ctx.showError(message, e)
+        }
+
+        fun setTextSize(size: Int) {
+            debug { "NovelTextPagerAdapter.ViewHolder.setTextSize $size" }
+            (view.textListView.adapter as? NovelTextListAdapter)?.setTextSize(size)
+        }
     }
 }
 
-class NovelTextListAdapter(private val ctx: Context, textList: List<String>) : BaseAdapter(), AnkoLogger {
-    private val items = textList
+class NovelTextListAdapter(private val ctx: Context, novelText: NovelText) : BaseAdapter(), AnkoLogger {
+    private val items = novelText.textList
     private var textSize = Settings.textSize
 
     @SuppressLint("SetTextI18n")
