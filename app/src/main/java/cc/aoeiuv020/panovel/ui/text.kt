@@ -10,6 +10,7 @@ import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -200,9 +201,20 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
             unusedHolders.pop()
         } else {
             ViewHolder(ctx, presenter, View.inflate(ctx, R.layout.novel_text_page_item, null).apply {
-                textListView.setOnItemClickListener { _, _, _, _ ->
-                    (context as NovelTextActivity).toggle()
+                setOnClickListener {
                 }
+                textListView.setOnTouchListener(object : View.OnTouchListener {
+                    private var previousAction: Int = MotionEvent.ACTION_UP
+                    @SuppressLint("ClickableViewAccessibility")
+                    override fun onTouch(v: View?, event: MotionEvent): Boolean {
+                        if (previousAction == MotionEvent.ACTION_DOWN
+                                && event.action == MotionEvent.ACTION_UP) {
+                            ctx.toggle()
+                        }
+                        previousAction = event.action
+                        return false
+                    }
+                })
             })
         }.also { usedHolders.push(it) }
         val chapter = chaptersAsc[position]
@@ -344,4 +356,6 @@ class NovelTextListAdapter(private val ctx: Context) : BaseAdapter(), AnkoLogger
         items = novelText.textList.let { if (it is RandomAccess) it else ArrayList(it) }
         notifyDataSetChanged()
     }
+
+    override fun isEnabled(position: Int): Boolean = false
 }
