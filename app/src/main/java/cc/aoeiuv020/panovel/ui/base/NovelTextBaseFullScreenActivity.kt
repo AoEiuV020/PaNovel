@@ -17,6 +17,8 @@ import cc.aoeiuv020.panovel.ui.hide
 import cc.aoeiuv020.panovel.ui.show
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
+import org.jetbrains.anko.verbose
 
 /**
  * 全屏Activity，绝大部分代码是自动生成的，
@@ -70,7 +72,7 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        delayedHide(100)
+        hide()
     }
 
     fun toggle() {
@@ -82,6 +84,13 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
     }
 
     protected fun hide() {
+        debug { "hide" }
+        verbose {
+            val stack = Thread.currentThread().stackTrace
+            stack.drop(2).take(6).joinToString("\n", "stack trace\n") {
+                "\tat ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
+            }
+        }
         app_bar.hide()
         fullscreen_content_controls.visibility = View.GONE
         mVisible = false
@@ -90,6 +99,7 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
     }
 
     protected fun show() {
+        debug { "show" }
         viewPager.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
