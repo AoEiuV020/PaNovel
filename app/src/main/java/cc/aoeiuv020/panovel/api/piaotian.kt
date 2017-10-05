@@ -5,6 +5,7 @@ package cc.aoeiuv020.panovel.api
 import android.annotation.SuppressLint
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *
@@ -41,10 +42,12 @@ class Piaotian : NovelContext() {
 
     private fun isDetail(url: String) = url.startsWith("http://www.piaotian.com/bookinfo")
 
+    @SuppressLint("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
         val response = response(requester)
         if (isDetail(response.url().toString())) {
             val detail = getNovelDetail(DetailRequester(requester.url))
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
             val info = detail.run { "最新章节: ${lastChapter.name} 字数: $length 更新: ${sdf.format(update)} 状态: $status" }
             return listOf(NovelListItem(detail.novel, requester.url, info))
         }
@@ -77,9 +80,6 @@ class Piaotian : NovelContext() {
         return genre.requester.url.startsWith(SEARCH_PAGE_URL)
     }
 
-    @SuppressLint("SimpleDateFormat")
-    val sdf = SimpleDateFormat("yyyy-MM-dd")
-
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val root = request(requester)
         val tbody1 = root.select("#content > table > tbody").first()
@@ -102,7 +102,6 @@ class Piaotian : NovelContext() {
         val list = tbody2.text().pick(pattern)!!
         val (name, genre, author, _, length) = list
         val (updateString, status, _, _, starsString) = list.drop(5)
-        val update = sdf.parse(updateString)
         val stars = starsString.toInt()
 
         val td = tbody1.select("tr:nth-child(4) > td > table > tbody > tr > td:nth-child(2)").first()
@@ -110,11 +109,15 @@ class Piaotian : NovelContext() {
         val info = td.select("div").first().textList()
                 .joinToString("\n")
 
-        val lastChapter = tbody1.select("tr:nth-child(8) > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > li > a").first().let {
+        val lastChapterElement = tbody1.select("tr:nth-child(8) > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > li > a").first()
+        val (year) = updateString.pick("(\\d*)-(\\d*)-(\\d*)")!!
+        val (month, day, hour, minute) = lastChapterElement.title().pick(".*更新时间:(\\d*)-(\\d*) (\\d*):(\\d*)")!!
+        @Suppress("DEPRECATION")
+        val update = Date(year.toInt() - 1900, month.toInt() - 1, day.toInt(), hour.toInt(), minute.toInt())
+        val lastChapter = lastChapterElement.let {
             val a = it
             NovelChapter(a.text(), a.absHref())
         }
-
         val chapterPageUrl = tbody1.select("tr:nth-child(8) > td > table > caption > a").first().absHref()
         return NovelDetail(NovelItem(name, author), img, update, lastChapter, status, genre, length, info, stars, chapterPageUrl)
     }

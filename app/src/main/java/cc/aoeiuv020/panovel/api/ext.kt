@@ -67,6 +67,7 @@ fun String.pick(pattern: String) = pick(Pattern.compile(pattern, Pattern.DOTALL)
 
 fun Element.src(): String = attr("src")
 fun Element.absHref(): String = absUrl("href")
+fun Element.title(): String = attr("title")
 fun Element.textList(): List<String> = childNodes()
         .drop(9)
         .filter { it is TextNode }
