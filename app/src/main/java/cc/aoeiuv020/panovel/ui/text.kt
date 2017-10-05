@@ -71,9 +71,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
             override fun onPageSelected(position: Int) {
                 debug { "onPageSelected: $position" }
-                val chapter = chaptersAsc[position]
-                title = "$novelName - ${chapter.name}"
-                urlTextView.text = chapter.requester.url
+                setTitleChapter(position)
             }
         })
 
@@ -100,6 +98,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         presenter.start()
     }
 
+    private fun setTitleChapter(index: Int) {
+        val chapter = chaptersAsc[index]
+        title = "$novelName - ${chapter.name}"
+        urlTextView.text = chapter.requester.url
+    }
+
     fun showError(message: String, e: Throwable) {
         progressDialog.dismiss()
         alertError(alertDialog, message, e)
@@ -108,6 +112,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
     fun showChapters(chaptersAsc: List<NovelChapter>) {
         this.chaptersAsc = chaptersAsc
+        setTitleChapter(index)
         progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {
             alert(alertDialog, R.string.novel_not_support)
@@ -135,6 +140,9 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
             })
         }.also { usedHolders.push(it) }
         val chapter = chaptersAsc[position]
+        debug {
+            "instantiate $position $chapter"
+        }
         holder.apply(chapter)
         container.addView(holder.view)
         return holder
