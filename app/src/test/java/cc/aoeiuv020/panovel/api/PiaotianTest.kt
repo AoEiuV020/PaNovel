@@ -114,6 +114,16 @@ class PiaotianTest {
     }
 
     @Test
+    fun getNovelChapters() {
+        context.getNovelChaptersAsc(ChaptersRequester("http://www.piaotian.com/html/4/4316/index.html")).let { list ->
+            list.forEach {
+                println(it)
+            }
+            assertEquals("序幕：天外飞仙+第一章：客栈柴房温暖如春", list.first().name)
+        }
+    }
+
+    @Test
     fun getNovelText() {
         context.getNovelText(TextRequester("http://www.piaotian.com/html/8/8605/5582838.html")).textList.let {
             assertEquals(21, it.size)
