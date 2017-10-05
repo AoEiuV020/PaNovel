@@ -22,13 +22,16 @@ import cc.aoeiuv020.panovel.api.NovelText
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
+import cc.aoeiuv020.panovel.ui.widget.ColorPickerDialog
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_item.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
+import kotlinx.android.synthetic.main.novel_text_read_settings.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.dip
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
@@ -43,6 +46,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
     private lateinit var presenter: NovelTextPresenter
     private lateinit var novelName: String
     private lateinit var chaptersAsc: List<NovelChapter>
+    private lateinit var ntpAdapter: NovelTextPagerAdapter
+
     private var index: Int by Delegates.notNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,24 +80,84 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
             }
         })
 
+        // 设置字体大小，
         val textSize = Settings.textSize
         debug { "load textSite = $textSize" }
+        textSizeTextView.text = getString(R.string.text_size_placeholders, textSize)
         textSizeSeekBar.progress = textSize - 12
         textSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val size = 12 + progress
-                (viewPager.adapter as NovelTextPagerAdapter).setTextSize(size)
+                val iTextSize = 12 + progress
+                textSizeTextView.text = getString(R.string.text_size_placeholders, iTextSize)
+                ntpAdapter.setTextSize(iTextSize)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                val size = 12 + seekBar.progress
-                Settings.textSize = size
+                val iTextSize = 12 + seekBar.progress
+                Settings.textSize = iTextSize
+            }
+        })
+
+        // 设置行间距，
+        val lineSpacing = Settings.lineSpacing
+        lineSpacingTextView.text = getString(R.string.line_spacing_placeholder, lineSpacing)
+        lineSpacingSeekBar.progress = lineSpacing
+        lineSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                lineSpacingTextView.text = getString(R.string.line_spacing_placeholder, progress)
+                ntpAdapter.setLineSpacing(progress)
             }
 
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                Settings.lineSpacing = seekBar.progress
+            }
         })
+
+        // 设置段间距，
+        val paragraphSpacing = Settings.paragraphSpacing
+        paragraphSpacingTextView.text = getString(R.string.paragraph_spacing_placeholder, paragraphSpacing)
+        paragraphSpacingSeekBar.progress = paragraphSpacing
+        paragraphSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                paragraphSpacingTextView.text = getString(R.string.paragraph_spacing_placeholder, progress)
+                ntpAdapter.setParagraphSpacing(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                Settings.paragraphSpacing = seekBar.progress
+            }
+        })
+
+        // 设置背景色，
+        val backgroundColor = Settings.backgroundColor
+        viewPager.setBackgroundColor(backgroundColor)
+        backgroundColorTextView.text = getString(R.string.background_color_placeholder, backgroundColor)
+        backgroundColorTextView.setOnClickListener {
+            ColorPickerDialog(this@NovelTextActivity, Settings.backgroundColor, getString(R.string.background_color)) { color ->
+                Settings.backgroundColor = color
+                backgroundColorTextView.text = getString(R.string.background_color_placeholder, color)
+                viewPager.setBackgroundColor(color)
+            }.show()
+        }
+
+        // 设置文字颜色，
+        textColorTextView.text = getString(R.string.text_color_placeholder, Settings.textColor)
+        textColorTextView.setOnClickListener {
+            ColorPickerDialog(this@NovelTextActivity, Settings.textColor, getString(R.string.text_color)) { color ->
+                Settings.textColor = color
+                textColorTextView.text = getString(R.string.text_color_placeholder, color)
+                ntpAdapter.setTextColor(color)
+            }.show()
+        }
 
         presenter = NovelTextPresenter(this, requester, index)
         presenter.start()
@@ -121,6 +186,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
             return
         }
         viewPager.adapter = NovelTextPagerAdapter(this, presenter, chaptersAsc)
+                .also { ntpAdapter = it }
         viewPager.currentItem = index
     }
 }
@@ -162,11 +228,26 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
 
     fun setTextSize(size: Int) {
         debug { "NovelTextPagerAdapter.setTextSize $size" }
-        usedHolders.forEach {
+        (usedHolders + unusedHolders).forEach {
             it.setTextSize(size)
         }
-        unusedHolders.forEach {
-            it.setTextSize(size)
+    }
+
+    fun setLineSpacing(size: Int) {
+        (usedHolders + unusedHolders).forEach {
+            it.setLineSpacing(size)
+        }
+    }
+
+    fun setParagraphSpacing(size: Int) {
+        (usedHolders + unusedHolders).forEach {
+            it.setParagraphSpacing(size)
+        }
+    }
+
+    fun setTextColor(color: Int) {
+        (usedHolders + unusedHolders).forEach {
+            it.setTextColor(color)
         }
     }
 
@@ -176,10 +257,12 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
             View.inflate(ctx, R.layout.novel_text_header, null)
         }
         private val textListAdapter = NovelTextListAdapter(ctx)
+        private var paragraphSpacing = Settings.paragraphSpacing
 
         init {
             view.textListView.apply {
                 addHeaderView(headerView)
+                dividerHeight = ctx.dip(paragraphSpacing)
             }
         }
 
@@ -204,18 +287,34 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
             debug { "NovelTextPagerAdapter.ViewHolder.setTextSize $size" }
             textListAdapter.setTextSize(size)
         }
+
+        fun setLineSpacing(size: Int) {
+            textListAdapter.setLineSpacing(size)
+        }
+
+        fun setParagraphSpacing(size: Int) {
+            view.textListView.dividerHeight = ctx.dip(size)
+        }
+
+        fun setTextColor(color: Int) {
+            textListAdapter.setTextColor(color)
+        }
     }
 }
 
 class NovelTextListAdapter(private val ctx: Context) : BaseAdapter(), AnkoLogger {
     private var items = emptyList<String>()
     private var textSize = Settings.textSize
+    private var lineSpacing = Settings.lineSpacing
+    private var textColor = Settings.textColor
 
     @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View
             = (convertView ?: LayoutInflater.from(ctx).inflate(R.layout.novel_text_item, parent, false)).apply {
         textView.text = "        " + getItem(position)
         textView.textSize = textSize.toFloat()
+        textView.setTextColor(textColor)
+        textView.setLineSpacing(ctx.dip(lineSpacing).toFloat(), 1.toFloat())
     }
 
     override fun getItem(position: Int) = items[position]
@@ -227,6 +326,16 @@ class NovelTextListAdapter(private val ctx: Context) : BaseAdapter(), AnkoLogger
     fun setTextSize(size: Int) {
         debug { "NovelTextListAdapter.setTextSize $size" }
         this.textSize = size
+        notifyDataSetChanged()
+    }
+
+    fun setLineSpacing(size: Int) {
+        this.lineSpacing = size
+        notifyDataSetChanged()
+    }
+
+    fun setTextColor(color: Int) {
+        this.textColor = color
         notifyDataSetChanged()
     }
 

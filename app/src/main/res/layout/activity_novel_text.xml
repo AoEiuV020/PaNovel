@@ -77,12 +77,7 @@
             android:orientation="vertical"
             tools:ignore="UselessParent">
 
-            <SeekBar
-                android:id="@+id/textSizeSeekBar"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="40" />
+            <include layout="@layout/novel_text_read_settings" />
 
             <View
                 android:id="@+id/navBarBg"
