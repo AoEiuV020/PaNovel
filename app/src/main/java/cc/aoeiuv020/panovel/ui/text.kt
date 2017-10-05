@@ -16,10 +16,10 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.SeekBar
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.NovelText
+import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.NovelLocal
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
@@ -48,17 +48,18 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
     private lateinit var novelName: String
     private lateinit var chaptersAsc: List<NovelChapter>
     private lateinit var ntpAdapter: NovelTextPagerAdapter
-
+    private lateinit var novelLocal: NovelLocal
     private var index: Int by Delegates.notNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val novelItem = intent.getSerializableExtra("novel") as NovelItem
-        val requester = intent.getSerializableExtra("requester") as DetailRequester
-        debug { "receive $requester" }
+        novelLocal = (intent.getSerializableExtra("novelLocal") as NovelLocal).let { Bookshelf.get(it) ?: it }
+        debug { "receive $novelLocal" }
+        val novelItem = novelLocal.novelItem
+        val requester = novelLocal.requester
         novelName = novelItem.name
-        index = intent.getIntExtra("index", 0)
+        index = intent.getIntExtra("index", novelLocal.progress.chapterProgress)
 
         urlTextView.text = requester.url
         urlBar.setOnClickListener {
@@ -77,7 +78,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
             override fun onPageSelected(position: Int) {
                 debug { "onPageSelected: $position" }
-                setTitleChapter(position)
+                currentChapterIndex(position)
             }
         })
 
@@ -164,10 +165,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         presenter.start()
     }
 
-    private fun setTitleChapter(index: Int) {
+    private fun currentChapterIndex(index: Int) {
         val chapter = chaptersAsc[index]
         title = "$novelName - ${chapter.name}"
         urlTextView.text = chapter.requester.url
+        novelLocal.progress.chapterProgress = index
+        novelLocal.progress.textProgress = 0
     }
 
     fun showError(message: String, e: Throwable) {
@@ -178,7 +181,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
     fun showChapters(chaptersAsc: List<NovelChapter>) {
         this.chaptersAsc = chaptersAsc
-        setTitleChapter(index)
+        currentChapterIndex(index)
         progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {
             alert(alertDialog, R.string.novel_not_support)
@@ -189,6 +192,13 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         viewPager.adapter = NovelTextPagerAdapter(this, presenter, chaptersAsc)
                 .also { ntpAdapter = it }
         viewPager.currentItem = index
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (Bookshelf.contains(novelLocal)) {
+            Bookshelf.add(novelLocal)
+        }
     }
 }
 

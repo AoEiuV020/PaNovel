@@ -42,6 +42,8 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     private lateinit var presenter: NovelDetailPresenter
     private lateinit var chapterAdapter: NovelChaptersAdapter
     private var novelDetail: NovelDetail? = null
+    private var novelLocal: NovelLocal? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +57,9 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         debug { "receive $requester" }
 
         recyclerView.adapter = NovelChaptersAdapter(this@NovelDetailActivity) { index ->
-            startActivity<NovelTextActivity>("novel" to novelItem, "requester" to requester, "index" to index)
+            novelLocal?.let {
+                startActivity<NovelTextActivity>("novelLocal" to it, "index" to index)
+            }
         }.also { chapterAdapter = it }
         recyclerView.layoutManager = GridLayoutManager(this@NovelDetailActivity, 3)
 
@@ -63,7 +67,9 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         setTitle(novelItem)
 
         fabRead.setOnClickListener {
-            startActivity<NovelTextActivity>("novel" to novelItem, "requester" to requester)
+            novelLocal?.let {
+                startActivity<NovelTextActivity>("novelLocal" to it)
+            }
         }
 
         presenter = NovelDetailPresenter(this, requester)
@@ -78,7 +84,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         this.novelDetail = detail
         progressDialog.dismiss()
         setTitle(detail.novel)
-        val novelLocal = NovelLocal(detail.novel, detail.bigImg, requester)
+        val novelLocal = NovelLocal(detail.novel, detail.bigImg, requester).also { this.novelLocal = Bookshelf.get(it) ?: it }
         fabStar.isChecked = Bookshelf.contains(novelLocal)
         fabStar.setOnClickListener {
             fabStar.toggle()

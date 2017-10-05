@@ -10,5 +10,8 @@ import java.io.Serializable
  */
 abstract class LocalData : Serializable
 
-data class NovelLocal(val novelItem: NovelItem, val img: String, val requester: DetailRequester)
+data class NovelLocal(val novelItem: NovelItem, val img: String, val requester: DetailRequester, val progress: NovelProgress = NovelProgress())
+    : LocalData()
+
+data class NovelProgress(var chapterProgress: Int = 0, var textProgress: Int = 0)
     : LocalData()

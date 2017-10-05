@@ -16,9 +16,11 @@ object Bookshelf : LocalSource {
     fun remove(novelLocal: NovelLocal) = fileRemove(novelLocal.bookId)
 
     fun list(): List<NovelLocal> = fileList()
+
+    fun get(novelLocal: NovelLocal): NovelLocal? = fileLoad(novelLocal.bookId)
 }
 
-val NovelLocal.bookId get() = md5Base64(toString())
+val NovelLocal.bookId get() = md5Base64(novelItem.toString() + requester.toString())
 
 fun md5Base64(s: String): String {
     val digest = java.security.MessageDigest.getInstance("MD5")
