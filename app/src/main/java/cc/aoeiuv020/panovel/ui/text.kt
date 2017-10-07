@@ -314,7 +314,9 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
     class ViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter, val view: View) : AnkoLogger {
         private val presenter = presenter.subPresenter(this)
         private val headerView by lazy {
-            View.inflate(ctx, R.layout.novel_text_header, null)
+            View.inflate(ctx, R.layout.novel_text_header, null).apply {
+                chapterNameTextView.setTextColor(Settings.textColor)
+            }
         }
         private val textListAdapter = NovelTextListAdapter(ctx)
         private var paragraphSpacing = Settings.paragraphSpacing
@@ -366,6 +368,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         }
 
         fun setTextColor(color: Int) {
+            headerView.chapterNameTextView.setTextColor(color)
             textListAdapter.setTextColor(color)
         }
 
