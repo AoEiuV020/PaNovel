@@ -80,7 +80,6 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
 
     fun showNovelDetail(detail: NovelDetail) {
         this.novelDetail = detail
-        progressDialog.dismiss()
         setTitle(detail.novel)
         fabStar.isChecked = Bookshelf.contains(detail)
         fabStar.setOnClickListener {
@@ -94,10 +93,12 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         // 有可能activity已经销毁，glide会报错，
         if (isDestroyed) return
         Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
+        loading(progressDialog, R.string.novel_chapters)
         presenter.requestChapters(detail.requester)
     }
 
     fun showNovelChapters(chapters: List<NovelChapter>) {
+        progressDialog.dismiss()
         chapterAdapter.setChapters(chapters)
     }
 

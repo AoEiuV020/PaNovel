@@ -14,6 +14,7 @@
     <string name="novel_list">小说列表</string>
     <string name="genre_list">分类列表</string>
     <string name="novel_detail">小说详情</string>
+    <string name="novel_chapters">小说章节</string>
     <string name="novel_page">小说页面</string>
     <string name="yet_last_page">已经是最后一页了</string>
     <string name="next_page">下一页</string>
