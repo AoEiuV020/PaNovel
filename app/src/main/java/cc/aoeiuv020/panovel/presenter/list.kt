@@ -21,7 +21,7 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
         saveGenre(genre)
         this.genre = genre
         Observable.fromCallable {
-            NovelContext.getNovelContext(genre.requester.url).also { context = it }
+            NovelContext.getNovelContextByUrl(genre.requester.url).also { context = it }
                     .getNovelList(genre.requester)
         }.async().subscribe({ comicList ->
             view.showNovelList(comicList)

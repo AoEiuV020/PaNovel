@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.panovel.api.DetailRequester
-import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.api.NovelDetail
 import java.io.Serializable
 
 /**
@@ -10,7 +9,7 @@ import java.io.Serializable
  */
 abstract class LocalData : Serializable
 
-data class NovelLocal(val novelItem: NovelItem, val img: String, val requester: DetailRequester, val progress: NovelProgress = NovelProgress())
+data class NovelLocal(val novelDetail: NovelDetail, val progress: NovelProgress = NovelProgress())
     : LocalData()
 
 data class NovelProgress(var chapterProgress: Int = 0, var textProgress: Int = 0)

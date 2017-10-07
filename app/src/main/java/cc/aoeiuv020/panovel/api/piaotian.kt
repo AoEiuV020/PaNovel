@@ -49,7 +49,7 @@ class Piaotian : NovelContext() {
             val detail = getNovelDetail(DetailRequester(requester.url))
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
             val info = detail.run { "最新章节: ${lastChapter.name} 字数: $length 更新: ${sdf.format(update)} 状态: $status" }
-            return listOf(NovelListItem(detail.novel, requester.url, info))
+            return listOf(NovelListItem(detail.novel, info))
         }
         val root = request(response)
         val elements = root.select("#content > table.grid > tbody > tr:not(:nth-child(1))")
@@ -63,7 +63,7 @@ class Piaotian : NovelContext() {
             val update = it.select("td:nth-child(5)").first().text()
             val status = it.select("td:nth-child(6)").first().text()
             val info = "最新章节: $last 字数: $length 更新: $update 状态: $status"
-            NovelListItem(NovelItem(name, author), url, info)
+            NovelListItem(NovelItem(this, name, author, url), info)
         }
     }
 
@@ -119,7 +119,7 @@ class Piaotian : NovelContext() {
             NovelChapter(a.text(), a.absHref())
         }
         val chapterPageUrl = tbody1.select("tr:nth-child(8) > td > table > caption > a").first().absHref()
-        return NovelDetail(NovelItem(name, author), img, update, lastChapter, status, genre, length, info, stars, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, lastChapter, status, genre, length, info, stars, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {

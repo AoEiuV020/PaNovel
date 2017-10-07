@@ -20,7 +20,7 @@ object Bookshelf : LocalSource {
     fun get(novelLocal: NovelLocal): NovelLocal? = fileLoad(novelLocal.bookId)
 }
 
-val NovelLocal.bookId get() = md5Base64(novelItem.toString() + requester.toString())
+val NovelLocal.bookId get() = md5Base64(novelDetail.novel.toString())
 
 fun md5Base64(s: String): String {
     val digest = java.security.MessageDigest.getInstance("MD5")

@@ -56,8 +56,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
         novelLocal = (intent.getSerializableExtra("novelLocal") as NovelLocal).let { Bookshelf.get(it) ?: it }
         debug { "receive $novelLocal" }
-        val novelItem = novelLocal.novelItem
-        val requester = novelLocal.requester
+        val novelItem = novelLocal.novelDetail.novel
+        val requester = novelLocal.novelDetail.novel.requester
         novelName = novelItem.name
         index = intent.getIntExtra("index", novelLocal.progress.chapterProgress)
 

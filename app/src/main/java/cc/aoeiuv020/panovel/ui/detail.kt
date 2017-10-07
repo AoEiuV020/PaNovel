@@ -53,7 +53,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
         val novelItem = intent.getSerializableExtra("novel") as NovelItem
-        requester = intent.getSerializableExtra("requester") as DetailRequester
+        requester = novelItem.requester
         debug { "receive $requester" }
 
         recyclerView.adapter = NovelChaptersAdapter(this@NovelDetailActivity) { index ->
@@ -84,7 +84,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         this.novelDetail = detail
         progressDialog.dismiss()
         setTitle(detail.novel)
-        val novelLocal = NovelLocal(detail.novel, detail.bigImg, requester).also { this.novelLocal = Bookshelf.get(it) ?: it }
+        val novelLocal = NovelLocal(detail).also { this.novelLocal = Bookshelf.get(it) ?: it }
         fabStar.isChecked = Bookshelf.contains(novelLocal)
         fabStar.setOnClickListener {
             fabStar.toggle()

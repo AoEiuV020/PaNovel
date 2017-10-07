@@ -16,19 +16,20 @@ abstract class NovelContext {
     companion object {
         @Suppress("RemoveExplicitTypeArguments")
         private val contexts: List<NovelContext> = listOf(Piaotian())
-        private val contextsMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
+        private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
+        private val nameMap = contexts.associateBy { it.getNovelSite().name }
         fun getNovelContexts(): List<NovelContext> = contexts
-        fun getNovelContext(url: String): NovelContext {
-            val host: String
-            try {
-                host = URL(url).host
-            } catch (e: Exception) {
-                throw e
-            }
-            return contextsMap[host] ?: contexts.firstOrNull { it.check(url) } ?: throw IllegalArgumentException("网址不支持: $url")
+        fun getNovelContextByUrl(url: String): NovelContext {
+            val host = URL(url).host
+            return hostMap[host] ?: contexts.firstOrNull { it.check(url) } ?: throw IllegalArgumentException("网址不支持: $url")
         }
 
-        fun getNovelContext(site: NovelSite): NovelContext = getNovelContext(site.baseUrl)
+        fun getNovelContextByUrl(site: NovelSite): NovelContext = getNovelContextByUrl(site.baseUrl)
+
+        @Suppress("unused")
+        fun getNovelContextByName(name: String): NovelContext {
+            return nameMap[name] ?: throw IllegalArgumentException("网站不支持: $name")
+        }
     }
 
     @Suppress("MemberVisibilityCanPrivate")

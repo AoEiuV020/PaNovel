@@ -35,25 +35,30 @@ data class NovelGenre(
 }
 
 /**
- * 代表一本小说，由小说名和作者唯一决定，
+ * 代表一本小说，由网站名，小说名和作者唯一决定，
+ * 自带详情页的请求类，
  */
 data class NovelItem(
+        val site: String,
         val name: String,
-        val author: String
-) : Data()
+        val author: String,
+        val requester: DetailRequester
+) : Data() {
+    constructor(context: NovelContext, name: String, author: String, requester: DetailRequester)
+            : this(context.getNovelSite().name, name, author, requester)
+
+    constructor(context: NovelContext, name: String, author: String, url: String)
+            : this(context.getNovelSite().name, name, author, DetailRequester(url))
+}
 
 /**
  * 小说列表中的一本小说，
  */
 data class NovelListItem(
         val novel: NovelItem,
-        val requester: DetailRequester,
         // 简介，最新章，或者其他任何有用的信息，
         val info: String = ""
-) : Data() {
-    constructor(novel: NovelItem, detailUrl: String, info: String = "")
-            : this(novel, DetailRequester(detailUrl), info)
-}
+) : Data()
 
 /**
  * 小说详情页，

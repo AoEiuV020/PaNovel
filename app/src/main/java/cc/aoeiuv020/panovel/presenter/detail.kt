@@ -21,7 +21,7 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val re
 
     private fun requestNovelDetail() {
         Observable.fromCallable {
-            NovelContext.getNovelContext(requester.url).also { this.context = it }
+            NovelContext.getNovelContextByUrl(requester.url).also { this.context = it }
                     .getNovelDetail(requester)
         }.async().subscribe({ comicDetail ->
             view.showNovelDetail(comicDetail)

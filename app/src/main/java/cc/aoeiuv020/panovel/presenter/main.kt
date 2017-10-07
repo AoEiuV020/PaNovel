@@ -37,7 +37,7 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
      */
     private fun loadGenre(site: NovelSite): NovelGenre? {
         return Selected.genre?.takeIf {
-            NovelContext.getNovelContext(site).check(it.requester.url)
+            NovelContext.getNovelContextByUrl(site).check(it.requester.url)
         }
     }
 
@@ -64,7 +64,7 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
 
     fun search(site: NovelSite, query: String) {
         debug { "在网站(${site.name})搜索：$query, " }
-        NovelContext.getNovelContext(site).searchNovelName(query).let { genre ->
+        NovelContext.getNovelContextByUrl(site).searchNovelName(query).let { genre ->
             view.showGenre(genre)
         }
     }
@@ -72,7 +72,7 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
     fun requestGenres(site: NovelSite) {
         saveSite(site)
         Observable.fromCallable {
-            NovelContext.getNovelContext(site).getGenres()
+            NovelContext.getNovelContextByUrl(site).getGenres()
         }.async().subscribe({ genres ->
             debug { "加载网站分类列表成功，数量：${genres.size}" }
             view.showGenres(genres)

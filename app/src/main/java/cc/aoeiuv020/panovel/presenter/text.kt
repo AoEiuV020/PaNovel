@@ -19,7 +19,7 @@ class NovelTextPresenter(private val view: NovelTextActivity, val requester: Det
 
     fun start() {
         Observable.fromCallable {
-            NovelContext.getNovelContext(requester.url).also { context = it }
+            NovelContext.getNovelContextByUrl(requester.url).also { context = it }
                     .getNovelDetail(requester).let {
                 context.getNovelChaptersAsc(it.requester)
             }
