@@ -121,6 +121,13 @@ class PiaotianTest {
             }
             assertEquals("序幕：天外飞仙+第一章：客栈柴房温暖如春", list.first().name)
         }
+        context.getNovelChaptersAsc(ChaptersRequester("http://www.piaotian.com/html/8/8912/index.html")).let { list ->
+            list.forEach {
+                println(it)
+            }
+            assertEquals("第001章 狂暴系统", list.first().name)
+            assertTrue(list.last().name.isNotEmpty())
+        }
     }
 
     @Test
