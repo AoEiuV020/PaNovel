@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        build_version = '26.0.1'
+        build_version = '26.0.2'
         compile_version = 26
         min_version = 19
         target_version = compile_version
@@ -20,7 +20,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta7'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
