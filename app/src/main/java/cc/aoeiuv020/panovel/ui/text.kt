@@ -385,7 +385,10 @@ class NovelTextListAdapter(private val ctx: Context) : BaseAdapter(), AnkoLogger
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View
             = (convertView ?: LayoutInflater.from(ctx).inflate(R.layout.novel_text_item, parent, false)).apply {
         textView.text = "        " + getItem(position)
-        textView.textSize = textSize.toFloat()
+        // 直接设置字号的话不会调整高度，可能是后面的setLineSpacing的影响，
+        textView.post {
+            textView.textSize = textSize.toFloat()
+        }
         textView.setTextColor(textColor)
         textView.setLineSpacing(ctx.dip(lineSpacing).toFloat(), 1.toFloat())
     }
