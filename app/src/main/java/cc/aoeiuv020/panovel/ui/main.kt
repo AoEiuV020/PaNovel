@@ -86,9 +86,9 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
                 R.id.select_sites -> presenter.requestSites()
                 R.id.bookshelf -> {
                     val list = Bookshelf.list()
-                    selector(getString(R.string.bookshelf), list.map { it.novelDetail.novel.name }) { _, i ->
-                        val novelLocal = list[i]
-                        startActivity<NovelDetailActivity>("novel" to novelLocal.novelDetail.novel)
+                    selector(getString(R.string.bookshelf), list.map { it.novel.name }) { _, i ->
+                        val novelDetail = list[i]
+                        startActivity<NovelDetailActivity>("novelItem" to novelDetail.novel)
                     }
                 }
             }

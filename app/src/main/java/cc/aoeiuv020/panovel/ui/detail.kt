@@ -19,7 +19,6 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
-import cc.aoeiuv020.panovel.local.NovelLocal
 import cc.aoeiuv020.panovel.presenter.NovelDetailPresenter
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_detail.*
@@ -42,7 +41,6 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     private lateinit var presenter: NovelDetailPresenter
     private lateinit var chapterAdapter: NovelChaptersAdapter
     private var novelDetail: NovelDetail? = null
-    private var novelLocal: NovelLocal? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,13 +50,13 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        val novelItem = intent.getSerializableExtra("novel") as NovelItem
+        val novelItem = intent.getSerializableExtra("novelItem") as NovelItem
         requester = novelItem.requester
         debug { "receive $requester" }
 
         recyclerView.adapter = NovelChaptersAdapter(this@NovelDetailActivity) { index ->
-            novelLocal?.let {
-                startActivity<NovelTextActivity>("novelLocal" to it, "index" to index)
+            novelDetail?.let {
+                startActivity<NovelTextActivity>("novelItem" to it.novel, "index" to index)
             }
         }.also { chapterAdapter = it }
         recyclerView.layoutManager = GridLayoutManager(this@NovelDetailActivity, 3)
@@ -67,8 +65,8 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         setTitle(novelItem)
 
         fabRead.setOnClickListener {
-            novelLocal?.let {
-                startActivity<NovelTextActivity>("novelLocal" to it)
+            novelDetail?.let {
+                startActivity<NovelTextActivity>("novelItem" to it.novel)
             }
         }
 
@@ -84,14 +82,13 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         this.novelDetail = detail
         progressDialog.dismiss()
         setTitle(detail.novel)
-        val novelLocal = NovelLocal(detail).also { this.novelLocal = Bookshelf.get(it) ?: it }
-        fabStar.isChecked = Bookshelf.contains(novelLocal)
+        fabStar.isChecked = Bookshelf.contains(detail)
         fabStar.setOnClickListener {
             fabStar.toggle()
             if (fabStar.isChecked) {
-                Bookshelf.add(novelLocal)
+                Bookshelf.add(detail)
             } else {
-                Bookshelf.remove(novelLocal)
+                Bookshelf.remove(detail)
             }
         }
         // 有可能activity已经销毁，glide会报错，

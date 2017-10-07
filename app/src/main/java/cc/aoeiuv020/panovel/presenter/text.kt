@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.presenter
 
+import cc.aoeiuv020.panovel.api.ChaptersRequester
 import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
@@ -13,19 +14,27 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.03-19:06:50.
  */
-class NovelTextPresenter(private val view: NovelTextActivity, val requester: DetailRequester, private var index: Int) : AnkoLogger {
-    private lateinit var chaptersAsc: List<NovelChapter>
+class NovelTextPresenter(private val view: NovelTextActivity, private val requester: DetailRequester) : AnkoLogger {
     private lateinit var context: NovelContext
 
     fun start() {
         Observable.fromCallable {
             NovelContext.getNovelContextByUrl(requester.url).also { context = it }
-                    .getNovelDetail(requester).let {
-                context.getNovelChaptersAsc(it.requester)
-            }
+                    .getNovelDetail(requester)
+        }.async().subscribe({ detail ->
+            view.showDetail(detail)
+        }, { e ->
+            val message = "加载小说章节详情失败，"
+            error(message, e)
+            view.showError(message, e)
+        })
+    }
+
+    fun requestChapters(chaptersRequester: ChaptersRequester) {
+        Observable.fromCallable {
+            context.getNovelChaptersAsc(chaptersRequester)
         }.async().subscribe({ chapters ->
-            chaptersAsc = chapters
-            view.showChapters(chaptersAsc)
+            view.showChapters(chapters)
         }, { e ->
             val message = "加载小说章节列表失败，"
             error(message, e)

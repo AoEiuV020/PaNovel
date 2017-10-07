@@ -17,9 +17,11 @@ import android.widget.BaseAdapter
 import android.widget.SeekBar
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
+import cc.aoeiuv020.panovel.api.NovelDetail
+import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.NovelText
-import cc.aoeiuv020.panovel.local.Bookshelf
-import cc.aoeiuv020.panovel.local.NovelLocal
+import cc.aoeiuv020.panovel.local.NovelProgress
+import cc.aoeiuv020.panovel.local.ReadProgress
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
@@ -35,7 +37,6 @@ import org.jetbrains.anko.debug
 import org.jetbrains.anko.dip
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.properties.Delegates
 
 /**
  *
@@ -48,18 +49,25 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
     private lateinit var novelName: String
     private lateinit var chaptersAsc: List<NovelChapter>
     private lateinit var ntpAdapter: NovelTextPagerAdapter
-    private lateinit var novelLocal: NovelLocal
-    private var index: Int by Delegates.notNull()
+    private var novelDetail: NovelDetail? = null
+    private lateinit var novelItem: NovelItem
+    private lateinit var progress: NovelProgress
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable("progress", progress)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        novelLocal = (intent.getSerializableExtra("novelLocal") as NovelLocal).let { Bookshelf.get(it) ?: it }
-        debug { "receive $novelLocal" }
-        val novelItem = novelLocal.novelDetail.novel
-        val requester = novelLocal.novelDetail.novel.requester
+        novelItem = intent.getSerializableExtra("novelItem") as NovelItem
+        // 进度，读取顺序， savedInstanceState > intent > ReadProgress
+        progress = savedInstanceState?.run { getSerializable("progress") as? NovelProgress }
+                ?: (intent.getSerializableExtra("index") as? Int)?.let { NovelProgress(it) } ?: ReadProgress.get(novelItem)
+        debug { "receive $novelItem, $progress" }
+        val requester = novelItem.requester
         novelName = novelItem.name
-        index = intent.getIntExtra("index", novelLocal.progress.chapterProgress)
 
         urlTextView.text = requester.url
         urlBar.setOnClickListener {
@@ -161,16 +169,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
             }.show()
         }
 
-        presenter = NovelTextPresenter(this, requester, index)
+        presenter = NovelTextPresenter(this, requester)
         presenter.start()
     }
 
     private fun currentChapterIndex(index: Int) {
+        progress.chapterProgress = index
         val chapter = chaptersAsc[index]
         title = "$novelName - ${chapter.name}"
         urlTextView.text = chapter.requester.url
-        novelLocal.progress.chapterProgress = index
-        novelLocal.progress.textProgress = 0
     }
 
     fun showError(message: String, e: Throwable) {
@@ -179,9 +186,14 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         show()
     }
 
+    fun showDetail(detail: NovelDetail) {
+        this.novelDetail = detail
+        presenter.requestChapters(detail.requester)
+    }
+
     fun showChapters(chaptersAsc: List<NovelChapter>) {
         this.chaptersAsc = chaptersAsc
-        currentChapterIndex(index)
+        currentChapterIndex(progress.chapterProgress)
         progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {
             alert(alertDialog, R.string.novel_not_support)
@@ -191,20 +203,33 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         }
         viewPager.adapter = NovelTextPagerAdapter(this, presenter, chaptersAsc)
                 .also { ntpAdapter = it }
-        viewPager.currentItem = index
+        viewPager.currentItem = progress.chapterProgress
+        viewPager.post {
+            ntpAdapter.setTextProgress(progress.textProgress)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        if (Bookshelf.contains(novelLocal)) {
-            Bookshelf.add(novelLocal)
+        // 比如断网，如果没有展示出章节，就直接保存持有的进度，
+        val progress = if (viewPager.adapter == null) {
+            this.progress
+        } else {
+            val chapterProgress = viewPager.currentItem
+            val textProgress = ntpAdapter.getTextProgress()
+            NovelProgress(chapterProgress, textProgress)
         }
+        debug {
+            "save progress $progress"
+        }
+        ReadProgress.put(novelItem, progress)
     }
 }
 
 class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter, private val chaptersAsc: List<NovelChapter>) : PagerAdapter(), AnkoLogger {
     private val unusedHolders: LinkedList<ViewHolder> = LinkedList()
     private val usedHolders: LinkedList<ViewHolder> = LinkedList()
+    private lateinit var current: ViewHolder
     override fun isViewFromObject(view: View, obj: Any) = (obj as ViewHolder).view === view
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val holder = if (unusedHolders.isNotEmpty()) {
@@ -234,6 +259,19 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         holder.apply(chapter)
         container.addView(holder.view)
         return holder
+    }
+
+    override fun setPrimaryItem(container: ViewGroup?, position: Int, obj: Any) {
+        super.setPrimaryItem(container, position, obj)
+        current = obj as ViewHolder
+    }
+
+    fun getTextProgress(): Int {
+        return current.view.textListView.firstVisiblePosition
+    }
+
+    fun setTextProgress(textProgress: Int) {
+        current.setTextProgress(textProgress)
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any?) {
@@ -280,6 +318,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         }
         private val textListAdapter = NovelTextListAdapter(ctx)
         private var paragraphSpacing = Settings.paragraphSpacing
+        private var textProgress: Int? = null
 
         init {
             view.textListView.apply {
@@ -297,7 +336,15 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
 
         fun showText(novelText: NovelText) {
             textListAdapter.setNovelText(novelText)
-            view.textListView.adapter = textListAdapter
+            view.textListView.apply {
+                adapter = textListAdapter
+                textProgress?.let {
+                    post {
+                        setSelection(it)
+                    }
+                    textProgress = null
+                }
+            }
             view.progressBar.hide()
         }
 
@@ -320,6 +367,10 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
 
         fun setTextColor(color: Int) {
             textListAdapter.setTextColor(color)
+        }
+
+        fun setTextProgress(textProgress: Int) {
+            this.textProgress = textProgress
         }
     }
 }

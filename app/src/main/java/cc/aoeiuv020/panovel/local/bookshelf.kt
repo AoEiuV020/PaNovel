@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import android.util.Base64
+import cc.aoeiuv020.panovel.api.NovelDetail
 
 
 /**
@@ -9,22 +9,11 @@ import android.util.Base64
  */
 
 object Bookshelf : LocalSource {
-    fun contains(novelLocal: NovelLocal): Boolean = fileExists(novelLocal.bookId)
+    fun contains(novelDetail: NovelDetail): Boolean = fileExists(novelDetail.bookId)
 
-    fun add(novelLocal: NovelLocal) = fileSave(novelLocal.bookId, novelLocal)
+    fun add(novelDetail: NovelDetail) = fileSave(novelDetail.bookId, novelDetail)
 
-    fun remove(novelLocal: NovelLocal) = fileRemove(novelLocal.bookId)
+    fun remove(novelDetail: NovelDetail) = fileRemove(novelDetail.bookId)
 
-    fun list(): List<NovelLocal> = fileList()
-
-    fun get(novelLocal: NovelLocal): NovelLocal? = fileLoad(novelLocal.bookId)
-}
-
-val NovelLocal.bookId get() = md5Base64(novelDetail.novel.toString())
-
-fun md5Base64(s: String): String {
-    val digest = java.security.MessageDigest.getInstance("MD5")
-    digest.update(s.toByteArray())
-    val messageDigest = digest.digest()
-    return Base64.encodeToString(messageDigest, Base64.NO_PADDING or Base64.URL_SAFE or Base64.NO_WRAP)
+    fun list(): List<NovelDetail> = fileList()
 }

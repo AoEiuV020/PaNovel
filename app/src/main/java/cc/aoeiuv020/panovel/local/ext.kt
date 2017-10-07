@@ -2,7 +2,10 @@
 
 package cc.aoeiuv020.panovel.local
 
+import android.util.Base64
 import cc.aoeiuv020.panovel.App
+import cc.aoeiuv020.panovel.api.NovelDetail
+import cc.aoeiuv020.panovel.api.NovelItem
 import java.io.*
 import kotlin.reflect.KProperty
 
@@ -55,4 +58,14 @@ fun LocalSource.fileRemove(name: String): Boolean = File(externalFile(), name).d
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> LocalSource.fileList(): List<T> = externalFile().listFiles().mapNotNull { file ->
     fileLoad<T>(file)
+}
+
+val NovelDetail.bookId get() = novel.bookId
+val NovelItem.bookId get() = md5Base64(toString())
+
+fun md5Base64(s: String): String {
+    val digest = java.security.MessageDigest.getInstance("MD5")
+    digest.update(s.toByteArray())
+    val messageDigest = digest.digest()
+    return Base64.encodeToString(messageDigest, Base64.NO_PADDING or Base64.URL_SAFE or Base64.NO_WRAP)
 }
