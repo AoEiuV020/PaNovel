@@ -48,6 +48,7 @@ fun <T> LocalSource.fileLoad(file: File): T? = try {
         (readObject() as? T).also { close() }
     }
 } catch (_: Exception) {
+    file.delete()
     null
 }
 
