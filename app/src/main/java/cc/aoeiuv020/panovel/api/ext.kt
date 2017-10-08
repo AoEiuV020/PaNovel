@@ -2,6 +2,7 @@
 
 package cc.aoeiuv020.panovel.api
 
+import com.google.gson.GsonBuilder
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.slf4j.Logger
@@ -75,4 +76,13 @@ fun Element.textList(): List<String> = childNodes()
         .map { it as TextNode }
         .filterNot { it.isBlank }
         .map { it.wholeText.trim() }
+
+fun GsonBuilder.paNovel(): GsonBuilder = apply {
+    Requester.attach(this)
+}
+
+/**
+ * 标记可以用gson序列化的类，
+ */
+interface GsonSerializable
 

@@ -15,6 +15,7 @@ import android.widget.BaseAdapter
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelListItem
+import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.presenter.NovelListPresenter
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.novel_list_item.view.*
@@ -49,7 +50,7 @@ class NovelListFragment : Fragment() {
             adapter = NovelListAdapter(activity, novelList)
             setOnItemClickListener { _, _, position, _ ->
                 val item = adapter.getItem(position) as NovelListItem
-                context.startActivity<NovelDetailActivity>("novelItem" to item.novel)
+                context.startActivity<NovelDetailActivity>("novelItem" to item.novel.toJson())
             }
             setOnScrollListener(object : AbsListView.OnScrollListener {
                 private var lastItem = 0

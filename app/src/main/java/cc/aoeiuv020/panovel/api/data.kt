@@ -2,7 +2,6 @@
 
 package cc.aoeiuv020.panovel.api
 
-import java.io.Serializable
 import java.util.*
 
 /**
@@ -11,7 +10,7 @@ import java.util.*
  * 不纯粹是数据，
  * Created by AoEiuV020 on 2017.10.02-15:27:52.
  */
-abstract class Data : Serializable
+abstract class Data : GsonSerializable
 
 /**
  * 小说网站信息，
@@ -49,6 +48,9 @@ data class NovelItem(
 
     constructor(context: NovelContext, name: String, author: String, url: String)
             : this(context.getNovelSite().name, name, author, DetailRequester(url))
+
+    constructor(site: String, name: String, author: String, url: String)
+            : this(site, name, author, DetailRequester(url))
 }
 
 /**

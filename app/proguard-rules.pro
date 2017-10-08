@@ -21,3 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 -keepnames class * implements cc.aoeiuv020.panovel.local.LocalSource
+-keepclassmembers class * implements cc.aoeiuv020.panovel.api.GsonSerializable {* <feilds>;}

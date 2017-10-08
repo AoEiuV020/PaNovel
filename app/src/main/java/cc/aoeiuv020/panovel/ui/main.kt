@@ -15,6 +15,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.presenter.MainPresenter
 import cc.aoeiuv020.panovel.ui.base.MainBaseNavigationActivity
 import com.bumptech.glide.Glide
@@ -33,6 +34,7 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
     companion object {
         private val GROUP_ID: Int = 1
     }
+
     private val alertDialog: AlertDialog by lazy { AlertDialog.Builder(this).create() }
     private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
     private var url: String = "https://github.com/AoEiuV020/PaNovel"
@@ -88,7 +90,7 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
                     val list = Bookshelf.list()
                     selector(getString(R.string.bookshelf), list.map { it.novel.name }) { _, i ->
                         val novelDetail = list[i]
-                        startActivity<NovelDetailActivity>("novelItem" to novelDetail.novel)
+                        startActivity<NovelDetailActivity>("novelItem" to novelDetail.novel.toJson())
                     }
                 }
             }

@@ -14,11 +14,12 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.toBean
+import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.presenter.NovelDetailPresenter
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_detail.*
@@ -37,11 +38,10 @@ import org.jetbrains.anko.startActivity
 class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     private val alertDialog: AlertDialog by lazy { AlertDialog.Builder(this).create() }
     private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
-    private lateinit var requester: DetailRequester
     private lateinit var presenter: NovelDetailPresenter
     private lateinit var chapterAdapter: NovelChaptersAdapter
     private var novelDetail: NovelDetail? = null
-
+    private lateinit var novelItem: NovelItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,13 +50,13 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        val novelItem = intent.getSerializableExtra("novelItem") as NovelItem
-        requester = novelItem.requester
+        novelItem = intent.getStringExtra("novelItem").toBean()
+        val requester = novelItem.requester
         debug { "receive $requester" }
 
         recyclerView.adapter = NovelChaptersAdapter(this@NovelDetailActivity) { index ->
             novelDetail?.let {
-                startActivity<NovelTextActivity>("novelItem" to it.novel, "index" to index)
+                startActivity<NovelTextActivity>("novelItem" to it.novel.toJson(), "index" to index)
             }
         }.also { chapterAdapter = it }
         recyclerView.layoutManager = GridLayoutManager(this@NovelDetailActivity, 3)
@@ -66,7 +66,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
 
         fabRead.setOnClickListener {
             novelDetail?.let {
-                startActivity<NovelTextActivity>("novelItem" to it.novel)
+                startActivity<NovelTextActivity>("novelItem" to it.novel.toJson())
             }
         }
 
@@ -116,7 +116,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_detail, menu)
         menu.findItem(R.id.browse).setOnMenuItemClickListener {
-            browse(requester.url)
+            browse(novelItem.requester.url)
         }
         menu.findItem(R.id.info).setOnMenuItemClickListener {
             showNovelAbout()

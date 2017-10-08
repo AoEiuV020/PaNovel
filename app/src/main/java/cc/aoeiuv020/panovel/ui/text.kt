@@ -20,9 +20,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.NovelText
-import cc.aoeiuv020.panovel.local.NovelProgress
-import cc.aoeiuv020.panovel.local.ReadProgress
-import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.local.*
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
 import cc.aoeiuv020.panovel.ui.widget.ColorPickerDialog
@@ -55,15 +53,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putSerializable("progress", progress)
+        outState.putString("progress", progress.toJson())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        novelItem = intent.getSerializableExtra("novelItem") as NovelItem
+        novelItem = intent.getStringExtra("novelItem").toBean()
         // 进度，读取顺序， savedInstanceState > intent > ReadProgress
-        progress = savedInstanceState?.run { getSerializable("progress") as? NovelProgress }
+        progress = savedInstanceState?.run { getString("progress").toBean<NovelProgress>() }
                 ?: (intent.getSerializableExtra("index") as? Int)?.let { NovelProgress(it) } ?: ReadProgress.get(novelItem)
         debug { "receive $novelItem, $progress" }
         val requester = novelItem.requester

@@ -2,6 +2,10 @@
 
 package cc.aoeiuv020.panovel.api
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonObject
+import com.google.gson.JsonSerializer
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 
@@ -18,7 +22,7 @@ import org.jsoup.Jsoup
  * 这样可以只序列化保存类名和extra,
  * Created by AoEiuV020 on 2017.10.03-14:59:04.
  */
-open class Requester(private var extra: String) {
+open class Requester(private var extra: String) : GsonSerializable {
     companion object {
         fun serialize(requester: Requester): String {
             return "${requester.javaClass.name}/${requester.extra}"
@@ -33,11 +37,37 @@ open class Requester(private var extra: String) {
                     .getConstructor(String::class.java)
                     .newInstance(extra) as T
         }
+
+        fun attach(builder: GsonBuilder): GsonBuilder = builder.apply {
+            registerTypeHierarchyAdapter(Requester::class.java, JsonSerializer { src: Requester, _, _ ->
+                JsonObject().apply {
+                    addProperty("type", src.javaClass.name)
+                    addProperty("extra", src.extra)
+                }
+            })
+            registerTypeHierarchyAdapter(Requester::class.java, JsonDeserializer { json, _, _ ->
+                json.asJsonObject.let {
+                    val type = it.getAsJsonPrimitive("type").asString
+                    val extra = it.getAsJsonPrimitive("extra").asString
+                    Class.forName(type)
+                            .getConstructor(String::class.java)
+                            .newInstance(extra) as Requester
+                }
+            })
+        }
     }
 
-    val url get() = extra
+    open val url get() = extra
     open fun request(): Connection.Response = Jsoup.connect(url).execute()
     override fun toString() = "${this.javaClass.simpleName}(url=$url)"
+    override fun equals(other: Any?): Boolean {
+        return if (other == null || other !is Requester) false
+        else other.javaClass == javaClass && other.extra == extra
+    }
+
+    override fun hashCode(): Int {
+        return extra.hashCode()
+    }
 }
 
 /**

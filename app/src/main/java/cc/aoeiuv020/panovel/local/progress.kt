@@ -7,7 +7,7 @@ import cc.aoeiuv020.panovel.api.NovelItem
  * Created by AoEiuV020 on 2017.10.07-18:36:12.
  */
 object ReadProgress : LocalSource {
-    fun put(novelItem: NovelItem, progress: NovelProgress) = fileSave(novelItem.bookId, progress)
+    fun put(novelItem: NovelItem, progress: NovelProgress) = gsonSave(novelItem.bookId, progress)
 
-    fun get(novelItem: NovelItem): NovelProgress = fileLoad(novelItem.bookId) ?: NovelProgress()
+    fun get(novelItem: NovelItem): NovelProgress = gsonLoad(novelItem.bookId) ?: NovelProgress()
 }
