@@ -50,14 +50,14 @@ inline fun Logger.error(e: Throwable, message: () -> Any?) {
     }
 }
 
-fun String.pick(pattern: Pattern): List<String>? {
+fun String.pick(pattern: Pattern): List<String> {
     val matcher = pattern.matcher(this)
     return if (matcher.find()) {
         List(matcher.groupCount()) {
             matcher.group(it + 1)
         }
     } else {
-        null
+        throw IllegalStateException("not match <$this, $pattern>")
     }
 }
 
@@ -71,7 +71,6 @@ fun Element.href(): String = attr("href")
 fun Element.absHref(): String = absUrl("href")
 fun Element.title(): String = attr("title")
 fun Element.textList(): List<String> = childNodes()
-        .drop(9)
         .filter { it is TextNode }
         .map { it as TextNode }
         .filterNot { it.isBlank }

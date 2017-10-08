@@ -76,8 +76,8 @@ class Piaotian : NovelContext() {
 
     override fun searchNovelAuthor(author: String) = search(author, "author")
 
-    override fun isSearchResult(genre: NovelGenre): Boolean {
-        return genre.requester.url.startsWith(SEARCH_PAGE_URL)
+    fun isSearchResult(requester: ListRequester): Boolean {
+        return requester.url.startsWith(SEARCH_PAGE_URL)
     }
 
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
@@ -99,7 +99,7 @@ class Piaotian : NovelContext() {
                 "本月推荐：(\\S*)\\s" +
                 "收到鲜花：(\\S*)" +
                 ""
-        val list = tbody2.text().pick(pattern)!!
+        val list = tbody2.text().pick(pattern)
         val (name, genre, author, _, length) = list
         val (updateString, status, _, _, starsString) = list.drop(5)
         val stars = starsString.toInt()
@@ -110,8 +110,8 @@ class Piaotian : NovelContext() {
                 .joinToString("\n")
 
         val lastChapterElement = tbody1.select("tr:nth-child(8) > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > li > a").first()
-        val (year) = updateString.pick("(\\d*)-(\\d*)-(\\d*)")!!
-        val (month, day, hour, minute) = lastChapterElement.title().pick(".*更新时间:(\\d*)-(\\d*) (\\d*):(\\d*)")!!
+        val (year) = updateString.pick("(\\d*)-(\\d*)-(\\d*)")
+        val (month, day, hour, minute) = lastChapterElement.title().pick(".*更新时间:(\\d*)-(\\d*) (\\d*):(\\d*)")
         @Suppress("DEPRECATION")
         val update = Date(year.toInt() - 1900, month.toInt() - 1, day.toInt(), hour.toInt(), minute.toInt())
         val lastChapter = lastChapterElement.let {

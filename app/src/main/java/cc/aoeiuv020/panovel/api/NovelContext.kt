@@ -15,7 +15,7 @@ import java.net.URL
 abstract class NovelContext {
     companion object {
         @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf(Piaotian())
+        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge())
         private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         private val nameMap = contexts.associateBy { it.getNovelSite().name }
         fun getNovelContexts(): List<NovelContext> = contexts
@@ -59,12 +59,7 @@ abstract class NovelContext {
     /**
      * 搜索小说作者，
      */
-    abstract fun searchNovelAuthor(author: String): NovelGenre
-
-    /**
-     * 判断这个对象是不是搜索产生的，
-     */
-    abstract fun isSearchResult(genre: NovelGenre): Boolean
+    open fun searchNovelAuthor(author: String): NovelGenre = searchNovelName(author)
 
     /**
      * 获取小说详情页信息，
@@ -84,7 +79,7 @@ abstract class NovelContext {
     /**
      * 判断这个地址是不是属于这个网站，
      */
-    internal fun check(url: String): Boolean = URL(getNovelSite().baseUrl).host == URL(url).host
+    internal open fun check(url: String): Boolean = URL(getNovelSite().baseUrl).host == URL(url).host
 
     /**
      * 封装网络请求，主要是为了统一打log,

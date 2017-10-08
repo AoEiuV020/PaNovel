@@ -93,8 +93,8 @@ class PiaotianTest {
 
     @Test
     fun isSearchResult() {
-        assertTrue(context.isSearchResult(NovelGenre("", "http://www.piaotian.com/modules/article/search.php")))
-        assertFalse(context.isSearchResult(NovelGenre("", "http://www.piaotian.com/booksort1/0/1.html")))
+        assertTrue(context.isSearchResult(ListRequester("http://www.piaotian.com/modules/article/search.php")))
+        assertFalse(context.isSearchResult(ListRequester("http://www.piaotian.com/booksort1/0/1.html")))
     }
 
     @Test
@@ -160,7 +160,7 @@ class PiaotianTest {
                 "本月推荐：(\\S*)\\s" +
                 "收到鲜花：(\\S*)" +
                 ""
-        val list = novelDetail.pick(pattern)!!
+        val list = novelDetail.pick(pattern)
         println(list)
     }
 
