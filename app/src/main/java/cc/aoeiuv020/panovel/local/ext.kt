@@ -54,7 +54,7 @@ fun <T : Any> LocalSource.primitiveList(): List<T> = external(FileType.PRIMITIVE
 }
 
 val NovelDetail.bookId get() = novel.bookId
-val NovelItem.bookId get() = md5Base64(toString())
+val NovelItem.bookId get() = "$name.$author.$site"
 
 fun md5Base64(s: String): String {
     val digest = java.security.MessageDigest.getInstance("MD5")
