@@ -28,12 +28,8 @@ enum class FileType {
 private fun LocalSource.externalPrimitive() = external(FileType.PRIMITIVE)
 private fun LocalSource.externalPrimitive(name: String) = File(externalPrimitive(), name)
 fun LocalSource.primitiveSave(name: String, obj: Serializable?) {
-    if (obj == null) {
-        primitiveRemove(name)
-        return
-    } else {
-        externalPrimitive(name).writeText(App.gson.toJson(obj))
-    }
+    obj?.let { externalPrimitive(name).writeText(App.gson.toJson(it)) }
+            ?: primitiveRemove(name)
 }
 
 
@@ -75,12 +71,8 @@ private fun LocalSource.externalGson(name: String) = File(externalGson(), name)
 fun LocalSource.gsonExists(name: String): Boolean = externalGson(name).exists()
 fun LocalSource.gsonRemove(name: String): Boolean = externalGson(name).delete()
 fun LocalSource.gsonSave(name: String, obj: GsonSerializable?) {
-    if (obj == null) {
-        gsonRemove(name)
-        return
-    } else {
-        externalGson(name).writeText(obj.toJson())
-    }
+    obj?.let { externalGson(name).writeText(it.toJson()) }
+            ?: gsonRemove(name)
 }
 
 fun <T : GsonSerializable> LocalSource.gsonLoad(name: String, type: Type): T? = gsonLoad(externalGson(name), type)
