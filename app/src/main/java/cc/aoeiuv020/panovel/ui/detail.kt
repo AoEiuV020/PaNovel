@@ -9,10 +9,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
@@ -61,7 +58,6 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         }.also { chapterAdapter = it }
         recyclerView.layoutManager = GridLayoutManager(this@NovelDetailActivity, 3)
 
-        loading(progressDialog, R.string.novel_detail)
         setTitle(novelItem)
 
         fabRead.setOnClickListener {
@@ -71,7 +67,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         }
 
         presenter = NovelDetailPresenter(this, requester)
-        presenter.start()
+        refresh()
     }
 
     private fun setTitle(novelItem: NovelItem) {
@@ -113,15 +109,22 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
         }
     }
 
+    private fun refresh() {
+        loading(progressDialog, R.string.novel_detail)
+        presenter.start()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.browse -> browse(novelItem.requester.url)
+            R.id.info -> showNovelAbout()
+            R.id.refresh -> refresh()
+        }
+        return true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_detail, menu)
-        menu.findItem(R.id.browse).setOnMenuItemClickListener {
-            browse(novelItem.requester.url)
-        }
-        menu.findItem(R.id.info).setOnMenuItemClickListener {
-            showNovelAbout()
-            true
-        }
         return true
     }
 }

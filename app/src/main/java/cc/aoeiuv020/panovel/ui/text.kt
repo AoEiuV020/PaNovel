@@ -9,10 +9,7 @@ import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.BaseAdapter
 import android.widget.SeekBar
 import cc.aoeiuv020.panovel.R
@@ -71,7 +68,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         urlBar.setOnClickListener {
             browse(urlTextView.text.toString())
         }
-        loading(progressDialog, R.string.novel_page)
 
         // 监听器确保只添加一次，
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -168,7 +164,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         }
 
         presenter = NovelTextPresenter(this, requester)
-        presenter.start()
+        refresh()
     }
 
     private fun currentChapterIndex(index: Int) {
@@ -221,6 +217,23 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
             "save progress $progress"
         }
         ReadProgress.put(novelItem, progress)
+    }
+
+    private fun refresh() {
+        loading(progressDialog, R.string.novel_page)
+        presenter.start()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.refresh -> refresh()
+        }
+        return true
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_text, menu)
+        return true
     }
 }
 

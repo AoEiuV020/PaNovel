@@ -38,5 +38,6 @@
     <string name="background_color">背景色</string>
     <string name="text_color_placeholder">0x%06x</string>
     <string name="text_color">文字色</string>
+    <string name="refresh">刷新</string>
 
 </resources>

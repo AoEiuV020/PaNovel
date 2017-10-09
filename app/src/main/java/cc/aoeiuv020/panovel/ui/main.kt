@@ -41,6 +41,7 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
     private lateinit var presenter: MainPresenter
     private lateinit var genres: List<NovelGenre>
     private var site: NovelSite? = null
+    private var genre: NovelGenre? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,16 +68,20 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
         presenter.start()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        val item = menu.findItem(R.id.action_search)
-        searchView.setMenuItem(item)
-        menu.findItem(R.id.browse).setOnMenuItemClickListener {
-            browse(url)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.browse -> browse(url)
+            R.id.refresh -> refresh()
         }
         return true
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        val item = menu.findItem(R.id.action_search)
+        searchView.setMenuItem(item)
+        return true
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -103,7 +108,12 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
         this.url = url
     }
 
+    private fun refresh() {
+        genre?.let { showGenre(it) }
+    }
+
     fun showGenre(genre: NovelGenre) {
+        this.genre = genre
         title = genre.name
         url = genre.requester.url
         progressDialog.dismiss()

@@ -7,14 +7,18 @@
         android:icon="@drawable/ic_action_action_search"
         android:orderInCategory="100"
         android:title="@string/abc_search_hint"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         tools:ignore="PrivateResource" />
     <item
         android:id="@+id/browse"
         android:icon="@drawable/ic_open_in_browser"
         android:orderInCategory="100"
         android:title="@string/browse"
-        app:iconTint="@android:color/white"
-        app:showAsAction="ifRoom"
-        tools:ignore="PrivateResource" />
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_refresh"
+        android:orderInCategory="100"
+        android:title="@string/refresh"
+        app:showAsAction="never" />
 </menu>

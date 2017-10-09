@@ -51,11 +51,9 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         false
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        item?.itemId.let {
-            when (it) {
-                android.R.id.home -> onBackPressed()
-            }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
