@@ -9,11 +9,11 @@ import cc.aoeiuv020.panovel.api.NovelDetail
  */
 
 object Bookshelf : LocalSource {
-    fun contains(novelDetail: NovelDetail): Boolean = primitiveExists(novelDetail.bookId)
+    fun contains(novelDetail: NovelDetail): Boolean = gsonExists(novelDetail.bookId)
 
     fun add(novelDetail: NovelDetail) = gsonSave(novelDetail.bookId, novelDetail)
 
-    fun remove(novelDetail: NovelDetail) = primitiveRemove(novelDetail.bookId)
+    fun remove(novelDetail: NovelDetail) = gsonRemove(novelDetail.bookId)
 
     fun list(): List<NovelDetail> = gsonList()
 }

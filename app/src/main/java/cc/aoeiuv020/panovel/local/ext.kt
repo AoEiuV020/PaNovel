@@ -25,7 +25,8 @@ enum class FileType {
     PRIMITIVE, GSON
 }
 
-private fun LocalSource.externalPrimitive(name: String) = File(external(FileType.PRIMITIVE), name)
+private fun LocalSource.externalPrimitive() = external(FileType.PRIMITIVE)
+private fun LocalSource.externalPrimitive(name: String) = File(externalPrimitive(), name)
 fun LocalSource.primitiveSave(name: String, obj: Serializable?) {
     if (obj == null) {
         primitiveRemove(name)
@@ -49,7 +50,7 @@ fun <T> LocalSource.primitiveLoad(name: String): T? = primitiveLoad(externalPrim
 fun LocalSource.primitiveExists(name: String): Boolean = externalPrimitive(name).exists()
 fun LocalSource.primitiveRemove(name: String): Boolean = externalPrimitive(name).delete()
 @Suppress("UNCHECKED_CAST")
-fun <T : Any> LocalSource.primitiveList(): List<T> = external(FileType.PRIMITIVE).listFiles().mapNotNull { file ->
+fun <T : Any> LocalSource.primitiveList(): List<T> = externalPrimitive().listFiles().mapNotNull { file ->
     primitiveLoad<T>(file)
 }
 
@@ -69,7 +70,8 @@ fun LocalSource.prefLoad(key: String): String? = pref().getString(key, null)
 fun LocalSource.prefRemove(key: String) = pref().edit().putString(key, null).apply()
 
 inline fun <reified T : GsonSerializable> type(): Type = object : TypeToken<T>() {}.type
-private fun LocalSource.externalGson(name: String) = File(external(FileType.GSON), name)
+private fun LocalSource.externalGson() = external(FileType.GSON)
+private fun LocalSource.externalGson(name: String) = File(externalGson(), name)
 fun LocalSource.gsonExists(name: String): Boolean = externalGson(name).exists()
 fun LocalSource.gsonRemove(name: String): Boolean = externalGson(name).delete()
 fun LocalSource.gsonSave(name: String, obj: GsonSerializable?) {
@@ -90,7 +92,13 @@ fun <T : GsonSerializable> LocalSource.gsonLoad(file: File, type: Type): T? = tr
     null
 }
 
-inline fun <reified T : GsonSerializable> LocalSource.gsonList(): List<T> = primitiveList<String>().map { it.toBean<T>() }
+fun <T : GsonSerializable> LocalSource.gsonList(type: Type) = externalGson().listFiles().mapNotNull { file ->
+    gsonLoad<T>(file, type)
+}
+
+inline fun <reified T : GsonSerializable> LocalSource.gsonList(): List<T> = gsonList(type<T>())
+
+
 fun GsonSerializable.toJson(): String = App.gson.toJson(this)
 // reified T 可以直接给gson用，没有reified的T用TypeToken包装也没用，只能传入type,
 inline fun <reified T : GsonSerializable> String.toBean(): T = App.gson.fromJson(this, type<T>())
