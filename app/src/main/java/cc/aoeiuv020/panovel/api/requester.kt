@@ -24,20 +24,6 @@ import org.jsoup.Jsoup
  */
 open class Requester(private var extra: String) : GsonSerializable {
     companion object {
-        fun serialize(requester: Requester): String {
-            return "${requester.javaClass.name}/${requester.extra}"
-        }
-
-        fun <T : Requester> deserialize(string: String): T {
-            val index = string.indexOf('/')
-            val name = string.substring(0, index)
-            val extra = string.substring(index + 1)
-            @Suppress("UNCHECKED_CAST")
-            return Class.forName(name)
-                    .getConstructor(String::class.java)
-                    .newInstance(extra) as T
-        }
-
         fun attach(builder: GsonBuilder): GsonBuilder = builder.apply {
             registerTypeHierarchyAdapter(Requester::class.java, JsonSerializer { src: Requester, _, _ ->
                 JsonObject().apply {
