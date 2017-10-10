@@ -143,7 +143,7 @@
             android:minEms="6"
             android:singleLine="true"
             android:textColor="@android:color/primary_text_dark"
-            tools:text="0xffffffff" />
+            tools:text="0xFFFFFFFF" />
     </LinearLayout>
 
     <LinearLayout
@@ -175,7 +175,7 @@
             android:minEms="6"
             android:singleLine="true"
             android:textColor="@android:color/primary_text_dark"
-            tools:text="0xff000000" />
+            tools:text="0xFF000000" />
 
     </LinearLayout>
 </LinearLayout>

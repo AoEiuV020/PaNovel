@@ -34,9 +34,9 @@
     <string name="line_spacing">行间距</string>
     <string name="paragraph_spacing_placeholder">%ddp</string>
     <string name="paragraph_spacing">段间距</string>
-    <string name="background_color_placeholder">0x%06x</string>
+    <string name="background_color_placeholder">0x%08X</string>
     <string name="background_color">背景色</string>
-    <string name="text_color_placeholder">0x%06x</string>
+    <string name="text_color_placeholder">0x%08X</string>
     <string name="text_color">文字色</string>
     <string name="refresh">刷新</string>
     <string name="select">Select</string>
