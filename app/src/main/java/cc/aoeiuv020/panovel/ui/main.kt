@@ -100,7 +100,7 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
                     }
                 }
                 R.id.history -> History.list().let { list ->
-                    selector(getString(R.string.history), list.sortedByDescending { it.date }.map { it.detail }.map { "${it.novel.name} - ${it.novel.site}" }) { _, i ->
+                    selector(getString(R.string.history), list.map { it.detail }.map { "${it.novel.name} - ${it.novel.site}" }) { _, i ->
                         val novelDetail = list[i].detail
                         startActivity<NovelDetailActivity>("novelItem" to novelDetail.novel.toJson())
                     }

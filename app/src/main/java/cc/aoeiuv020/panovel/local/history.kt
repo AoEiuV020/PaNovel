@@ -7,12 +7,25 @@ import cc.aoeiuv020.panovel.api.NovelDetail
  * Created by AoEiuV020 on 2017.10.10-17:59:51.
  */
 object History : LocalSource {
-    fun add(history: NovelHistory) = gsonSave(history.detail.bookId, history)
+    private var max: Int = 50
+
+    private fun add(history: NovelHistory) = gsonSave(history.detail.bookId, history)
 
     fun add(detail: NovelDetail) = add(NovelHistory(detail))
 
-    @Suppress("unused")
-    fun remove(history: NovelHistory) = gsonRemove(history.detail.bookId)
+    private fun remove(detail: NovelDetail) = gsonRemove(detail.bookId)
 
-    fun list(): List<NovelHistory> = gsonList()
+    private fun remove(history: NovelHistory) = remove(history.detail)
+
+    fun list(): List<NovelHistory> = gsonList<NovelHistory>().sortedByDescending { it.date }.let { list ->
+        // 删除过多的历史，
+        val n = list.size - max
+        println("$n, $max, ${list.size}")
+        if (n > 0) {
+            list.subList(max, list.size).forEach { remove(it) }
+            list.subList(0, max)
+        } else {
+            list
+        }
+    }
 }
