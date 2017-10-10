@@ -1,4 +1,4 @@
-<cc.aoeiuv020.panovel.ui.base.NovelTextFullScreenRootFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -62,11 +62,6 @@
             </android.support.constraint.ConstraintLayout>
 
         </android.support.design.widget.AppBarLayout>
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
@@ -77,14 +72,14 @@
             android:orientation="vertical"
             tools:ignore="UselessParent">
 
-            <include layout="@layout/novel_text_read_settings" />
-
-            <View
-                android:id="@+id/navBarBg"
+            <include
+                android:id="@+id/include"
+                layout="@layout/novel_text_read_settings"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="bottom"
-                android:focusable="false" />
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </LinearLayout>
     </FrameLayout>
-</cc.aoeiuv020.panovel.ui.base.NovelTextFullScreenRootFrameLayout>
+</FrameLayout>

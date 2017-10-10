@@ -1,17 +1,11 @@
 package cc.aoeiuv020.panovel.ui.base
 
-import android.annotation.TargetApi
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
-import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowInsets
 import android.view.WindowManager
-import android.widget.FrameLayout
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.ui.hide
 import cc.aoeiuv020.panovel.ui.show
@@ -115,15 +109,5 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         private val AUTO_HIDE = true
         private val AUTO_HIDE_DELAY_MILLIS = 3000
         private val UI_ANIMATION_DELAY = 300
-    }
-}
-
-class NovelTextFullScreenRootFrameLayout(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), AnkoLogger {
-    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-    override fun dispatchApplyWindowInsets(insets: WindowInsets): WindowInsets {
-        findViewById<View>(R.id.navBarBg)?.apply {
-            layoutParams = layoutParams.apply { height = insets.systemWindowInsetBottom }
-        }
-        return super.dispatchApplyWindowInsets(insets)
     }
 }
