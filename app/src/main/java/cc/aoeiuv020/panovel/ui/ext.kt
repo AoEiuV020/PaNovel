@@ -45,6 +45,6 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
         .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
         .setOnColorChangedListener(callback)
         .setPositiveButton(R.string.select) { _, color, _ -> callback(color) }
-        .setNegativeButton(R.string.cacnel) { _, _ -> callback(initial) }
+        .setNegativeButton(R.string.cancel) { _, _ -> callback(initial) }
         .build().show()
 

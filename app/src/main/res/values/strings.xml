@@ -40,6 +40,6 @@
     <string name="text_color">文字色</string>
     <string name="refresh">刷新</string>
     <string name="select">Select</string>
-    <string name="cacnel">Cancel</string>
+    <string name="cancel">Cancel</string>
 
 </resources>
