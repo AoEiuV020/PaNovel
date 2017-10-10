@@ -73,7 +73,7 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
             R.id.browse -> browse(url)
             R.id.refresh -> refresh()
         }
-        return true
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

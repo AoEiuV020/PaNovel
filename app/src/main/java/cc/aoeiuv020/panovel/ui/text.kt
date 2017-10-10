@@ -228,7 +228,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         when (item.itemId) {
             R.id.refresh -> refresh()
         }
-        return true
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -120,7 +120,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
             R.id.info -> showNovelAbout()
             R.id.refresh -> refresh()
         }
-        return true
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
