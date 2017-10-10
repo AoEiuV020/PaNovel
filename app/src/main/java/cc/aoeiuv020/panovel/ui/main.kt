@@ -15,6 +15,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.presenter.MainPresenter
 import cc.aoeiuv020.panovel.ui.base.MainBaseNavigationActivity
@@ -95,6 +96,12 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
                     val list = Bookshelf.list()
                     selector(getString(R.string.bookshelf), list.map { "${it.novel.name} - ${it.novel.site}" }) { _, i ->
                         val novelDetail = list[i]
+                        startActivity<NovelDetailActivity>("novelItem" to novelDetail.novel.toJson())
+                    }
+                }
+                R.id.history -> History.list().let { list ->
+                    selector(getString(R.string.history), list.sortedByDescending { it.date }.map { it.detail }.map { "${it.novel.name} - ${it.novel.site}" }) { _, i ->
+                        val novelDetail = list[i].detail
                         startActivity<NovelDetailActivity>("novelItem" to novelDetail.novel.toJson())
                     }
                 }

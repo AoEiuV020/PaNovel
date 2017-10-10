@@ -41,5 +41,6 @@
     <string name="refresh">刷新</string>
     <string name="select">Select</string>
     <string name="cancel">Cancel</string>
+    <string name="history">历史</string>
 
 </resources>
