@@ -20,7 +20,6 @@ object History : LocalSource {
     fun list(): List<NovelHistory> = gsonList<NovelHistory>().sortedByDescending { it.date }.let { list ->
         // 删除过多的历史，
         val n = list.size - max
-        println("$n, $max, ${list.size}")
         if (n > 0) {
             list.subList(max, list.size).forEach { remove(it) }
             list.subList(0, max)
