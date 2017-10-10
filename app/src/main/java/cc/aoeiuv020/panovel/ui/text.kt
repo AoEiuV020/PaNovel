@@ -359,6 +359,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         }
 
         fun showError(message: String, e: Throwable) {
+            view.progressBar.hide()
             ctx.showError(message, e)
         }
 
