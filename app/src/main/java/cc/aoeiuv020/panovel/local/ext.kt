@@ -19,7 +19,7 @@ import java.lang.reflect.Type
  * Created by AoEiuV020 on 2017.10.04-15:33:13.
  */
 
-private fun LocalSource.external(fileType: FileType) = File(File(App.ctx.getExternalFilesDir(null), fileType.name.toLowerCase()), this.javaClass.simpleName)
+private fun LocalSource.external(fileType: FileType) = File(File(App.ctx.getExternalFilesDir(null), this.javaClass.simpleName), fileType.name.toLowerCase())
         .apply { mkdirs() }
 
 private fun LocalSource.file(file: File, name: String) = File(file, name).apply { parentFile.mkdirs() }
