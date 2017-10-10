@@ -16,7 +16,10 @@ class App : Application() {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var ctx: Context
-        val gsonBuilder: GsonBuilder = GsonBuilder().paNovel()
+        val gsonBuilder: GsonBuilder = GsonBuilder()
+                .disableHtmlEscaping()
+                .setPrettyPrinting()
+                .paNovel()
         val gson: Gson = gsonBuilder.create()
     }
 
