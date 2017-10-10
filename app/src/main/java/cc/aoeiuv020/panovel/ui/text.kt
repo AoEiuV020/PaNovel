@@ -20,7 +20,6 @@ import cc.aoeiuv020.panovel.api.NovelText
 import cc.aoeiuv020.panovel.local.*
 import cc.aoeiuv020.panovel.presenter.NovelTextPresenter
 import cc.aoeiuv020.panovel.ui.base.NovelTextBaseFullScreenActivity
-import cc.aoeiuv020.panovel.ui.widget.ColorPickerDialog
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_item.view.*
@@ -146,21 +145,21 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         viewPager.setBackgroundColor(backgroundColor)
         backgroundColorTextView.text = getString(R.string.background_color_placeholder, backgroundColor)
         backgroundColorTextView.setOnClickListener {
-            ColorPickerDialog(this@NovelTextActivity, Settings.backgroundColor, getString(R.string.background_color)) { color ->
+            alertColorPicker(Settings.backgroundColor) { color ->
                 Settings.backgroundColor = color
                 backgroundColorTextView.text = getString(R.string.background_color_placeholder, color)
                 viewPager.setBackgroundColor(color)
-            }.show()
+            }
         }
 
         // 设置文字颜色，
         textColorTextView.text = getString(R.string.text_color_placeholder, Settings.textColor)
         textColorTextView.setOnClickListener {
-            ColorPickerDialog(this@NovelTextActivity, Settings.textColor, getString(R.string.text_color)) { color ->
+            alertColorPicker(Settings.textColor) { color ->
                 Settings.textColor = color
                 textColorTextView.text = getString(R.string.text_color_placeholder, color)
                 ntpAdapter.setTextColor(color)
-            }.show()
+            }
         }
 
         presenter = NovelTextPresenter(this, requester)

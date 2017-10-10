@@ -7,6 +7,8 @@ import android.content.Context
 import android.support.v7.app.AlertDialog
 import android.view.View
 import cc.aoeiuv020.panovel.R
+import com.flask.colorpicker.ColorPickerView
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 
 /**
  *
@@ -37,3 +39,12 @@ fun View.hide() {
 fun View.show() {
     visibility = View.VISIBLE
 }
+
+fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = ColorPickerDialogBuilder.with(this)
+        .initialColor(initial)
+        .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
+        .setOnColorChangedListener(callback)
+        .setPositiveButton(R.string.select) { _, color, _ -> callback(color) }
+        .setNegativeButton(R.string.cacnel) { _, _ -> callback(initial) }
+        .build().show()
+

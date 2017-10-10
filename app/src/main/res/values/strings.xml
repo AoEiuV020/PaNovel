@@ -39,5 +39,7 @@
     <string name="text_color_placeholder">0x%06x</string>
     <string name="text_color">文字色</string>
     <string name="refresh">刷新</string>
+    <string name="select">Select</string>
+    <string name="cacnel">Cancel</string>
 
 </resources>
