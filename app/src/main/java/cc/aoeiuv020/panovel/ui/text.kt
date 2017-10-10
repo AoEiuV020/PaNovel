@@ -328,7 +328,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
 
         init {
             view.textListView.apply {
-                addHeaderView(headerView)
+                addHeaderView(headerView, null, false)
                 dividerHeight = ctx.dip(paragraphSpacing)
             }
         }
