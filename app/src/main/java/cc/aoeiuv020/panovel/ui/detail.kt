@@ -73,8 +73,9 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
             }
         }
 
-        presenter = NovelDetailPresenter(this, requester)
-        refresh()
+        presenter = NovelDetailPresenter(this, novelItem)
+        loading(progressDialog, R.string.novel_detail)
+        presenter.start()
     }
 
     private fun setTitle(novelItem: NovelItem) {
@@ -118,7 +119,7 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
 
     private fun refresh() {
         loading(progressDialog, R.string.novel_detail)
-        presenter.start()
+        presenter.refresh()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

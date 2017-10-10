@@ -1,8 +1,9 @@
 package cc.aoeiuv020.panovel.presenter
 
 import cc.aoeiuv020.panovel.api.ChaptersRequester
-import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.ui.NovelDetailActivity
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
@@ -12,17 +13,30 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.03-18:10:45.
  */
-class NovelDetailPresenter(private val view: NovelDetailActivity, private val requester: DetailRequester) : AnkoLogger {
-    private lateinit var context: NovelContext
+class NovelDetailPresenter(private val view: NovelDetailActivity, private val novelItem: NovelItem) : AnkoLogger {
+    private val context: NovelContext by lazy {
+        NovelContext.getNovelContextByUrl(novelItem.requester.url)
+    }
+    private var refresh = false
 
     fun start() {
         requestNovelDetail()
     }
 
+    fun refresh() {
+        refresh = true
+        requestNovelDetail()
+    }
+
     private fun requestNovelDetail() {
+        val requester = novelItem.requester
         Observable.fromCallable {
-            NovelContext.getNovelContextByUrl(requester.url).also { this.context = it }
-                    .getNovelDetail(requester)
+            if (refresh) {
+                context.getNovelDetail(requester).also { Cache.putDetail(it) }
+            } else {
+                Cache.getDetail(novelItem)
+                        ?: context.getNovelDetail(requester).also { Cache.putDetail(it) }
+            }
         }.async().subscribe({ comicDetail ->
             view.showNovelDetail(comicDetail)
         }, { e ->
@@ -34,7 +48,12 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val re
 
     fun requestChapters(requester: ChaptersRequester) {
         Observable.fromCallable {
-            context.getNovelChaptersAsc(requester)
+            if (refresh) {
+                context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
+            } else {
+                Cache.getChapters(novelItem)
+                        ?: context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
+            }
         }.async().subscribe({ chapters ->
             view.showNovelChapters(chapters)
         }, { e ->
@@ -42,5 +61,6 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val re
             error(message, e)
             view.showError(message, e)
         })
+        refresh = false
     }
 }

@@ -162,8 +162,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
             }
         }
 
-        presenter = NovelTextPresenter(this, requester)
-        refresh()
+        presenter = NovelTextPresenter(this, novelItem)
+        loading(progressDialog, R.string.novel_page)
+        presenter.start()
     }
 
     private fun currentChapterIndex(index: Int) {
@@ -216,7 +217,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
     private fun refresh() {
         loading(progressDialog, R.string.novel_page)
-        presenter.start()
+        presenter.refresh()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

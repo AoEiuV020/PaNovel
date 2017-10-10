@@ -19,14 +19,16 @@ import java.lang.reflect.Type
  * Created by AoEiuV020 on 2017.10.04-15:33:13.
  */
 
-private fun LocalSource.external(fileType: FileType) = File(File(App.ctx.getExternalFilesDir(null), fileType.name.toLowerCase()), this.javaClass.simpleName).apply { mkdirs() }
+private fun LocalSource.external(fileType: FileType) = File(File(App.ctx.getExternalFilesDir(null), fileType.name.toLowerCase()), this.javaClass.simpleName)
+
+private fun LocalSource.file(file: File, name: String) = File(file, name).apply { parentFile.mkdirs() }
 
 enum class FileType {
     PRIMITIVE, GSON
 }
 
 private fun LocalSource.externalPrimitive() = external(FileType.PRIMITIVE)
-private fun LocalSource.externalPrimitive(name: String) = File(externalPrimitive(), name)
+private fun LocalSource.externalPrimitive(name: String) = file(externalPrimitive(), name)
 fun LocalSource.primitiveSave(name: String, obj: Serializable?) {
     obj?.let { externalPrimitive(name).writeText(App.gson.toJson(it)) }
             ?: primitiveRemove(name)
@@ -67,7 +69,7 @@ fun LocalSource.prefRemove(key: String) = pref().edit().putString(key, null).app
 
 inline fun <reified T : GsonSerializable> type(): Type = object : TypeToken<T>() {}.type
 private fun LocalSource.externalGson() = external(FileType.GSON)
-private fun LocalSource.externalGson(name: String) = File(externalGson(), name)
+private fun LocalSource.externalGson(name: String) = file(externalGson(), name)
 fun LocalSource.gsonExists(name: String): Boolean = externalGson(name).exists()
 fun LocalSource.gsonRemove(name: String): Boolean = externalGson(name).delete()
 fun LocalSource.gsonSave(name: String, obj: GsonSerializable?) {
@@ -87,9 +89,7 @@ fun <T : GsonSerializable> LocalSource.gsonLoad(file: File, type: Type): T? = tr
 fun <T : GsonSerializable> LocalSource.gsonList(type: Type) = externalGson().listFiles().mapNotNull { file ->
     gsonLoad<T>(file, type)
 }
-
 inline fun <reified T : GsonSerializable> LocalSource.gsonList(): List<T> = gsonList(type<T>())
-
 
 fun GsonSerializable.toJson(): String = App.gson.toJson(this)
 // reified T 可以直接给gson用，没有reified的T用TypeToken包装也没用，只能传入type,
