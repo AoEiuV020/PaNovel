@@ -20,6 +20,7 @@ import java.lang.reflect.Type
  */
 
 private fun LocalSource.external(fileType: FileType) = File(File(App.ctx.getExternalFilesDir(null), fileType.name.toLowerCase()), this.javaClass.simpleName)
+        .apply { mkdirs() }
 
 private fun LocalSource.file(file: File, name: String) = File(file, name).apply { parentFile.mkdirs() }
 
@@ -89,6 +90,7 @@ fun <T : GsonSerializable> LocalSource.gsonLoad(file: File, type: Type): T? = tr
 fun <T : GsonSerializable> LocalSource.gsonList(type: Type) = externalGson().listFiles().mapNotNull { file ->
     gsonLoad<T>(file, type)
 }
+
 inline fun <reified T : GsonSerializable> LocalSource.gsonList(): List<T> = gsonList(type<T>())
 
 fun GsonSerializable.toJson(): String = App.gson.toJson(this)
