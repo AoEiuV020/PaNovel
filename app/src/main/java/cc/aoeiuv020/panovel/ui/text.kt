@@ -32,6 +32,7 @@ import org.jetbrains.anko.dip
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 /**
  *
  * Created by AoEiuV020 on 2017.10.03-19:06:44.
@@ -220,9 +221,24 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
         presenter.refresh()
     }
 
+    private fun download() {
+        val progress = ntpAdapter?.let { NovelProgress(viewPager.currentItem, it.getTextProgress()) }
+                ?: this.progress
+        val index = progress.chapterProgress
+        notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
+                , novelItem.name)
+        presenter.download(index)
+    }
+
+    fun downloadComplete(exists: Int, downloads: Int, errors: Int) {
+        notify(1, getString(R.string.download_complete_placeholder, exists, downloads, errors)
+                , novelItem.name)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.refresh -> refresh()
+            R.id.download -> download()
         }
         return super.onOptionsItemSelected(item)
     }

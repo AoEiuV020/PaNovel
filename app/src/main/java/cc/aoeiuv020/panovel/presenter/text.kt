@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.ui.NovelTextActivity
 import cc.aoeiuv020.panovel.ui.NovelTextPagerAdapter
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
 
 /**
@@ -28,6 +29,36 @@ class NovelTextPresenter(private val view: NovelTextActivity, private val novelI
     fun refresh() {
         refresh = true
         requestNovelDetail()
+    }
+
+    fun download(fromIndex: Int) {
+        Observable.fromCallable {
+            val detail = Cache.getDetail(novelItem)
+                    ?: context.getNovelDetail(novelItem.requester).also { Cache.putDetail(it) }
+            val chapters = Cache.getChapters(novelItem)
+                    ?: context.getNovelChaptersAsc(detail.requester).also { Cache.putChapters(novelItem, it) }
+            var exists = 0
+            var downloads = 0
+            var errors = 0
+            chapters.drop(fromIndex).forEach { chapter ->
+                Cache.getText(novelItem, chapter).also { exists++ } ?: try {
+                    context.getNovelText(chapter.requester)
+                } catch (_: Exception) {
+                    errors++
+                    null
+                }?.also { Cache.putText(novelItem, chapter, it); downloads++ }
+            }
+            Triple(exists, downloads, errors)
+        }.async().subscribe({ (exists, downloads, errors) ->
+            debug {
+                "download complete <exists, $exists> <downloads, $downloads> <errors, $errors>"
+            }
+            view.downloadComplete(exists, downloads, errors)
+        }, { e ->
+            val message = "下载小说失败，"
+            error(message, e)
+            view.showError(message, e)
+        })
     }
 
     private fun requestNovelDetail() {

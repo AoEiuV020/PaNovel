@@ -42,5 +42,10 @@
     <string name="select">Select</string>
     <string name="cancel">Cancel</string>
     <string name="history">历史</string>
+    <string name="download">下载</string>
+    <string name="downloading_from_current_chapter_placeholder">从当前章节(%d)开始下载</string>
+    <string name="downloading_title_placeholder">%s</string>
+    <string name="download_complete_placeholder">下载完成 已存在%d章 下载%d章 失败%d章</string>
+    <string name="download_complete_title_placeholder">%s</string>
 
 </resources>
