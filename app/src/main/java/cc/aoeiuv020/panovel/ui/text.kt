@@ -246,8 +246,6 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
             unusedHolders.pop()
         } else {
             ViewHolder(ctx, presenter, View.inflate(ctx, R.layout.novel_text_page_item, null).apply {
-                setOnClickListener {
-                }
                 textListView.setOnTouchListener(object : View.OnTouchListener {
                     private var previousAction: Int = MotionEvent.ACTION_UP
                     @SuppressLint("ClickableViewAccessibility")
