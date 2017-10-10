@@ -130,7 +130,7 @@ class Biquge : NovelContext() {
         val (author) = div.select("> p:nth-child(2)").first().text()
                 .pick("作    者：(\\S*)")
         val (status) = div.select("#info > p:nth-child(3)").first().text()
-                .pick("状    态：(\\S*)")
+                .pick("状    态：([^,]*)")
         val (updateString) = div.select("#info > p:nth-child(4)").first().text()
                 .pick("最后更新：(.*)")
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
