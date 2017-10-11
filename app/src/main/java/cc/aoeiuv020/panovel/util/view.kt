@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION", "unused")
 
-package cc.aoeiuv020.panovel.ui
+package cc.aoeiuv020.panovel.util
 
 import android.app.NotificationManager
 import android.app.ProgressDialog

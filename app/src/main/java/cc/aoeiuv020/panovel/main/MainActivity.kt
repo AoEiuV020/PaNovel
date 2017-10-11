@@ -1,30 +1,28 @@
 @file:Suppress("DEPRECATION")
 
-package cc.aoeiuv020.panovel.ui
+package cc.aoeiuv020.panovel.main
 
-import android.app.Activity
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.BaseAdapter
+import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelSite
+import cc.aoeiuv020.panovel.detail.NovelDetailActivity
+import cc.aoeiuv020.panovel.list.NovelListFragment
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.local.toJson
-import cc.aoeiuv020.panovel.presenter.MainPresenter
-import cc.aoeiuv020.panovel.ui.base.MainBaseNavigationActivity
+import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.loading
 import com.bumptech.glide.Glide
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
-import kotlinx.android.synthetic.main.site_list_item.view.*
 import org.jetbrains.anko.*
 
 /**
@@ -175,20 +173,3 @@ class MainActivity : MainBaseNavigationActivity(), IView, AnkoLogger {
     }
 }
 
-class SiteListAdapter(private val ctx: Activity, private val sites: List<NovelSite>) : BaseAdapter() {
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view = convertView ?: View.inflate(ctx, R.layout.site_list_item, null)
-        val site = getItem(position)
-        view.apply {
-            siteName.text = site.name
-            Glide.with(ctx).load(site.logo).into(siteLogo)
-        }
-        return view
-    }
-
-    override fun getItem(position: Int) = sites[position]
-
-    override fun getItemId(position: Int) = 0L
-
-    override fun getCount() = sites.size
-}

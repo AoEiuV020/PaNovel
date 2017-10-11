@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.ui.base
+package cc.aoeiuv020.panovel.main
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView

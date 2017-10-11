@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,10 +25,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.NovelDetailActivity"
+            android:name=".detail.NovelDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.NovelTextActivity"
+            android:name=".text.NovelTextActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/FullscreenTheme" />
     </application>

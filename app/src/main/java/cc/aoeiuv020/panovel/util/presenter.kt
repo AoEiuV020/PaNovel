@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.presenter
+package cc.aoeiuv020.panovel.util
 
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

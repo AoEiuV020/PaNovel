@@ -1,16 +1,16 @@
 @file:Suppress("DEPRECATION")
 
-package cc.aoeiuv020.panovel.ui
+package cc.aoeiuv020.panovel.detail
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
@@ -18,12 +18,14 @@ import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
-import cc.aoeiuv020.panovel.presenter.NovelDetailPresenter
+import cc.aoeiuv020.panovel.text.NovelTextActivity
+import cc.aoeiuv020.panovel.util.alert
+import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.loading
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
 import kotlinx.android.synthetic.main.content_novel_detail.*
-import kotlinx.android.synthetic.main.novel_chapter_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
@@ -146,31 +148,3 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 }
 
-class NovelChaptersAdapter(private val ctx: Context, val callback: (Int) -> Unit) : RecyclerView.Adapter<NovelChaptersAdapter.Holder>() {
-    private var issuesDesc = emptyList<NovelChapter>()
-    override fun getItemCount() = issuesDesc.size
-
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        val issue = issuesDesc[position]
-        holder.root.apply {
-            name.text = issue.name
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int)
-            = Holder(LayoutInflater.from(ctx).inflate(R.layout.novel_chapter_item, parent, false))
-
-    inner class Holder(val root: View) : RecyclerView.ViewHolder(root), AnkoLogger {
-        init {
-            root.setOnClickListener {
-                // 传出话数的顺序索引，
-                callback(issuesDesc.size - 1 - layoutPosition)
-            }
-        }
-    }
-
-    fun setChapters(chapters: List<NovelChapter>) {
-        issuesDesc = chapters.asReversed()
-        notifyDataSetChanged()
-    }
-}

@@ -1,6 +1,4 @@
-package cc.aoeiuv020.panovel.presenter
-
-import cc.aoeiuv020.panovel.ui.IView
+package cc.aoeiuv020.panovel
 
 /**
  * mvp的presenter,

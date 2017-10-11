@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.ui
+package cc.aoeiuv020.panovel
 
 /**
  * mvp的view,

@@ -1,12 +1,12 @@
-package cc.aoeiuv020.panovel.presenter
+package cc.aoeiuv020.panovel.text
 
+import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.ChaptersRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
-import cc.aoeiuv020.panovel.ui.NovelTextActivity
-import cc.aoeiuv020.panovel.ui.NovelTextPagerAdapter
+import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -102,9 +102,9 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
         })
     }
 
-    fun subPresenter(view: NovelTextPagerAdapter.ViewHolder) = NTPresenter().apply { attach(view) }
+    fun subPresenter(view: NovelTextViewHolder) = NTPresenter().apply { attach(view) }
 
-    inner class NTPresenter : Presenter<NovelTextPagerAdapter.ViewHolder>() {
+    inner class NTPresenter : Presenter<NovelTextViewHolder>() {
         fun requestNovelText(chapter: NovelChapter) {
             Observable.fromCallable {
                 if (refresh) {

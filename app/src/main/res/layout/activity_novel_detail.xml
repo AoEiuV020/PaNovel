@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="cc.aoeiuv020.panovel.ui.NovelDetailActivity">
+    tools:context="cc.aoeiuv020.panovel.detail.NovelDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -51,10 +51,10 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:tint="@android:color/white"
-        app:layout_behavior=".ui.widget.ScrollAwareFABBehavior"
+        app:layout_behavior=".detail.ScrollAwareFABBehavior"
         app:srcCompat="@drawable/ic_read" />
 
-    <cc.aoeiuv020.panovel.ui.widget.CheckableFloatingActionButton
+    <cc.aoeiuv020.panovel.detail.CheckableFloatingActionButton
         android:id="@+id/fabStar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

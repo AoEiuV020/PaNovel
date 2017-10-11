@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cc.aoeiuv020.panovel.ui.MainActivity">
+    tools:context="cc.aoeiuv020.panovel.main.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/fragment_container"
-        android:name="cc.aoeiuv020.panovel.ui.NovelListFragment"
+        android:name="cc.aoeiuv020.panovel.list.NovelListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

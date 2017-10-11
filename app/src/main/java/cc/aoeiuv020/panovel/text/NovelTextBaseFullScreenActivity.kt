@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.ui.base
+package cc.aoeiuv020.panovel.text
 
 import android.os.Bundle
 import android.os.Handler
@@ -7,8 +7,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.ui.hide
-import cc.aoeiuv020.panovel.ui.show
+import cc.aoeiuv020.panovel.util.hide
+import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug

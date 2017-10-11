@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.ui.widget;
+package cc.aoeiuv020.panovel.detail;
 
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;

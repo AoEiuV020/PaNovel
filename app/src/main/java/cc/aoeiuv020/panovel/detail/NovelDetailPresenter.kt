@@ -1,10 +1,11 @@
-package cc.aoeiuv020.panovel.presenter
+package cc.aoeiuv020.panovel.detail
 
+import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.ChaptersRequester
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
-import cc.aoeiuv020.panovel.ui.NovelDetailActivity
+import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
