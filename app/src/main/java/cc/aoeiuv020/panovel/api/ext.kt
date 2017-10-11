@@ -71,11 +71,9 @@ fun Element.absSrc(): String = absUrl("src")
 fun Element.href(): String = attr("href")
 fun Element.absHref(): String = absUrl("href")
 fun Element.title(): String = attr("title")
-fun Element.textList(): List<String> = childNodes()
-        .filter { it is TextNode }
-        .map { it as TextNode }
-        .filterNot { it.isBlank }
-        .map { it.wholeText.trim() }
+fun Element.textList(): List<String> = childNodes().mapNotNull {
+    (it as? TextNode)?.wholeText?.takeIf { it.isNotBlank() }?.trim()
+}
 
 fun GsonBuilder.paNovel(): GsonBuilder = apply {
     Requester.attach(this)
