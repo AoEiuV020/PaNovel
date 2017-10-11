@@ -206,7 +206,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     override fun onPause() {
         super.onPause()
         // 比如断网，如果没有展示出章节，就直接保存持有的进度，
-        val progress = ntpAdapter?.let { NovelProgress(viewPager.currentItem, it.getTextProgress()) }
+        val progress = ntpAdapter?.getTextProgress()?.let { NovelProgress(viewPager.currentItem, it) }
                 ?: this.progress
         debug {
             "save progress $progress"
@@ -220,9 +220,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     private fun download() {
-        val progress = ntpAdapter?.let { NovelProgress(viewPager.currentItem, it.getTextProgress()) }
-                ?: this.progress
-        val index = progress.chapterProgress
+        val index = viewPager.currentItem
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
                 , novelItem.name)
         presenter.download(index)

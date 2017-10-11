@@ -12,7 +12,7 @@ import java.util.*
 class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter, private val chaptersAsc: List<NovelChapter>) : PagerAdapter(), AnkoLogger {
     private val unusedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
     private val usedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
-    private lateinit var current: NovelTextViewHolder
+    private var current: NovelTextViewHolder? = null
     override fun isViewFromObject(view: View, obj: Any) = (obj as NovelTextViewHolder).itemView === view
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val holder = if (unusedHolders.isNotEmpty()) {
@@ -34,12 +34,12 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         current = obj as NovelTextViewHolder
     }
 
-    fun getTextProgress(): Int {
-        return current.itemView.textListView.firstVisiblePosition
+    fun getTextProgress(): Int? {
+        return current?.run { itemView.textListView.firstVisiblePosition }
     }
 
     fun setTextProgress(textProgress: Int) {
-        current.setTextProgress(textProgress)
+        current?.setTextProgress(textProgress)
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any?) {
