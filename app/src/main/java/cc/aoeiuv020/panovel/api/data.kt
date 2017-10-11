@@ -10,7 +10,7 @@ import java.util.*
  * 不纯粹是数据，
  * Created by AoEiuV020 on 2017.10.02-15:27:52.
  */
-abstract class Data : GsonSerializable
+abstract class Data
 
 /**
  * 小说网站信息，

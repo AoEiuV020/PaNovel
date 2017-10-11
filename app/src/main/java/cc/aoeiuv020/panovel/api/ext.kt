@@ -80,8 +80,3 @@ fun GsonBuilder.paNovel(): GsonBuilder = apply {
     Requester.attach(this)
 }
 
-/**
- * 标记可以用gson序列化的类，
- */
-interface GsonSerializable
-

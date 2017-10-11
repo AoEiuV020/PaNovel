@@ -16,9 +16,8 @@ object Cache : LocalSource {
     fun putDetail(detail: NovelDetail) = gsonSave(id(detail, "detail"), detail)
     fun getDetail(item: NovelItem): NovelDetail? = gsonLoad(id(item, "detail"))
 
-    private fun putChapters(item: NovelItem, chapters: NovelChapters) = gsonSave(id(item, "chapter"), chapters)
-    fun putChapters(item: NovelItem, chapters: List<NovelChapter>) = putChapters(item, NovelChapters(chapters))
-    fun getChapters(item: NovelItem): List<NovelChapter>? = gsonLoad<NovelChapters>(id(item, "chapter"))?.chapters
+    fun putChapters(item: NovelItem, chapters: List<NovelChapter>) = gsonSave(id(item, "chapter"), chapters)
+    fun getChapters(item: NovelItem): List<NovelChapter>? = gsonLoad(id(item, "chapter"))
 
     fun putText(item: NovelItem, chapter: NovelChapter, text: NovelText) = gsonSave(id(item, chapter.name), text)
     fun getText(item: NovelItem, chapter: NovelChapter): NovelText? = gsonLoad(id(item, chapter.name))

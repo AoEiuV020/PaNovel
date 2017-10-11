@@ -1,6 +1,12 @@
 
+
+# 需要用gson序列化的类成员不混淆，
+-keepclassmembers class * extends cc.aoeiuv020.panovel.api.Data { <fields>; }
+-keepclassmembers class * extends cc.aoeiuv020.panovel.api.Requester { <fields>; }
+-keepclassmembers class * extends cc.aoeiuv020.panovel.local.LocalData { <fields>; }
+
+# 本地保存用到类名，不混淆，
 -keepnames class * implements cc.aoeiuv020.panovel.local.LocalSource
--keepclassmembers class * implements cc.aoeiuv020.panovel.api.GsonSerializable { <fields>; }
 
 
 #jsoup https://stackoverflow.com/a/32169975/5615186

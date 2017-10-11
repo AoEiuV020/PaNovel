@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
  * 这样可以只序列化保存类名和extra,
  * Created by AoEiuV020 on 2017.10.03-14:59:04.
  */
-open class Requester(private var extra: String) : GsonSerializable {
+open class Requester(private var extra: String) {
     companion object {
         fun attach(builder: GsonBuilder): GsonBuilder = builder.apply {
             registerTypeHierarchyAdapter(Requester::class.java, JsonSerializer { src: Requester, _, _ ->
@@ -46,7 +46,7 @@ open class Requester(private var extra: String) : GsonSerializable {
     open val url get() = extra
     open fun request(): Connection.Response = Jsoup.connect(url).execute()
     override fun toString() = "${this.javaClass.simpleName}(url=$url)"
-    override fun equals(other: Any?): Boolean {
+    override fun equals(other: kotlin.Any?): Boolean {
         return if (other == null || other !is Requester) false
         else other.javaClass == javaClass && other.extra == extra
     }

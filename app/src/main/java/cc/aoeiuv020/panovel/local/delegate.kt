@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.panovel.api.GsonSerializable
 import java.io.Serializable
 import kotlin.reflect.KProperty
 
@@ -51,9 +50,9 @@ class NullablePrimitiveDelegate<T : Serializable>(private val default: T? = null
  * 用gson序列化对象储存json字符串，
  * 可空，
  */
-class GsonDelegate<T : GsonSerializable>(private val default: T? = null, private val type: Class<T>) {
+class GsonDelegate<T>(private val default: T? = null, private val type: Class<T>) {
     companion object {
-        inline fun <reified T : GsonSerializable> new(default: T? = null) = GsonDelegate(default, T::class.java)
+        inline fun <reified T> new(default: T? = null) = GsonDelegate(default, T::class.java)
     }
 
     operator fun getValue(thisRef: LocalSource, property: KProperty<*>): T? {
