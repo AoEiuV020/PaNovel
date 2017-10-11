@@ -77,10 +77,13 @@ fun LocalSource.gsonSave(name: String, obj: Any?) {
             ?: gsonRemove(name)
 }
 
-fun <T> LocalSource.gsonLoad(name: String, type: Type): T? = gsonLoad(externalGson(name), type)
-inline fun <reified T> LocalSource.gsonLoad(name: String): T? = gsonLoad(name, type<T>())
-fun <T> LocalSource.gsonLoad(file: File, type: Type): T? = try {
-    file.readText().toBean(type)
+fun <T> LocalSource.gsonLoad(name: String, type: Type, timeout: Long = 0): T? = gsonLoad(externalGson(name), type, timeout)
+inline fun <reified T> LocalSource.gsonLoad(name: String, timeout: Long = 0): T? = gsonLoad(name, type<T>(), timeout)
+fun <T> LocalSource.gsonLoad(file: File, type: Type, timeout: Long = 0): T? = try {
+    // timeout <= 0时 不判断超时，缓存时间小于timeout才取出，
+    file.takeIf { timeout <= 0 || System.currentTimeMillis() - it.lastModified() < timeout }?.run {
+        readText().toBean(type)
+    }
 } catch (_: Exception) {
     file.delete()
     null

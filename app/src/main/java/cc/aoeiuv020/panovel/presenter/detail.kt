@@ -7,7 +7,9 @@ import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.ui.NovelDetailActivity
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
+import java.io.IOException
 
 /**
  *
@@ -50,10 +52,19 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val no
         Observable.fromCallable {
             if (refresh) {
                 refresh = false
-                context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
+                context.getNovelChaptersAsc(requester)
+                        .also { Cache.putChapters(novelItem, it) }
+                        .also { debug { "重新获取章节，${it.size}" } }
             } else {
-                Cache.getChapters(novelItem)
-                        ?: context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
+                try {
+                    Cache.getChapters(novelItem)?.also { debug { "读取缓存章节，${it.size}" } }
+                            ?: context.getNovelChaptersAsc(requester)
+                            .also { Cache.putChapters(novelItem, it) }
+                            .also { debug { "重新获取章节，${it.size}" } }
+                } catch (e: IOException) {
+                    Cache.getChapters(novelItem, 0)?.also { debug { "网络有问题，读取缓存不判断超时，${it.size}" } }
+                            ?: throw e
+                }
             }
         }.async().subscribe({ chapters ->
             view.showNovelChapters(chapters)

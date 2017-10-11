@@ -11,6 +11,7 @@ import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
+import java.io.IOException
 
 /**
  *
@@ -84,8 +85,13 @@ class NovelTextPresenter(private val view: NovelTextActivity, private val novelI
             if (refresh) {
                 context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
             } else {
-                Cache.getChapters(novelItem)
-                        ?: context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
+                try {
+                    Cache.getChapters(novelItem)
+                            ?: context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
+                } catch (e: IOException) {
+                    error { "网络有问题，读取缓存不判断超时，" }
+                    Cache.getChapters(novelItem, 0) ?: throw e
+                }
             }
         }.async().subscribe({ chapters ->
             view.showChapters(chapters)
