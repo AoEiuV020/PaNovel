@@ -85,7 +85,7 @@ class LiudatxtTest {
                     "从此以后踏上了诸天万界各大反派人生导师的不归路！露出一脸和善微笑的雄霸正指挥着风云怒肛帝释天、" +
                     "海贼世界已经成为一个出色海军的路飞正带着自己的海军攻打四皇、" +
                     "以及把令狐冲当做亲儿子一般的对待满脸正气的岳不群。 " +
-                    "......刘锋叹了一...", it.info)
+                    "......刘锋叹了一...", it.introduction)
             println(it.update)
             println(it.status)
             println(it.stars)

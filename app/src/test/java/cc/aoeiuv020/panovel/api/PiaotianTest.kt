@@ -103,7 +103,7 @@ class PiaotianTest {
             assertEquals("剑灵同居日记", it.novel.name)
             assertEquals("国王陛下", it.novel.author)
             assertEquals("武侠修真", it.genre)
-            assertEquals("“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”\n一个无敌的随身剑灵与天才美少女（们）的同居故事。", it.info)
+            assertEquals("“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”\n一个无敌的随身剑灵与天才美少女（们）的同居故事。", it.introduction)
             println(it.bigImg)
             println(it.length)
             println(it.update)

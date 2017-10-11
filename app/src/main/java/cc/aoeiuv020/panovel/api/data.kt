@@ -79,7 +79,7 @@ data class NovelDetail(
         // 字数，
         val length: String,
         // 简介，
-        val info: String,
+        val introduction: String,
         // 收藏人数，不支持就-1,
         val stars: Int,
         val requester: ChaptersRequester

@@ -124,7 +124,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
 
     private fun showNovelAbout() {
         novelDetail?.let {
-            alert(alertDialog, it.info, "${it.novel.name} - ${it.novel.author}")
+            alert(alertDialog, it.introduction, "${it.novel.name} - ${it.novel.author}")
         }
     }
 
