@@ -232,7 +232,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
     fun downloadComplete(exists: Int, downloads: Int, errors: Int) {
         notify(1, getString(R.string.download_complete_placeholder, exists, downloads, errors)
-                , novelItem.name)
+                , novelItem.name
+                , R.drawable.ic_file_download)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
