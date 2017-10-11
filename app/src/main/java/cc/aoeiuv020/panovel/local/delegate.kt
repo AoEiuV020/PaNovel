@@ -10,17 +10,21 @@ import kotlin.reflect.KProperty
  */
 
 /**
+ * 一个Delegate只用在一个字段，
  * 只用在原始类型，
  * 不要用在自定义的Serializable类，
  * 非空，
  */
 class PrimitiveDelegate<T : Serializable>(private val default: T) {
+    private var backingField: T? = null
     operator fun getValue(thisRef: LocalSource, property: KProperty<*>): T {
-        this::class.java.isPrimitive
-        return thisRef.primitiveLoad(property.name) ?: default
+        // 优先返回幕后字段，为空则读取，读出空则替换成默认，读出的设到幕后字段，
+        // 线程不安全，同时多次get可能多次读取，
+        return backingField ?: (thisRef.primitiveLoad(property.name) ?: default).also { backingField = it }
     }
 
     operator fun setValue(thisRef: LocalSource, property: KProperty<*>, value: T) {
+        backingField = value
         thisRef.primitiveSave(property.name, value)
     }
 }
@@ -32,11 +36,13 @@ class PrimitiveDelegate<T : Serializable>(private val default: T) {
  */
 @Suppress("unused")
 class NullablePrimitiveDelegate<T : Serializable>(private val default: T? = null) {
+    private var backingField: T? = null
     operator fun getValue(thisRef: LocalSource, property: KProperty<*>): T? {
-        return thisRef.primitiveLoad(property.name) ?: default
+        return backingField ?: (thisRef.primitiveLoad(property.name) ?: default)?.also { backingField = it }
     }
 
     operator fun setValue(thisRef: LocalSource, property: KProperty<*>, value: T?) {
+        backingField = value
         thisRef.primitiveSave(property.name, value)
     }
 }
