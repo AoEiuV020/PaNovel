@@ -38,8 +38,8 @@ import kotlin.collections.ArrayList
  * Created by AoEiuV020 on 2017.10.03-19:06:44.
  */
 class NovelTextActivity : NovelTextBaseFullScreenActivity() {
-    private val alertDialog: AlertDialog by lazy { AlertDialog.Builder(this).create() }
-    private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelTextPresenter
     private lateinit var novelName: String
     private lateinit var chaptersAsc: List<NovelChapter>
@@ -55,6 +55,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        alertDialog = AlertDialog.Builder(this).create()
+        progressDialog = ProgressDialog(this)
 
         novelItem = intent.getStringExtra("novelItem").toBean()
         // 进度，读取顺序， savedInstanceState > intent > ReadProgress

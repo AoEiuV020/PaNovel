@@ -34,8 +34,8 @@ import org.jetbrains.anko.startActivity
  * Created by AoEiuV020 on 2017.10.03-18:10:37.
  */
 class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
-    private val alertDialog: AlertDialog by lazy { AlertDialog.Builder(this).create() }
-    private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelDetailPresenter
     private lateinit var chapterAdapter: NovelChaptersAdapter
     private var novelDetail: NovelDetail? = null
@@ -43,6 +43,9 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        alertDialog = AlertDialog.Builder(this).create()
+        progressDialog = ProgressDialog(this)
 
         // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
         // it's not a BUG, it's a FEATURE,

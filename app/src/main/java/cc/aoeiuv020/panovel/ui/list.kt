@@ -27,23 +27,31 @@ import org.jetbrains.anko.startActivity
  * Created by AoEiuV020 on 2017.10.02-21:49:45.
  */
 class NovelListFragment : Fragment() {
-    private val alertDialog: AlertDialog by lazy { AlertDialog.Builder(context).create() }
-    private val progressDialog: ProgressDialog by lazy { ProgressDialog(context) }
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelListPresenter
     private var isEnd = false
     private var isLoadingNextPage = false
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.content_main, container, false)
+
+        alertDialog = AlertDialog.Builder(context).create()
+        progressDialog = ProgressDialog(context)
+
         presenter = NovelListPresenter(this)
         return root
     }
 
     fun showError(message: String, e: Throwable) {
         progressDialog.dismiss()
-        context.alertError(alertDialog, message, e)
+        activity.alertError(alertDialog, message, e)
     }
 
     fun showNovelList(novelList: List<NovelListItem>) {
+        // 如果activity已经退出，下面的不执行，
+        if (activity == null || activity.isDestroyed) {
+            return
+        }
         isLoadingNextPage = false
         progressDialog.dismiss()
         listView.run {
@@ -68,7 +76,7 @@ class NovelListFragment : Fragment() {
                             return
                         }
                         isLoadingNextPage = true
-                        context.loading(progressDialog, R.string.next_page)
+                        activity.loading(progressDialog, R.string.next_page)
                         presenter.loadNextPage()
                     }
                 }
@@ -90,13 +98,13 @@ class NovelListFragment : Fragment() {
         isEnd = true
         isLoadingNextPage = false
         progressDialog.dismiss()
-        context.alert(alertDialog, R.string.yet_last_page)
+        activity.alert(alertDialog, R.string.yet_last_page)
     }
 
     fun showGenre(genre: NovelGenre) {
         isEnd = false
         isLoadingNextPage = false
-        context.loading(progressDialog, R.string.novel_list)
+        activity.loading(progressDialog, R.string.novel_list)
         presenter.requestNovelList(genre)
     }
 

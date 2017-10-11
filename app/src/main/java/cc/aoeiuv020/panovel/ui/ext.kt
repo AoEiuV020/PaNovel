@@ -2,6 +2,7 @@
 
 package cc.aoeiuv020.panovel.ui
 
+import android.app.Activity
 import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
@@ -22,20 +23,28 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder
  *
  * Created by AoEiuV020 on 2017.10.02-21:50:34.
  */
-fun Context.loading(dialog: ProgressDialog, id: Int) = loading(dialog, getString(R.string.loading, getString(id)))
+fun Activity?.loading(dialog: ProgressDialog, id: Int) = loading(dialog, this?.getString(R.string.loading, getString(id)) ?: "")
 
-fun Context.loading(dialog: ProgressDialog, str: String) = dialog.apply {
+fun Activity?.loading(dialog: ProgressDialog, str: String) = dialog.apply {
+    // activity已经退出则不继续，
+    if (this@loading == null || this@loading.isDestroyed) {
+        return@apply
+    }
     setMessage(str)
     show()
 }
 
-fun Context.alertError(dialog: AlertDialog, str: String, e: Throwable) = alert(dialog, str + "\n" + e.message)
-fun Context.alert(dialog: AlertDialog, messageId: Int) = alert(dialog, getString(messageId))
-fun Context.alert(dialog: AlertDialog, messageId: Int, titleId: Int) = alert(dialog, getString(messageId), getString(titleId))
-fun Context.alert(dialog: AlertDialog, message: String, title: String? = null) = dialog.apply {
-    dialog.setMessage(message)
+fun Activity?.alertError(dialog: AlertDialog, str: String, e: Throwable) = alert(dialog, str + "\n" + e.message)
+fun Activity?.alert(dialog: AlertDialog, messageId: Int) = alert(dialog, this?.getString(messageId) ?: "")
+fun Activity?.alert(dialog: AlertDialog, messageId: Int, titleId: Int) = alert(dialog, this?.getString(messageId) ?: "", this?.getString(titleId))
+fun Activity?.alert(dialog: AlertDialog, message: String, title: String? = null) = dialog.apply {
+    // activity已经退出则不继续，
+    if (this@alert == null || this@alert.isDestroyed) {
+        return@apply
+    }
+    setMessage(message)
     title?.let {
-        dialog.setTitle(title)
+        setTitle(title)
     }
     show()
 }

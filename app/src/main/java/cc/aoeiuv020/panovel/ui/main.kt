@@ -36,8 +36,8 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
         private val GROUP_ID: Int = 1
     }
 
-    private val alertDialog: AlertDialog by lazy { AlertDialog.Builder(this).create() }
-    private val progressDialog: ProgressDialog by lazy { ProgressDialog(this) }
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var progressDialog: ProgressDialog
     private var url: String = "https://github.com/AoEiuV020/PaNovel"
     private lateinit var presenter: MainPresenter
     private lateinit var genres: List<NovelGenre>
@@ -46,6 +46,9 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        alertDialog = AlertDialog.Builder(this).create()
+        progressDialog = ProgressDialog(this)
 
         searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
