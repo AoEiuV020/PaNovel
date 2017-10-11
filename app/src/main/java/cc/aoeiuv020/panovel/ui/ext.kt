@@ -3,10 +3,8 @@
 package cc.aoeiuv020.panovel.ui
 
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
@@ -53,14 +51,10 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
         .build().show()
 
 fun Context.notify(id: Int, text: String? = null, title: String? = null) {
-    val pi = PendingIntent.getActivity(this, 1, Intent(this, this.javaClass)
-            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-            PendingIntent.FLAG_UPDATE_CURRENT)
     val nb = NotificationCompat.Builder(this)
             .setContentTitle(title)
             .setContentText(text)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentIntent(pi)
             .setAutoCancel(true)
     (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).notify(id, nb.build())
 }
