@@ -49,6 +49,7 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val no
     fun requestChapters(requester: ChaptersRequester) {
         Observable.fromCallable {
             if (refresh) {
+                refresh = false
                 context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
             } else {
                 Cache.getChapters(novelItem)
@@ -61,6 +62,5 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val no
             error(message, e)
             view.showError(message, e)
         })
-        refresh = false
     }
 }
