@@ -13,7 +13,7 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.03-16:12:55.
  */
-class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
+class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
     private lateinit var context: NovelContext
     private lateinit var genre: NovelGenre
 
@@ -24,11 +24,11 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
             NovelContext.getNovelContextByUrl(genre.requester.url).also { context = it }
                     .getNovelList(genre.requester)
         }.async().subscribe({ comicList ->
-            view.showNovelList(comicList)
+            view?.showNovelList(comicList)
         }, { e ->
             val message = "加载小说列表失败，"
             error(message, e)
-            view.showError(message, e)
+            view?.showError(message, e)
         })
     }
 
@@ -44,26 +44,26 @@ class NovelListPresenter(private val view: NovelListFragment) : AnkoLogger {
         }.async().toList().subscribe({ genres ->
             if (genres.isEmpty()) {
                 debug { "没有下一页" }
-                view.showYetLastPage()
+                view?.showYetLastPage()
                 return@subscribe
             }
             val genre = genres.first()
             saveGenre(genre)
-            view.showUrl(genre.requester.url)
+            view?.showUrl(genre.requester.url)
             Observable.fromCallable {
                 context.getNovelList(genre.requester)
             }.async().subscribe({ comicList ->
                 debug { "展示小说列表，数量：${comicList.size}" }
-                view.addNovelList(comicList)
+                view?.addNovelList(comicList)
             }, { e ->
                 val message = "加载下一页小说列表失败，"
                 error(message, e)
-                view.showError(message, e)
+                view?.showError(message, e)
             })
         }, { e ->
             val message = "加载小说列表一下页地址失败，"
             error(message, e)
-            view.showError(message, e)
+            view?.showError(message, e)
         })
     }
 }

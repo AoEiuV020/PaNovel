@@ -37,7 +37,7 @@ import kotlin.collections.ArrayList
  *
  * Created by AoEiuV020 on 2017.10.03-19:06:44.
  */
-class NovelTextActivity : NovelTextBaseFullScreenActivity() {
+class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelTextPresenter
@@ -166,9 +166,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity() {
             }
         }
 
-        presenter = NovelTextPresenter(this, novelItem)
         loading(progressDialog, R.string.novel_page)
+        presenter = NovelTextPresenter(novelItem)
+        presenter.attach(this)
         presenter.start()
+    }
+
+    override fun onDestroy() {
+        presenter.detach()
+        super.onDestroy()
     }
 
     private fun currentChapterIndex(index: Int) {
@@ -336,7 +342,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         }
     }
 
-    class ViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter, val view: View) : AnkoLogger {
+    class ViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter, val view: View) : IView, AnkoLogger {
         private val presenter = presenter.subPresenter(this)
         private val headerView by lazy {
             View.inflate(ctx, R.layout.novel_text_header, null).apply {

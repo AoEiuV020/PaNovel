@@ -17,7 +17,7 @@ import java.io.IOException
  *
  * Created by AoEiuV020 on 2017.10.03-19:06:50.
  */
-class NovelTextPresenter(private val view: NovelTextActivity, private val novelItem: NovelItem) : AnkoLogger {
+class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelTextActivity>(), AnkoLogger {
     private val context: NovelContext by lazy {
         NovelContext.getNovelContextByUrl(novelItem.requester.url)
     }
@@ -54,11 +54,11 @@ class NovelTextPresenter(private val view: NovelTextActivity, private val novelI
             debug {
                 "download complete <exists, $exists> <downloads, $downloads> <errors, $errors>"
             }
-            view.downloadComplete(exists, downloads, errors)
+            view?.downloadComplete(exists, downloads, errors)
         }, { e ->
             val message = "下载小说失败，"
             error(message, e)
-            view.showError(message, e)
+            view?.showError(message, e)
         })
     }
 
@@ -72,11 +72,11 @@ class NovelTextPresenter(private val view: NovelTextActivity, private val novelI
                         ?: context.getNovelDetail(requester).also { Cache.putDetail(it) }
             }
         }.async().subscribe({ detail ->
-            view.showDetail(detail)
+            view?.showDetail(detail)
         }, { e ->
             val message = "加载小说章节详情失败，"
             error(message, e)
-            view.showError(message, e)
+            view?.showError(message, e)
         })
     }
 
@@ -94,17 +94,17 @@ class NovelTextPresenter(private val view: NovelTextActivity, private val novelI
                 }
             }
         }.async().subscribe({ chapters ->
-            view.showChapters(chapters)
+            view?.showChapters(chapters)
         }, { e ->
             val message = "加载小说章节列表失败，"
             error(message, e)
-            view.showError(message, e)
+            view?.showError(message, e)
         })
     }
 
-    fun subPresenter(view: NovelTextPagerAdapter.ViewHolder) = NTPresenter(view)
+    fun subPresenter(view: NovelTextPagerAdapter.ViewHolder) = NTPresenter().apply { attach(view) }
 
-    inner class NTPresenter(private val view: NovelTextPagerAdapter.ViewHolder) {
+    inner class NTPresenter : Presenter<NovelTextPagerAdapter.ViewHolder>() {
         fun requestNovelText(chapter: NovelChapter) {
             Observable.fromCallable {
                 if (refresh) {
@@ -116,11 +116,11 @@ class NovelTextPresenter(private val view: NovelTextActivity, private val novelI
                             ?: context.getNovelText(chapter.requester).also { Cache.putText(novelItem, chapter, it) }
                 }
             }.async().subscribe({ novelText ->
-                view.showText(novelText)
+                view?.showText(novelText)
             }, { e ->
                 val message = "加载小说页面失败，"
                 error(message, e)
-                view.showError(message, e)
+                view?.showError(message, e)
             })
         }
     }

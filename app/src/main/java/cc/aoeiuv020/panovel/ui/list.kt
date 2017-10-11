@@ -26,7 +26,7 @@ import org.jetbrains.anko.startActivity
  *
  * Created by AoEiuV020 on 2017.10.02-21:49:45.
  */
-class NovelListFragment : Fragment() {
+class NovelListFragment : Fragment(), IView {
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelListPresenter
@@ -38,8 +38,14 @@ class NovelListFragment : Fragment() {
         alertDialog = AlertDialog.Builder(context).create()
         progressDialog = ProgressDialog(context)
 
-        presenter = NovelListPresenter(this)
+        presenter = NovelListPresenter()
+        presenter.attach(this)
         return root
+    }
+
+    override fun onDestroyView() {
+        presenter.detach()
+        super.onDestroyView()
     }
 
     fun showError(message: String, e: Throwable) {

@@ -31,7 +31,7 @@ import org.jetbrains.anko.*
  *
  * Created by AoEiuV020 on 2017.10.02-21:37:23.
  */
-class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
+class MainActivity : MainBaseNavigationActivity(), IView, AnkoLogger {
     companion object {
         private val GROUP_ID: Int = 1
     }
@@ -68,8 +68,14 @@ class MainActivity : MainBaseNavigationActivity(), AnkoLogger {
 
         })
 
-        presenter = MainPresenter(this)
+        presenter = MainPresenter()
+        presenter.attach(this)
         presenter.start()
+    }
+
+    override fun onDestroy() {
+        presenter.detach()
+        super.onDestroy()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

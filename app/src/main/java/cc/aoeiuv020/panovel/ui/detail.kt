@@ -33,7 +33,7 @@ import org.jetbrains.anko.startActivity
  *
  * Created by AoEiuV020 on 2017.10.03-18:10:37.
  */
-class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
+class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelDetailPresenter
@@ -76,9 +76,15 @@ class NovelDetailActivity : AppCompatActivity(), AnkoLogger {
             }
         }
 
-        presenter = NovelDetailPresenter(this, novelItem)
         loading(progressDialog, R.string.novel_detail)
+        presenter = NovelDetailPresenter(novelItem)
+        presenter.attach(this)
         presenter.start()
+    }
+
+    override fun onDestroy() {
+        presenter.detach()
+        super.onDestroy()
     }
 
     private fun setTitle(novelItem: NovelItem) {

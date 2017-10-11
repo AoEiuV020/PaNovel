@@ -15,7 +15,7 @@ import java.io.IOException
  *
  * Created by AoEiuV020 on 2017.10.03-18:10:45.
  */
-class NovelDetailPresenter(private val view: NovelDetailActivity, private val novelItem: NovelItem) : AnkoLogger {
+class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDetailActivity>(), AnkoLogger {
     private val context: NovelContext by lazy {
         NovelContext.getNovelContextByUrl(novelItem.requester.url)
     }
@@ -40,11 +40,11 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val no
                         ?: context.getNovelDetail(requester).also { Cache.putDetail(it) }
             }
         }.async().subscribe({ comicDetail ->
-            view.showNovelDetail(comicDetail)
+            view?.showNovelDetail(comicDetail)
         }, { e ->
             val message = "加载小说详情失败，"
             error(message, e)
-            view.showError(message, e)
+            view?.showError(message, e)
         })
     }
 
@@ -67,11 +67,11 @@ class NovelDetailPresenter(private val view: NovelDetailActivity, private val no
                 }
             }
         }.async().subscribe({ chapters ->
-            view.showNovelChapters(chapters)
+            view?.showNovelChapters(chapters)
         }, { e ->
             val message = "加载小说章节失败，"
             error(message, e)
-            view.showError(message, e)
+            view?.showError(message, e)
         })
     }
 }

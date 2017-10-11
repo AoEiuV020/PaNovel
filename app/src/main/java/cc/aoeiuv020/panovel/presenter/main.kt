@@ -14,15 +14,15 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.02-21:35:07.
  */
-class MainPresenter(private val view: MainActivity) : AnkoLogger {
+class MainPresenter : Presenter<MainActivity>(), AnkoLogger {
     fun start() {
         debug { "读取记住的选择，" }
         loadSite()?.also { site ->
             debug { "已有记住网站：${site.name}" }
-            view.showSite(site)
+            view?.showSite(site)
             loadGenre(site)?.let { genre ->
                 debug { "已有记住分类：${genre.name}" }
-                view.showGenre(genre)
+                view?.showGenre(genre)
             } ?: run {
                 debug { "没有记住的分类，" }
             }
@@ -58,14 +58,14 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
 
     fun requestSites() {
         NovelContext.getNovelContexts().map { it.getNovelSite() }.let { sites ->
-            view.showSites(sites)
+            view?.showSites(sites)
         }
     }
 
     fun search(site: NovelSite, query: String) {
         debug { "在网站(${site.name})搜索：$query, " }
         NovelContext.getNovelContextByUrl(site).searchNovelName(query).let { genre ->
-            view.showGenre(genre)
+            view?.showGenre(genre)
         }
     }
 
@@ -75,11 +75,11 @@ class MainPresenter(private val view: MainActivity) : AnkoLogger {
             NovelContext.getNovelContextByUrl(site).getGenres()
         }.async().subscribe({ genres ->
             debug { "加载网站分类列表成功，数量：${genres.size}" }
-            view.showGenres(genres)
+            view?.showGenres(genres)
         }, { e ->
             val message = "加载网站分类列表失败，"
             error(message, e)
-            view.showError(message, e)
+            view?.showError(message, e)
         })
 
     }
