@@ -67,6 +67,7 @@ fun String.pick(pattern: Pattern): List<String> {
 fun String.pick(pattern: String) = pick(Pattern.compile(pattern, Pattern.DOTALL))
 
 fun Element.src(): String = attr("src")
+fun Element.absSrc(): String = absUrl("src")
 fun Element.href(): String = attr("href")
 fun Element.absHref(): String = absUrl("href")
 fun Element.title(): String = attr("title")
