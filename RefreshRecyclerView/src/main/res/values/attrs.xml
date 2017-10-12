@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="RefreshRecyclerView">
         <attr name="refresh_able" format="boolean" />
+        <attr name="fastScrollEnabled" format="boolean" />
         <attr name="load_more_able" format="boolean" />
     </declare-styleable>
 </resources>
