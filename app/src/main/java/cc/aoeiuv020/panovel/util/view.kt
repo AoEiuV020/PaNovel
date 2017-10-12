@@ -48,6 +48,10 @@ fun View.show() {
     visibility = View.VISIBLE
 }
 
+fun View.setHeight(height: Int) {
+    layoutParams = layoutParams.also { it.height = height }
+}
+
 fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = ColorPickerDialogBuilder.with(this)
         .initialColor(initial)
         .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)

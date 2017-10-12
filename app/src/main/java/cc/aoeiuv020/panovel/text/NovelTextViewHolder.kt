@@ -1,9 +1,10 @@
 package cc.aoeiuv020.panovel.text
 
 import android.annotation.SuppressLint
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.MotionEvent
 import android.view.View
-import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import cc.aoeiuv020.panovel.IView
@@ -16,27 +17,27 @@ import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.dip
+import org.jetbrains.anko.debug
 
 class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
     private val presenter = presenter.subPresenter(this)
+    // TODO
     private val headerView = View.inflate(ctx, R.layout.novel_text_header, null)
     private val chapterNameTextView: TextView
-    private val textListView: ListView
+    private val textRecyclerView: RecyclerView
+    private val layoutManager: LinearLayoutManager
     private val progressBar: ProgressBar
-
-    private val textListAdapter = NovelTextListAdapter(ctx)
-    private var paragraphSpacing = Settings.paragraphSpacing
+    private val textListAdapter = NovelTextRecyclerAdapter(ctx)
     private var textProgress: Int? = null
 
     init {
-        textListView = itemView.textListView
-        textListView.addHeaderView(headerView, null, false)
-        textListView.dividerHeight = ctx.dip(paragraphSpacing)
+        textRecyclerView = itemView.textRecyclerView
+        layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
+        textRecyclerView.layoutManager = layoutManager
         // 这有个警告禁用不了，只能这样无意义的强转一下，
         // Custom view `ListView` has setOnTouchListener called on it but does not override performClick
-        (textListView as View).setOnTouchListener(object : View.OnTouchListener {
+        (textRecyclerView as View).setOnTouchListener(object : View.OnTouchListener {
             private var previousAction: Int = MotionEvent.ACTION_UP
             @SuppressLint("ClickableViewAccessibility")
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
@@ -56,16 +57,16 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
     fun apply(chapter: NovelChapter) {
         progressBar.show()
         headerView.chapterNameTextView.text = chapter.name
-        textListView.adapter = null
+        textRecyclerView.adapter = null
         presenter.requestNovelText(chapter)
     }
 
     fun showText(novelText: NovelText) {
         textListAdapter.setNovelText(novelText)
-        textListView.apply {
+        textRecyclerView.apply {
             adapter = textListAdapter
             textProgress?.let {
-                post { setSelection(it) }
+                post { scrollToPosition(it) }
                 textProgress = null
             }
         }
@@ -86,7 +87,7 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
     }
 
     fun setParagraphSpacing(size: Int) {
-        itemView.textListView.dividerHeight = ctx.dip(size)
+        textListAdapter.setParagraphSpacing(size)
     }
 
     fun setTextColor(color: Int) {
@@ -95,6 +96,13 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
     }
 
     fun setTextProgress(textProgress: Int) {
+        debug { "setTextProgress $textProgress" }
         this.textProgress = textProgress
+    }
+
+    fun getTextProgress(): Int? {
+        return layoutManager.findLastVisibleItemPosition().also {
+            debug { "getTextProgress $it" }
+        }
     }
 }

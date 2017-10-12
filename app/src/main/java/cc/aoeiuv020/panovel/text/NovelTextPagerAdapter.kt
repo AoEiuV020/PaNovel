@@ -4,7 +4,6 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.api.NovelChapter
-import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.util.*
@@ -35,7 +34,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
     }
 
     fun getTextProgress(): Int? {
-        return current?.run { itemView.textListView.firstVisiblePosition }
+        return current?.getTextProgress()
     }
 
     fun setTextProgress(textProgress: Int) {
