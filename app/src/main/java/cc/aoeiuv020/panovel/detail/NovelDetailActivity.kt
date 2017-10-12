@@ -63,12 +63,9 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         val requester = novelItem.requester
         debug { "receive $requester" }
 
-        recyclerView.adapter = NovelChaptersAdapter(this@NovelDetailActivity) { index ->
-            novelDetail?.let {
-                startActivity<NovelTextActivity>("novelItem" to it.novel.toJson(), "index" to index)
-            }
-        }.also { chapterAdapter = it }
-        recyclerView.layoutManager = GridLayoutManager(this@NovelDetailActivity, 3)
+        chapterAdapter = NovelChaptersAdapter(this, novelItem)
+        recyclerView.setAdapter(chapterAdapter)
+        recyclerView.setLayoutManager(GridLayoutManager(this@NovelDetailActivity, 3))
 
         setTitle(novelItem)
 
@@ -114,7 +111,8 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
 
     fun showNovelChapters(chapters: List<NovelChapter>) {
         progressDialog.dismiss()
-        chapterAdapter.setChapters(chapters)
+        chapterAdapter.clear()
+        chapterAdapter.addAll(chapters.asReversed())
     }
 
     fun showError(message: String, e: Throwable) {
