@@ -35,10 +35,10 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
         val requester = novelItem.requester
         Observable.fromCallable {
             if (refresh) {
-                context.getNovelDetail(requester).also { Cache.putDetail(it) }
+                context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
             } else {
-                Cache.getDetail(novelItem)
-                        ?: context.getNovelDetail(requester).also { Cache.putDetail(it) }
+                Cache.detail.get(novelItem)
+                        ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
             }
         }.async().subscribe({ comicDetail ->
             view?.showNovelDetail(comicDetail)
@@ -54,16 +54,16 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
             if (refresh) {
                 refresh = false
                 context.getNovelChaptersAsc(requester)
-                        .also { Cache.putChapters(novelItem, it) }
+                        .also { Cache.chapters.put(novelItem, it) }
                         .also { debug { "重新获取章节，${it.size}" } }
             } else {
                 try {
-                    Cache.getChapters(novelItem)?.also { debug { "读取缓存章节，${it.size}" } }
+                    Cache.chapters.get(novelItem)?.also { debug { "读取缓存章节，${it.size}" } }
                             ?: context.getNovelChaptersAsc(requester)
-                            .also { Cache.putChapters(novelItem, it) }
+                            .also { Cache.chapters.put(novelItem, it) }
                             .also { debug { "重新获取章节，${it.size}" } }
                 } catch (e: IOException) {
-                    Cache.getChapters(novelItem, 0)?.also { debug { "网络有问题，读取缓存不判断超时，${it.size}" } }
+                    Cache.chapters.get(novelItem, timeout = 0)?.also { debug { "网络有问题，读取缓存不判断超时，${it.size}" } }
                             ?: throw e
                 }
             }

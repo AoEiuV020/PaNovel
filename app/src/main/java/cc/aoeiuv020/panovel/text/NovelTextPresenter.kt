@@ -34,20 +34,20 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
 
     fun download(fromIndex: Int) {
         Observable.fromCallable {
-            val detail = Cache.getDetail(novelItem)
-                    ?: context.getNovelDetail(novelItem.requester).also { Cache.putDetail(it) }
-            val chapters = Cache.getChapters(novelItem)
-                    ?: context.getNovelChaptersAsc(detail.requester).also { Cache.putChapters(novelItem, it) }
+            val detail = Cache.detail.get(novelItem)
+                    ?: context.getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
+            val chapters = Cache.chapters.get(novelItem)
+                    ?: context.getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
             var exists = 0
             var downloads = 0
             var errors = 0
             chapters.drop(fromIndex).forEach { chapter ->
-                Cache.getText(novelItem, chapter).also { exists++ } ?: try {
+                Cache.text.get(novelItem, chapter.name).also { exists++ } ?: try {
                     context.getNovelText(chapter.requester)
                 } catch (_: Exception) {
                     errors++
                     null
-                }?.also { Cache.putText(novelItem, chapter, it); downloads++ }
+                }?.also { Cache.text.put(novelItem, it, chapter.name); downloads++ }
             }
             Triple(exists, downloads, errors)
         }.async().subscribe({ (exists, downloads, errors) ->
@@ -66,10 +66,10 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
         val requester = novelItem.requester
         Observable.fromCallable {
             if (refresh) {
-                context.getNovelDetail(requester).also { Cache.putDetail(it) }
+                context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
             } else {
-                Cache.getDetail(novelItem)
-                        ?: context.getNovelDetail(requester).also { Cache.putDetail(it) }
+                Cache.detail.get(novelItem)
+                        ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
             }
         }.async().subscribe({ detail ->
             view?.showDetail(detail)
@@ -83,14 +83,14 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     fun requestChapters(requester: ChaptersRequester) {
         Observable.fromCallable {
             if (refresh) {
-                context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
+                context.getNovelChaptersAsc(requester).also { Cache.chapters.put(novelItem, it) }
             } else {
                 try {
-                    Cache.getChapters(novelItem)
-                            ?: context.getNovelChaptersAsc(requester).also { Cache.putChapters(novelItem, it) }
+                    Cache.chapters.get(novelItem)
+                            ?: context.getNovelChaptersAsc(requester).also { Cache.chapters.put(novelItem, it) }
                 } catch (e: IOException) {
                     error { "网络有问题，读取缓存不判断超时，" }
-                    Cache.getChapters(novelItem, 0) ?: throw e
+                    Cache.chapters.get(novelItem, timeout = 0) ?: throw e
                 }
             }
         }.async().subscribe({ chapters ->
@@ -110,10 +110,10 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                 if (refresh) {
                     // 只刷新一章，
                     refresh = false
-                    context.getNovelText(chapter.requester).also { Cache.putText(novelItem, chapter, it) }
+                    context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.name) }
                 } else {
-                    Cache.getText(novelItem, chapter)
-                            ?: context.getNovelText(chapter.requester).also { Cache.putText(novelItem, chapter, it) }
+                    Cache.text.get(novelItem, chapter.name)
+                            ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.name) }
                 }
             }.async().subscribe({ novelText ->
                 view?.showText(novelText)
