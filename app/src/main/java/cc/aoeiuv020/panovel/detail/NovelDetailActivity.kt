@@ -2,7 +2,6 @@
 
 package cc.aoeiuv020.panovel.detail
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -21,7 +20,6 @@ import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
-import cc.aoeiuv020.panovel.util.loading
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
@@ -37,7 +35,6 @@ import org.jetbrains.anko.startActivity
  */
 class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     private lateinit var alertDialog: AlertDialog
-    private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelDetailPresenter
     private lateinit var chapterAdapter: NovelChaptersAdapter
     private var novelDetail: NovelDetail? = null
@@ -47,7 +44,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         super.onCreate(savedInstanceState)
 
         alertDialog = AlertDialog.Builder(this).create()
-        progressDialog = ProgressDialog(this)
 
         // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
         // it's not a BUG, it's a FEATURE,
@@ -75,7 +71,11 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
             }
         }
 
-        loading(progressDialog, R.string.novel_detail)
+        swipeRefreshLayout.setOnRefreshListener {
+            refresh()
+        }
+        swipeRefreshLayout.isRefreshing = true
+
         presenter = NovelDetailPresenter(novelItem)
         presenter.attach(this)
         presenter.start()
@@ -105,18 +105,17 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         // 有可能activity已经销毁，glide会报错，
         if (isDestroyed) return
         Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
-        loading(progressDialog, R.string.novel_chapters)
         presenter.requestChapters(detail.requester)
     }
 
     fun showNovelChapters(chapters: List<NovelChapter>) {
-        progressDialog.dismiss()
         chapterAdapter.clear()
         chapterAdapter.addAll(chapters.asReversed())
+        swipeRefreshLayout.isRefreshing = false
     }
 
     fun showError(message: String, e: Throwable) {
-        progressDialog.dismiss()
+        swipeRefreshLayout.isRefreshing = false
         alertError(alertDialog, message, e)
     }
 
@@ -127,7 +126,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     private fun refresh() {
-        loading(progressDialog, R.string.novel_detail)
+        swipeRefreshLayout.isRefreshing = true
         presenter.refresh()
     }
 
