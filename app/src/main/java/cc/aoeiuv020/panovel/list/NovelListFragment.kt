@@ -2,7 +2,6 @@
 
 package cc.aoeiuv020.panovel.list
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -15,9 +14,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.main.MainActivity
-import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
-import cc.aoeiuv020.panovel.util.loading
 import kotlinx.android.synthetic.main.content_main.*
 
 /**
@@ -26,14 +23,12 @@ import kotlinx.android.synthetic.main.content_main.*
  */
 class NovelListFragment : Fragment(), IView {
     private lateinit var alertDialog: AlertDialog
-    private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelListPresenter
     private lateinit var mAdapter: NovelListRecyclerAdapter
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.content_main, container, false)
 
         alertDialog = AlertDialog.Builder(context).create()
-        progressDialog = ProgressDialog(context)
 
         mAdapter = NovelListRecyclerAdapter(context)
 
@@ -58,19 +53,16 @@ class NovelListFragment : Fragment(), IView {
     }
 
     fun showError(message: String, e: Throwable) {
-        progressDialog.dismiss()
         activity.alertError(alertDialog, message, e)
     }
 
     fun showNovelList(novelList: List<NovelListItem>) {
-        progressDialog.dismiss()
         mAdapter.clear()
         mAdapter.addAll(novelList)
+        mAdapter.openLoadMore()
         recyclerView.run {
-            recyclerView.run {
-                scrollToPosition(0)
-            }
-            showNoMore()
+            recyclerView.scrollToPosition(0)
+            dismissSwipeRefresh()
         }
     }
 
@@ -80,12 +72,13 @@ class NovelListFragment : Fragment(), IView {
 
     fun showYetLastPage() {
         recyclerView.showNoMore()
-        progressDialog.dismiss()
-        activity.alert(alertDialog, R.string.yet_last_page)
     }
 
     fun showGenre(genre: NovelGenre) {
-        activity.loading(progressDialog, R.string.novel_list)
+        recyclerView.showSwipeRefresh()
+        recyclerView.setRefreshAction {
+            presenter.requestNovelList(genre)
+        }
         presenter.requestNovelList(genre)
     }
 
