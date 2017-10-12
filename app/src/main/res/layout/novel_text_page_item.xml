@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.aspsine.irecyclerview.IRecyclerView
+    <cn.lemon.view.RefreshRecyclerView
         android:id="@+id/textRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:load_more_able="false"
+        app:refresh_able="false"
         tools:listitem="@layout/novel_text_item" />
 
     <RelativeLayout

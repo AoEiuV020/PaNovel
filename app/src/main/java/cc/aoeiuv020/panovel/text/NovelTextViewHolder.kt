@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.text
 
-import android.annotation.SuppressLint
 import android.support.v7.widget.LinearLayoutManager
-import android.view.MotionEvent
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import cc.aoeiuv020.panovel.IView
@@ -13,7 +13,7 @@ import cc.aoeiuv020.panovel.api.NovelText
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
-import com.aspsine.irecyclerview.IRecyclerView
+import cn.lemon.view.RefreshRecyclerView
 import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
@@ -22,9 +22,9 @@ import org.jetbrains.anko.debug
 class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
     private val presenter = presenter.subPresenter(this)
-    private val headerView = View.inflate(ctx, R.layout.novel_text_header, null)
+    private val headerView: View
     private val chapterNameTextView: TextView
-    private val textRecyclerView: IRecyclerView
+    private val textRecyclerView: RefreshRecyclerView
     private val layoutManager: LinearLayoutManager
     private val progressBar: ProgressBar
     private val textListAdapter = NovelTextRecyclerAdapter(ctx)
@@ -33,23 +33,13 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
     init {
         textRecyclerView = itemView.textRecyclerView
         layoutManager = LinearLayoutManager(ctx)
-        textRecyclerView.layoutManager = layoutManager
-        textRecyclerView.iAdapter = textListAdapter
-        // 这有个警告禁用不了，只能这样无意义的强转一下，
-        // Custom view `ListView` has setOnTouchListener called on it but does not override performClick
-        (textRecyclerView as View).setOnTouchListener(object : View.OnTouchListener {
-            private var previousAction: Int = MotionEvent.ACTION_UP
-            @SuppressLint("ClickableViewAccessibility")
-            override fun onTouch(v: View?, event: MotionEvent): Boolean {
-                if (previousAction == MotionEvent.ACTION_DOWN
-                        && event.action == MotionEvent.ACTION_UP) {
-                    ctx.toggle()
-                }
-                previousAction = event.action
-                return false
-            }
-        })
-        textRecyclerView.addHeaderView(headerView)
+        textRecyclerView.setLayoutManager(layoutManager)
+        headerView = LayoutInflater.from(ctx).inflate(R.layout.novel_text_header, itemView as ViewGroup, false)
+        headerView.setOnClickListener {
+            ctx.toggle()
+        }
+        textListAdapter.header = headerView
+        textRecyclerView.setAdapter(textListAdapter)
         chapterNameTextView = headerView.chapterNameTextView
         chapterNameTextView.setTextColor(Settings.textColor)
         progressBar = itemView.progressBar
@@ -57,18 +47,18 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
 
     fun apply(chapter: NovelChapter) {
         progressBar.show()
-        headerView.chapterNameTextView.text = chapter.name
+        chapterNameTextView.text = chapter.name
         textListAdapter.clear()
         presenter.requestNovelText(chapter)
     }
 
     fun showText(novelText: NovelText) {
         textListAdapter.setNovelText(novelText)
-        textRecyclerView.apply {
-            textProgress?.let {
+        textProgress?.let {
+            textRecyclerView.recyclerView.run {
                 post { scrollToPosition(it) }
-                textProgress = null
             }
+            textProgress = null
         }
         progressBar.hide()
     }
@@ -91,7 +81,7 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
     }
 
     fun setTextColor(color: Int) {
-        headerView.chapterNameTextView.setTextColor(color)
+        chapterNameTextView.setTextColor(color)
         textListAdapter.setTextColor(color)
     }
 
