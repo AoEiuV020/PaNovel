@@ -2,7 +2,6 @@ package cc.aoeiuv020.panovel.text
 
 import android.annotation.SuppressLint
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ProgressBar
@@ -14,6 +13,7 @@ import cc.aoeiuv020.panovel.api.NovelText
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
+import com.aspsine.irecyclerview.IRecyclerView
 import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
@@ -22,10 +22,9 @@ import org.jetbrains.anko.debug
 class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
     private val presenter = presenter.subPresenter(this)
-    // TODO
     private val headerView = View.inflate(ctx, R.layout.novel_text_header, null)
     private val chapterNameTextView: TextView
-    private val textRecyclerView: RecyclerView
+    private val textRecyclerView: IRecyclerView
     private val layoutManager: LinearLayoutManager
     private val progressBar: ProgressBar
     private val textListAdapter = NovelTextRecyclerAdapter(ctx)
@@ -35,6 +34,7 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
         textRecyclerView = itemView.textRecyclerView
         layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
         textRecyclerView.layoutManager = layoutManager
+        textRecyclerView.iAdapter = textListAdapter
         // 这有个警告禁用不了，只能这样无意义的强转一下，
         // Custom view `ListView` has setOnTouchListener called on it but does not override performClick
         (textRecyclerView as View).setOnTouchListener(object : View.OnTouchListener {
@@ -49,6 +49,7 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
                 return false
             }
         })
+        textRecyclerView.addHeaderView(headerView)
         chapterNameTextView = headerView.chapterNameTextView
         chapterNameTextView.setTextColor(Settings.textColor)
         progressBar = itemView.progressBar
@@ -57,14 +58,13 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
     fun apply(chapter: NovelChapter) {
         progressBar.show()
         headerView.chapterNameTextView.text = chapter.name
-        textRecyclerView.adapter = null
+        textListAdapter.clear()
         presenter.requestNovelText(chapter)
     }
 
     fun showText(novelText: NovelText) {
         textListAdapter.setNovelText(novelText)
         textRecyclerView.apply {
-            adapter = textListAdapter
             textProgress?.let {
                 post { scrollToPosition(it) }
                 textProgress = null

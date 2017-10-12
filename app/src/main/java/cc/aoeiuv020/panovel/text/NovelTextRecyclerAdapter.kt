@@ -75,6 +75,11 @@ class NovelTextRecyclerAdapter(private val ctx: Context) : RecyclerView.Adapter<
         notifyDataSetChanged()
     }
 
+    fun clear() {
+        items = emptyList()
+        notifyDataSetChanged()
+    }
+
     class TextListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val divider: View = view.divider
         val textView: TextView = view.textView
