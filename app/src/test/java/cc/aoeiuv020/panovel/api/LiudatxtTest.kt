@@ -42,7 +42,7 @@ class LiudatxtTest {
 
     @Test
     fun getNovelList() {
-        context.getNovelList(ListRequester("http://www.liudatxt.com/mulu/1.html")).let {
+        context.getNovelList(GenreListRequester("http://www.liudatxt.com/mulu/1.html")).let {
             it.forEach { novelItem ->
                 println(novelItem)
             }

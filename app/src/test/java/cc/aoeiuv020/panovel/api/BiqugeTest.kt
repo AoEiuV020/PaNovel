@@ -42,13 +42,13 @@ class BiqugeTest {
 
     @Test
     fun getNovelList() {
-        context.getNovelList(ListRequester("http://www.biqubao.com/xuanhuan/")).let {
+        context.getNovelList(GenreListRequester("http://www.biqubao.com/xuanhuan/")).let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
             assertEquals(66, it.size)
         }
-        context.getNovelList(ListRequester("http://www.biqubao.com/quanben/")).let {
+        context.getNovelList(GenreListRequester("http://www.biqubao.com/quanben/")).let {
             it.forEach { novelItem ->
                 println(novelItem)
             }

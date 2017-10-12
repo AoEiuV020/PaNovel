@@ -37,7 +37,11 @@ class Piaotian : NovelContext() {
         val root = request(genre.requester)
         val a = root.select("#pagelink > a.next").first() ?: return null
         val url = a.absHref()
-        return NovelGenre(genre.name, url)
+        return if (genre.requester is GenreListRequester) {
+            NovelGenre(genre.name, url)
+        } else {
+            NovelSearch(genre.name, url)
+        }
     }
 
     private fun isDetail(url: String) = url.startsWith("http://www.piaotian.com/bookinfo")
@@ -69,16 +73,13 @@ class Piaotian : NovelContext() {
 
     private fun search(str: String, type: String): NovelGenre {
         val key = URLEncoder.encode(str, "GBK")
-        return NovelGenre(str, "$SEARCH_PAGE_URL?searchtype=$type&searchkey=$key")
+        val url = "$SEARCH_PAGE_URL?searchtype=$type&searchkey=$key"
+        return NovelSearch(str, url)
     }
 
     override fun searchNovelName(name: String) = search(name, "articlename")
 
     override fun searchNovelAuthor(author: String) = search(author, "author")
-
-    fun isSearchResult(requester: ListRequester): Boolean {
-        return requester.url.startsWith(SEARCH_PAGE_URL)
-    }
 
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val root = request(requester)

@@ -30,7 +30,7 @@ class Liudatxt : NovelContext() {
     }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        if (isSearchResult(genre.requester.url)) {
+        if (genre.requester is SearchListRequester) {
             return null
         }
         val root = request(genre.requester)
@@ -43,8 +43,8 @@ class Liudatxt : NovelContext() {
     @SuppressLint("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
         val root = request(requester)
-        val flag = isSearchResult(requester.url)
-        return root.select("#${if (flag) "sitembox" else "sitebox"} > dl").map {
+        val isSearch = requester is SearchListRequester
+        return root.select("#${if (isSearch) "sitembox" else "sitebox"} > dl").map {
             val a = it.select("> dd:nth-child(2) > h3 > a").first()
             val name = a.text()
             val url = a.absHref()
@@ -54,7 +54,7 @@ class Liudatxt : NovelContext() {
             val genre = dd3.select("> span:nth-child(3)").first().text()
             val last = it.select("> dd:nth-child(5) > a").first().text().trim()
             val about = it.select("> dd.book_des").first().text()
-            val info = if (flag) {
+            val info = if (isSearch) {
                 val length = dd3.select("> span:nth-child(4)").first().text()
                 val update = it.select("> dd:nth-child(5) > span").first().text()
                 "最新章节: $last 类型: $genre 更新: $update 状态: $status 长度: $length 简介: $about"
@@ -72,11 +72,8 @@ class Liudatxt : NovelContext() {
      */
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
-        return NovelGenre(name, "$SEARCH_PAGE_URL?searchkey=$key")
-    }
-
-    private fun isSearchResult(url: String): Boolean {
-        return url.startsWith(SEARCH_PAGE_URL)
+        val url = "$SEARCH_PAGE_URL?searchkey=$key"
+        return NovelSearch(name, url)
     }
 
     @SuppressLint("SimpleDateFormat")

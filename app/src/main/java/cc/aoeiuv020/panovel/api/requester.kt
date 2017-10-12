@@ -59,7 +59,17 @@ open class Requester(private var extra: String) {
 /**
  * 用来请求小说列表，
  */
-open class ListRequester(url: String) : Requester(url)
+abstract class ListRequester(url: String) : Requester(url)
+
+/**
+ * 用来请求分类页面的小说列表，
+ */
+open class GenreListRequester(url: String) : ListRequester(url)
+
+/**
+ * 用来请求搜索结果页面的小说列表，
+ */
+open class SearchListRequester(url: String) : ListRequester(url)
 
 /**
  * 用来请求小说详情页，

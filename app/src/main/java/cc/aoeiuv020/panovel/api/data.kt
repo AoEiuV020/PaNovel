@@ -30,7 +30,7 @@ data class NovelGenre(
         val requester: ListRequester
 ) : Data() {
     constructor(name: String, url: String)
-            : this(name, ListRequester(url))
+            : this(name, GenreListRequester(url))
 }
 
 /**

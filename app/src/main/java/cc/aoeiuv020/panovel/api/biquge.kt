@@ -29,26 +29,26 @@ class Biquge : NovelContext() {
         val elements = root.select("#wrapper > div.nav > ul > li:not(:nth-last-child(1)):not(:nth-child(1)) > a")
         return elements.map {
             val a = it
-            NovelGenre(a.text(), a.absHref())
+            NovelGenre(a.text(), GenreListRequester(a.absHref()))
         }
     }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        if (!isSearchResult(genre.requester.url)) {
+        if (genre.requester is GenreListRequester) {
             return null
         }
         val root = request(genre.requester)
         val a = root.select("#pageFooter > a.pager-next-foot.n").first() ?: return null
         val url = a.absHref()
         if (url.isEmpty()) return null
-        return NovelGenre(genre.name, url)
+        return NovelSearch(genre.name, url)
     }
 
     @SuppressLint("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
         val root = request(requester)
-        return if (isSearchResult(requester.url)) {
-            root.select("#results > div.result-list > div > div.result-game-item-detail").map {
+        return when {
+            requester is SearchListRequester -> root.select("#results > div.result-list > div > div.result-game-item-detail").map {
                 val a = it.select("h3 > a").first()
                 val name = a.title()
                 val url = a.absHref()
@@ -60,8 +60,7 @@ class Biquge : NovelContext() {
                 val info = "最新章节: $last 类型: $genre 更新: $update 简介: $about"
                 NovelListItem(NovelItem(this, name, author, url), info)
             }
-        } else if (requester.url.startsWith("http://www.biqubao.com/quanben/")) {
-            root.select("#main > div.novelslist2 > ul > li:not(:nth-child(1))").map {
+            requester.url.startsWith("http://www.biqubao.com/quanben/") -> root.select("#main > div.novelslist2 > ul > li:not(:nth-child(1))").map {
                 val a = it.select("> span.s2 > a").first()
                 val name = a.text()
                 val url = a.absHref()
@@ -72,24 +71,21 @@ class Biquge : NovelContext() {
                 val info = "最新章节: $last 类型: $genre 更新: $update"
                 NovelListItem(NovelItem(this, name, author, url), info)
             }
-        } else {
-            val list1 = root.select("#hotcontent > div > div").map {
+            else -> root.select("#hotcontent > div > div").map {
                 val a = it.select("> dl > dt > a").first()
                 val name = a.text()
                 val url = a.absHref()
                 val author = it.select("> dl > dt > span").first().text()
                 val info = it.select("> dl > dd").first().text().trim()
                 NovelListItem(NovelItem(this, name, author, url), info)
-            }
-            val list2 = root.select("#newscontent > div.l > ul > li").map {
+            } + root.select("#newscontent > div.l > ul > li").map {
                 val a = it.select("> span.s2 > a").first()
                 val name = a.text()
                 val url = a.absHref()
                 val author = it.select("> span.s5").first().text()
                 val info = it.select("> span.s3").first().text()
                 NovelListItem(NovelItem(this, name, author, url), info)
-            }
-            val list3 = root.select("#newscontent > div.r > ul > li").map {
+            } + root.select("#newscontent > div.r > ul > li").map {
                 val a = it.select("> span.s2 > a").first()
                 val name = a.text()
                 val url = a.absHref()
@@ -97,7 +93,6 @@ class Biquge : NovelContext() {
                 val info = ""
                 NovelListItem(NovelItem(this, name, author, url), info)
             }
-            list1 + list2 + list3
         }
     }
 
@@ -113,7 +108,8 @@ class Biquge : NovelContext() {
      */
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
-        return NovelGenre(name, "$SEARCH_PAGE_URL?s=11522483553330821378&q=$key")
+        val url = "$SEARCH_PAGE_URL?s=11522483553330821378&q=$key"
+        return NovelSearch(name, url)
     }
 
     private fun isSearchResult(url: String): Boolean {

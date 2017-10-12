@@ -51,7 +51,7 @@ class PiaotianTest {
 
     @Test
     fun getNovelList() {
-        context.getNovelList(ListRequester("http://www.piaotian.com/booksort1/0/1.html")).let {
+        context.getNovelList(GenreListRequester("http://www.piaotian.com/booksort1/0/1.html")).let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
@@ -89,12 +89,6 @@ class PiaotianTest {
                 novelItem.novel.name == "从前有座灵剑山"
             })
         }
-    }
-
-    @Test
-    fun isSearchResult() {
-        assertTrue(context.isSearchResult(ListRequester("http://www.piaotian.com/modules/article/search.php")))
-        assertFalse(context.isSearchResult(ListRequester("http://www.piaotian.com/booksort1/0/1.html")))
     }
 
     @Test
