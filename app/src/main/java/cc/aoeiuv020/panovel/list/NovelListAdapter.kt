@@ -15,9 +15,9 @@ class NovelListAdapter(private val ctx: Activity, data: List<NovelListItem>) : B
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View
             = (convertView ?: LayoutInflater.from(ctx).inflate(R.layout.novel_list_item, parent, false)).apply {
         val novel = getItem(position)
-        novel_name.text = novel.novel.name
-        novel_author.text = novel.novel.author
-        novel_info.text = novel.info
+        novelName.text = novel.novel.name
+        novelAuthor.text = novel.novel.author
+        novelInfo.text = novel.info
     }
 
     override fun getItem(position: Int) = items[position]

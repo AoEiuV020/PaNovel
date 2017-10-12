@@ -32,7 +32,7 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
 
     init {
         textRecyclerView = itemView.textRecyclerView
-        layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
+        layoutManager = LinearLayoutManager(ctx)
         textRecyclerView.layoutManager = layoutManager
         textRecyclerView.iAdapter = textListAdapter
         // 这有个警告禁用不了，只能这样无意义的强转一下，
