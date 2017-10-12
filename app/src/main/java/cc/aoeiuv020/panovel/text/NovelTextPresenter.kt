@@ -42,7 +42,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
             var downloads = 0
             var errors = 0
             chapters.drop(fromIndex).forEach { chapter ->
-                Cache.text.get(novelItem, chapter.name).also { exists++ } ?: try {
+                Cache.text.get(novelItem, chapter.name)?.also { exists++ } ?: try {
                     context.getNovelText(chapter.requester)
                 } catch (_: Exception) {
                     errors++
