@@ -7,7 +7,7 @@
     tools:context="cc.aoeiuv020.panovel.main.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <com.aspsine.irecyclerview.IRecyclerView
+    <cn.lemon.view.RefreshRecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -15,8 +15,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:loadMoreEnabled="true"
-        app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp" />
 </android.support.constraint.ConstraintLayout>

@@ -55,4 +55,5 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.1'
     implementation 'com.github.QuadFlask:colorpicker:0.0.13'
     implementation 'com.github.Aspsine:IRecyclerView:0.0.5'
+    implementation project(':RefreshRecyclerView')
 }

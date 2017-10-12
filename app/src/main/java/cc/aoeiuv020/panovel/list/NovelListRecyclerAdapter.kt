@@ -1,65 +1,40 @@
 package cc.aoeiuv020.panovel.list
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.toJson
+import cn.lemon.view.adapter.BaseViewHolder
+import cn.lemon.view.adapter.RecyclerAdapter
 import kotlinx.android.synthetic.main.novel_list_item.view.*
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
 import org.jetbrains.anko.startActivity
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.12-17:11:53.
  */
-class NovelListRecyclerAdapter(private val ctx: Context) : RecyclerView.Adapter<NovelListRecyclerAdapter.ItemViewHolder>(), AnkoLogger {
-    companion object {
-        private val I_RECYCLER_VIEW_HEADER_COUNT: Int = 2
-    }
+class NovelListRecyclerAdapter(ctx: Context) : RecyclerAdapter<NovelListItem>(ctx), AnkoLogger {
+    override fun onCreateBaseViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<NovelListItem>
+            = ItemViewHolder(parent, R.layout.novel_list_item)
 
-    private var items: MutableList<NovelListItem> = mutableListOf()
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val novel = items[position]
-        holder.apply {
+    class ItemViewHolder(parent: ViewGroup, layoutId: Int) : BaseViewHolder<NovelListItem>(parent, layoutId) {
+        private val novelName: TextView = itemView.novelName
+        private val novelAuthor: TextView = itemView.novelAuthor
+        private val novelInfo: TextView = itemView.novelInfo
+
+        override fun setData(novel: NovelListItem) {
+            super.setData(novel)
             novelName.text = novel.novel.name
             novelAuthor.text = novel.novel.author
             novelInfo.text = novel.info
         }
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ItemViewHolder
-            = ItemViewHolder(LayoutInflater.from(ctx).inflate(R.layout.novel_list_item, parent, false)).apply {
-        itemView.setOnClickListener {
-            val position = layoutPosition - I_RECYCLER_VIEW_HEADER_COUNT
-            val novelItem = items[position].novel
-            debug { "novel item click $position, $novelItem" }
-            ctx.startActivity<NovelDetailActivity>("novelItem" to novelItem.toJson())
+        override fun onItemViewClick(novelItem: NovelListItem) {
+            itemView.context.startActivity<NovelDetailActivity>("novelItem" to novelItem.novel.toJson())
         }
-
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    fun setData(novelList: List<NovelListItem>) {
-        items = novelList.toMutableList()
-        notifyDataSetChanged()
-    }
-
-    fun addAll(novelList: List<NovelListItem>) {
-        items.addAll(novelList)
-        notifyDataSetChanged()
-    }
-
-    class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val novelName: TextView = view.novelName
-        val novelAuthor: TextView = view.novelAuthor
-        val novelInfo: TextView = view.novelInfo
     }
 }

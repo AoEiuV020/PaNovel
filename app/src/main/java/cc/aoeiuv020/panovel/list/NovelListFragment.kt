@@ -15,7 +15,9 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.main.MainActivity
-import cc.aoeiuv020.panovel.util.*
+import cc.aoeiuv020.panovel.util.alert
+import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.loading
 import kotlinx.android.synthetic.main.content_main.*
 
 /**
@@ -46,8 +48,13 @@ class NovelListFragment : Fragment(), IView {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        recyclerView.iAdapter = mAdapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.apply {
+            setAdapter(mAdapter)
+            setLayoutManager(LinearLayoutManager(context))
+            setLoadMoreAction {
+                presenter.loadNextPage()
+            }
+        }
     }
 
     fun showError(message: String, e: Throwable) {
@@ -57,14 +64,13 @@ class NovelListFragment : Fragment(), IView {
 
     fun showNovelList(novelList: List<NovelListItem>) {
         progressDialog.dismiss()
+        mAdapter.clear()
+        mAdapter.addAll(novelList)
         recyclerView.run {
-            scrollToPosition(0)
-            mAdapter.setData(novelList)
-            setOnLoadMoreListener {
-                presenter.loadNextPage()
+            recyclerView.run {
+                scrollToPosition(0)
             }
-            setLoadMoreEnabled(true)
-            loadMoreFooterView.show()
+            showNoMore()
         }
     }
 
@@ -73,16 +79,12 @@ class NovelListFragment : Fragment(), IView {
     }
 
     fun showYetLastPage() {
-        recyclerView.apply {
-            setLoadMoreEnabled(false)
-            loadMoreFooterView.hide()
-        }
+        recyclerView.showNoMore()
         progressDialog.dismiss()
         activity.alert(alertDialog, R.string.yet_last_page)
     }
 
     fun showGenre(genre: NovelGenre) {
-        recyclerView.setLoadMoreEnabled(true)
         activity.loading(progressDialog, R.string.novel_list)
         presenter.requestNovelList(genre)
     }
