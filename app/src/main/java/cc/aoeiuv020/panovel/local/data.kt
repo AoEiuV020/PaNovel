@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.panovel.api.NovelDetail
+import cc.aoeiuv020.panovel.api.NovelItem
 import java.util.*
 
 /**
@@ -12,5 +12,5 @@ abstract class LocalData
 data class NovelProgress(var chapterProgress: Int = 0, var textProgress: Int = 0)
     : LocalData()
 
-data class NovelHistory(val detail: NovelDetail, val date: Date = Date())
+data class NovelHistory(val novel: NovelItem, val date: Date = Date())
     : LocalData()

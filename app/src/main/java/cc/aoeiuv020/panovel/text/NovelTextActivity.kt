@@ -181,7 +181,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun showDetail(detail: NovelDetail) {
         this.novelDetail = detail
-        History.add(detail)
+        History.add(detail.novel)
         presenter.requestChapters(detail.requester)
     }
 

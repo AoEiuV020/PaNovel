@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.panovel.api.NovelDetail
+import cc.aoeiuv020.panovel.api.NovelItem
 
 
 /**
@@ -8,12 +9,16 @@ import cc.aoeiuv020.panovel.api.NovelDetail
  * Created by AoEiuV020 on 2017.10.04-19:23:01.
  */
 
+@Suppress("MemberVisibilityCanPrivate")
 object Bookshelf : LocalSource {
-    fun contains(novelDetail: NovelDetail): Boolean = gsonExists(novelDetail.bookId)
+    fun contains(novelDetail: NovelDetail): Boolean = contains(novelDetail.novel)
+    fun contains(novelItem: NovelItem): Boolean = gsonExists(novelItem.bookId)
 
-    fun add(novelDetail: NovelDetail) = gsonSave(novelDetail.bookId, novelDetail)
+    fun add(novelDetail: NovelDetail) = add(novelDetail.novel)
+    fun add(novelItem: NovelItem) = gsonSave(novelItem.bookId, novelItem)
 
-    fun remove(novelDetail: NovelDetail) = gsonRemove(novelDetail.bookId)
+    fun remove(novelDetail: NovelDetail) = remove(novelDetail.novel)
+    fun remove(novelItem: NovelItem) = gsonRemove(novelItem.bookId)
 
-    fun list(): List<NovelDetail> = gsonList()
+    fun list(): List<NovelItem> = gsonList()
 }

@@ -101,15 +101,15 @@ class MainActivity : MainBaseNavigationActivity(), IView, AnkoLogger {
                 R.id.select_sites -> presenter.requestSites()
                 R.id.bookshelf -> {
                     val list = Bookshelf.list()
-                    selector(getString(R.string.bookshelf), list.map { "${it.novel.name} - ${it.novel.site}" }) { _, i ->
-                        val novelDetail = list[i]
-                        startActivity<NovelDetailActivity>("novelItem" to novelDetail.novel.toJson())
+                    selector(getString(R.string.bookshelf), list.map { "${it.name} - ${it.site}" }) { _, i ->
+                        val novelItem = list[i]
+                        startActivity<NovelDetailActivity>("novelItem" to novelItem.toJson())
                     }
                 }
                 R.id.history -> History.list().let { list ->
-                    selector(getString(R.string.history), list.map { it.detail }.map { "${it.novel.name} - ${it.novel.site}" }) { _, i ->
-                        val novelDetail = list[i].detail
-                        startActivity<NovelDetailActivity>("novelItem" to novelDetail.novel.toJson())
+                    selector(getString(R.string.history), list.map { it.novel }.map { "${it.name} - ${it.site}" }) { _, i ->
+                        val novelItem = list[i].novel
+                        startActivity<NovelDetailActivity>("novelItem" to novelItem.toJson())
                     }
                 }
             }

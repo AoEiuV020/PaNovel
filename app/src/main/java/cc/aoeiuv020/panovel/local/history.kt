@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.panovel.api.NovelDetail
+import cc.aoeiuv020.panovel.api.NovelItem
 
 /**
  *
@@ -9,13 +9,13 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 object History : LocalSource {
     private var max: Int = 50
 
-    private fun add(history: NovelHistory) = gsonSave(history.detail.bookId, history)
+    private fun add(history: NovelHistory) = gsonSave(history.novel.bookId, history)
 
-    fun add(detail: NovelDetail) = add(NovelHistory(detail))
+    fun add(item: NovelItem) = add(NovelHistory(item))
 
-    private fun remove(detail: NovelDetail) = gsonRemove(detail.bookId)
+    private fun remove(item: NovelItem) = gsonRemove(item.bookId)
 
-    private fun remove(history: NovelHistory) = remove(history.detail)
+    private fun remove(history: NovelHistory) = remove(history.novel)
 
     fun list(): List<NovelHistory> = gsonList<NovelHistory>().sortedByDescending { it.date }.let { list ->
         // 删除过多的历史，
