@@ -53,6 +53,7 @@ class NovelListFragment : Fragment(), IView {
     }
 
     fun showError(message: String, e: Throwable) {
+        recyclerView.dismissSwipeRefresh()
         activity.alertError(alertDialog, message, e)
     }
 
