@@ -51,7 +51,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         novelItem = intent.getStringExtra("novelItem").toBean()
         // 进度，读取顺序， savedInstanceState > intent > ReadProgress
         progress = savedInstanceState?.run { getString("progress").toBean<NovelProgress>() }
-                ?: (intent.getSerializableExtra("index") as? Int)?.let { NovelProgress(it) } ?: ReadProgress.get(novelItem)
+                ?: (intent.getSerializableExtra("index") as? Int)?.let { NovelProgress(it) } ?: Cache.progress.get(novelItem) ?: NovelProgress()
         debug { "receive $novelItem, $progress" }
         val requester = novelItem.requester
         novelName = novelItem.name
@@ -211,7 +211,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         debug {
             "save progress $progress"
         }
-        ReadProgress.put(novelItem, progress)
+        Cache.progress.put(novelItem, progress)
     }
 
     private fun refresh() {

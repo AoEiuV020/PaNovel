@@ -30,6 +30,8 @@ class Cache<T>(private val type: Type,
         val chapters: Cache<List<NovelChapter>> = new("NovelChapters", chaptersCacheTimeout)
 
         val text: Cache<NovelText> = new()
+
+        val progress: Cache<NovelProgress> = new()
     }
 
     private fun id(item: NovelItem, fileName: String) = "${item.bookId}/$cacheName/$fileName"
