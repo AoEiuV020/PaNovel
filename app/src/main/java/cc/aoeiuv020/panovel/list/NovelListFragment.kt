@@ -70,7 +70,7 @@ class NovelListFragment : Fragment(), IView {
         mAdapter.addAll(novelList)
     }
 
-    fun showYetLastPage() {
+    fun showNoMore() {
         recyclerView.showNoMore()
     }
 

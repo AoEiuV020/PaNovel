@@ -45,7 +45,7 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
         }.async().toList().subscribe({ genres ->
             if (genres.isEmpty()) {
                 debug { "没有下一页" }
-                view?.showYetLastPage()
+                view?.showNoMore()
                 return@subscribe
             }
             genre = genres.first()
