@@ -48,7 +48,7 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
                 view?.showYetLastPage()
                 return@subscribe
             }
-            val genre = genres.first()
+            genre = genres.first()
             saveGenre(genre)
             view?.showUrl(genre.requester.url)
             Observable.fromCallable {
