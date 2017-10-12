@@ -25,7 +25,7 @@ class NovelTextListAdapter(private val ctx: Context) : BaseAdapter(), AnkoLogger
     @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View
             = (convertView ?: LayoutInflater.from(ctx).inflate(R.layout.novel_text_item, parent, false)).apply {
-        textView.text = "        " + getItem(position)
+        textView.text = "　　" + getItem(position)
         textView.textSize = textSize.toFloat()
         // 直接设置字号的话不会自动调整高度，手动请求一下，
         textView.post {
