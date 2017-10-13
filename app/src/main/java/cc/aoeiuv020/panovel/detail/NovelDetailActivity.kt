@@ -39,6 +39,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     private lateinit var chapterAdapter: NovelChaptersAdapter
     private var novelDetail: NovelDetail? = null
     private lateinit var novelItem: NovelItem
+    private var isRefreshEnable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,8 +75,9 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         swipeRefreshLayout.setOnRefreshListener {
             refresh()
         }
+        swipeRefreshLayout.setOnChildScrollUpCallback { _, _ -> !isRefreshEnable }
         app_bar.addOnOffsetChangedListener { _, verticalOffset ->
-            swipeRefreshLayout.isEnabled = verticalOffset == 0
+            isRefreshEnable = verticalOffset == 0
         }
         swipeRefreshLayout.isRefreshing = true
 
