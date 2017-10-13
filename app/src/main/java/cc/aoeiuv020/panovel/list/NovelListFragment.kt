@@ -60,7 +60,11 @@ class NovelListFragment : Fragment(), IView {
     fun showNovelList(novelList: List<NovelListItem>) {
         mAdapter.clear()
         mAdapter.addAll(novelList)
-        mAdapter.openLoadMore()
+        if (novelList.isEmpty()) {
+            showNoMore()
+        } else {
+            mAdapter.openLoadMore()
+        }
         recyclerView.run {
             recyclerView.scrollToPosition(0)
             dismissSwipeRefresh()
