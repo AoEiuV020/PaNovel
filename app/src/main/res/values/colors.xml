@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="black_overlay">#66000000</color>
+    <color name="colorChapterCached">#0f0</color>
+    <color name="colorChapterReadAt">#f00</color>
+    <color name="colorChapterDefault">@android:color/primary_text_light</color>
 </resources>

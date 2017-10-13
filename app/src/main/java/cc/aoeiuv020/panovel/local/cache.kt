@@ -17,6 +17,7 @@ class Cache<T>(private val type: Type,
                private val defaultTimeout: Long
 ) : LocalSource {
     companion object : LocalSource {
+        private val DEFAULT_FILE_NAME = "default"
         private inline fun <reified T> new(defaultName: String = Cache::class.java.simpleName,
                                            defaultTimeout: Long = 0): Cache<T> {
             val type = type<T>()
@@ -36,10 +37,12 @@ class Cache<T>(private val type: Type,
 
     private fun id(item: NovelItem, fileName: String) = "${item.bookId}/$cacheName/$fileName"
 
-    fun put(item: NovelItem, t: T, fileName: String = "default") = gsonSave(id(item, fileName), t)
+    fun put(item: NovelItem, t: T, fileName: String = DEFAULT_FILE_NAME) = gsonSave(id(item, fileName), t)
 
     /**
      * @param timeout 传入0表示不判断超时，
      */
-    fun get(item: NovelItem, fileName: String = "default", timeout: Long = defaultTimeout): T? = gsonLoad(id(item, fileName), type, timeout)
+    fun get(item: NovelItem, fileName: String = DEFAULT_FILE_NAME, timeout: Long = defaultTimeout): T? = gsonLoad(id(item, fileName), type, timeout)
+
+    fun exists(item: NovelItem, fileName: String = DEFAULT_FILE_NAME) = gsonExists(id(item, fileName))
 }

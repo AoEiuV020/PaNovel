@@ -91,6 +91,11 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         super.onDestroy()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        chapterAdapter.refresh()
+    }
+
     private fun setTitle(novelItem: NovelItem) {
         toolbar_layout.title = "${novelItem.name} - ${novelItem.author}"
     }
