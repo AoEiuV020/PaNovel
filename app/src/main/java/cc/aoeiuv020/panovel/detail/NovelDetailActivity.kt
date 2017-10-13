@@ -74,6 +74,9 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         swipeRefreshLayout.setOnRefreshListener {
             refresh()
         }
+        app_bar.addOnOffsetChangedListener { _, verticalOffset ->
+            swipeRefreshLayout.isEnabled = verticalOffset == 0
+        }
         swipeRefreshLayout.isRefreshing = true
 
         presenter = NovelDetailPresenter(novelItem)

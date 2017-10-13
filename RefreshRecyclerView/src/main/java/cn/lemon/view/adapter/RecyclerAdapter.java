@@ -36,7 +36,7 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<BaseViewHo
     protected View mStatusView;
     protected LinearLayout mLoadMoreView;
     int mViewCount = 0;
-    private boolean allowLog = true;  //改成false关闭日志
+    private boolean allowLog = false;  //改成false关闭日志
     private boolean hasHeader = false;
     private boolean hasFooter = false;
     private List<T> mData = new ArrayList<>();
@@ -325,14 +325,14 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<BaseViewHo
         return footerView;
     }
 
-    public void setFooter(@LayoutRes int res) {
-        setFooter(LayoutInflater.from(mContext).inflate(res, null));
-    }
-
     public void setFooter(View footer) {
         hasFooter = true;
         footerView = footer;
         mViewCount++;
+    }
+
+    public void setFooter(@LayoutRes int res) {
+        setFooter(LayoutInflater.from(mContext).inflate(res, null));
     }
 
     public void removeHeader() {
