@@ -16,12 +16,12 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 
 class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : RecyclerAdapter<NovelChapter>(ctx), AnkoLogger {
-    private var readAt = Cache.progress.get(novelItem)?.chapterProgress ?: 0
+    private var readAt = Cache.progress.get(novelItem)?.chapter ?: 0
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelChapter>
             = ViewHolder(parent)
 
     fun refresh() {
-        readAt = Cache.progress.get(novelItem)?.chapterProgress ?: 0
+        readAt = Cache.progress.get(novelItem)?.chapter ?: 0
         notifyDataSetChanged()
     }
 

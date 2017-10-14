@@ -9,7 +9,7 @@ import java.util.*
  */
 abstract class LocalData
 
-data class NovelProgress(var chapterProgress: Int = 0, var textProgress: Int = 0)
+data class NovelProgress(var chapter: Int = 0, var text: Int = 0)
     : LocalData()
 
 data class NovelHistory(val novel: NovelItem, val date: Date = Date())

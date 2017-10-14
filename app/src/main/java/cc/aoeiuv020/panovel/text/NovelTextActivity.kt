@@ -167,7 +167,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     private fun currentChapterIndex(index: Int) {
-        progress.chapterProgress = index
+        progress.chapter = index
         val chapter = chaptersAsc[index]
         title = "$novelName - ${chapter.name}"
         urlTextView.text = chapter.requester.url
@@ -187,7 +187,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun showChapters(chaptersAsc: List<NovelChapter>) {
         this.chaptersAsc = chaptersAsc
-        currentChapterIndex(progress.chapterProgress)
+        currentChapterIndex(progress.chapter)
         progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {
             alert(alertDialog, R.string.novel_not_support)
@@ -197,9 +197,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
         viewPager.adapter = NovelTextPagerAdapter(this, presenter, chaptersAsc)
                 .also { ntpAdapter = it }
-        viewPager.currentItem = progress.chapterProgress
+        viewPager.currentItem = progress.chapter
         viewPager.post {
-            ntpAdapter?.setTextProgress(progress.textProgress)
+            ntpAdapter?.setTextProgress(progress.text)
         }
     }
 
