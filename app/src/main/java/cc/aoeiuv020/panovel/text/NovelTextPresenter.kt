@@ -102,7 +102,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
         })
     }
 
-    fun subPresenter(view: NovelTextViewHolder) = NTPresenter().apply { attach(view) }
+    fun subPresenter() = NTPresenter()
 
     inner class NTPresenter : Presenter<NovelTextViewHolder>() {
         fun requestNovelText(chapter: NovelChapter) {

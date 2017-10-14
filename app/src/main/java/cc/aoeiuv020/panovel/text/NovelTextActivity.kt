@@ -163,6 +163,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     override fun onDestroy() {
         presenter.detach()
+        // 清空viewPager，自动调用destroyItem切断presenter,
+        viewPager.adapter = null
         super.onDestroy()
     }
 

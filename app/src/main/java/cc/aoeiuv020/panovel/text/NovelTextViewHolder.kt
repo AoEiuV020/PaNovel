@@ -21,7 +21,7 @@ import org.jetbrains.anko.debug
 
 class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
-    private val presenter = presenter.subPresenter(this)
+    private val presenter = presenter.subPresenter()
     private val headerView: View
     private val chapterNameTextView: TextView
     private val textRecyclerView: RefreshRecyclerView
@@ -49,7 +49,12 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
         progressBar.show()
         chapterNameTextView.text = chapter.name
         textListAdapter.clear()
+        presenter.attach(this)
         presenter.requestNovelText(chapter)
+    }
+
+    fun destroy() {
+        presenter.detach()
     }
 
     fun showText(novelText: NovelText) {

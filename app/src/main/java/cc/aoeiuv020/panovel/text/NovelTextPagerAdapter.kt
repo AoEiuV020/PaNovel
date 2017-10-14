@@ -42,9 +42,13 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any?) {
+        debug {
+            "destroy $position"
+        }
         val holder = obj as NovelTextViewHolder
         val view = holder.itemView
         container.removeView(view)
+        holder.destroy()
         holder.let {
             usedHolders.remove(it)
             unusedHolders.push(holder)
