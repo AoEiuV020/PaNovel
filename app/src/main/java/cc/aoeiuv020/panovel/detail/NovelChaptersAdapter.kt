@@ -14,14 +14,25 @@ import cn.lemon.view.adapter.RecyclerAdapter
 import kotlinx.android.synthetic.main.novel_chapter_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
+import kotlin.properties.Delegates
 
 class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : RecyclerAdapter<NovelChapter>(ctx), AnkoLogger {
-    private var readAt = Cache.progress.get(novelItem)?.chapter ?: 0
+    private var readAt: Int by Delegates.notNull()
+    private lateinit var cachedList: Set<String>
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelChapter>
             = ViewHolder(parent)
 
-    fun refresh() {
+    init {
+        init()
+    }
+
+    private fun init() {
         readAt = Cache.progress.get(novelItem)?.chapter ?: 0
+        cachedList = Cache.text.cachedList(novelItem).toSet()
+    }
+
+    fun refresh() {
+        init()
         notifyDataSetChanged()
     }
 
@@ -31,7 +42,7 @@ class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : Rec
             super.setData(issue)
             nameTextView.apply {
                 text = issue.name
-                isSelected = readAt == indexAsc
+                isSelected = cachedList.contains(issue.name)
             }
         }
 

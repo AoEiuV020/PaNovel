@@ -4,6 +4,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.NovelText
+import java.io.File
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
@@ -35,15 +36,17 @@ class Cache<T>(private val type: Type,
         val progress: Cache<NovelProgress> = new()
     }
 
-    private fun id(item: NovelItem, fileName: String) = "${item.bookId}/$cacheName/$fileName"
+    private fun folder(item: NovelItem) = "${item.bookId}${File.separatorChar}$cacheName"
 
-    fun put(item: NovelItem, t: T, fileName: String = DEFAULT_FILE_NAME) = gsonSave(id(item, fileName), t)
+    fun put(item: NovelItem, t: T, fileName: String = DEFAULT_FILE_NAME) = gsonSave(fileName, t, folder(item))
 
     /**
      * @param timeout 传入0表示不判断超时，
      */
-    fun get(item: NovelItem, fileName: String = DEFAULT_FILE_NAME, timeout: Long = defaultTimeout): T? = gsonLoad(id(item, fileName), type, timeout)
+    fun get(item: NovelItem, fileName: String = DEFAULT_FILE_NAME, timeout: Long = defaultTimeout): T? = gsonLoad(fileName, type, timeout, folder(item))
+
+    fun cachedList(item: NovelItem): List<String> = gsonNameList(folder(item))
 
     @Suppress("unused")
-    fun exists(item: NovelItem, fileName: String = DEFAULT_FILE_NAME) = gsonExists(id(item, fileName))
+    fun exists(item: NovelItem, fileName: String = DEFAULT_FILE_NAME) = gsonExists(fileName, folder(item))
 }
