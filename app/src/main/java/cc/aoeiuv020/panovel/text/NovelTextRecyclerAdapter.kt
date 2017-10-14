@@ -19,7 +19,6 @@ import org.jetbrains.anko.dip
  * Created by AoEiuV020 on 2017.10.12-14:55:56.
  */
 class NovelTextRecyclerAdapter(private val ctx: NovelTextActivity) : RecyclerAdapter<String>(ctx), AnkoLogger {
-    private var items = emptyList<String>()
     private var mTextSize = Settings.textSize
     private var mLineSpacing = Settings.lineSpacing
     private var mParagraphSpacing = Settings.paragraphSpacing
