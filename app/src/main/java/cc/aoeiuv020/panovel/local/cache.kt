@@ -44,5 +44,6 @@ class Cache<T>(private val type: Type,
      */
     fun get(item: NovelItem, fileName: String = DEFAULT_FILE_NAME, timeout: Long = defaultTimeout): T? = gsonLoad(id(item, fileName), type, timeout)
 
+    @Suppress("unused")
     fun exists(item: NovelItem, fileName: String = DEFAULT_FILE_NAME) = gsonExists(id(item, fileName))
 }

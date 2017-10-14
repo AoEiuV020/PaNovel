@@ -31,14 +31,7 @@ class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : Rec
             super.setData(issue)
             nameTextView.apply {
                 text = issue.name
-                setTextColor(when {
-                    readAt == indexAsc -> R.color.colorChapterReadAt
-                    Cache.text.exists(novelItem, issue.name) -> R.color.colorChapterCached
-                    else -> R.color.colorChapterDefault
-                }.let {
-                    @Suppress("DEPRECATION")
-                    context.resources.getColor(it)
-                })
+                isSelected = readAt == indexAsc
             }
         }
 
