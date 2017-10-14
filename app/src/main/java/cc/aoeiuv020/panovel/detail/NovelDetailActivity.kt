@@ -119,8 +119,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     fun showNovelChapters(chapters: List<NovelChapter>) {
-        chapterAdapter.clear()
-        chapterAdapter.addAll(chapters.asReversed())
+        chapterAdapter.data = chapters.asReversed()
         recyclerView.recyclerView.post {
             swipeRefreshLayout.isRefreshing = false
         }

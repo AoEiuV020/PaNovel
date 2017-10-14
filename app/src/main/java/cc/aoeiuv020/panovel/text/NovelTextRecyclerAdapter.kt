@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelText
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.setHeight
 import cn.lemon.view.adapter.BaseViewHolder
@@ -71,13 +70,6 @@ class NovelTextRecyclerAdapter(private val ctx: NovelTextActivity) : RecyclerAda
 
     fun setTextColor(color: Int) {
         this.mTextColor = color
-        notifyDataSetChanged()
-    }
-
-    fun setNovelText(novelText: NovelText) {
-        debug { items.size }
-        clear()
-        addAll(novelText.textList)
         notifyDataSetChanged()
     }
 }

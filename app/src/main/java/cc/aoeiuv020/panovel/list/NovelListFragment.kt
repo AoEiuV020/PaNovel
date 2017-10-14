@@ -58,8 +58,7 @@ class NovelListFragment : Fragment(), IView {
     }
 
     fun showNovelList(novelList: List<NovelListItem>) {
-        mAdapter.clear()
-        mAdapter.addAll(novelList)
+        mAdapter.data = novelList
         if (novelList.isEmpty()) {
             showNoMore()
         } else {

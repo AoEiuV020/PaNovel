@@ -53,7 +53,7 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
     }
 
     fun showText(novelText: NovelText) {
-        textListAdapter.setNovelText(novelText)
+        textListAdapter.data = novelText.textList
         textProgress?.let {
             textRecyclerView.recyclerView.run {
                 post { scrollToPosition(it) }
