@@ -1,3 +1,4 @@
+/*
 package cc.aoeiuv020.panovel.bookshelf
 
 import android.os.Bundle
@@ -12,10 +13,12 @@ import kotlinx.android.synthetic.main.activity_bookshelf.*
 import kotlinx.android.synthetic.main.content_bookshelf.*
 import org.jetbrains.anko.startActivity
 
+*/
 /**
  *
  * Created by AoEiuV020 on 2017.10.14-21:54.
- */
+ *//*
+
 class BookshelfActivity : AppCompatActivity(), IView {
     private lateinit var mAdapter: BookshelfAdapter
     private lateinit var presenter: BookshelfPresenter
@@ -57,9 +60,11 @@ class BookshelfActivity : AppCompatActivity(), IView {
         presenter.refresh()
     }
 
-    /**
-     * 强行刷新，重新下载小说详情，主要是看最新章，
-     */
+    */
+/**
+ * 强行刷新，重新下载小说详情，主要是看最新章，
+ *//*
+
     private fun forceRefresh() {
         presenter.forceRefresh()
     }
@@ -75,3 +80,4 @@ class BookshelfActivity : AppCompatActivity(), IView {
     }
 
 }
+*/

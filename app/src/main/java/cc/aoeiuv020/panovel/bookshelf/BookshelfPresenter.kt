@@ -13,7 +13,7 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.14-21:54.
  */
-class BookshelfPresenter : Presenter<BookshelfActivity>() {
+class BookshelfPresenter : Presenter<BookshelfFragment>() {
     private var refreshTime = 0L
 
     fun start() {

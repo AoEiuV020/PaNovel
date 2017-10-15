@@ -26,8 +26,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name=".bookshelf.BookshelfActivity"
-            android:label="@string/title_activity_bookshelf"
+            android:name=".main.MainActivity"
+            android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
