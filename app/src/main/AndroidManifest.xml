@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".main.MainActivity"
+            android:name=".bookstore.BookstoreActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".detail.NovelDetailActivity"

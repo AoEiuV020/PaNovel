@@ -13,9 +13,9 @@ import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelListItem
-import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.util.alertError
-import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.content_bookstore.*
 
 /**
  *
@@ -26,7 +26,7 @@ class NovelListFragment : Fragment(), IView {
     private lateinit var presenter: NovelListPresenter
     private lateinit var mAdapter: NovelListRecyclerAdapter
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.content_main, container, false)
+        val root = inflater.inflate(R.layout.content_bookstore, container, false)
 
         alertDialog = AlertDialog.Builder(context).create()
 
@@ -87,7 +87,7 @@ class NovelListFragment : Fragment(), IView {
     }
 
     fun showUrl(url: String) {
-        (activity as MainActivity).showUrl(url)
+        (activity as BookstoreActivity).showUrl(url)
     }
 }
 

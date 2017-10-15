@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package cc.aoeiuv020.panovel.main
+package cc.aoeiuv020.panovel.bookstore
 
 import android.app.ProgressDialog
 import android.os.Bundle
@@ -20,16 +20,16 @@ import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.loading
 import com.bumptech.glide.Glide
 import com.miguelcatalan.materialsearchview.MaterialSearchView
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.nav_header_main.view.*
+import kotlinx.android.synthetic.main.activity_bookstore.*
+import kotlinx.android.synthetic.main.app_bar_bookstore.*
+import kotlinx.android.synthetic.main.nav_header_bookstore.view.*
 import org.jetbrains.anko.*
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.02-21:37:23.
  */
-class MainActivity : MainBaseNavigationActivity(), IView, AnkoLogger {
+class BookstoreActivity : BookstoreBaseNavigationActivity(), IView, AnkoLogger {
     companion object {
         private val GROUP_ID: Int = 1
     }
@@ -37,7 +37,7 @@ class MainActivity : MainBaseNavigationActivity(), IView, AnkoLogger {
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private var url: String = "https://github.com/AoEiuV020/PaNovel"
-    private lateinit var presenter: MainPresenter
+    private lateinit var presenter: BookstorePresenter
     private lateinit var genres: List<NovelGenre>
     private var site: NovelSite? = null
     private var genre: NovelGenre? = null
@@ -66,7 +66,7 @@ class MainActivity : MainBaseNavigationActivity(), IView, AnkoLogger {
 
         })
 
-        presenter = MainPresenter()
+        presenter = BookstorePresenter()
         presenter.attach(this)
         presenter.start()
     }
@@ -85,7 +85,7 @@ class MainActivity : MainBaseNavigationActivity(), IView, AnkoLogger {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_bookstore, menu)
         val item = menu.findItem(R.id.action_search)
         searchView.setMenuItem(item)
         return true
@@ -136,7 +136,7 @@ class MainActivity : MainBaseNavigationActivity(), IView, AnkoLogger {
     }
 
     fun showSites(sites: List<NovelSite>) {
-        AlertDialog.Builder(this@MainActivity).setAdapter(SiteListAdapter(this@MainActivity, sites)) { _, index ->
+        AlertDialog.Builder(this@BookstoreActivity).setAdapter(SiteListAdapter(this@BookstoreActivity, sites)) { _, index ->
             val site = sites[index]
             this.site = site
             debug { "选中网站：${site.name}，弹出侧栏，" }

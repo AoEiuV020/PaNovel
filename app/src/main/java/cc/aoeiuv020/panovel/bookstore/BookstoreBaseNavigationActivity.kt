@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.main
+package cc.aoeiuv020.panovel.bookstore
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -6,8 +6,8 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import cc.aoeiuv020.panovel.R
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.activity_bookstore.*
+import kotlinx.android.synthetic.main.app_bar_bookstore.*
 
 /**
  * 抽屉Activity，绝大部分代码是自动生成的，
@@ -15,11 +15,11 @@ import kotlinx.android.synthetic.main.app_bar_main.*
  * Created by AoEiuV020 on 2017.09.18-20:32:06.
  */
 @Suppress("MemberVisibilityCanPrivate", "unused")
-abstract class MainBaseNavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+abstract class BookstoreBaseNavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_bookstore)
         setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(

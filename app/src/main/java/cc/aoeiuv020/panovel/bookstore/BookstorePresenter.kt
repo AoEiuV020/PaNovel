@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.main
+package cc.aoeiuv020.panovel.bookstore
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelContext
@@ -15,7 +15,7 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.02-21:35:07.
  */
-class MainPresenter : Presenter<MainActivity>(), AnkoLogger {
+class BookstorePresenter : Presenter<BookstoreActivity>(), AnkoLogger {
     fun start() {
         debug { "读取记住的选择，" }
         loadSite()?.also { site ->

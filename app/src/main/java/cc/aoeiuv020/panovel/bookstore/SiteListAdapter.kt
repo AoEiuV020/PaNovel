@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.main
+package cc.aoeiuv020.panovel.bookstore
 
 import android.app.Activity
 import android.view.View

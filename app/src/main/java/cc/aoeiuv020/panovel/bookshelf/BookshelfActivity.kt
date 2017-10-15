@@ -7,7 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import kotlinx.android.synthetic.main.activity_bookshelf.*
 import kotlinx.android.synthetic.main.content_bookshelf.*
 import org.jetbrains.anko.startActivity
@@ -26,7 +26,7 @@ class BookshelfActivity : AppCompatActivity(), IView {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { _ ->
-            startActivity<MainActivity>()
+            startActivity<BookstoreActivity>()
         }
 
         recyclerView.setLayoutManager(LinearLayoutManager(this))
