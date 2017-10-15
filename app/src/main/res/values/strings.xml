@@ -50,7 +50,6 @@
     <string name="title_activity_bookshelf">@string/bookshelf</string>
     <string name="read_at">阅读至</string>
     <string name="last_chapter">最新章</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
