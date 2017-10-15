@@ -47,5 +47,8 @@
     <string name="downloading_title_placeholder">%s</string>
     <string name="download_complete_placeholder">下载完成 已存在%d章 下载%d章 失败%d章</string>
     <string name="download_complete_title_placeholder">%s</string>
+    <string name="title_activity_bookshelf">@string/bookshelf</string>
+    <string name="read_at">阅读至</string>
+    <string name="last_chapter">最新章</string>
 
 </resources>

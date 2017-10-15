@@ -1,18 +1,7 @@
 <resources>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="AppTheme.NoActionBar.TranslateStatusBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
-    <style name="FullscreenTheme" parent="AppTheme.NoActionBar">
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@android:color/white</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
-        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
     </style>
 
 </resources>
