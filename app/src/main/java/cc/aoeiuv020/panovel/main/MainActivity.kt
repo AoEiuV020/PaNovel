@@ -84,7 +84,12 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private val snack: Snackbar by lazy {
+        Snackbar.make(fab, "", Snackbar.LENGTH_SHORT)
+    }
+
     fun showError(message: String, e: Throwable) {
-        Snackbar.make(fab, message + e.message, Snackbar.LENGTH_SHORT).show()
+        snack.setText(message + e.message)
+        snack.show()
     }
 }
