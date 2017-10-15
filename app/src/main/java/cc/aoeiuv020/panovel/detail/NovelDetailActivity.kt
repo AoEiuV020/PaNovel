@@ -118,8 +118,8 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.requestChapters(detail.requester)
     }
 
-    fun showNovelChapters(chapters: List<NovelChapter>) {
-        chapterAdapter.data = chapters.asReversed()
+    fun showNovelChaptersDesc(chapters: ArrayList<NovelChapter>) {
+        chapterAdapter.data = chapters
         recyclerView.recyclerView.post {
             swipeRefreshLayout.isRefreshing = false
         }

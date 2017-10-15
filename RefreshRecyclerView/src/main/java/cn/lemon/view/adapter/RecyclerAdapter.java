@@ -325,14 +325,14 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<BaseViewHo
         return footerView;
     }
 
-    public void setFooter(@LayoutRes int res) {
-        setFooter(LayoutInflater.from(mContext).inflate(res, null));
-    }
-
     public void setFooter(View footer) {
         hasFooter = true;
         footerView = footer;
         mViewCount++;
+    }
+
+    public void setFooter(@LayoutRes int res) {
+        setFooter(LayoutInflater.from(mContext).inflate(res, null));
     }
 
     public void removeHeader() {
@@ -358,7 +358,11 @@ public abstract class RecyclerAdapter<T> extends RecyclerView.Adapter<BaseViewHo
             clear();
             return;
         }
-        mData = new ArrayList(data);
+        if (data instanceof ArrayList) {
+            mData = data;
+        } else {
+            mData = new ArrayList(data);
+        }
         mViewCount = 1;
         if (hasHeader) {
             mViewCount++;

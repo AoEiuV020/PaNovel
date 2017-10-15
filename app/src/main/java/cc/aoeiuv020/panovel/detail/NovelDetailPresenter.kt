@@ -66,9 +66,9 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
                     Cache.chapters.get(novelItem, timeout = 0)?.also { debug { "网络有问题，读取缓存不判断超时，${it.size}" } }
                             ?: throw e
                 }
-            }
+            }.asReversed().let { ArrayList(it) }
         }.async().subscribe({ chapters ->
-            view?.showNovelChapters(chapters)
+            view?.showNovelChaptersDesc(chapters)
         }, { e ->
             val message = "加载小说章节失败，"
             error(message, e)
