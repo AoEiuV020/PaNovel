@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
+import cc.aoeiuv020.panovel.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_settings -> Snackbar.make(container, "未实现", Snackbar.LENGTH_SHORT).show()
+            R.id.action_settings -> SettingsActivity.start(this)
         }
         return super.onOptionsItemSelected(item)
     }

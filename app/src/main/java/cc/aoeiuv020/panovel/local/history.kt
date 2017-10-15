@@ -7,7 +7,7 @@ import cc.aoeiuv020.panovel.api.NovelItem
  * Created by AoEiuV020 on 2017.10.10-17:59:51.
  */
 object History : LocalSource {
-    private var max: Int = 50
+    private val max get() = Settings.historyCount
 
     private fun add(history: NovelHistory) = gsonSave(history.novel.bookId, history)
 
