@@ -1,4 +1,5 @@
-package cc.aoeiuv020.panovel.bookshelf
+package cc.aoeiuv020.panovel.history
+
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,13 +13,14 @@ import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.main.MainActivity
 import kotlinx.android.synthetic.main.content_bookshelf.*
 
+
 /**
- *
- * Created by AoEiuV020 on 2017.10.15-17:22:28.
+ * 绝大部分照搬书架，
+ * Created by AoEiuV020 on 2017.10.15-18:07:39.
  */
-class BookshelfFragment : Fragment(), IView {
-    private lateinit var mAdapter: BookshelfAdapter
-    private lateinit var presenter: BookshelfPresenter
+class HistoryFragment : Fragment(), IView {
+    private lateinit var mAdapter: HistoryAdapter
+    private lateinit var presenter: HistoryPresenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -29,8 +31,8 @@ class BookshelfFragment : Fragment(), IView {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
-        presenter = BookshelfPresenter()
-        mAdapter = BookshelfAdapter(context, presenter)
+        presenter = HistoryPresenter()
+        mAdapter = HistoryAdapter(context, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()

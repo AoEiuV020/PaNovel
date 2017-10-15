@@ -4,12 +4,13 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
+import cc.aoeiuv020.panovel.history.HistoryFragment
 
 class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            1 -> BookshelfFragment.newInstance()
-            else -> BookshelfFragment.newInstance()
+            0 -> BookshelfFragment()
+            else -> HistoryFragment()
         }
     }
 
