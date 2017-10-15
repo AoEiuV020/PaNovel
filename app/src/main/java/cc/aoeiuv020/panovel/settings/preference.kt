@@ -33,6 +33,11 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
             "text_size" to ({ Settings.textSize.toString() } to { v -> Settings.textSize = v.toInt() })
     )
 
+    init {
+        // 默认可能没有读取数据初始化，所以要这句，
+        text = getPersistedString(text)
+    }
+
     override fun persistString(string: String): Boolean = try {
         debug {
             "$key < $string"
