@@ -33,7 +33,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     }
 
     fun download(fromIndex: Int) {
-        Observable.fromCallable {
+        Observable.create<List<Int>> { em ->
             val detail = Cache.detail.get(novelItem)
                     ?: context.getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
             val chapters = Cache.chapters.get(novelItem)
@@ -41,20 +41,27 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
             var exists = 0
             var downloads = 0
             var errors = 0
+            var left = chapters.size - fromIndex
+            fun next() = em.onNext(listOf(exists, downloads, errors, left))
             chapters.drop(fromIndex).forEach { chapter ->
-                Cache.text.get(novelItem, chapter.name)?.also { exists++ } ?: try {
+                left -= 1
+                Cache.text.get(novelItem, chapter.name)?.also { exists++; next() } ?: try {
                     context.getNovelText(chapter.requester)
                 } catch (_: Exception) {
-                    errors++
+                    errors++; next()
                     null
-                }?.also { Cache.text.put(novelItem, it, chapter.name); downloads++ }
+                }?.also { Cache.text.put(novelItem, it, chapter.name); downloads++; next() }
             }
-            Triple(exists, downloads, errors)
-        }.async().subscribe({ (exists, downloads, errors) ->
+            em.onComplete()
+        }.async().subscribe({ (exists, downloads, errors, left) ->
             debug {
-                "download complete <exists, $exists> <downloads, $downloads> <errors, $errors>"
+                "download <exists, $exists> <downloads, $downloads> <errors, $errors> <left, $left>"
             }
-            view?.downloadComplete(exists, downloads, errors)
+            if (left == 0) {
+                view?.showDownloadComplete(exists, downloads, errors)
+            } else {
+                view?.showDownloading(exists, downloads, errors, left)
+            }
         }, { e ->
             val message = "下载小说失败，"
             error(message, e)

@@ -4,6 +4,7 @@ package cc.aoeiuv020.panovel.text
 
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.Menu
@@ -224,14 +225,45 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private fun download() {
         val index = viewPager.currentItem
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
-                , novelItem.name)
+                , novelItem.name
+                , R.drawable.ic_file_download)
         presenter.download(index)
     }
 
-    fun downloadComplete(exists: Int, downloads: Int, errors: Int) {
+    private val handler: Handler = Handler()
+
+    /**
+     * 安卓通知是不按顺序的，使用唯一runnable确保顺序，
+     */
+    private val downloadingRunnable = object : Runnable {
+        var exists = 0
+        var downloads = 0
+        var errors = 0
+        var left = 0
+        fun set(exists: Int, downloads: Int, errors: Int, left: Int) {
+            this.exists = exists
+            this.downloads = downloads
+            this.errors = errors
+            this.left = left
+        }
+
+        override fun run() {
+            notify(1, getString(R.string.downloading_placeholder, exists, downloads, errors, left)
+                    , novelItem.name
+                    , R.drawable.ic_file_download)
+        }
+    }
+
+    fun showDownloading(exists: Int, downloads: Int, errors: Int, left: Int) {
+        handler.removeCallbacks(downloadingRunnable)
+        downloadingRunnable.set(exists, downloads, errors, left)
+        handler.postDelayed(downloadingRunnable, 100)
+    }
+
+    fun showDownloadComplete(exists: Int, downloads: Int, errors: Int) {
+        handler.removeCallbacks(downloadingRunnable)
         notify(1, getString(R.string.download_complete_placeholder, exists, downloads, errors)
-                , novelItem.name
-                , R.drawable.ic_file_download)
+                , novelItem.name)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
