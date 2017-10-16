@@ -101,24 +101,26 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                 }
             }
         }.async().subscribe({ chapters ->
-            view?.showChapters(chapters)
+            view?.showChaptersAsc(chapters)
         }, { e ->
             val message = "加载小说章节列表失败，"
             error(message, e)
             view?.showError(message, e)
         })
     }
-
     fun subPresenter() = NTPresenter()
 
     inner class NTPresenter : Presenter<NovelTextViewHolder>() {
+        var refresh = false
         fun requestNovelText(chapter: NovelChapter) {
             Observable.fromCallable {
                 if (refresh) {
-                    // 只刷新一章，
+                    debug { "$this refresh $chapter" }
+                    // 一次刷新所有正在展示的章节，每个presenter刷一次，
                     refresh = false
                     context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.name) }
                 } else {
+                    debug { "$this load $chapter" }
                     Cache.text.get(novelItem, chapter.name)
                             ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.name) }
                 }

@@ -33,7 +33,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private lateinit var presenter: NovelTextPresenter
     private lateinit var novelName: String
     private lateinit var chaptersAsc: List<NovelChapter>
-    private var ntpAdapter: NovelTextPagerAdapter? = null
+    private lateinit var ntpAdapter: NovelTextPagerAdapter
     private var novelDetail: NovelDetail? = null
     private lateinit var novelItem: NovelItem
     private lateinit var progress: NovelProgress
@@ -86,7 +86,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 val iTextSize = 12 + progress
                 textSizeTextView.text = getString(R.string.text_size_placeholders, iTextSize)
-                ntpAdapter?.setTextSize(iTextSize)
+                ntpAdapter.setTextSize(iTextSize)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -105,7 +105,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         lineSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 lineSpacingTextView.text = getString(R.string.line_spacing_placeholder, progress)
-                ntpAdapter?.setLineSpacing(progress)
+                ntpAdapter.setLineSpacing(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -123,7 +123,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         paragraphSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 paragraphSpacingTextView.text = getString(R.string.paragraph_spacing_placeholder, progress)
-                ntpAdapter?.setParagraphSpacing(progress)
+                ntpAdapter.setParagraphSpacing(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -152,12 +152,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             alertColorPicker(Settings.textColor) { color ->
                 Settings.textColor = color
                 textColorTextView.text = getString(R.string.text_color_placeholder, color)
-                ntpAdapter?.setTextColor(color)
+                ntpAdapter.setTextColor(color)
             }
         }
 
-        loading(progressDialog, R.string.novel_page)
         presenter = NovelTextPresenter(novelItem)
+        ntpAdapter = NovelTextPagerAdapter(this, presenter)
+        viewPager.adapter = ntpAdapter
+
+        loading(progressDialog, R.string.novel_page)
         presenter.attach(this)
         presenter.start()
     }
@@ -188,7 +191,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         presenter.requestChapters(detail.requester)
     }
 
-    fun showChapters(chaptersAsc: List<NovelChapter>) {
+    fun showChaptersAsc(chaptersAsc: List<NovelChapter>) {
         this.chaptersAsc = chaptersAsc
         currentChapterIndex(progress.chapter)
         progressDialog.dismiss()
@@ -198,19 +201,17 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             show()
             return
         }
-        viewPager.adapter = NovelTextPagerAdapter(this, presenter, chaptersAsc)
-                .also { ntpAdapter = it }
+        ntpAdapter.setChaptersAsc(chaptersAsc)
         viewPager.currentItem = progress.chapter
         viewPager.post {
-            ntpAdapter?.setTextProgress(progress.text)
+            ntpAdapter.setTextProgress(progress.text)
         }
     }
 
     override fun onPause() {
         super.onPause()
         // 比如断网，如果没有展示出章节，就直接保存持有的进度，
-        val progress = ntpAdapter?.getTextProgress()?.let { NovelProgress(viewPager.currentItem, it) }
-                ?: this.progress
+        ntpAdapter.getTextProgress()?.let { progress.text = it }
         debug {
             "save progress $progress"
         }
@@ -219,6 +220,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     private fun refresh() {
         loading(progressDialog, R.string.novel_page)
+        // 保存一下的进度，
+        ntpAdapter.getTextProgress()?.let { progress.text = it }
         presenter.refresh()
     }
 

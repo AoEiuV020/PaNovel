@@ -8,10 +8,16 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.util.*
 
-class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter, private val chaptersAsc: List<NovelChapter>) : PagerAdapter(), AnkoLogger {
+class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter) : PagerAdapter(), AnkoLogger {
+    private var chaptersAsc: List<NovelChapter> = emptyList()
     private val unusedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
     private val usedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
     private var current: NovelTextViewHolder? = null
+
+    fun setChaptersAsc(chapters: List<NovelChapter>) {
+        this.chaptersAsc = chapters
+        notifyDataSetChanged()
+    }
     override fun isViewFromObject(view: View, obj: Any) = (obj as NovelTextViewHolder).itemView === view
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val holder = if (unusedHolders.isNotEmpty()) {
@@ -28,9 +34,9 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         return holder
     }
 
-    override fun setPrimaryItem(container: ViewGroup?, position: Int, obj: Any) {
+    override fun setPrimaryItem(container: ViewGroup?, position: Int, obj: Any?) {
         super.setPrimaryItem(container, position, obj)
-        current = obj as NovelTextViewHolder
+        current = obj as? NovelTextViewHolder
     }
 
     fun getTextProgress(): Int? {
