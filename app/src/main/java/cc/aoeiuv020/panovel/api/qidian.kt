@@ -215,6 +215,7 @@ class Qidian : NovelContext() {
         return super.check(url)
                 || url.startsWith("https://read.qidian.com/")
                 || url.startsWith("https://book.qidian.com/info/")
+                || url.startsWith("https://vipreader.qidian.com/chapter/")
     }
 }
 
