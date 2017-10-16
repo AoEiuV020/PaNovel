@@ -202,10 +202,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             return
         }
         ntpAdapter.setChaptersAsc(chaptersAsc)
-        viewPager.currentItem = progress.chapter
-        viewPager.post {
-            ntpAdapter.setTextProgress(progress.text)
-        }
+        viewPager.setCurrentItem(progress.chapter, false)
+        ntpAdapter.setTextProgress(progress.text)
     }
 
     override fun onPause() {

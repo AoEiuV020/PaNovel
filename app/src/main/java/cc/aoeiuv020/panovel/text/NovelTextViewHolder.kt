@@ -23,6 +23,7 @@ import org.jetbrains.anko.debug
 
 class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter.NTPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
+    var position: Int = 0
     private val headerView: View
     private val chapterNameTextView: TextView
     private val textRecyclerView: RefreshRecyclerView

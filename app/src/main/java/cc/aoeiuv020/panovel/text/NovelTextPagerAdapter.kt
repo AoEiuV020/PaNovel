@@ -30,12 +30,14 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
             "instantiate $position $chapter"
         }
         container.addView(holder.itemView)
+        holder.position = position
         holder.apply(chapter)
         return holder
     }
 
     override fun setPrimaryItem(container: ViewGroup?, position: Int, obj: Any?) {
         super.setPrimaryItem(container, position, obj)
+        debug { "viewpager current position $position" }
         current = obj as? NovelTextViewHolder
     }
 
@@ -44,6 +46,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
     }
 
     fun setTextProgress(textProgress: Int) {
+        debug { "setTextProgress position ${current?.position}" }
         current?.setTextProgress(textProgress)
     }
 
