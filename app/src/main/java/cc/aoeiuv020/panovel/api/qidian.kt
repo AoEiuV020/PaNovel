@@ -176,7 +176,7 @@ class Qidian : NovelContext() {
         val author = information.select("h1 > span > a").first().text()
         val status = information.select("> p.tag > span:nth-child(1)").first().text()
         val length = information.select("> p:nth-child(4) > em:nth-child(1)").first().text() + "万"
-        val stars = information.select("> p:nth-child(4) > em:nth-child(7)").first().text().toInt()
+        val stars = -1
         val info = detail.select("> div.book-content-wrap.cf > div.left-wrap.fl > div.book-info-detail > div.book-intro > p").first().textNodes().joinToString("\n") {
             it.toString().trim()
         }
