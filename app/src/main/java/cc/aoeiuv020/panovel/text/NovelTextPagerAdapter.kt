@@ -23,7 +23,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         val holder = if (unusedHolders.isNotEmpty()) {
             unusedHolders.pop()
         } else {
-            NovelTextViewHolder(ctx, presenter)
+            NovelTextViewHolder(ctx, presenter.subPresenter())
         }.also { usedHolders.push(it) }
         val chapter = chaptersAsc[position]
         debug {

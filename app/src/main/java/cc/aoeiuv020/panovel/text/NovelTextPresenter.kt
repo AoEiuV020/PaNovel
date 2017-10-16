@@ -111,8 +111,15 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     fun subPresenter() = NTPresenter()
 
     inner class NTPresenter : Presenter<NovelTextViewHolder>() {
-        var refresh = false
+        private var chapter: NovelChapter? = null
+        private var refresh = false
+        fun refresh() {
+            refresh = true
+            chapter?.let { requestNovelText(it) }
+        }
+
         fun requestNovelText(chapter: NovelChapter) {
+            this.chapter = chapter
             Observable.fromCallable {
                 if (refresh) {
                     debug { "$this refresh $chapter" }

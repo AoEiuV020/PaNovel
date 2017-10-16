@@ -19,9 +19,8 @@ import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 
-class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter) : IView, AnkoLogger {
+class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter.NTPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
-    private val presenter = presenter.subPresenter()
     private val headerView: View
     private val chapterNameTextView: TextView
     private val textRecyclerView: RefreshRecyclerView
@@ -38,11 +37,20 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
         headerView.setOnClickListener {
             ctx.toggle()
         }
+        headerView.setOnLongClickListener {
+            refresh()
+        }
         textListAdapter.header = headerView
         textRecyclerView.setAdapter(textListAdapter)
         chapterNameTextView = headerView.chapterNameTextView
         chapterNameTextView.setTextColor(Settings.textColor)
         progressBar = itemView.progressBar
+    }
+
+    fun refresh(): Boolean {
+        progressBar.show()
+        presenter.refresh()
+        return true
     }
 
     fun apply(chapter: NovelChapter) {
