@@ -20,8 +20,8 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            // 有bug，被修复后再开启， https://issuetracker.google.com/issues/65829618
-            shrinkResources false
+            useProguard false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
