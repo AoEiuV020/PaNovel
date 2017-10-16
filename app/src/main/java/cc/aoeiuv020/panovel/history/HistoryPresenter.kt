@@ -1,0 +1,88 @@
+package cc.aoeiuv020.panovel.history
+
+import cc.aoeiuv020.panovel.Presenter
+import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.local.History
+import cc.aoeiuv020.panovel.util.async
+import io.reactivex.Observable
+import org.jetbrains.anko.error
+
+/**
+ * 绝大部分照搬书架，
+ * Created by AoEiuV020 on 2017.10.15-18:11:15.
+ */
+class HistoryPresenter : Presenter<HistoryFragment>() {
+    private var refreshTime = 0L
+
+    fun start() {
+        requestBookshelf()
+    }
+
+    private fun requestBookshelf() {
+        Observable.fromCallable {
+            History.list().map { it.novel }
+        }.async().subscribe({ list ->
+            view?.showNovelList(list)
+        }, { e ->
+            val message = "获取历史列表失败，"
+            error(message, e)
+            view?.showError(message, e)
+        })
+    }
+
+    fun refresh() {
+        requestBookshelf()
+    }
+
+    fun forceRefresh() {
+        refreshTime = System.currentTimeMillis()
+        requestBookshelf()
+    }
+
+    fun subPresenter(): ItemPresenter = ItemPresenter()
+
+    inner class ItemPresenter : Presenter<HistoryAdapter.ViewHolder>() {
+        fun requestDetail(novelItem: NovelItem) {
+            Observable.fromCallable {
+                Cache.detail.get(novelItem)
+                        ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
+                        .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
+            }.async().subscribe({ comicDetail ->
+                view?.showDetail(comicDetail)
+            }, { e ->
+                val message = "加载小说详情失败，"
+                error(message, e)
+                this@HistoryPresenter.view?.showError(message, e)
+            }, {
+                Observable.fromCallable {
+                    val detail = Cache.detail.get(novelItem, timeout = System.currentTimeMillis() - refreshTime)
+                            ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
+                            .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
+                    detail.lastChapter
+                }.async().subscribe({ chapter ->
+                    view?.showLastChapter(chapter)
+                }, { e ->
+                    val message = "加载最新章节失败，"
+                    error(message, e)
+                    this@HistoryPresenter.view?.showError(message, e)
+                })
+            })
+        }
+
+        fun requestChapterProgress(novelItem: NovelItem) {
+            Observable.fromCallable {
+                val chapters = Cache.chapters.get(novelItem)
+                val progress = Cache.progress.get(novelItem)?.chapter ?: 0
+                chapters?.get(progress)?.name ?: "null"
+            }.async().subscribe({ chapterName ->
+                view?.showChapter(chapterName)
+            }, { e ->
+                val message = "加载小说章节进度失败，"
+                error(message, e)
+                this@HistoryPresenter.view?.showError(message, e)
+            })
+        }
+    }
+}

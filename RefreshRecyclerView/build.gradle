@@ -1,0 +1,23 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion compile_version
+    buildToolsVersion build_version
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion target_version
+        versionCode 5
+        versionName "1.2.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation "com.android.support:recyclerview-v7:$support_version"
+}

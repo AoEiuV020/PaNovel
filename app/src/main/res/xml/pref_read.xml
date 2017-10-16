@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="text_size"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/text_size" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="line_spacing"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/line_spacing" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="paragraph_spacing"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/paragraph_spacing" />
+
+    <cc.aoeiuv020.panovel.settings.ColorPickerPreference
+        android:key="background_color"
+        android:title="@string/background_color"
+        app:alphaSlider="true"
+        app:lightnessSlider="true"
+        app:wheelType="CIRCLE" />
+
+    <cc.aoeiuv020.panovel.settings.ColorPickerPreference
+        android:key="text_color"
+        android:title="@string/text_color"
+        app:alphaSlider="true"
+        app:lightnessSlider="true"
+        app:wheelType="CIRCLE" />
+</PreferenceScreen>

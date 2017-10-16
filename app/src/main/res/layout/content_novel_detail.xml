@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cn.lemon.view.RefreshRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:load_more_able="false"
+    app:refresh_able="false"
+    tools:context="cc.aoeiuv020.panovel.detail.NovelDetailActivity"
+    tools:listitem="@layout/novel_chapter_item"
+    tools:showIn="@layout/activity_novel_detail">
+
+</cn.lemon.view.RefreshRecyclerView>

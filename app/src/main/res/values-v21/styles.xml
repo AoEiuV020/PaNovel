@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="AppTheme.NoActionBar.TranslateStatusBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+</resources>

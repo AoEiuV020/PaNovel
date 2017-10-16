@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">爬小说</string>
+    <string name="settings">设置</string>
+    <string name="loading">加载中..%s</string>
+    <string name="title_activity_novel_info">小说详情页</string>
+    <string name="site">网站</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="title_activity_novel_page">NovelPageActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="novel_list">小说列表</string>
+    <string name="genre_list">分类列表</string>
+    <string name="novel_detail">小说详情</string>
+    <string name="novel_chapters">小说章节</string>
+    <string name="novel_page">小说页面</string>
+    <string name="yet_last_page">已经是最后一页了</string>
+    <string name="next_page">下一页</string>
+    <string name="page_number">%d/%d</string>
+    <string name="browse">浏览</string>
+    <string name="info">简介</string>
+    <string name="search_result">搜索结果</string>
+    <string name="novel_not_support">浏览失败或者不支持该小说</string>
+    <string name="no_previous_issue">没有上一话了</string>
+    <string name="no_next_issue">没有下一话了</string>
+    <string name="now_loading_previous_issue">正在加载上一话</string>
+    <string name="now_loading_next_issue">正在加载下一话</string>
+    <string name="bookshelf">书架</string>
+    <string name="text_size">字体大</string>
+    <string name="text_size_placeholders">%dsp</string>
+    <string name="line_spacing_placeholder">%ddp</string>
+    <string name="line_spacing">行间距</string>
+    <string name="paragraph_spacing_placeholder">%ddp</string>
+    <string name="paragraph_spacing">段间距</string>
+    <string name="background_color_placeholder">0x%08X</string>
+    <string name="background_color">背景色</string>
+    <string name="text_color_placeholder">0x%08X</string>
+    <string name="text_color">文字色</string>
+    <string name="refresh">刷新</string>
+    <string name="select">Select</string>
+    <string name="cancel">Cancel</string>
+    <string name="history">历史</string>
+    <string name="download">下载</string>
+    <string name="downloading_from_current_chapter_placeholder">从当前章节(%d)开始下载</string>
+    <string name="downloading_title_placeholder">%s</string>
+    <string name="download_complete_placeholder">下载完成 已存在%d章 下载%d章 失败%d章</string>
+    <string name="download_complete_title_placeholder">%s</string>
+    <string name="title_activity_bookshelf">@string/bookshelf</string>
+    <string name="read_at">阅读至</string>
+    <string name="last_chapter">最新章</string>
+    <string name="history_count">历史数</string>
+    <string name="title_activity_settings">设置</string>
+
+    <string name="pref_header_general">全局设置</string>
+    <string name="pref_header_read">阅读设置</string>
+    <string name="chapters_cache_timeout">章节缓存超时</string>
+
+
+</resources>

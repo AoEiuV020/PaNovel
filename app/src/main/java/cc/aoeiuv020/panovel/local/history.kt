@@ -1,0 +1,30 @@
+package cc.aoeiuv020.panovel.local
+
+import cc.aoeiuv020.panovel.api.NovelItem
+
+/**
+ *
+ * Created by AoEiuV020 on 2017.10.10-17:59:51.
+ */
+object History : LocalSource {
+    private val max get() = Settings.historyCount
+
+    private fun add(history: NovelHistory) = gsonSave(history.novel.bookId, history)
+
+    fun add(item: NovelItem) = add(NovelHistory(item))
+
+    private fun remove(item: NovelItem) = gsonRemove(item.bookId)
+
+    private fun remove(history: NovelHistory) = remove(history.novel)
+
+    fun list(): List<NovelHistory> = gsonList<NovelHistory>().sortedByDescending { it.date }.let { list ->
+        // 删除过多的历史，
+        val n = list.size - max
+        if (n > 0) {
+            list.subList(max, list.size).forEach { remove(it) }
+            list.subList(0, max)
+        } else {
+            list
+        }
+    }
+}

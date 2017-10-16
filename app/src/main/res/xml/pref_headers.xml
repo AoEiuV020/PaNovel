@@ -1,0 +1,15 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="cc.aoeiuv020.panovel.settings.GeneralPreferenceFragment"
+        android:icon="@drawable/ic_info"
+        android:title="@string/pref_header_general" />
+
+    <header
+        android:fragment="cc.aoeiuv020.panovel.settings.ReadPreferenceFragment"
+        android:icon="@drawable/ic_read"
+        android:title="@string/pref_header_read" />
+
+</preference-headers>
