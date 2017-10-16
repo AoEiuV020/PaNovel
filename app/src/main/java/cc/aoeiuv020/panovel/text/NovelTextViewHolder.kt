@@ -1,7 +1,9 @@
 package cc.aoeiuv020.panovel.text
 
+import android.annotation.SuppressLint
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -34,13 +36,25 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
         layoutManager = LinearLayoutManager(ctx)
         textRecyclerView.setLayoutManager(layoutManager)
         headerView = LayoutInflater.from(ctx).inflate(R.layout.novel_text_header, itemView as ViewGroup, false)
-        headerView.setOnClickListener {
-            ctx.toggle()
-        }
         headerView.setOnLongClickListener {
             refresh()
         }
+        headerView.setOnClickListener {
+            ctx.toggle()
+        }
         textListAdapter.header = headerView
+        textRecyclerView.recyclerView.setOnTouchListener(object : View.OnTouchListener {
+            private var previousAction: Int = MotionEvent.ACTION_UP
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouch(v: View?, event: MotionEvent): Boolean {
+                if (previousAction == MotionEvent.ACTION_DOWN
+                        && event.action == MotionEvent.ACTION_UP) {
+                    ctx.toggle()
+                }
+                previousAction = event.action
+                return false
+            }
+        })
         textRecyclerView.setAdapter(textListAdapter)
         chapterNameTextView = headerView.chapterNameTextView
         chapterNameTextView.setTextColor(Settings.textColor)

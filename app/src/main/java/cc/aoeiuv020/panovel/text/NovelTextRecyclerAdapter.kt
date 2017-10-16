@@ -18,7 +18,7 @@ import org.jetbrains.anko.dip
  *
  * Created by AoEiuV020 on 2017.10.12-14:55:56.
  */
-class NovelTextRecyclerAdapter(private val ctx: NovelTextActivity) : RecyclerAdapter<String>(ctx), AnkoLogger {
+class NovelTextRecyclerAdapter(ctx: NovelTextActivity) : RecyclerAdapter<String>(ctx), AnkoLogger {
     private var mTextSize = Settings.textSize
     private var mLineSpacing = Settings.lineSpacing
     private var mParagraphSpacing = Settings.paragraphSpacing
@@ -32,7 +32,6 @@ class NovelTextRecyclerAdapter(private val ctx: NovelTextActivity) : RecyclerAda
         private val textView: TextView = itemView.textView
         @SuppressLint("SetTextI18n")
         override fun setData(data: String) {
-            super.setData(data)
             divider.setHeight(context.dip(mParagraphSpacing))
             textView.apply {
                 text = "　　" + data
@@ -44,10 +43,6 @@ class NovelTextRecyclerAdapter(private val ctx: NovelTextActivity) : RecyclerAda
                 setTextColor(mTextColor)
                 setLineSpacing(context.dip(mLineSpacing).toFloat(), 1.toFloat())
             }
-        }
-
-        override fun onItemViewClick(data: String?) {
-            ctx.toggle()
         }
     }
 
