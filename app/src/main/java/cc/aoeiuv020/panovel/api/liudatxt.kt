@@ -66,10 +66,6 @@ class Liudatxt : NovelContext() {
         }
     }
 
-    /**
-     * 这网站用的是百度站内搜索，
-     * 连接时不时失败，应该是百度的问题，
-     */
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
         val url = "$SEARCH_PAGE_URL?searchkey=$key"

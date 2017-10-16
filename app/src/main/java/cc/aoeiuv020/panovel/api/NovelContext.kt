@@ -15,7 +15,7 @@ import java.net.URL
 abstract class NovelContext {
     companion object {
         @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt())
+        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt(), Qidian())
         private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         private val nameMap = contexts.associateBy { it.getNovelSite().name }
         fun getNovelContexts(): List<NovelContext> = contexts
@@ -99,6 +99,7 @@ abstract class NovelContext {
         val root = response.parse()
         logger.debug { "status code: ${response.statusCode()}" }
         logger.debug { "response url: ${response.url()}" }
+        logger.trace { "body length: ${response.body().length}" }
         if (!check(response.url().toString())) {
             throw IOException("网络被重定向，检查网络是否可用，")
         }
