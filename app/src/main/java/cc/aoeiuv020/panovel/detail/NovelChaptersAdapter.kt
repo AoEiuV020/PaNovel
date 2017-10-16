@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.detail
 
 import android.content.Context
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.CheckedTextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
@@ -37,11 +37,12 @@ class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : Rec
     }
 
     inner class ViewHolder(parent: ViewGroup?) : BaseViewHolder<NovelChapter>(parent, R.layout.novel_chapter_item) {
-        private val nameTextView: TextView = itemView.name
+        private val nameTextView: CheckedTextView = itemView.name
         override fun setData(issue: NovelChapter) {
             super.setData(issue)
             nameTextView.apply {
                 text = issue.name
+                isChecked = readAt == indexAsc
                 isSelected = cachedList.contains(issue.name)
             }
         }
