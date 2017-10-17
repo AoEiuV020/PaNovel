@@ -46,7 +46,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
     inner class ItemPresenter : Presenter<BookshelfAdapter.ViewHolder>() {
         fun requestDetail(novelItem: NovelItem) {
             Observable.fromCallable {
-                Cache.detail.get(novelItem)
+                Cache.detail.get(novelItem, timeout = 0)
                         ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
                         .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
             }.async().subscribe({ comicDetail ->
@@ -73,8 +73,8 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
 
         fun requestChapterProgress(novelItem: NovelItem) {
             Observable.fromCallable {
-                val chapters = Cache.chapters.get(novelItem)
-                val progress = Cache.progress.get(novelItem)?.chapter ?: 0
+                val chapters = Cache.chapters.get(novelItem, timeout = 0)
+                val progress = Cache.progress.get(novelItem, timeout = 0)?.chapter ?: 0
                 chapters?.get(progress)?.name ?: "null"
             }.async().subscribe({ chapterName ->
                 view?.showChapter(chapterName)
