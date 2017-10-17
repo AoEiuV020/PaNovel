@@ -66,7 +66,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
             val message = "下载小说失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 2) }
     }
 
     private fun requestNovelDetail() {
@@ -84,7 +84,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
             val message = "加载小说章节详情失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 0) }
     }
 
     fun requestChapters(requester: ChaptersRequester) {
@@ -106,7 +106,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
             val message = "加载小说章节列表失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 1) }
     }
     fun subPresenter() = NTPresenter()
 
@@ -137,7 +137,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                 val message = "加载小说页面失败，"
                 error(message, e)
                 view?.showError(message, e)
-            })
+            }).let { addDisposable(it) }
         }
     }
 }

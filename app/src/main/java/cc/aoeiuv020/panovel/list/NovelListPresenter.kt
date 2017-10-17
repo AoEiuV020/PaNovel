@@ -30,7 +30,7 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
             val message = "加载小说列表失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 0) }
     }
 
     private fun saveGenre(genre: NovelGenre) {
@@ -65,6 +65,6 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
             val message = "加载小说列表一下页地址失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 1) }
     }
 }

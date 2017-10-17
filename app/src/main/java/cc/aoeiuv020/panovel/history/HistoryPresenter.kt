@@ -29,7 +29,7 @@ class HistoryPresenter : Presenter<HistoryFragment>() {
             val message = "获取历史列表失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it) }
     }
 
     fun refresh() {
@@ -68,7 +68,7 @@ class HistoryPresenter : Presenter<HistoryFragment>() {
                     error(message, e)
                     this@HistoryPresenter.view?.showError(message, e)
                 })
-            })
+            }).let { addDisposable(it, 0) }
         }
 
         fun requestChapterProgress(novelItem: NovelItem) {
@@ -82,7 +82,7 @@ class HistoryPresenter : Presenter<HistoryFragment>() {
                 val message = "加载小说章节进度失败，"
                 error(message, e)
                 this@HistoryPresenter.view?.showError(message, e)
-            })
+            }).let { addDisposable(it, 1) }
         }
     }
 }

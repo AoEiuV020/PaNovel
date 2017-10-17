@@ -81,7 +81,6 @@ class BookstorePresenter : Presenter<BookstoreActivity>(), AnkoLogger {
             val message = "加载网站分类列表失败，"
             error(message, e)
             view?.showError(message, e)
-        })
-
+        }).let { addDisposable(it) }
     }
 }

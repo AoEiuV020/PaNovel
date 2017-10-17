@@ -29,7 +29,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
             val message = "获取书架列表失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it) }
     }
 
     fun refresh() {
@@ -67,8 +67,8 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
                     val message = "加载最新章节失败，"
                     error(message, e)
                     this@BookshelfPresenter.view?.showError(message, e)
-                })
-            })
+                }).let { addDisposable(it, 2) }
+            }).let { addDisposable(it, 0) }
         }
 
         fun requestChapterProgress(novelItem: NovelItem) {
@@ -82,7 +82,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
                 val message = "加载小说章节进度失败，"
                 error(message, e)
                 this@BookshelfPresenter.view?.showError(message, e)
-            })
+            }).let { addDisposable(it, 1) }
         }
     }
 

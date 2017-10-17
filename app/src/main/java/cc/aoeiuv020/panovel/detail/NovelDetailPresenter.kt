@@ -46,7 +46,7 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
             val message = "加载小说详情失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 0) }
     }
 
     fun requestChapters(requester: ChaptersRequester) {
@@ -73,6 +73,6 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
             val message = "加载小说章节失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 1) }
     }
 }
