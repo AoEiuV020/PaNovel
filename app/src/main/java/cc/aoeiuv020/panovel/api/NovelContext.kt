@@ -92,7 +92,7 @@ abstract class NovelContext {
             }
         }
         logger.debug { "request $requester" }
-        return requester.request()
+        return requester.connect().execute()
     }
 
     protected fun request(response: Connection.Response): Document {

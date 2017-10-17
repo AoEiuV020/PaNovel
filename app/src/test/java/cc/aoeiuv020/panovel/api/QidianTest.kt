@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.api
 
 import org.jsoup.Jsoup
-import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -50,7 +50,7 @@ class QidianTest {
     @Test
     fun getNextPage() {
         context.getNextPage(NovelGenre("东方玄幻", "https://www.qidian.com/all?chanId=21&subCateId=8&orderId=&page=1&style=1&pageSize=20&siteid=1&hiddenField=0")).let {
-            Assert.assertEquals("https://www.qidian.com/all?chanId=21&subCateId=8&orderId=&style=1&pageSize=20&siteid=1&hiddenField=0&page=2", it!!.requester.url)
+            assertEquals("https://www.qidian.com/all?chanId=21&subCateId=8&orderId=&style=1&pageSize=20&siteid=1&hiddenField=0&page=2", it!!.requester.url)
         }
     }
 
@@ -60,7 +60,7 @@ class QidianTest {
             it.forEach { novelItem ->
                 println(novelItem)
             }
-            Assert.assertEquals(20, it.size)
+            assertEquals(20, it.size)
         }
     }
 
@@ -70,7 +70,7 @@ class QidianTest {
             it.forEach { novelItem ->
                 println(novelItem)
             }
-            Assert.assertTrue(it.any { novelItem ->
+            assertTrue(it.any { novelItem ->
                 novelItem.novel.name == "我是女皇的随身铠甲"
             })
         }
@@ -82,7 +82,7 @@ class QidianTest {
             it.forEach { novelItem ->
                 println(novelItem)
             }
-            Assert.assertTrue(it.any { novelItem ->
+            assertTrue(it.any { novelItem ->
                 novelItem.novel.name == "诸天万界反派聊天群"
             })
         }
@@ -91,11 +91,11 @@ class QidianTest {
     @Test
     fun getNovelDetail() {
         context.getNovelDetail(DetailRequester("https://book.qidian.com/info/1010436534")).let {
-            Assert.assertEquals("https://qidian.qpic.cn/qdbimg/349573/1010436534/180", it.bigImg)
-            Assert.assertEquals("我是女皇的随身铠甲", it.novel.name)
-            Assert.assertEquals("一文倒", it.novel.author)
-            Assert.assertEquals("东方玄幻", it.genre)
-            Assert.assertEquals("盖世修为和《周天全书》，张夜带着他们重生，却成为了冰雪美人的专属甲胄，过上了给她当老爷爷的日子。\n" +
+            assertEquals("https://qidian.qpic.cn/qdbimg/349573/1010436534/180", it.bigImg)
+            assertEquals("我是女皇的随身铠甲", it.novel.name)
+            assertEquals("一文倒", it.novel.author)
+            assertEquals("东方玄幻", it.genre)
+            assertEquals("盖世修为和《周天全书》，张夜带着他们重生，却成为了冰雪美人的专属甲胄，过上了给她当老爷爷的日子。\n" +
                     "“什么？有大boss？，丫头给我撞死他！”\n" +
                     "“高手？丫头给我撕了他！”\n" +
                     "“六臂食人猿？丫头，给我活吞了她！”\n" +
@@ -117,16 +117,21 @@ class QidianTest {
             list.forEach {
                 println(it)
             }
-            Assert.assertEquals("第一章 我叫张夜，是一颗陨石", list.first().name)
+            assertEquals("第一章 我叫张夜，是一颗陨石", list.first().name)
         }
     }
 
     @Test
     fun getNovelText() {
         context.getNovelText(TextRequester("https://read.qidian.com/chapter/XljeBHNXyTjoTMoHyHZuUA2/LlljjtD5ydO2uJcMpdsVgA2")).textList.let {
-            Assert.assertEquals(71, it.size)
-            Assert.assertEquals("矿井区。", it.first())
-            Assert.assertEquals("那冒泡的灵根潭面上，竟然悠悠浮起了半颗光头...", it.last())
+            assertEquals(71, it.size)
+            assertEquals("矿井区。", it.first())
+            assertEquals("那冒泡的灵根潭面上，竟然悠悠浮起了半颗光头...", it.last())
+        }
+        context.getNovelText(Qidian.VipRequester("https://vipreader.qidian.com/chapter/3602691/388384897")).textList.let {
+            assertEquals(93, it.size)
+            assertEquals("“楚前辈手下留情！”宋书航道。", it.first())
+            assertEquals("核心世界中，除了楚阁主ｏｎｅ的脑袋外，还有其它脑袋吗？", it.last())
         }
     }
 }

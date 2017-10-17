@@ -44,7 +44,7 @@ open class Requester(private var extra: String) {
     }
 
     open val url get() = extra
-    open fun request(): Connection.Response = Jsoup.connect(url).execute()
+    open fun connect(): Connection = Jsoup.connect(url)
     override fun toString() = "${this.javaClass.simpleName}(url=$url)"
     override fun equals(other: kotlin.Any?): Boolean {
         return if (other == null || other !is Requester) false

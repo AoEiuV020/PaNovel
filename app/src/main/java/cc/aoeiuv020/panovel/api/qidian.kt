@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.api
 
 import android.annotation.SuppressLint
+import org.jsoup.Connection
+import org.jsoup.Jsoup
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 
@@ -205,7 +207,12 @@ class Qidian : NovelContext() {
 
     override fun getNovelText(requester: TextRequester): NovelText {
         val root = request(requester)
-        val textList = root.select("div#j_chapterBox > div > div > div.read-content.j_readContent > p").map {
+        val query = if (requester is VipRequester) {
+            "#chapterContent > section > p"
+        }else{
+            "div#j_chapterBox > div > div > div.read-content.j_readContent > p"
+        }
+        val textList = root.select(query).map {
             it.text().trim()
         }
         return NovelText(textList)
@@ -216,6 +223,25 @@ class Qidian : NovelContext() {
                 || url.startsWith("https://read.qidian.com/")
                 || url.startsWith("https://book.qidian.com/info/")
                 || url.startsWith("https://vipreader.qidian.com/chapter/")
+                || url.startsWith("https://m.qidian.com/book/")
+    }
+
+    class VipRequester(url: String) : TextRequester(url) {
+        private fun isVip(url: String) = url.startsWith("https://vipreader.qidian.com/chapter/")
+        override fun connect(): Connection {
+            return if (isVip(url)) {
+                val mobile = url.replace("https://vipreader.qidian.com/chapter/", "https://m.qidian.com/book/")
+                val deviceId = "878788848187878"
+                @Suppress("UnnecessaryVariable")
+                val id = deviceId
+                val urlMd5 = md5Hex(url)
+                val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
+                val sign = des3(plain)
+                Jsoup.connect(mobile).cookie("QDSign", sign)
+            } else {
+                super.connect()
+            }
+        }
     }
 }
 
