@@ -147,7 +147,7 @@ class Biquge : NovelContext() {
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val root = request(requester.url)
+        val root = request(requester)
         return root.select("#list > dl > dd > a").map {
             val a = it
             NovelChapter(a.text(), a.absHref())

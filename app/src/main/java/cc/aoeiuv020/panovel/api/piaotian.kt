@@ -124,7 +124,7 @@ class Piaotian : NovelContext() {
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val root = request(requester.url)
+        val root = request(requester)
         return root.select("div.mainbody > div.centent > ul > li > a").dropWhile {
             it.absHref().isEmpty() || it.href() == "#"
         }.dropLastWhile {

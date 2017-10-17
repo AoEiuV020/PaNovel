@@ -230,7 +230,7 @@ class Qidian : NovelContext() {
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val root = request(requester.url)
+        val root = request(requester)
         return root.select("#j-catalogWrap > div.volume-wrap > div > ul > li > a").map { a ->
             NovelChapter(a.text(), a.absHref())
         }
