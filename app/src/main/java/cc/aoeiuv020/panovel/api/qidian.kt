@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.api
 
 import android.annotation.SuppressLint
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import java.net.URLEncoder
@@ -230,9 +232,41 @@ class Qidian : NovelContext() {
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val root = request(requester)
-        return root.select("#j-catalogWrap > div.volume-wrap > div > ul > li > a").map { a ->
-            NovelChapter(a.text(), a.absHref())
+        val response = response(requester)
+        val root = request(response)
+        val elements = root.select("#j-catalogWrap > div.volume-wrap > div > ul > li > a")
+        return if (elements.isNotEmpty()) {
+            elements.map { a ->
+                NovelChapter(a.text(), a.absHref())
+            }
+        } else {
+            val token = response.cookie("_csrfToken")
+            val bookId = requester.url.removePrefix("https://book.qidian.com/info/")
+            val category = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
+            val categoryJson = response(category).body()
+            Gson().fromJson(categoryJson, JsonObject::class.java)
+                    .getAsJsonObject("data")
+                    .getAsJsonArray("vs").map {
+                it.asJsonObject.getAsJsonArray("cs").map {
+                    it.asJsonObject.let {
+                        val cN = it.getAsJsonPrimitive("cN").asString
+                        val cU = it.getAsJsonPrimitive("cU").asString
+                        val id = it.getAsJsonPrimitive("id").asInt
+                        val sS = it.getAsJsonPrimitive("sS").asInt
+                        if (sS == 1) {
+                            // 免费章节，
+                            val url = "https://read.qidian.com/chapter/$cU"
+                            NovelChapter(cN, url)
+                        } else {
+                            // VIP章节，
+                            val url = "https://vipreader.qidian.com/chapter/$bookId/$id"
+                            NovelChapter(cN, VipRequester(url))
+                        }
+                    }
+                }
+            }.reduce { acc, list ->
+                acc + list
+            }
         }
     }
 
@@ -240,7 +274,7 @@ class Qidian : NovelContext() {
         val root = request(requester)
         val query = if (requester is VipRequester) {
             "#chapterContent > section > p"
-        }else{
+        } else {
             "div#j_chapterBox > div > div > div.read-content.j_readContent > p"
         }
         val textList = root.select(query).map {

@@ -95,6 +95,8 @@ abstract class NovelContext {
         return requester.connect().execute()
     }
 
+    protected fun response(url: String) = response(Requester(url))
+
     protected fun request(response: Connection.Response): Document {
         val root = response.parse()
         logger.debug { "status code: ${response.statusCode()}" }

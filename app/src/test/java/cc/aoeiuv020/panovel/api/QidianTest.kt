@@ -131,6 +131,12 @@ class QidianTest {
 
     @Test
     fun getNovelChaptersAsc() {
+        context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3602691")).let { list ->
+            list.forEach {
+                println(it)
+            }
+            assertEquals("有趣的书评同人小故事", list.first().name)
+        }
         context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/1010436534")).let { list ->
             list.forEach {
                 println(it)
