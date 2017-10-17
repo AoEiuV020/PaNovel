@@ -5,6 +5,7 @@ import org.jsoup.Connection
 import org.jsoup.Jsoup
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *
@@ -179,19 +180,49 @@ class Qidian : NovelContext() {
         val status = information.select("> p.tag > span:nth-child(1)").first().text()
         val length = information.select("> p:nth-child(4) > em:nth-child(1)").first().text() + "万"
         val stars = -1
-        val info = detail.select("> div.book-content-wrap.cf > div.left-wrap.fl > div.book-info-detail > div.book-intro > p").first().textNodes().joinToString("\n") {
+        val info = detail.select("div.book-intro > p").first().textNodes().joinToString("\n") {
             it.toString().trim()
         }
 
         val genre = root.select("body > div.wrap > div.crumbs-nav.center990.top-op > span > a:nth-child(6)").first().text()
 
-        val lastChapterElement = root.select("#j-catalogWrap > div.volume-wrap > div:nth-last-child(1) > ul > li:nth-last-child(1) > a").first()
-        val (updateString) = lastChapterElement.title().pick("首发时间：(.*) 章节字数：.*")
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val update = sdf.parse(updateString)
-
-        val lastChapter = lastChapterElement.let {
+        val cf = detail.select("div.book-state > ul > li.update > div > p.cf").first()
+        val lastChapter = cf.select("> a").first().let {
             NovelChapter(it.text(), it.absHref())
+        }
+
+        val lastChapterElement = root.select("#j-catalogWrap > div.volume-wrap > div:nth-last-child(1) > ul > li:nth-last-child(1) > a").first()
+        val update = if (lastChapterElement != null) {
+            val (updateString) = lastChapterElement.title().pick("首发时间：(.*) 章节字数：.*")
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            sdf.parse(updateString)
+        } else {
+            val updateString = cf.select("> em").first().text()
+            when {
+                updateString.startsWith("今天") -> {
+                    val (hour, minute) = updateString.pick("今天(\\d*):(\\d*)更新")
+                    Calendar.getInstance().run {
+                        set(Calendar.HOUR_OF_DAY, hour.toInt())
+                        set(Calendar.MINUTE, minute.toInt())
+                        set(Calendar.SECOND, 0)
+                        time
+                    }
+                }
+                updateString.startsWith("昨日") -> {
+                    val (hour, minute) = updateString.pick("昨日(\\d*):(\\d*)更新")
+                    Calendar.getInstance().run {
+                        add(Calendar.DATE, -1)
+                        set(Calendar.HOUR_OF_DAY, hour.toInt())
+                        set(Calendar.MINUTE, minute.toInt())
+                        set(Calendar.SECOND, 0)
+                        time
+                    }
+                }
+                else -> {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    sdf.parse(updateString)
+                }
+            }
         }
 
         val chapterPageUrl = requester.url

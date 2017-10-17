@@ -1,7 +1,8 @@
 package cc.aoeiuv020.panovel.api
 
 import org.jsoup.Jsoup
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -90,6 +91,23 @@ class QidianTest {
 
     @Test
     fun getNovelDetail() {
+        context.getNovelDetail(DetailRequester("https://book.qidian.com/info/3602691")).let {
+            assertEquals("https://qidian.qpic.cn/qdbimg/349573/3602691/180", it.bigImg)
+            assertEquals("修真聊天群", it.novel.name)
+            assertEquals("圣骑士的传说", it.novel.author)
+            assertEquals("异术超能", it.genre)
+            assertEquals("某天，宋书航意外加入了一个仙侠中二病资深患者的交流群，里面的群友们都以‘道友’相称，群名片都是各种府主、洞主、真人、天师。连群主走失的宠物犬都称为大妖犬离家出走。整天聊的是炼丹、闯秘境、炼功经验啥的。\n" +
+                    "突然有一天，潜水良久的他突然发现……群里每一个群员，竟然全部是修真者，能移山倒海、长生千年的那种！\n" +
+                    "啊啊啊啊，世界观在一夜间彻底崩碎啦！\n" +
+                    "书友群：九洲1号群:207572656\n" +
+                    "九洲２号群:168114177\n" +
+                    "九洲一号群（VIP书友群，需验证）63769632", it.introduction)
+            println(it.update)
+            println(it.status)
+            println(it.stars)
+            println(it.length)
+            println(it.lastChapter)
+        }
         context.getNovelDetail(DetailRequester("https://book.qidian.com/info/1010436534")).let {
             assertEquals("https://qidian.qpic.cn/qdbimg/349573/1010436534/180", it.bigImg)
             assertEquals("我是女皇的随身铠甲", it.novel.name)
