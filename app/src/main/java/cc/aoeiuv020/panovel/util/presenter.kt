@@ -11,6 +11,9 @@ import java.util.concurrent.LinkedBlockingDeque
  * Created by AoEiuV020 on 2017.10.02-21:42:59.
  */
 
+/**
+ * 自定义Executor主要是为了避免线程复用时interrupt中断旧线程导致数据异常，
+ */
 private val asyncExecutor = object : Executor {
     val tasks = LinkedBlockingDeque<Runnable>()
     val threads = List(4) {
