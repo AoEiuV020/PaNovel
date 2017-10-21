@@ -10,5 +10,5 @@ import io.reactivex.schedulers.Schedulers
  */
 
 fun <T : Any?> Observable<T>.async(): Observable<T> = this
-        .subscribeOn(Schedulers.io())
+        .subscribeOn(Schedulers.from { Thread(it).start() })
         .observeOn(AndroidSchedulers.mainThread())
