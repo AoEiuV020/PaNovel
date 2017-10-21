@@ -120,30 +120,23 @@ class Biquge : NovelContext() {
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val root = request(requester)
         val img = root.select("#fmimg > img").first().src()
-        val genre = root.select("div.con_top > a:nth-child(2)").first().text()
         val div = root.select("#info").first()
         val name = div.select("> h1").first().text()
         val (author) = div.select("> p:nth-child(2)").first().text()
                 .pick("作    者：(\\S*)")
-        val (status) = div.select("#info > p:nth-child(3)").first().text()
-                .pick("状    态：([^,]*)")
-        val (updateString) = div.select("#info > p:nth-child(4)").first().text()
-                .pick("最后更新：(.*)")
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val update = sdf.parse(updateString)
-        val lastChapter = div.select("> p:nth-child(5) > a").first().let {
-            NovelChapter(it.text(), it.absHref())
-        }
-        val length = "null"
         val info = root.select("#intro > p").joinToString("\n") {
             it.textNodes().joinToString("\n") {
                 it.toString().trim()
             }
         }
-        val stars = -1
+
+        val (updateString) = div.select("#info > p:nth-child(4)").first().text()
+                .pick("最后更新：(.*)")
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val update = sdf.parse(updateString)
 
         val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, lastChapter, status, genre, length, info, stars, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {

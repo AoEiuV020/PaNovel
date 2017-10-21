@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.history
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.History
@@ -26,7 +27,7 @@ class HistoryPresenter : Presenter<HistoryFragment>() {
         }.async().subscribe({ list ->
             view?.showNovelList(list)
         }, { e ->
-            val message = "获取历史列表失败，"
+            val message = "获取书架列表失败，"
             error(message, e)
             view?.showError(message, e)
         }).let { addDisposable(it) }
@@ -52,37 +53,29 @@ class HistoryPresenter : Presenter<HistoryFragment>() {
             }.async().subscribe({ comicDetail ->
                 view?.showDetail(comicDetail)
             }, { e ->
-                val message = "加载小说详情失败，"
+                val message = "读取小说详情失败，"
                 error(message, e)
                 this@HistoryPresenter.view?.showError(message, e)
-            }, {
-                Observable.fromCallable {
-                    val detail = Cache.detail.get(novelItem, timeout = System.currentTimeMillis() - refreshTime)
-                            ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
-                            .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
-                    detail.lastChapter
-                }.async().subscribe({ chapter ->
-                    view?.showLastChapter(chapter)
-                }, { e ->
-                    val message = "加载最新章节失败，"
-                    error(message, e)
-                    this@HistoryPresenter.view?.showError(message, e)
-                })
             }).let { addDisposable(it, 0) }
         }
 
-        fun requestChapterProgress(novelItem: NovelItem) {
+        fun requestChapters(detail: NovelDetail) {
             Observable.fromCallable {
-                val chapters = Cache.chapters.get(novelItem)
+                val novelItem = detail.novel
+                val chapters = Cache.chapters.get(novelItem, timeout = System.currentTimeMillis() - refreshTime)
+                        ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
+                        .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
                 val progress = Cache.progress.get(novelItem)?.chapter ?: 0
-                chapters?.get(progress)?.name ?: "null"
-            }.async().subscribe({ chapterName ->
-                view?.showChapter(chapterName)
+                Pair(chapters, progress)
+            }.async().subscribe({ (chapters, progress) ->
+                view?.showChapter(chapters, progress)
             }, { e ->
-                val message = "加载小说章节进度失败，"
+                val message = "读取小说章节失败，"
                 error(message, e)
                 this@HistoryPresenter.view?.showError(message, e)
             }).let { addDisposable(it, 1) }
         }
     }
+
 }
+

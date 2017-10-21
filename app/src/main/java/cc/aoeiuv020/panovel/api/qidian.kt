@@ -179,19 +179,11 @@ class Qidian : NovelContext() {
         val img = detail.select("#bookImg > img").first().absSrc()
         val name = information.select("> h1 > em").first().text()
         val author = information.select("h1 > span > a").first().text()
-        val status = information.select("> p.tag > span:nth-child(1)").first().text()
-        val length = information.select("> p:nth-child(4) > em:nth-child(1)").first().text() + "万"
-        val stars = -1
         val info = detail.select("div.book-intro > p").first().textNodes().joinToString("\n") {
             it.toString().trim()
         }
 
-        val genre = root.select("body > div.wrap > div.crumbs-nav.center990.top-op > span > a:nth-child(6)").first().text()
-
         val cf = detail.select("div.book-state > ul > li.update > div > p.cf").first()
-        val lastChapter = cf.select("> a").first().let {
-            NovelChapter(it.text(), it.absHref())
-        }
 
         val lastChapterElement = root.select("#j-catalogWrap > div.volume-wrap > div:nth-last-child(1) > ul > li:nth-last-child(1) > a").first()
         val update = if (lastChapterElement != null) {
@@ -228,7 +220,7 @@ class Qidian : NovelContext() {
         }
 
         val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, lastChapter, status, genre, length, info, stars, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {

@@ -52,7 +52,7 @@ class Piaotian : NovelContext() {
         if (isDetail(response.url().toString())) {
             val detail = getNovelDetail(DetailRequester(requester.url))
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
-            val info = detail.run { "最新章节: ${lastChapter.name} 字数: $length 更新: ${sdf.format(update)} 状态: $status" }
+            val info = detail.run { "更新: ${sdf.format(update)} 简介: $introduction" }
             return listOf(NovelListItem(detail.novel, info))
         }
         val root = request(response)
@@ -101,9 +101,8 @@ class Piaotian : NovelContext() {
                 "收到鲜花：(\\S*)" +
                 ""
         val list = tbody2.text().pick(pattern)
-        val (name, genre, author, _, length) = list
-        val (updateString, status, _, _, starsString) = list.drop(5)
-        val stars = starsString.toInt()
+        val (name, _, author) = list
+        val (updateString) = list.drop(5)
 
         val td = tbody1.select("tr:nth-child(4) > td > table > tbody > tr > td:nth-child(2)").first()
         val img = td.select("a > img").first().src()
@@ -115,12 +114,8 @@ class Piaotian : NovelContext() {
         val (month, day, hour, minute) = lastChapterElement.title().pick(".*更新时间:(\\d*)-(\\d*) (\\d*):(\\d*)")
         @Suppress("DEPRECATION")
         val update = Date(year.toInt() - 1900, month.toInt() - 1, day.toInt(), hour.toInt(), minute.toInt())
-        val lastChapter = lastChapterElement.let {
-            val a = it
-            NovelChapter(a.text(), a.absHref())
-        }
         val chapterPageUrl = tbody1.select("tr:nth-child(8) > td > table > caption > a").first().absHref()
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, lastChapter, status, genre, length, info, stars, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {

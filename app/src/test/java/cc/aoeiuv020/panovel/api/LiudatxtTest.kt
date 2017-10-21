@@ -80,17 +80,12 @@ class LiudatxtTest {
             assertEquals("http://www.liudatxt.com/headimgs/22/22921/s22921.jpg", it.bigImg)
             assertEquals("诸天万界反派聊天群", it.novel.name)
             assertEquals("不要尬舞", it.novel.author)
-            assertEquals("科幻灵异", it.genre)
             assertEquals("这个穿越画风有些不对？开局就是地狱难度是个什么鬼？还好自带一个金手指。 " +
                     "从此以后踏上了诸天万界各大反派人生导师的不归路！露出一脸和善微笑的雄霸正指挥着风云怒肛帝释天、" +
                     "海贼世界已经成为一个出色海军的路飞正带着自己的海军攻打四皇、" +
                     "以及把令狐冲当做亲儿子一般的对待满脸正气的岳不群。 " +
                     "......刘锋叹了一...", it.introduction)
             println(it.update)
-            println(it.status)
-            println(it.stars)
-            println(it.length)
-            println(it.lastChapter)
         }
     }
 

@@ -68,21 +68,17 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
 
             presenter.attach(this)
             presenter.requestDetail(novel)
-            presenter.requestChapterProgress(novel)
         }
 
         fun showDetail(detail: NovelDetail) {
             update.text = sdf.format(detail.update)
-            last.text = detail.lastChapter.name
             Glide.with(context).load(detail.bigImg).into(image)
+            presenter.requestChapters(detail)
         }
 
-        fun showLastChapter(chapter: NovelChapter) {
-            last.text = chapter.name
-        }
-
-        fun showChapter(chapterName: String) {
-            readAt.text = chapterName
+        fun showChapter(chapters: List<NovelChapter>, progress: Int) {
+            readAt.text = chapters[progress].name
+            last.text = chapters.last().name
             progressBar.hide()
         }
 
