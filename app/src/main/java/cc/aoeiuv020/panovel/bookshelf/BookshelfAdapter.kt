@@ -46,6 +46,7 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
         private val update = itemView.tvUpdate
         private val readAt = itemView.tvReadAt
         private val last = itemView.tvLast
+        private val newChapterDot = itemView.newChapterDot
         private val progressBar = itemView.progressBar
 
         override fun setData(data: NovelItem) {
@@ -58,6 +59,8 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
             name.text = novel.name
             author.text = novel.author
             site.text = novel.site
+
+            newChapterDot.hide()
             progressBar.show()
 
             // 清空残留数据，避免闪烁，
@@ -80,6 +83,9 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
             readAt.text = chapters[progress].name
             last.text = chapters.last().name
             progressBar.hide()
+            if (chapters.lastIndex > progress) {
+                newChapterDot.show()
+            }
         }
 
         override fun onItemViewClick(data: NovelItem) {
