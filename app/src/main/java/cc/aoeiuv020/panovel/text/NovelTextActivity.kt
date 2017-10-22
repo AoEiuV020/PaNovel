@@ -205,6 +205,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun showChaptersAsc(chaptersAsc: List<NovelChapter>) {
         this.chaptersAsc = chaptersAsc
+        // 支持跳到倒数第一章，
+        if (progress.chapter == -1) {
+            progress.chapter = chaptersAsc.lastIndex
+        }
         currentChapterIndex(progress.chapter)
         progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {

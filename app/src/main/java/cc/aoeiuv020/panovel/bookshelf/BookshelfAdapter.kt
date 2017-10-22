@@ -53,6 +53,10 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
                 NovelDetailActivity.start(context, novel)
             }
 
+            last.setOnClickListener {
+                NovelTextActivity.start(context, novel, -1)
+            }
+
             itemView.setOnClickListener {
                 NovelTextActivity.start(context, novel)
             }
