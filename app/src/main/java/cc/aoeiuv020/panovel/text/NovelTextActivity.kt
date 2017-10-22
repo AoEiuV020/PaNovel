@@ -3,6 +3,7 @@
 package cc.aoeiuv020.panovel.text
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.view.ViewPager
@@ -21,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.novel_text_read_settings.*
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.startActivity
 
 
 /**
@@ -28,6 +30,16 @@ import org.jetbrains.anko.debug
  * Created by AoEiuV020 on 2017.10.03-19:06:44.
  */
 class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
+    companion object {
+        fun start(context: Context, novelItem: NovelItem) {
+            context.startActivity<NovelTextActivity>("novelItem" to novelItem.toJson())
+        }
+
+        fun start(context: Context, novelItem: NovelItem, index: Int) {
+            context.startActivity<NovelTextActivity>("novelItem" to novelItem.toJson(), "index" to index)
+        }
+    }
+
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelTextPresenter

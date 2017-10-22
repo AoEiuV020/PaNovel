@@ -9,7 +9,6 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
@@ -18,7 +17,6 @@ import cn.lemon.view.adapter.RecyclerAdapter
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.bookshelf_item.view.*
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.startActivity
 import java.text.SimpleDateFormat
 
 /**
@@ -52,11 +50,11 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
 
         init {
             name.setOnClickListener {
-                context.startActivity<NovelDetailActivity>("novelItem" to novel.toJson())
+                NovelDetailActivity.start(context, novel)
             }
 
             itemView.setOnClickListener {
-                context.startActivity<NovelTextActivity>("novelItem" to novel.toJson())
+                NovelTextActivity.start(context, novel)
             }
         }
 

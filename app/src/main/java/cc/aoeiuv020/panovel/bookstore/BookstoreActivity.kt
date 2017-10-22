@@ -3,6 +3,7 @@
 package cc.aoeiuv020.panovel.bookstore
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.Menu
@@ -15,7 +16,6 @@ import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.list.NovelListFragment
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
-import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.loading
 import com.bumptech.glide.Glide
@@ -32,6 +32,9 @@ import org.jetbrains.anko.*
 class BookstoreActivity : BookstoreBaseNavigationActivity(), IView, AnkoLogger {
     companion object {
         private val GROUP_ID: Int = 1
+        fun start(context: Context) {
+            context.startActivity<BookstoreActivity>()
+        }
     }
 
     private lateinit var alertDialog: AlertDialog
@@ -103,13 +106,13 @@ class BookstoreActivity : BookstoreBaseNavigationActivity(), IView, AnkoLogger {
                     val list = Bookshelf.list()
                     selector(getString(R.string.bookshelf), list.map { "${it.name} - ${it.site}" }) { _, i ->
                         val novelItem = list[i]
-                        startActivity<NovelDetailActivity>("novelItem" to novelItem.toJson())
+                        NovelDetailActivity.start(this, novelItem)
                     }
                 }
                 R.id.history -> History.list().let { list ->
                     selector(getString(R.string.history), list.map { it.novel }.map { "${it.name} - ${it.site}" }) { _, i ->
                         val novelItem = list[i].novel
-                        startActivity<NovelDetailActivity>("novelItem" to novelItem.toJson())
+                        NovelDetailActivity.start(this, novelItem)
                     }
                 }
             }

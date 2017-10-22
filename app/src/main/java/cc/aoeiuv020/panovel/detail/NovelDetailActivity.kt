@@ -2,6 +2,7 @@
 
 package cc.aoeiuv020.panovel.detail
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -34,6 +35,12 @@ import org.jetbrains.anko.startActivity
  * Created by AoEiuV020 on 2017.10.03-18:10:37.
  */
 class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
+    companion object {
+        fun start(context: Context, novelItem: NovelItem) {
+            context.startActivity<NovelDetailActivity>("novelItem" to novelItem.toJson())
+        }
+    }
+
     private lateinit var alertDialog: AlertDialog
     private lateinit var presenter: NovelDetailPresenter
     private lateinit var chapterAdapter: NovelChaptersAdapter
@@ -68,7 +75,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
 
         fabRead.setOnClickListener {
             novelDetail?.let {
-                startActivity<NovelTextActivity>("novelItem" to it.novel.toJson())
+                NovelTextActivity.start(this, it.novel)
             }
         }
 

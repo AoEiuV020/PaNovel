@@ -18,7 +18,6 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
-import org.jetbrains.anko.startActivity
 
 
 /**
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         container.adapter = mSectionsPagerAdapter
 
         fab.setOnClickListener { _ ->
-            startActivity<BookstoreActivity>()
+            BookstoreActivity.start(this)
         }
 
 
