@@ -9,7 +9,7 @@
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/settings"
         android:title="@string/settings"
         app:showAsAction="never" />
 </menu>

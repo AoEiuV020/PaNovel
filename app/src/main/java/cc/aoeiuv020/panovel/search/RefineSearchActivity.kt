@@ -107,7 +107,7 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_search -> searchView.showSearch()
+            R.id.search -> searchView.showSearch()
             android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)

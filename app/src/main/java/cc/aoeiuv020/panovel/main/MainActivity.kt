@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_settings -> SettingsActivity.start(this)
+            R.id.settings -> SettingsActivity.start(this)
             R.id.search -> RefineSearchActivity.start(this)
         }
         return super.onOptionsItemSelected(item)
