@@ -81,6 +81,7 @@ class BookstoreActivity : BookstoreBaseNavigationActivity(), IView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_search -> searchView.showSearch()
             R.id.browse -> browse(url)
             R.id.refresh -> refresh()
         }
@@ -89,8 +90,6 @@ class BookstoreActivity : BookstoreBaseNavigationActivity(), IView, AnkoLogger {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_bookstore, menu)
-        val item = menu.findItem(R.id.action_search)
-        searchView.setMenuItem(item)
         return true
     }
 
