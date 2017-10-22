@@ -4,7 +4,6 @@
     tools:context="cc.aoeiuv020.panovel.main.MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
         android:title="@string/settings"
         app:showAsAction="never" />
 </menu>
