@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_action_action_search"
+        android:icon="@drawable/ic_search"
         android:title="@string/abc_search_hint"
+        app:iconTint="@android:color/white"
         app:showAsAction="ifRoom"
         tools:ignore="PrivateResource" />
     <item
