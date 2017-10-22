@@ -38,7 +38,6 @@ class BookshelfFragment : Fragment(), IView {
 
         recyclerView.showSwipeRefresh()
         presenter.attach(this)
-        presenter.start()
     }
 
     override fun onDetach() {
@@ -46,7 +45,11 @@ class BookshelfFragment : Fragment(), IView {
         super.onDetach()
     }
 
-    @Suppress("unused")
+    override fun onStart() {
+        super.onStart()
+        refresh()
+    }
+
     private fun refresh() {
         recyclerView.showSwipeRefresh()
         presenter.refresh()
