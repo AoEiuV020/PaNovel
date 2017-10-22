@@ -66,10 +66,6 @@ class Liudatxt : NovelContext() {
         }
     }
 
-    /**
-     * 这网站用的是百度站内搜索，
-     * 连接时不时失败，应该是百度的问题，
-     */
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
         val url = "$SEARCH_PAGE_URL?searchkey=$key"
@@ -85,28 +81,22 @@ class Liudatxt : NovelContext() {
         val bookright = root.select("#bookinfo > div.bookright").first()
         val name = bookright.select("> div.booktitle > h1").first().text()
         val author = bookright.select("#author > a").first().text()
-        val list = bookright.select("> div.count > ul > li > span").map { it.text() }
-        val (genre, weekClick, _, _, status) = list
-        val (_, length) = list.drop(5)
-        val updateString = bookright.select("> div.new > span > span").first().text()
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val update = sdf.parse(updateString)
-        val stars = weekClick.toInt()
         val info = bookright.select("#bookintro > p").joinToString("\n") {
             it.textNodes().joinToString("\n") {
                 it.toString().trim()
             }
         }
-        val lastChapter = root.select("#newlist > ul > li:nth-child(1) > a").first().let {
-            NovelChapter(it.text(), it.absHref())
-        }
+
+        val updateString = bookright.select("> div.new > span > span").first().text()
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val update = sdf.parse(updateString)
 
         val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, lastChapter, status, genre, length, info, stars, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val root = request(requester.url)
+        val root = request(requester)
         return root.select("#readerlist > ul > li > a").map { a ->
             NovelChapter(a.text(), a.absHref())
         }

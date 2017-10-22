@@ -27,6 +27,8 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
             : super(context, attrs, defStyleAttr, defStyleRes)
 
     private val map = mapOf<String, Pair<() -> String, (String) -> Unit>>(
+            "download_thread_count" to ({ Settings.downloadThreadCount.toString() } to { v -> Settings.downloadThreadCount = v.toInt() }),
+            "async_thread_count" to ({ Settings.asyncThreadCount.toString() } to { v -> Settings.asyncThreadCount = v.toInt() }),
             "history_count" to ({ Settings.historyCount.toString() } to { v -> Settings.historyCount = v.toInt() }),
             "line_spacing" to ({ Settings.lineSpacing.toString() } to { v -> Settings.lineSpacing = v.toInt() }),
             "paragraph_spacing" to ({ Settings.paragraphSpacing.toString() } to { v -> Settings.paragraphSpacing = v.toInt() }),

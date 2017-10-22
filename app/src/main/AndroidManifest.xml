@@ -17,7 +17,7 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
             android:name=".bookstore.BookstoreActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.TranslateStatusBar" />
         <activity
             android:name=".detail.NovelDetailActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslateStatusBar" />
@@ -37,6 +37,10 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".search.RefineSearchActivity"
+            android:label="@string/title_activity_refine_search"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

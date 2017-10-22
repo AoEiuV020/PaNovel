@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
+import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -18,7 +19,6 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
-import org.jetbrains.anko.startActivity
 
 
 /**
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         container.adapter = mSectionsPagerAdapter
 
         fab.setOnClickListener { _ ->
-            startActivity<BookstoreActivity>()
+            BookstoreActivity.start(this)
         }
 
 
@@ -80,7 +80,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_settings -> SettingsActivity.start(this)
+            R.id.settings -> SettingsActivity.start(this)
+            R.id.search -> RefineSearchActivity.start(this)
         }
         return super.onOptionsItemSelected(item)
     }

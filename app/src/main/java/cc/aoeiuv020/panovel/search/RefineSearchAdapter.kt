@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.bookshelf
+package cc.aoeiuv020.panovel.search
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,7 +9,6 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
@@ -22,9 +21,9 @@ import java.text.SimpleDateFormat
 
 /**
  *
- * Created by AoEiuV020 on 2017.10.14-21:54.
+ * Created by AoEiuV020 on 2017.10.22-18:25:11.
  */
-class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresenter) : RecyclerAdapter<NovelItem>(context) {
+class RefineSearchAdapter(context: Context, val refineSearchPresenter: RefineSearchPresenter) : RecyclerAdapter<NovelItem>(context) {
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
@@ -37,7 +36,7 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
     }
 
     inner class ViewHolder(parent: ViewGroup?, layoutId: Int) : BaseViewHolder<NovelItem>(parent, layoutId), IView, AnkoLogger {
-        private val presenter = bookshelfPresenter.subPresenter()
+        private val presenter = refineSearchPresenter.subPresenter()
         private val image = itemView.imageView
         private val name = itemView.tvName
         private val author = itemView.tvAuthor
@@ -52,11 +51,6 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
         init {
             name.setOnClickListener {
                 NovelDetailActivity.start(context, novel)
-            }
-
-            name.setOnLongClickListener {
-                RefineSearchActivity.start(context, novel.name, novel.author)
-                true
             }
 
             last.setOnClickListener {

@@ -6,12 +6,10 @@ import android.widget.TextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.local.toJson
 import cn.lemon.view.adapter.BaseViewHolder
 import cn.lemon.view.adapter.RecyclerAdapter
 import kotlinx.android.synthetic.main.novel_list_item.view.*
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.startActivity
 
 /**
  *
@@ -33,8 +31,8 @@ class NovelListRecyclerAdapter(ctx: Context) : RecyclerAdapter<NovelListItem>(ct
             novelInfo.text = novel.info
         }
 
-        override fun onItemViewClick(novelItem: NovelListItem) {
-            itemView.context.startActivity<NovelDetailActivity>("novelItem" to novelItem.novel.toJson())
+        override fun onItemViewClick(novelListItem: NovelListItem) {
+            NovelDetailActivity.start(itemView.context, novelListItem.novel)
         }
     }
 }

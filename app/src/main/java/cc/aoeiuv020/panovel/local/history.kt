@@ -9,11 +9,11 @@ import cc.aoeiuv020.panovel.api.NovelItem
 object History : LocalSource {
     private val max get() = Settings.historyCount
 
-    private fun add(history: NovelHistory) = gsonSave(history.novel.bookId, history)
+    private fun add(history: NovelHistory) = gsonSave(history.novel.bookId.toString(), history)
 
     fun add(item: NovelItem) = add(NovelHistory(item))
 
-    private fun remove(item: NovelItem) = gsonRemove(item.bookId)
+    private fun remove(item: NovelItem) = gsonRemove(item.bookId.toString())
 
     private fun remove(history: NovelHistory) = remove(history.novel)
 

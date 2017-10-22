@@ -7,6 +7,9 @@
 
 # 本地保存用到类名，不混淆，
 -keepnames class * implements cc.aoeiuv020.panovel.local.LocalSource
+-keepnames class * extends cc.aoeiuv020.panovel.api.Data
+-keepnames class * extends cc.aoeiuv020.panovel.api.Requester
+-keepnames class * extends cc.aoeiuv020.panovel.local.LocalData
 
 
 #jsoup https://stackoverflow.com/a/32169975/5615186

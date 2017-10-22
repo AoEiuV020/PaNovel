@@ -9,7 +9,6 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import cn.lemon.view.adapter.BaseViewHolder
@@ -18,7 +17,6 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.bookshelf_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.startActivity
 import java.text.SimpleDateFormat
 
 /**
@@ -68,26 +66,22 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
 
             presenter.attach(this)
             presenter.requestDetail(novel)
-            presenter.requestChapterProgress(novel)
         }
 
         fun showDetail(detail: NovelDetail) {
             update.text = sdf.format(detail.update)
-            last.text = detail.lastChapter.name
             Glide.with(context).load(detail.bigImg).into(image)
+            presenter.requestChapters(detail)
         }
 
-        fun showLastChapter(chapter: NovelChapter) {
-            last.text = chapter.name
-        }
-
-        fun showChapter(chapterName: String) {
-            readAt.text = chapterName
+        fun showChapter(chapters: List<NovelChapter>, progress: Int) {
+            readAt.text = chapters[progress].name
+            last.text = chapters.last().name
             progressBar.hide()
         }
 
         override fun onItemViewClick(data: NovelItem) {
-            context.startActivity<NovelDetailActivity>("novelItem" to data.toJson())
+            NovelDetailActivity.start(context, data)
         }
 
         fun destroy() {

@@ -15,7 +15,7 @@ import java.net.URL
 abstract class NovelContext {
     companion object {
         @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt())
+        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt(), Qidian())
         private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         private val nameMap = contexts.associateBy { it.getNovelSite().name }
         fun getNovelContexts(): List<NovelContext> = contexts
@@ -24,7 +24,7 @@ abstract class NovelContext {
             return hostMap[host] ?: contexts.firstOrNull { it.check(url) } ?: throw IllegalArgumentException("网址不支持: $url")
         }
 
-        fun getNovelContextByUrl(site: NovelSite): NovelContext = getNovelContextByUrl(site.baseUrl)
+        fun getNovelContextBySite(site: NovelSite): NovelContext = getNovelContextByUrl(site.baseUrl)
 
         @Suppress("unused")
         fun getNovelContextByName(name: String): NovelContext {
@@ -92,13 +92,16 @@ abstract class NovelContext {
             }
         }
         logger.debug { "request $requester" }
-        return requester.request()
+        return requester.connect().execute()
     }
+
+    protected fun response(url: String) = response(Requester(url))
 
     protected fun request(response: Connection.Response): Document {
         val root = response.parse()
         logger.debug { "status code: ${response.statusCode()}" }
         logger.debug { "response url: ${response.url()}" }
+        logger.trace { "body length: ${response.body().length}" }
         if (!check(response.url().toString())) {
             throw IOException("网络被重定向，检查网络是否可用，")
         }

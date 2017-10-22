@@ -12,13 +12,13 @@ import cc.aoeiuv020.panovel.api.NovelItem
 @Suppress("MemberVisibilityCanPrivate")
 object Bookshelf : LocalSource {
     fun contains(novelDetail: NovelDetail): Boolean = contains(novelDetail.novel)
-    fun contains(novelItem: NovelItem): Boolean = gsonExists(novelItem.bookId)
+    fun contains(novelItem: NovelItem): Boolean = gsonExists(novelItem.bookId.toString())
 
     fun add(novelDetail: NovelDetail) = add(novelDetail.novel)
-    fun add(novelItem: NovelItem) = gsonSave(novelItem.bookId, novelItem)
+    fun add(novelItem: NovelItem) = gsonSave(novelItem.bookId.toString(), novelItem)
 
     fun remove(novelDetail: NovelDetail) = remove(novelDetail.novel)
-    fun remove(novelItem: NovelItem) = gsonRemove(novelItem.bookId)
+    fun remove(novelItem: NovelItem) = gsonRemove(novelItem.bookId.toString())
 
     fun list(): List<NovelItem> = gsonList()
 }

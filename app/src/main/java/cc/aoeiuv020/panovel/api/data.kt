@@ -70,23 +70,12 @@ data class NovelDetail(
         val bigImg: String,
         // 最后更新的时间，
         val update: Date,
-        // 最新章节，
-        val lastChapter: NovelChapter,
-        // 连载 or 完结，
-        val status: String,
-        // 所属分类，
-        val genre: String,
-        // 字数，
-        val length: String,
         // 简介，
         val introduction: String,
-        // 收藏人数，不支持就-1,
-        val stars: Int,
         val requester: ChaptersRequester
 ) : Data() {
-    constructor(novel: NovelItem, bigImg: String, update: Date, lastChapter: NovelChapter, status: String, genre: String
-                , length: String, info: String, stars: Int, url: String)
-            : this(novel, bigImg, update, lastChapter, status, genre, length, info, stars, ChaptersRequester(url))
+    constructor(novel: NovelItem, bigImg: String, update: Date, info: String, url: String)
+            : this(novel, bigImg, update, info, ChaptersRequester(url))
 }
 
 /**

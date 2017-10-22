@@ -6,12 +6,15 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  *
@@ -33,51 +36,68 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     }
 
     fun download(fromIndex: Int) {
-        Observable.fromCallable {
+        Observable.create<List<Int>> { em ->
             val detail = Cache.detail.get(novelItem)
                     ?: context.getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
             val chapters = Cache.chapters.get(novelItem)
                     ?: context.getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
-            var exists = 0
-            var downloads = 0
-            var errors = 0
-            chapters.drop(fromIndex).forEach { chapter ->
-                Cache.text.get(novelItem, chapter.name)?.also { exists++ } ?: try {
-                    context.getNovelText(chapter.requester)
-                } catch (_: Exception) {
-                    errors++
-                    null
-                }?.also { Cache.text.put(novelItem, it, chapter.name); downloads++ }
-            }
-            Triple(exists, downloads, errors)
-        }.async().subscribe({ (exists, downloads, errors) ->
+            val size = chapters.size
+            val exists = AtomicInteger()
+            val downloads = AtomicInteger()
+            val errors = AtomicInteger()
+            val left = AtomicInteger(size - fromIndex)
+            val nextIndex = AtomicInteger(fromIndex)
             debug {
-                "download complete <exists, $exists> <downloads, $downloads> <errors, $errors>"
+                "download start <$fromIndex/$size>"
             }
-            view?.downloadComplete(exists, downloads, errors)
+            // 同时启动多个线程下载，发射到上面总的em,
+            repeat(Settings.downloadThreadCount) {
+                // io线程下载，线程数不算在Settings.asyncThreadCount里，
+                Observable.fromCallable {
+                    var index = nextIndex.getAndIncrement()
+                    // 如果总的em已经取消订阅则不再继续，
+                    // 取消订阅时正在下载的不中断，
+                    while (index < size && !em.isDisposed) {
+                        debug { "${Thread.currentThread().name} downloading $index" }
+                        val chapter = chapters[index]
+                        Cache.text.get(novelItem, chapter.name)?.also { em.onNext(listOf(exists.incrementAndGet(), downloads.get(), errors.get(), left.decrementAndGet())) } ?: try {
+                            context.getNovelText(chapter.requester)
+                        } catch (_: Exception) {
+                            em.onNext(listOf(exists.get(), downloads.get(), errors.incrementAndGet(), left.decrementAndGet()))
+                            null
+                        }?.also { Cache.text.put(novelItem, it, chapter.name); em.onNext(listOf(exists.get(), downloads.incrementAndGet(), errors.get(), left.decrementAndGet())) }
+                        index = nextIndex.getAndIncrement()
+                    }
+                }.subscribeOn(Schedulers.io()).subscribe()
+            }
+        }.async().subscribe({ (exists, downloads, errors, left) ->
+            debug {
+                "downloaded <exists, $exists> <downloads, $downloads> <errors, $errors> <left, $left>"
+            }
+            if (left == 0) {
+                view?.showDownloadComplete(exists, downloads, errors)
+            } else {
+                view?.showDownloading(exists, downloads, errors, left)
+            }
         }, { e ->
             val message = "下载小说失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 2) }
     }
 
     private fun requestNovelDetail() {
         val requester = novelItem.requester
         Observable.fromCallable {
-            if (refresh) {
-                context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
-            } else {
-                Cache.detail.get(novelItem)
-                        ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
-            }
+            Cache.detail.get(novelItem)
+                    ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
         }.async().subscribe({ detail ->
             view?.showDetail(detail)
         }, { e ->
             val message = "加载小说章节详情失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 0) }
     }
 
     fun requestChapters(requester: ChaptersRequester) {
@@ -90,28 +110,38 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                             ?: context.getNovelChaptersAsc(requester).also { Cache.chapters.put(novelItem, it) }
                 } catch (e: IOException) {
                     error { "网络有问题，读取缓存不判断超时，" }
-                    Cache.chapters.get(novelItem, timeout = 0) ?: throw e
+                    Cache.chapters.get(novelItem, refreshTime = 0) ?: throw e
                 }
             }
         }.async().subscribe({ chapters ->
-            view?.showChapters(chapters)
+            view?.showChaptersAsc(chapters)
         }, { e ->
             val message = "加载小说章节列表失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 1) }
     }
 
     fun subPresenter() = NTPresenter()
 
     inner class NTPresenter : Presenter<NovelTextViewHolder>() {
+        private var chapter: NovelChapter? = null
+        private var refresh = false
+        fun refresh() {
+            refresh = true
+            chapter?.let { requestNovelText(it) }
+        }
+
         fun requestNovelText(chapter: NovelChapter) {
+            this.chapter = chapter
             Observable.fromCallable {
                 if (refresh) {
-                    // 只刷新一章，
+                    debug { "$this refresh $chapter" }
+                    // 一次刷新所有正在展示的章节，每个presenter刷一次，
                     refresh = false
                     context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.name) }
                 } else {
+                    debug { "$this load $chapter" }
                     Cache.text.get(novelItem, chapter.name)
                             ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.name) }
                 }
@@ -121,7 +151,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                 val message = "加载小说页面失败，"
                 error(message, e)
                 view?.showError(message, e)
-            })
+            }).let { addDisposable(it) }
         }
     }
 }

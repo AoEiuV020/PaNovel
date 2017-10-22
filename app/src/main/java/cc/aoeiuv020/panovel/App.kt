@@ -6,6 +6,9 @@ import android.content.Context
 import cc.aoeiuv020.panovel.api.paNovel
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.reactivex.internal.functions.Functions
+import io.reactivex.plugins.RxJavaPlugins
+
 
 /**
  *
@@ -26,5 +29,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         ctx = applicationContext
+
+        // 无视RxJava抛的异常，也就是不被捕获调用onError的异常，
+        RxJavaPlugins.setErrorHandler(Functions.emptyConsumer())
     }
 }

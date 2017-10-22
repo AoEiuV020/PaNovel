@@ -46,7 +46,7 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
             val message = "加载小说详情失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 0) }
     }
 
     fun requestChapters(requester: ChaptersRequester) {
@@ -63,7 +63,7 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
                             .also { Cache.chapters.put(novelItem, it) }
                             .also { debug { "重新获取章节，${it.size}" } }
                 } catch (e: IOException) {
-                    Cache.chapters.get(novelItem, timeout = 0)?.also { debug { "网络有问题，读取缓存不判断超时，${it.size}" } }
+                    Cache.chapters.get(novelItem, refreshTime = 0)?.also { debug { "网络有问题，读取缓存不判断超时，${it.size}" } }
                             ?: throw e
                 }
             }.asReversed().let { ArrayList(it) }
@@ -73,6 +73,6 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
             val message = "加载小说章节失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 1) }
     }
 }

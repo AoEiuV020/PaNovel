@@ -8,29 +8,37 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.util.*
 
-class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter, private val chaptersAsc: List<NovelChapter>) : PagerAdapter(), AnkoLogger {
+class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter) : PagerAdapter(), AnkoLogger {
+    private var chaptersAsc: List<NovelChapter> = emptyList()
     private val unusedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
     private val usedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
     private var current: NovelTextViewHolder? = null
+
+    fun setChaptersAsc(chapters: List<NovelChapter>) {
+        this.chaptersAsc = chapters
+        notifyDataSetChanged()
+    }
     override fun isViewFromObject(view: View, obj: Any) = (obj as NovelTextViewHolder).itemView === view
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val holder = if (unusedHolders.isNotEmpty()) {
             unusedHolders.pop()
         } else {
-            NovelTextViewHolder(ctx, presenter)
+            NovelTextViewHolder(ctx, presenter.subPresenter())
         }.also { usedHolders.push(it) }
         val chapter = chaptersAsc[position]
         debug {
             "instantiate $position $chapter"
         }
         container.addView(holder.itemView)
+        holder.position = position
         holder.apply(chapter)
         return holder
     }
 
-    override fun setPrimaryItem(container: ViewGroup?, position: Int, obj: Any) {
+    override fun setPrimaryItem(container: ViewGroup?, position: Int, obj: Any?) {
         super.setPrimaryItem(container, position, obj)
-        current = obj as NovelTextViewHolder
+        debug { "viewpager current position $position" }
+        current = obj as? NovelTextViewHolder
     }
 
     fun getTextProgress(): Int? {
@@ -38,6 +46,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
     }
 
     fun setTextProgress(textProgress: Int) {
+        debug { "setTextProgress position ${current?.position}" }
         current?.setTextProgress(textProgress)
     }
 

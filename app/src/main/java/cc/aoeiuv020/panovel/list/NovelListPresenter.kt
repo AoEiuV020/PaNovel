@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.list
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelGenre
+import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Selected
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
@@ -23,14 +24,14 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
         this.genre = genre
         Observable.fromCallable {
             NovelContext.getNovelContextByUrl(genre.requester.url).also { context = it }
-                    .getNovelList(genre.requester)
+                    .getNovelList(genre.requester).also { it.forEach { Cache.item.put(it.novel, it.novel) } }
         }.async().subscribe({ comicList ->
             view?.showNovelList(comicList)
         }, { e ->
             val message = "加载小说列表失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 0) }
     }
 
     private fun saveGenre(genre: NovelGenre) {
@@ -65,6 +66,6 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
             val message = "加载小说列表一下页地址失败，"
             error(message, e)
             view?.showError(message, e)
-        })
+        }).let { addDisposable(it, 1) }
     }
 }

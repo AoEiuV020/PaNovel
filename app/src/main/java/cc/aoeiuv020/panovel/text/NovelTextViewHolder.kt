@@ -1,7 +1,9 @@
 package cc.aoeiuv020.panovel.text
 
+import android.annotation.SuppressLint
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -19,9 +21,9 @@ import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 
-class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTextPresenter) : IView, AnkoLogger {
+class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter.NTPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
-    private val presenter = presenter.subPresenter()
+    var position: Int = 0
     private val headerView: View
     private val chapterNameTextView: TextView
     private val textRecyclerView: RefreshRecyclerView
@@ -35,14 +37,35 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, presenter: NovelTe
         layoutManager = LinearLayoutManager(ctx)
         textRecyclerView.setLayoutManager(layoutManager)
         headerView = LayoutInflater.from(ctx).inflate(R.layout.novel_text_header, itemView as ViewGroup, false)
+        headerView.setOnLongClickListener {
+            refresh()
+        }
         headerView.setOnClickListener {
             ctx.toggle()
         }
         textListAdapter.header = headerView
+        textRecyclerView.recyclerView.setOnTouchListener(object : View.OnTouchListener {
+            private var previousAction: Int = MotionEvent.ACTION_UP
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouch(v: View?, event: MotionEvent): Boolean {
+                if (previousAction == MotionEvent.ACTION_DOWN
+                        && event.action == MotionEvent.ACTION_UP) {
+                    ctx.toggle()
+                }
+                previousAction = event.action
+                return false
+            }
+        })
         textRecyclerView.setAdapter(textListAdapter)
         chapterNameTextView = headerView.chapterNameTextView
         chapterNameTextView.setTextColor(Settings.textColor)
         progressBar = itemView.progressBar
+    }
+
+    fun refresh(): Boolean {
+        progressBar.show()
+        presenter.refresh()
+        return true
     }
 
     fun apply(chapter: NovelChapter) {

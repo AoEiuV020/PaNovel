@@ -53,7 +53,7 @@ fun <T : kotlin.Any> LocalSource.primitiveList(folder: String? = null): List<T> 
     primitiveLoad<T>(file)
 }
 
-val NovelItem.bookId get() = "$name.$author.$site"
+val NovelItem.bookId get() = NovelId(site, author, name)
 
 fun md5Base64(s: String): String {
     val digest = java.security.MessageDigest.getInstance("MD5")
@@ -77,11 +77,11 @@ fun LocalSource.gsonSave(name: String, obj: Any?, folder: String? = null) {
             ?: gsonRemove(name, folder)
 }
 
-fun <T> LocalSource.gsonLoad(name: String, type: Type, timeout: Long = 0, folder: String? = null): T? = gsonLoad(externalGson(name, folder), type, timeout)
-inline fun <reified T> LocalSource.gsonLoad(name: String, timeout: Long = 0, folder: String? = null): T? = gsonLoad(name, type<T>(), timeout, folder)
-fun <T> LocalSource.gsonLoad(file: File, type: Type, timeout: Long = 0): T? = try {
-    // timeout <= 0时 不判断超时，缓存时间小于timeout才取出，
-    file.takeIf { timeout <= 0 || System.currentTimeMillis() - it.lastModified() < timeout }?.run {
+fun <T> LocalSource.gsonLoad(name: String, type: Type, refreshTime: Long = 0, folder: String? = null): T? = gsonLoad(externalGson(name, folder), type, refreshTime)
+inline fun <reified T> LocalSource.gsonLoad(name: String, refreshTime: Long = 0, folder: String? = null): T? = gsonLoad(name, type<T>(), refreshTime, folder)
+fun <T> LocalSource.gsonLoad(file: File, type: Type, refreshTime: Long = 0): T? = try {
+    // refreshTime 之后保存的数据才取出，
+    file.takeIf { it.lastModified() >= refreshTime }?.run {
         readText().toBean(type)
     }
 } catch (_: Exception) {
