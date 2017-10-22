@@ -2,10 +2,11 @@
 我们不生产小说，我们只做网站的搬运工，
 
 ## 应用简介
-这是有理想的小说神器，目前支持三个网站，  
+这是有理想的小说神器，目前支持下列网站，  
 [飘天文学](http://www.piaotian.com/)
 [笔趣阁](http://www.biqubao.com/)
 [溜达小说](http://www.liudatxt.com/)
+[起点中文](https://www.qidian.com/)
 
 【库】  
 kotlin + mvp + rxandroid  
