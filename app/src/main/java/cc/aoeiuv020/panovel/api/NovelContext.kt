@@ -24,7 +24,7 @@ abstract class NovelContext {
             return hostMap[host] ?: contexts.firstOrNull { it.check(url) } ?: throw IllegalArgumentException("网址不支持: $url")
         }
 
-        fun getNovelContextByUrl(site: NovelSite): NovelContext = getNovelContextByUrl(site.baseUrl)
+        fun getNovelContextBySite(site: NovelSite): NovelContext = getNovelContextByUrl(site.baseUrl)
 
         @Suppress("unused")
         fun getNovelContextByName(name: String): NovelContext {

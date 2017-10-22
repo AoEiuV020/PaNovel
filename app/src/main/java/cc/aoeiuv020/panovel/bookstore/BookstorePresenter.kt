@@ -38,7 +38,7 @@ class BookstorePresenter : Presenter<BookstoreActivity>(), AnkoLogger {
      */
     private fun loadGenre(site: NovelSite): NovelGenre? {
         return Selected.genre?.takeIf {
-            NovelContext.getNovelContextByUrl(site).check(it.requester.url)
+            NovelContext.getNovelContextBySite(site).check(it.requester.url)
         }
     }
 
@@ -65,7 +65,7 @@ class BookstorePresenter : Presenter<BookstoreActivity>(), AnkoLogger {
 
     fun search(site: NovelSite, query: String) {
         debug { "在网站(${site.name})搜索：$query, " }
-        NovelContext.getNovelContextByUrl(site).searchNovelName(query).let { genre ->
+        NovelContext.getNovelContextBySite(site).searchNovelName(query).let { genre ->
             view?.showGenre(genre)
         }
     }
@@ -73,7 +73,7 @@ class BookstorePresenter : Presenter<BookstoreActivity>(), AnkoLogger {
     fun requestGenres(site: NovelSite) {
         saveSite(site)
         Observable.fromCallable {
-            NovelContext.getNovelContextByUrl(site).getGenres()
+            NovelContext.getNovelContextBySite(site).getGenres()
         }.async().subscribe({ genres ->
             debug { "加载网站分类列表成功，数量：${genres.size}" }
             view?.showGenres(genres)
