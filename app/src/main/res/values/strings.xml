@@ -60,6 +60,7 @@
     <string name="async_thread_count">异步线程数</string>
     <string name="download_thread_count">下载线程数</string>
     <string name="contents">目录</string>
+    <string name="search">搜索</string>
 
 
 </resources>
