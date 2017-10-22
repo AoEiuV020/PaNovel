@@ -160,7 +160,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         ntpAdapter = NovelTextPagerAdapter(this, presenter)
         viewPager.adapter = ntpAdapter
 
-        loading(progressDialog, R.string.novel_page)
+        loading(progressDialog, R.string.novel_chapters)
         presenter.attach(this)
         presenter.start()
     }
@@ -217,7 +217,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     private fun refresh() {
-        loading(progressDialog, R.string.novel_page)
+        loading(progressDialog, R.string.novel_chapters)
         // 保存一下的进度，
         ntpAdapter.getTextProgress()?.let { progress.text = it }
         presenter.refresh()

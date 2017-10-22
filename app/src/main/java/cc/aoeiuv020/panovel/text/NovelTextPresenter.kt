@@ -72,12 +72,8 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     private fun requestNovelDetail() {
         val requester = novelItem.requester
         Observable.fromCallable {
-            if (refresh) {
-                context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
-            } else {
-                Cache.detail.get(novelItem)
-                        ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
-            }
+            Cache.detail.get(novelItem)
+                    ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
         }.async().subscribe({ detail ->
             view?.showDetail(detail)
         }, { e ->
@@ -108,6 +104,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
             view?.showError(message, e)
         }).let { addDisposable(it, 1) }
     }
+
     fun subPresenter() = NTPresenter()
 
     inner class NTPresenter : Presenter<NovelTextViewHolder>() {
