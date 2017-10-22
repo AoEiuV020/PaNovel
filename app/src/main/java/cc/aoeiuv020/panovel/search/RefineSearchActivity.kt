@@ -25,6 +25,10 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         fun start(context: Context, name: String) {
             context.startActivity<RefineSearchActivity>("name" to name)
         }
+
+        fun start(context: Context, name: String, author: String) {
+            context.startActivity<RefineSearchActivity>("name" to name, "author" to author)
+        }
     }
 
     private lateinit var presenter: RefineSearchPresenter
@@ -54,8 +58,12 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
             forceRefresh()
         }
 
-        intent.getStringExtra("name")?.let {
-            search(it)
+        val name = intent.getStringExtra("name")
+        val author = intent.getStringExtra("author")
+        name?.let { nameNonnull ->
+            author?.let { authorNonnull ->
+                search(nameNonnull, authorNonnull)
+            } ?: search(nameNonnull)
         } ?: searchView.post { searchView.showSearch() }
     }
 
@@ -64,20 +72,31 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         refresh()
     }
 
-    private fun search(query: String) {
-        title = query
+    private fun search(name: String, author: String) {
+        title = name
         mAdapter.clear()
         mAdapter.openLoadMore()
-        presenter.search(query)
+        presenter.search(name, author)
+    }
+
+    private fun search(name: String) {
+        title = name
+        mAdapter.clear()
+        mAdapter.openLoadMore()
+        presenter.search(name)
     }
 
     private fun refresh() {
         mAdapter.notifyDataSetChanged()
     }
 
+    /**
+     * 刷新列表，同时刷新小说章节信息，
+     */
     private fun forceRefresh() {
+        mAdapter.clear()
+        mAdapter.openLoadMore()
         presenter.forceRefresh()
-        mAdapter.notifyDataSetChanged()
         recyclerView.dismissSwipeRefresh()
     }
 

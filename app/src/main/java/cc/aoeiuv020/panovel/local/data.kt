@@ -14,3 +14,8 @@ data class NovelProgress(var chapter: Int = 0, var text: Int = 0)
 
 data class NovelHistory(val novel: NovelItem, val date: Date = Date())
     : LocalData()
+
+data class NovelId(val site: String, val author: String, val name: String)
+    : LocalData() {
+    override fun toString(): String = "$name.$author.$site"
+}

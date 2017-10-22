@@ -55,7 +55,7 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
             }
 
             name.setOnLongClickListener {
-                RefineSearchActivity.start(context, novel.name)
+                RefineSearchActivity.start(context, novel.name, novel.author)
                 true
             }
 

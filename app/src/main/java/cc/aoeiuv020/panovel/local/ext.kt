@@ -53,7 +53,7 @@ fun <T : kotlin.Any> LocalSource.primitiveList(folder: String? = null): List<T> 
     primitiveLoad<T>(file)
 }
 
-val NovelItem.bookId get() = "$name.$author.$site"
+val NovelItem.bookId get() = NovelId(site, author, name)
 
 fun md5Base64(s: String): String {
     val digest = java.security.MessageDigest.getInstance("MD5")

@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.local.NovelId
 import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
@@ -17,21 +18,46 @@ import org.jetbrains.anko.error
  */
 class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
     private var refreshTime = 0L
-    private var query: String? = null
+    private var name: String? = null
+    private var author: String? = null
 
-    fun search(query: String) {
-        this.query = query
-        debug { "search $query" }
+    fun search(name: String, author: String) {
+        this.name = name
+        this.author = author
+        searchActual(name, author)
+    }
+
+    fun search(name: String) {
+        this.name = name
+        searchActual(name, null)
+    }
+
+    private fun searchActual(name: String, author: String?) {
+        debug { "search <$name, $author>" }
         Observable.create<NovelItem> { em ->
             NovelContext.getNovelContexts().forEach { context ->
                 debug { "search ${context.getNovelSite().name}" }
-                try {
-                    context.getNovelList(context.searchNovelName(query).requester).firstOrNull { it.novel.name == query }?.let {
-                        debug { "search result ${it.novel.name}" }
-                        em.onNext(it.novel)
+                // 如果传入了作者，就可以尝试读缓存，
+                (author?.let { authorNonnull ->
+                    Cache.item.get(NovelId(context.getNovelSite().name, authorNonnull, name))
+                } ?: try {
+                    context.getNovelList(context.searchNovelName(name).requester).let { list ->
+                        if (author == null) {
+                            list.firstOrNull {
+                                it.novel.name == name
+                            }?.novel
+                        } else {
+                            list.firstOrNull {
+                                it.novel.name == name && author == it.novel.author
+                            }?.novel?.also { Cache.item.put(NovelId(context.getNovelSite().name, author, name), it) }
+                        }
                     }
                 } catch (_: Exception) {
-                    // 一个网站搜索失败就继续搜索，不抛异常，
+                    // 一个网站搜索不抛异常，
+                    null
+                })?.let {
+                    debug { "search result ${it.name}" }
+                    em.onNext(it)
                 }
             }
             em.onComplete()
@@ -46,12 +72,11 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
         }).let { addDisposable(it) }
     }
 
-    fun refresh() {
-        query?.let { search(it) }
-    }
-
     fun forceRefresh() {
         refreshTime = System.currentTimeMillis()
+        name?.let { nameNonnull ->
+            searchActual(nameNonnull, author)
+        }
     }
 
     fun subPresenter(): ItemPresenter = ItemPresenter()
