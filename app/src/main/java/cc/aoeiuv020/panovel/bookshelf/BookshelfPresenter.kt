@@ -63,7 +63,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
         fun requestChapters(detail: NovelDetail) {
             Observable.fromCallable {
                 val novelItem = detail.novel
-                val chapters = Cache.chapters.get(novelItem, timeout = System.currentTimeMillis() - refreshTime)
+                val chapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
                         ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
                         .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
                 val progress = Cache.progress.get(novelItem)?.chapter ?: 0

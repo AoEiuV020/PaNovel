@@ -110,7 +110,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                             ?: context.getNovelChaptersAsc(requester).also { Cache.chapters.put(novelItem, it) }
                 } catch (e: IOException) {
                     error { "网络有问题，读取缓存不判断超时，" }
-                    Cache.chapters.get(novelItem, timeout = 0) ?: throw e
+                    Cache.chapters.get(novelItem, refreshTime = 0) ?: throw e
                 }
             }
         }.async().subscribe({ chapters ->

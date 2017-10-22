@@ -20,7 +20,7 @@ class Cache<T>(private val type: Type,
     companion object : LocalSource {
         private val DEFAULT_FILE_NAME = "default"
         private inline fun <reified T> new(defaultName: String = Cache::class.java.simpleName,
-                                           defaultTimeout: Long = 0): Cache<T> {
+                                           defaultTimeout: Long = Long.MAX_VALUE): Cache<T> {
             val type = type<T>()
             val cacheName = (type as? Class<*>)?.simpleName ?: defaultName
             return Cache(type, cacheName, defaultTimeout)
@@ -41,9 +41,9 @@ class Cache<T>(private val type: Type,
     fun put(item: NovelItem, t: T, fileName: String = DEFAULT_FILE_NAME) = gsonSave(fileName, t, folder(item))
 
     /**
-     * @param timeout 传入0表示不判断超时，
+     * @param refreshTime 刷新时间，只能取出这个时间后保存的缓存，
      */
-    fun get(item: NovelItem, fileName: String = DEFAULT_FILE_NAME, timeout: Long = defaultTimeout): T? = gsonLoad(fileName, type, timeout, folder(item))
+    fun get(item: NovelItem, fileName: String = DEFAULT_FILE_NAME, refreshTime: Long = System.currentTimeMillis() - defaultTimeout): T? = gsonLoad(fileName, type, refreshTime, folder(item))
 
     fun cachedList(item: NovelItem): List<String> = gsonNameList(folder(item))
 
