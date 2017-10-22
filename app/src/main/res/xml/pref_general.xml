@@ -18,4 +18,13 @@
         android:singleLine="true"
         android:title="@string/async_thread_count" />
 
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="download_thread_count"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/download_thread_count" />
+
 </PreferenceScreen>

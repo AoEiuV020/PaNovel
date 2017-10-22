@@ -6,12 +6,15 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  *
@@ -38,24 +41,38 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                     ?: context.getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
             val chapters = Cache.chapters.get(novelItem)
                     ?: context.getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
-            var exists = 0
-            var downloads = 0
-            var errors = 0
-            var left = chapters.size - fromIndex
-            fun next() = em.onNext(listOf(exists, downloads, errors, left))
-            chapters.drop(fromIndex).forEach { chapter ->
-                left -= 1
-                Cache.text.get(novelItem, chapter.name)?.also { exists++; next() } ?: try {
-                    context.getNovelText(chapter.requester)
-                } catch (_: Exception) {
-                    errors++; next()
-                    null
-                }?.also { Cache.text.put(novelItem, it, chapter.name); downloads++; next() }
+            val size = chapters.size
+            val exists = AtomicInteger()
+            val downloads = AtomicInteger()
+            val errors = AtomicInteger()
+            val left = AtomicInteger(size - fromIndex)
+            val nextIndex = AtomicInteger(fromIndex)
+            debug {
+                "download start <$fromIndex/$size>"
             }
-            em.onComplete()
+            // 同时启动多个线程下载，发射到上面总的em,
+            repeat(Settings.downloadThreadCount) {
+                // io线程下载，线程数不算在Settings.asyncThreadCount里，
+                Observable.fromCallable {
+                    var index = nextIndex.getAndIncrement()
+                    // 如果总的em已经取消订阅则不再继续，
+                    // 取消订阅时正在下载的不中断，
+                    while (index < size && !em.isDisposed) {
+                        debug { "${Thread.currentThread().name} downloading $index" }
+                        val chapter = chapters[index]
+                        Cache.text.get(novelItem, chapter.name)?.also { em.onNext(listOf(exists.incrementAndGet(), downloads.get(), errors.get(), left.decrementAndGet())) } ?: try {
+                            context.getNovelText(chapter.requester)
+                        } catch (_: Exception) {
+                            em.onNext(listOf(exists.get(), downloads.get(), errors.incrementAndGet(), left.decrementAndGet()))
+                            null
+                        }?.also { Cache.text.put(novelItem, it, chapter.name); em.onNext(listOf(exists.get(), downloads.incrementAndGet(), errors.get(), left.decrementAndGet())) }
+                        index = nextIndex.getAndIncrement()
+                    }
+                }.subscribeOn(Schedulers.io()).subscribe()
+            }
         }.async().subscribe({ (exists, downloads, errors, left) ->
             debug {
-                "download <exists, $exists> <downloads, $downloads> <errors, $errors> <left, $left>"
+                "downloaded <exists, $exists> <downloads, $downloads> <errors, $errors> <left, $left>"
             }
             if (left == 0) {
                 view?.showDownloadComplete(exists, downloads, errors)

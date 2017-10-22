@@ -58,6 +58,7 @@
     <string name="pref_header_read">阅读设置</string>
     <string name="chapters_cache_timeout">章节缓存超时</string>
     <string name="async_thread_count">异步线程数</string>
+    <string name="download_thread_count">下载线程数</string>
 
 
 </resources>
