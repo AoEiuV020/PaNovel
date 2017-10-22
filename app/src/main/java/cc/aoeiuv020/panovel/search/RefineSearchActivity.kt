@@ -56,7 +56,7 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
         intent.getStringExtra("name")?.let {
             search(it)
-        }
+        } ?: searchView.post { searchView.showSearch() }
     }
 
     override fun onRestart() {
