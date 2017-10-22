@@ -9,4 +9,13 @@
         android:singleLine="true"
         android:title="@string/history_count" />
 
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="async_thread_count"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/async_thread_count" />
+
 </PreferenceScreen>
