@@ -85,7 +85,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
             override fun onPageSelected(position: Int) {
                 debug { "onPageSelected: $position" }
-                currentChapterIndex(position)
+                onChapterSelected(position)
             }
         })
 
@@ -184,7 +184,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         super.onDestroy()
     }
 
-    private fun currentChapterIndex(index: Int) {
+    private fun selectChapter(index: Int) {
+        viewPager.setCurrentItem(index, false)
+    }
+
+    private fun onChapterSelected(index: Int) {
         progress.chapter = index
         val chapter = chaptersAsc[index]
         title = "$novelName - ${chapter.name}"
@@ -209,7 +213,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         if (progress.chapter == -1) {
             progress.chapter = chaptersAsc.lastIndex
         }
-        currentChapterIndex(progress.chapter)
+        onChapterSelected(progress.chapter)
         progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {
             alert(alertDialog, R.string.novel_not_support)
@@ -245,6 +249,19 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 , novelItem.name
                 , R.drawable.ic_file_download)
         presenter.download(index)
+    }
+
+    private fun showContents() {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.contents)
+                .setAdapter(NovelContentsAdapter(this, novelItem, chaptersAsc, progress.chapter)) { _, index ->
+                    selectChapter(index)
+                }.create().apply {
+            listView.isFastScrollEnabled = true
+            listView.post {
+                listView.setSelection(progress.chapter)
+            }
+        }.show()
     }
 
     private val handler: Handler = Handler()
@@ -287,6 +304,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (item.itemId) {
             R.id.refresh -> refresh()
             R.id.download -> download()
+            R.id.contents -> showContents()
         }
         return super.onOptionsItemSelected(item)
     }
