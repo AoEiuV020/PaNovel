@@ -61,7 +61,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         setContentView(R.layout.activity_novel_detail)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
 
         novelItem = intent.getStringExtra("novelItem").toBean()
         val requester = novelItem.requester
@@ -153,6 +152,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
             R.id.browse -> browse(novelItem.requester.url)
             R.id.info -> showNovelAbout()
             R.id.refresh -> refresh()
+            android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
