@@ -147,5 +147,10 @@ class QidianTest {
             assertEquals("“楚前辈手下留情！”宋书航道。", it.first())
             assertEquals("核心世界中，除了楚阁主ｏｎｅ的脑袋外，还有其它脑袋吗？", it.last())
         }
+        context.getNovelText(Qidian.VipRequester("https://vipreader.qidian.com/chapter/1004608738/388762961")).textList.let {
+            assertEquals(108, it.size)
+            assertEquals("各大星系间，也不知道有多少进化者在议论，沸反盈天，主要是地球的动静大的惊人，举世瞩目。", it.first())
+            assertEquals("时间过的很快，三天一转眼就过去了，再有两个时辰天就快黑了，将在东海的一艘七彩大船上举办慈善晚宴。", it.last())
+        }
     }
 }

@@ -229,7 +229,12 @@ class Qidian : NovelContext() {
         val elements = root.select("#j-catalogWrap > div.volume-wrap > div > ul > li > a")
         return if (elements.isNotEmpty()) {
             elements.map { a ->
-                NovelChapter(a.text(), a.absHref())
+                val url = a.absHref()
+                if (url.startsWith("https://vipreader.qidian.com/chapter/")) {
+                    NovelChapter(a.text(), VipRequester(url))
+                } else {
+                    NovelChapter(a.text(), url)
+                }
             }
         } else {
             val token = response.cookie("_csrfToken")
@@ -284,20 +289,15 @@ class Qidian : NovelContext() {
     }
 
     class VipRequester(url: String) : TextRequester(url) {
-        private fun isVip(url: String) = url.startsWith("https://vipreader.qidian.com/chapter/")
         override fun connect(): Connection {
-            return if (isVip(url)) {
-                val mobile = url.replace("https://vipreader.qidian.com/chapter/", "https://m.qidian.com/book/")
-                val deviceId = "878788848187878"
-                @Suppress("UnnecessaryVariable")
-                val id = deviceId
-                val urlMd5 = md5Hex(url)
-                val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
-                val sign = des3(plain)
-                Jsoup.connect(mobile).cookie("QDSign", sign)
-            } else {
-                super.connect()
-            }
+            val mobile = url.replace("https://vipreader.qidian.com/chapter/", "https://m.qidian.com/book/")
+            val deviceId = "878788848187878"
+            @Suppress("UnnecessaryVariable")
+            val id = deviceId
+            val urlMd5 = md5Hex(url)
+            val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
+            val sign = des3(plain)
+            return Jsoup.connect(mobile).cookie("QDSign", sign)
         }
     }
 }
