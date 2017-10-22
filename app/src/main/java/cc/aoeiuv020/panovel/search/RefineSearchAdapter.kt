@@ -53,11 +53,6 @@ class RefineSearchAdapter(context: Context, val refineSearchPresenter: RefineSea
                 NovelDetailActivity.start(context, novel)
             }
 
-            name.setOnLongClickListener {
-                RefineSearchActivity.start(context, novel.name)
-                true
-            }
-
             last.setOnClickListener {
                 NovelTextActivity.start(context, novel, -1)
             }
