@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.error
@@ -53,7 +54,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
             }.async().subscribe({ comicDetail ->
                 view?.showDetail(comicDetail)
             }, { e ->
-                val message = "读取小说详情失败，"
+                val message = "读取《${novelItem.bookId}》详情失败，"
                 error(message, e)
                 this@BookshelfPresenter.view?.showError(message, e)
             }).let { addDisposable(it, 0) }
@@ -70,7 +71,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
             }.async().subscribe({ (chapters, progress) ->
                 view?.showChapter(chapters, progress)
             }, { e ->
-                val message = "读取小说章节失败，"
+                val message = "读取《${detail.novel.bookId}》章节失败，"
                 error(message, e)
                 this@BookshelfPresenter.view?.showError(message, e)
             }).let { addDisposable(it, 1) }
