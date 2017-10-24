@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api
 
-import android.annotation.SuppressLint
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Connection
@@ -134,7 +133,7 @@ class Qidian : NovelContext() {
         return NovelGenre(genre.name, url)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
         val root = request(requester)
         return if (requester is SearchListRequester) {
@@ -176,7 +175,7 @@ class Qidian : NovelContext() {
         return NovelSearch(name, url)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val root = request(requester)
         val detail = root.select("body > div.wrap > div.book-detail-wrap.center990").first()

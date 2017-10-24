@@ -2,7 +2,6 @@
 
 package cc.aoeiuv020.panovel.api
 
-import android.annotation.SuppressLint
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -44,7 +43,7 @@ class Biquge : NovelContext() {
         return NovelSearch(genre.name, url)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
         val root = request(requester)
         return when {
@@ -116,7 +115,7 @@ class Biquge : NovelContext() {
         return url.startsWith(SEARCH_PAGE_URL)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val root = request(requester)
         val img = root.select("#fmimg > img").first().src()

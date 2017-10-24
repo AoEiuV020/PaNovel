@@ -68,6 +68,6 @@ class ExtKtTest {
         println(type)
     }
 
-    fun <T> gsonType(): Type = object : TypeToken<T>() {}.type
+    private fun <T> gsonType(): Type = object : TypeToken<T>() {}.type
 }
 

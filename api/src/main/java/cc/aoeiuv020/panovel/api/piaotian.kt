@@ -2,7 +2,6 @@
 
 package cc.aoeiuv020.panovel.api
 
-import android.annotation.SuppressLint
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,7 +45,7 @@ class Piaotian : NovelContext() {
 
     private fun isDetail(url: String) = url.startsWith("http://www.piaotian.com/bookinfo")
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
         val response = response(requester)
         if (isDetail(response.url().toString())) {
