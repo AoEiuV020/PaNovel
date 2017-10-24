@@ -296,7 +296,7 @@ class Qidian : NovelContext() {
             val id = deviceId
             val urlMd5 = md5Hex(url)
             val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
-            val sign = des3(plain)
+            val sign = URLEncoder.encode(des3(plain).replace(" ", ""), "ascii")
             return Jsoup.connect(mobile).cookie("QDSign", sign)
         }
     }
