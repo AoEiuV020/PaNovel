@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Base64
 import cc.aoeiuv020.panovel.App
+import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -54,6 +55,7 @@ fun <T : kotlin.Any> LocalSource.primitiveList(folder: String? = null): List<T> 
 }
 
 val NovelItem.bookId get() = NovelId(site, author, name)
+val NovelChapter.id get() = name + '.' + md5Base64(requester.extra)
 
 fun md5Base64(s: String): String {
     val digest = java.security.MessageDigest.getInstance("MD5")

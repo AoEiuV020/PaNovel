@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.local.id
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -60,12 +61,12 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                     while (index < size && !em.isDisposed) {
                         debug { "${Thread.currentThread().name} downloading $index" }
                         val chapter = chapters[index]
-                        Cache.text.get(novelItem, chapter.name)?.also { em.onNext(listOf(exists.incrementAndGet(), downloads.get(), errors.get(), left.decrementAndGet())) } ?: try {
+                        Cache.text.get(novelItem, chapter.id)?.also { em.onNext(listOf(exists.incrementAndGet(), downloads.get(), errors.get(), left.decrementAndGet())) } ?: try {
                             context.getNovelText(chapter.requester)
                         } catch (_: Exception) {
                             em.onNext(listOf(exists.get(), downloads.get(), errors.incrementAndGet(), left.decrementAndGet()))
                             null
-                        }?.also { Cache.text.put(novelItem, it, chapter.name); em.onNext(listOf(exists.get(), downloads.incrementAndGet(), errors.get(), left.decrementAndGet())) }
+                        }?.also { Cache.text.put(novelItem, it, chapter.id); em.onNext(listOf(exists.get(), downloads.incrementAndGet(), errors.get(), left.decrementAndGet())) }
                         index = nextIndex.getAndIncrement()
                     }
                 }.subscribeOn(Schedulers.io()).subscribe()
@@ -139,11 +140,11 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                     debug { "$this refresh $chapter" }
                     // 一次刷新所有正在展示的章节，每个presenter刷一次，
                     refresh = false
-                    context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.name) }
+                    context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
                 } else {
                     debug { "$this load $chapter" }
-                    Cache.text.get(novelItem, chapter.name)
-                            ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.name) }
+                    Cache.text.get(novelItem, chapter.id)
+                            ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
                 }
             }.async().subscribe({ novelText ->
                 view?.showText(novelText)
