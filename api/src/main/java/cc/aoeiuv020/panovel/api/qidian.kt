@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api
 
-import android.annotation.SuppressLint
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Connection
@@ -134,7 +133,7 @@ class Qidian : NovelContext() {
         return NovelGenre(genre.name, url)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
         val root = request(requester)
         return if (requester is SearchListRequester) {
@@ -176,7 +175,7 @@ class Qidian : NovelContext() {
         return NovelSearch(name, url)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val root = request(requester)
         val detail = root.select("body > div.wrap > div.book-detail-wrap.center990").first()
@@ -294,14 +293,16 @@ class Qidian : NovelContext() {
     }
 
     class VipRequester(url: String) : TextRequester(url) {
+        companion object {
+            private val CACHED_ID = qidianMd5Hex(System.currentTimeMillis().toString() + Math.random().toString())
+        }
         override fun connect(): Connection {
             val mobile = url.replace("https://vipreader.qidian.com/chapter/", "https://m.qidian.com/book/")
             val deviceId = "878788848187878"
-            @Suppress("UnnecessaryVariable")
-            val id = deviceId
-            val urlMd5 = md5Hex(url)
+            val id = CACHED_ID
+            val urlMd5 = qidianMd5Hex(url)
             val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
-            val sign = URLEncoder.encode(des3(plain).replace(" ", ""), "ascii")
+            val sign = URLEncoder.encode(qidianDes3(plain).replace(" ", ""), "ascii")
             return Jsoup.connect(mobile).cookie("QDSign", sign)
         }
     }
@@ -310,7 +311,7 @@ class Qidian : NovelContext() {
 /**
  * 反编译自起点畅读，不要动不要用，
  */
-private fun md5Hex(str: String): String {
+private fun qidianMd5Hex(str: String): String {
     val digest = MessageDigest.getInstance("MD5").digest(str.toByteArray(charset("UTF-8")))
     val stringBuilder = StringBuilder(digest.size * 2)
     for (b in digest) {
@@ -325,17 +326,17 @@ private fun md5Hex(str: String): String {
 /**
  * 反编译自起点畅读，不要动不要用，
  */
-private fun des3(str: String): String {
+private fun qidianDes3(str: String): String {
     val generateSecret = SecretKeyFactory.getInstance("desede").generateSecret(DESedeKeySpec("JVYW9BWG7XJ98B3W34RT33B3".toByteArray()))
     val instance = Cipher.getInstance("desede/CBC/PKCS5Padding")
     instance.init(1, generateSecret, IvParameterSpec("01234567".toByteArray()))
-    return base64(instance.doFinal(str.toByteArray(charset("utf-8"))))
+    return qidianBase64(instance.doFinal(str.toByteArray(charset("utf-8"))))
 }
 
 /**
  * 反编译自起点畅读，不要动不要用，
  */
-private fun base64(bArr: ByteArray): String {
+private fun qidianBase64(bArr: ByteArray): String {
     val a = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray()
     val length = bArr.size
     val stringBuffer = StringBuilder(bArr.size * 3 / 2)

@@ -7,6 +7,8 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.local.Container
+import cc.aoeiuv020.panovel.local.id
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cn.lemon.view.adapter.BaseViewHolder
 import cn.lemon.view.adapter.RecyclerAdapter
@@ -16,7 +18,7 @@ import kotlin.properties.Delegates
 
 class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : RecyclerAdapter<NovelChapter>(ctx), AnkoLogger {
     private var readAt: Int by Delegates.notNull()
-    private lateinit var cachedList: Set<String>
+    private lateinit var container: Container
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelChapter>
             = ViewHolder(parent)
 
@@ -26,7 +28,7 @@ class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : Rec
 
     private fun init() {
         readAt = Cache.progress.get(novelItem)?.chapter ?: 0
-        cachedList = Cache.text.cachedList(novelItem).toSet()
+        container = Cache.text.container(novelItem)
     }
 
     fun refresh() {
@@ -36,12 +38,12 @@ class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : Rec
 
     inner class ViewHolder(parent: ViewGroup?) : BaseViewHolder<NovelChapter>(parent, R.layout.novel_chapter_item) {
         private val nameTextView: CheckedTextView = itemView.name
-        override fun setData(issue: NovelChapter) {
-            super.setData(issue)
+        override fun setData(chapter: NovelChapter) {
+            super.setData(chapter)
             nameTextView.apply {
-                text = issue.name
+                text = chapter.name
                 isChecked = readAt == indexAsc
-                isSelected = cachedList.contains(issue.name)
+                isSelected = container.contains(chapter.id)
             }
         }
 

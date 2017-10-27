@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
  * 这样可以只序列化保存类名和extra,
  * Created by AoEiuV020 on 2017.10.03-14:59:04.
  */
-open class Requester(private var extra: String) {
+open class Requester(val extra: String) {
     companion object {
         fun attach(builder: GsonBuilder): GsonBuilder = builder.apply {
             registerTypeHierarchyAdapter(Requester::class.java, JsonSerializer { src: Requester, _, _ ->

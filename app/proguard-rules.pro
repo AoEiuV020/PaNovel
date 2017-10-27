@@ -15,6 +15,11 @@
 #jsoup https://stackoverflow.com/a/32169975/5615186
 -keeppackagenames org.jsoup.nodes
 
+
+#slf4j https://github.com/getsentry/sentry-java/issues/373
+-dontwarn org.slf4j.**
+
+
 #glide https://github.com/bumptech/glide#proguard
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class * extends com.bumptech.glide.AppGlideModule

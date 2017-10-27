@@ -26,7 +26,7 @@ class CacheTest {
         t<List<NovelChapter>>()
     }
 
-    fun <T> t() {
+    private fun <T> t() {
         val type: Type = object : TypeToken<T>() {}.type
         assertEquals("sun.reflect.generics.reflectiveObjects.TypeVariableImpl", type.javaClass.name)
         assertEquals("T", type.toString())

@@ -41,12 +41,11 @@ class Cache<T>(private val type: Type,
     private fun folder(id: NovelId) = "$id${File.separatorChar}$cacheName"
 
     /**
-     * 简单的替换解决斜杆/的问题，引入的字符是假装不会实际出现，
+     * 简单的替换解决斜杆/的问题，
      * 虽然说用个靠谱点的encoder比较好，但是保存文件名乱码看不顺眼，
+     * 只要对应唯一，不需要能decode,
      */
-    private fun fileNameEncode(name: String) = name.replace('/', '\r')
-
-    private fun fileNameDecode(name: String) = name.replace('\r', '/')
+    private fun fileNameEncode(name: String) = name.replace('/', ' ')
 
     fun put(item: NovelItem, t: T, fileName: String = DEFAULT_FILE_NAME) = put(item.bookId, t, fileName)
     fun put(id: NovelId, t: T, fileName: String = DEFAULT_FILE_NAME) = gsonSave(fileNameEncode(fileName), t, folder(id))
@@ -60,9 +59,18 @@ class Cache<T>(private val type: Type,
     fun get(id: NovelId, fileName: String = DEFAULT_FILE_NAME, refreshTime: Long = System.currentTimeMillis() - defaultTimeout): T?
             = gsonLoad(fileNameEncode(fileName), type, refreshTime, folder(id))
 
-    fun cachedList(item: NovelItem): List<String> = cachedList(item.bookId)
-    fun cachedList(id: NovelId): List<String> = gsonNameList(folder(id)).map { fileNameDecode(it) }
-
     @Suppress("unused")
     fun exists(id: NovelId, fileName: String = DEFAULT_FILE_NAME) = gsonExists(fileNameEncode(fileName), folder(id))
+
+    fun container(item: NovelItem) = container(item.bookId)
+    fun container(id: NovelId) = object : Container {
+        private val list = gsonNameList(folder(id))
+        override fun contains(name: String): Boolean {
+            return list.contains(fileNameEncode(name))
+        }
+    }
+}
+
+interface Container {
+    fun contains(name: String): Boolean
 }

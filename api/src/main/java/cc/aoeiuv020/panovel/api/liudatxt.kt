@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api
 
-import android.annotation.SuppressLint
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 
@@ -40,7 +39,7 @@ class Liudatxt : NovelContext() {
         return NovelGenre(genre.name, url)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
         val root = request(requester)
         val isSearch = requester is SearchListRequester
@@ -72,7 +71,7 @@ class Liudatxt : NovelContext() {
         return NovelSearch(name, url)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val chapterRoot = request(requester)
         val detail = chapterRoot.select("#main > div.coverecom > div.tabstit > table > tbody > tr > td:nth-child(1) > a:nth-child(4)").first()

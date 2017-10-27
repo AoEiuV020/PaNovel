@@ -79,7 +79,7 @@ abstract class NovelContext {
     /**
      * 判断这个地址是不是属于这个网站，
      */
-    internal open fun check(url: String): Boolean = URL(getNovelSite().baseUrl).host == URL(url).host
+    open fun check(url: String): Boolean = URL(getNovelSite().baseUrl).host == URL(url).host
 
     /**
      * 封装网络请求，主要是为了统一打log,
