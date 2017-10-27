@@ -10,6 +10,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Container
+import cc.aoeiuv020.panovel.local.id
 import kotlinx.android.synthetic.main.novel_chapter_item.view.*
 
 /**
@@ -25,7 +26,7 @@ class NovelContentsAdapter(val context: Context, val novelItem: NovelItem, val c
         nameTextView.apply {
             text = chapter.name
             isChecked = readAt == position
-            isSelected = cachedList.contains(chapter.name)
+            isSelected = cachedList.contains(chapter.id)
         }
         return view
     }
