@@ -296,8 +296,7 @@ class Qidian : NovelContext() {
         override fun connect(): Connection {
             val mobile = url.replace("https://vipreader.qidian.com/chapter/", "https://m.qidian.com/book/")
             val deviceId = "878788848187878"
-            @Suppress("UnnecessaryVariable")
-            val id = deviceId
+            val id = Math.random().toString()
             val urlMd5 = qidianMd5Hex(url)
             val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
             val sign = URLEncoder.encode(qidianDes3(plain).replace(" ", ""), "ascii")
