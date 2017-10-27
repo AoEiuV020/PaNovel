@@ -293,10 +293,13 @@ class Qidian : NovelContext() {
     }
 
     class VipRequester(url: String) : TextRequester(url) {
+        companion object {
+            private val CACHED_ID = qidianMd5Hex(System.currentTimeMillis().toString() + Math.random().toString())
+        }
         override fun connect(): Connection {
             val mobile = url.replace("https://vipreader.qidian.com/chapter/", "https://m.qidian.com/book/")
             val deviceId = "878788848187878"
-            val id = Math.random().toString()
+            val id = CACHED_ID
             val urlMd5 = qidianMd5Hex(url)
             val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
             val sign = URLEncoder.encode(qidianDes3(plain).replace(" ", ""), "ascii")
