@@ -76,7 +76,7 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
         refreshTime = System.currentTimeMillis()
         name?.let { nameNonnull ->
             searchActual(nameNonnull, author)
-        }
+        } ?: view?.showOnComplete()
     }
 
     fun subPresenter(): ItemPresenter = ItemPresenter()
