@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
@@ -24,7 +25,8 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
 
     private fun requestBookshelf() {
         Observable.fromCallable {
-            Bookshelf.list()
+            val history = History.list().map { Pair(it.novel, it.date) }.toMap()
+            Bookshelf.list().sortedByDescending { history[it]?.time ?: 0 }
         }.async().subscribe({ list ->
             view?.showNovelList(list)
         }, { e ->
