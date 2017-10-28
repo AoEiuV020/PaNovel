@@ -60,6 +60,22 @@ class HistoryPresenter : Presenter<HistoryFragment>() {
             }).let { addDisposable(it, 0) }
         }
 
+        fun requestUpdate(novelDetail: NovelDetail) {
+            val novelItem = novelDetail.novel
+            Observable.fromCallable {
+                val detail = Cache.detail.get(novelItem, refreshTime = refreshTime)
+                        ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
+                        .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
+                detail.update
+            }.async().subscribe({ updateTime ->
+                view?.showUpdateTime(updateTime)
+            }, { e ->
+                val message = "读取《${novelItem.bookId}》详情失败，"
+                error(message, e)
+                this@HistoryPresenter.view?.showError(message, e)
+            }).let { addDisposable(it, 0) }
+        }
+
         fun requestChapters(detail: NovelDetail) {
             Observable.fromCallable {
                 val novelItem = detail.novel

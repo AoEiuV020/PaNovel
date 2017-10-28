@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.bookshelf_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * 绝大部分照搬书架，
@@ -69,9 +70,14 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
         }
 
         fun showDetail(detail: NovelDetail) {
-            update.text = sdf.format(detail.update)
+            showUpdateTime(detail.update)
             Glide.with(context).load(detail.bigImg).into(image)
+            presenter.requestUpdate(detail)
             presenter.requestChapters(detail)
+        }
+
+        fun showUpdateTime(updateTime: Date) {
+            update.text = sdf.format(updateTime)
         }
 
         fun showChapter(chapters: List<NovelChapter>, progress: Int) {
