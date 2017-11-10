@@ -234,21 +234,22 @@ class Qidian : NovelContext() {
         val bookId = requester.url.removePrefix("https://book.qidian.com/info/")
         val category = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
         val categoryJson = response(category).body()
+        var vipVolume = false
         return Gson().fromJson(categoryJson, JsonObject::class.java)
                 .getAsJsonObject("data")
                 .getAsJsonArray("vs").map {
-            it.asJsonObject.getAsJsonArray("cs").map {
+            it.asJsonObject.apply { getAsJsonPrimitive("vS").asInt.let { vipVolume = it == 1 } }
+                    .getAsJsonArray("cs").map {
                 it.asJsonObject.let {
                     val cN = it.getAsJsonPrimitive("cN").asString
                     val cU = it.getAsJsonPrimitive("cU").asString
                     val id = it.getAsJsonPrimitive("id").asInt
-                    val sS = it.getAsJsonPrimitive("sS").asInt
-                    if (sS == 1) {
-                        // 免费章节，
+                    if (!vipVolume) {
+                        // 免费卷，
                         val url = "https://read.qidian.com/chapter/$cU"
                         NovelChapter(cN, url)
                     } else {
-                        // VIP章节，
+                        // VIP卷，
                         val url = "https://vipreader.qidian.com/chapter/$bookId/$id"
                         NovelChapter(cN, VipRequester(url))
                     }
