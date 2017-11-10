@@ -228,46 +228,34 @@ class Qidian : NovelContext() {
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val response = response(requester)
-        val root = request(response)
-        val elements = root.select("#j-catalogWrap > div.volume-wrap > div > ul > li > a")
-        return if (elements.isNotEmpty()) {
-            elements.map { a ->
-                val url = a.absHref()
-                if (url.startsWith("https://vipreader.qidian.com/chapter/")) {
-                    NovelChapter(a.text(), VipRequester(url))
-                } else {
-                    NovelChapter(a.text(), url)
-                }
-            }
-        } else {
-            val token = response.cookie("_csrfToken")
-            val bookId = requester.url.removePrefix("https://book.qidian.com/info/")
-            val category = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
-            val categoryJson = response(category).body()
-            Gson().fromJson(categoryJson, JsonObject::class.java)
-                    .getAsJsonObject("data")
-                    .getAsJsonArray("vs").map {
-                it.asJsonObject.getAsJsonArray("cs").map {
-                    it.asJsonObject.let {
-                        val cN = it.getAsJsonPrimitive("cN").asString
-                        val cU = it.getAsJsonPrimitive("cU").asString
-                        val id = it.getAsJsonPrimitive("id").asInt
-                        val sS = it.getAsJsonPrimitive("sS").asInt
-                        if (sS == 1) {
-                            // 免费章节，
-                            val url = "https://read.qidian.com/chapter/$cU"
-                            NovelChapter(cN, url)
-                        } else {
-                            // VIP章节，
-                            val url = "https://vipreader.qidian.com/chapter/$bookId/$id"
-                            NovelChapter(cN, VipRequester(url))
-                        }
+        val token = cookies?.get("_csrfToken") ?: run {
+            response(requester).cookie("_csrfToken")
+        }
+        val bookId = requester.url.removePrefix("https://book.qidian.com/info/")
+        val category = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
+        val categoryJson = response(category).body()
+        return Gson().fromJson(categoryJson, JsonObject::class.java)
+                .getAsJsonObject("data")
+                .getAsJsonArray("vs").map {
+            it.asJsonObject.getAsJsonArray("cs").map {
+                it.asJsonObject.let {
+                    val cN = it.getAsJsonPrimitive("cN").asString
+                    val cU = it.getAsJsonPrimitive("cU").asString
+                    val id = it.getAsJsonPrimitive("id").asInt
+                    val sS = it.getAsJsonPrimitive("sS").asInt
+                    if (sS == 1) {
+                        // 免费章节，
+                        val url = "https://read.qidian.com/chapter/$cU"
+                        NovelChapter(cN, url)
+                    } else {
+                        // VIP章节，
+                        val url = "https://vipreader.qidian.com/chapter/$bookId/$id"
+                        NovelChapter(cN, VipRequester(url))
                     }
                 }
-            }.reduce { acc, list ->
-                acc + list
             }
+        }.reduce { acc, list ->
+            acc + list
         }
     }
 
@@ -296,6 +284,7 @@ class Qidian : NovelContext() {
         companion object {
             private val CACHED_ID = qidianMd5Hex(System.currentTimeMillis().toString() + Math.random().toString())
         }
+
         override fun connect(): Connection {
             val mobile = url.replace("https://vipreader.qidian.com/chapter/", "https://m.qidian.com/book/")
             val deviceId = "878788848187878"
