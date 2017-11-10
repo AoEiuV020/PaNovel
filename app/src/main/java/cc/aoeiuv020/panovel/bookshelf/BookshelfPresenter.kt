@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
@@ -24,7 +25,8 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
 
     private fun requestBookshelf() {
         Observable.fromCallable {
-            Bookshelf.list()
+            val history = History.list().map { Pair(it.novel, it.date) }.toMap()
+            Bookshelf.list().sortedByDescending { history[it]?.time ?: 0 }
         }.async().subscribe({ list ->
             view?.showNovelList(list)
         }, { e ->
@@ -53,6 +55,22 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
                         .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
             }.async().subscribe({ comicDetail ->
                 view?.showDetail(comicDetail)
+            }, { e ->
+                val message = "读取《${novelItem.bookId}》详情失败，"
+                error(message, e)
+                this@BookshelfPresenter.view?.showError(message, e)
+            }).let { addDisposable(it, 0) }
+        }
+
+        fun requestUpdate(novelDetail: NovelDetail) {
+            val novelItem = novelDetail.novel
+            Observable.fromCallable {
+                val detail = Cache.detail.get(novelItem, refreshTime = refreshTime)
+                        ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
+                        .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
+                detail.update
+            }.async().subscribe({ updateTime ->
+                view?.showUpdateTime(updateTime)
             }, { e ->
                 val message = "读取《${novelItem.bookId}》详情失败，"
                 error(message, e)

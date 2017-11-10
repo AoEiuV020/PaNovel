@@ -35,29 +35,27 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
     private fun searchActual(name: String, author: String?) {
         debug { "search <$name, $author>" }
         Observable.create<NovelItem> { em ->
+            fun next(novelItem: NovelItem) {
+                debug { "search result <${novelItem.name}, ${novelItem.author}>" }
+                em.onNext(novelItem)
+            }
             NovelContext.getNovelContexts().forEach { context ->
                 debug { "search ${context.getNovelSite().name}" }
-                // 如果传入了作者，就可以尝试读缓存，
-                (author?.let { authorNonnull ->
-                    Cache.item.get(NovelId(context.getNovelSite().name, authorNonnull, name))
-                } ?: try {
-                    context.getNovelList(context.searchNovelName(name).requester).let { list ->
-                        if (author == null) {
-                            list.firstOrNull {
-                                it.novel.name == name
-                            }?.novel
-                        } else {
-                            list.firstOrNull {
-                                it.novel.name == name && author == it.novel.author
-                            }?.novel?.also { Cache.item.put(NovelId(context.getNovelSite().name, author, name), it) }
-                        }
+                try {
+                    if (author != null) {
+                        // 如果传入了作者，就可以尝试读缓存，
+                        Cache.item.get(NovelId(context.getNovelSite().name, author, name))
+                                ?: context.getNovelList(context.searchNovelName(name).requester)
+                                .firstOrNull { it.novel.name == name }
+                                ?.novel
+                                ?.let { next(it) }
+                    } else {
+                        context.getNovelList(context.searchNovelName(name).requester).filter {
+                            it.novel.name == name
+                        }.forEach { next(it.novel) }
                     }
                 } catch (_: Exception) {
-                    // 一个网站搜索不抛异常，
-                    null
-                })?.let {
-                    debug { "search result ${it.name}" }
-                    em.onNext(it)
+                    // 一个网站搜索失败不抛异常，
                 }
             }
             em.onComplete()
@@ -76,7 +74,7 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
         refreshTime = System.currentTimeMillis()
         name?.let { nameNonnull ->
             searchActual(nameNonnull, author)
-        }
+        } ?: view?.showOnComplete()
     }
 
     fun subPresenter(): ItemPresenter = ItemPresenter()
@@ -89,6 +87,22 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
                         .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
             }.async().subscribe({ comicDetail ->
                 view?.showDetail(comicDetail)
+            }, { e ->
+                val message = "读取《${novelItem.bookId}》详情失败，"
+                error(message, e)
+                this@RefineSearchPresenter.view?.showError(message, e)
+            }).let { addDisposable(it, 0) }
+        }
+
+        fun requestUpdate(novelDetail: NovelDetail) {
+            val novelItem = novelDetail.novel
+            Observable.fromCallable {
+                val detail = Cache.detail.get(novelItem, refreshTime = refreshTime)
+                        ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
+                        .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
+                detail.update
+            }.async().subscribe({ updateTime ->
+                view?.showUpdateTime(updateTime)
             }, { e ->
                 val message = "读取《${novelItem.bookId}》详情失败，"
                 error(message, e)

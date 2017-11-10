@@ -11,7 +11,7 @@ object Settings : LocalSource {
     var backgroundColor: Int by PrimitiveDelegate(0xffffffff.toInt())
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
 
-    var historyCount: Int by PrimitiveDelegate(30)
+    var historyCount: Int by PrimitiveDelegate(200)
 
     var asyncThreadCount: Int by PrimitiveDelegate(30)
     var downloadThreadCount: Int by PrimitiveDelegate(4)

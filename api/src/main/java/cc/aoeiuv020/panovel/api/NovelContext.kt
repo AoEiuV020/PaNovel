@@ -34,6 +34,7 @@ abstract class NovelContext {
 
     @Suppress("MemberVisibilityCanPrivate")
     protected val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
+    protected var cookies: Map<String, String>? = null
 
     abstract fun getNovelSite(): NovelSite
     /**
@@ -92,7 +93,13 @@ abstract class NovelContext {
             }
         }
         logger.debug { "request $requester" }
-        return requester.connect().execute()
+        val conn = requester.connect()
+        // 设置cookies,
+        cookies?.let { conn.cookies(it) }
+        val res = conn.execute()
+        // 保存cookies,
+        cookies = res.cookies()
+        return res
     }
 
     protected fun response(url: String) = response(Requester(url))

@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.bookshelf_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *
@@ -89,9 +90,14 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
         }
 
         fun showDetail(detail: NovelDetail) {
-            update.text = sdf.format(detail.update)
+            showUpdateTime(detail.update)
             Glide.with(context).load(detail.bigImg).into(image)
+            presenter.requestUpdate(detail)
             presenter.requestChapters(detail)
+        }
+
+        fun showUpdateTime(updateTime: Date) {
+            update.text = sdf.format(updateTime)
         }
 
         fun showChapter(chapters: List<NovelChapter>, progress: Int) {
