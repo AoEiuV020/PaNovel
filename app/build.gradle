@@ -6,7 +6,6 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion compile_version
-    buildToolsVersion build_version
     defaultConfig {
         applicationId "cc.aoeiuv020.panovel"
         minSdkVersion min_version
