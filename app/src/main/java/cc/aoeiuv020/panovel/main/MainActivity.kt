@@ -7,12 +7,11 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -73,10 +72,7 @@ class MainActivity : AppCompatActivity() {
         magic_indicator.navigator = commonNavigator
         ViewPagerHelper.bind(magic_indicator, container)
 
-        MobileAds.initialize(this, "ca-app-pub-3036112914192534~4631187497")
-
-        val adRequest = AdRequest.Builder()
-                .build()
+        val adRequest = App.adRequest
 
         // Start loading the ad in the background.
         ad_view.loadAd(adRequest)

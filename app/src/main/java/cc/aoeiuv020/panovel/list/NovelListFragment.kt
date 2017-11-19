@@ -9,14 +9,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.util.alertError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.content_bookstore.*
 
 /**
@@ -53,10 +52,8 @@ class NovelListFragment : Fragment(), IView {
                 presenter.loadNextPage()
             }
         }
-        MobileAds.initialize(activity, "ca-app-pub-3036112914192534~4631187497")
 
-        val adRequest = AdRequest.Builder()
-                .build()
+        val adRequest = App.adRequest
 
         // Start loading the ad in the background.
         ad_view.loadAd(adRequest)
