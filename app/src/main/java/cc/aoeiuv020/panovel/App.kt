@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.panovel.api.paNovel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
@@ -35,6 +36,12 @@ class App : Application(), AnkoLogger {
     override fun onCreate() {
         super.onCreate()
         ctx = applicationContext
+
+        // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
+        // 还有ContextCompat.getDrawable也不行，
+        // it's not a BUG, it's a FEATURE,
+        // https://issuetracker.google.com/issues/37100284
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
         // 无视RxJava抛的异常，也就是不被捕获调用onError的异常，
         RxJavaPlugins.setErrorHandler(Functions.emptyConsumer())

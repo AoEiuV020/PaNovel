@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
@@ -53,11 +52,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         super.onCreate(savedInstanceState)
 
         alertDialog = AlertDialog.Builder(this).create()
-
-        // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
-        // it's not a BUG, it's a FEATURE,
-        // https://issuetracker.google.com/issues/37100284
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
         setContentView(R.layout.activity_novel_detail)
         setSupportActionBar(toolbar)
