@@ -11,6 +11,8 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -70,6 +72,34 @@ class MainActivity : AppCompatActivity() {
         }
         magic_indicator.navigator = commonNavigator
         ViewPagerHelper.bind(magic_indicator, container)
+
+        // Initialize the Mobile Ads SDK with an AdMob App ID.
+        MobileAds.initialize(this, "ca-app-pub-3036112914192534~4631187497")
+
+        // Create an ad request. If you're running this on a physical device, check your logcat to
+        // learn how to enable test ads for it. Look for a line like this one:
+        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+        val adRequest = AdRequest.Builder()
+                .build()
+
+        // Start loading the ad in the background.
+        ad_view.loadAd(adRequest)
+
+    }
+
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
+    }
+
+    override fun onDestroy() {
+        ad_view.destroy()
+        super.onDestroy()
     }
 
 

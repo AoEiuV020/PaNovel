@@ -118,8 +118,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
                 Bookshelf.remove(detail)
             }
         }
-        // 有可能activity已经销毁，glide会报错，
-        if (isDestroyed) return
         Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
         presenter.requestChapters(detail.requester)
     }
