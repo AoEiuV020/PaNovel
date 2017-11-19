@@ -26,6 +26,7 @@ android {
     }
 }
 
+
 dependencies {
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
@@ -34,6 +35,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support:support-v4:$support_version"
     implementation "com.android.support:support-vector-drawable:$support_version"
+    implementation 'com.google.firebase:firebase-ads:11.6.0'
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -53,3 +55,6 @@ dependencies {
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
     implementation project(':api')
 }
+
+
+apply plugin: 'com.google.gms.google-services'

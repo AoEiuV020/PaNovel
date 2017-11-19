@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
@@ -70,6 +71,27 @@ class MainActivity : AppCompatActivity() {
         }
         magic_indicator.navigator = commonNavigator
         ViewPagerHelper.bind(magic_indicator, container)
+
+        val adRequest = App.adRequest
+
+        // Start loading the ad in the background.
+        ad_view.loadAd(adRequest)
+
+    }
+
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
+    }
+
+    override fun onDestroy() {
+        ad_view.destroy()
+        super.onDestroy()
     }
 
 
