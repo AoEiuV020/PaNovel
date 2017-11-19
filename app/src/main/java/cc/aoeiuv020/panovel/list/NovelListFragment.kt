@@ -15,6 +15,8 @@ import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.util.alertError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.content_bookstore.*
 
 /**
@@ -38,6 +40,7 @@ class NovelListFragment : Fragment(), IView {
     }
 
     override fun onDestroyView() {
+        ad_view.destroy()
         presenter.detach()
         super.onDestroyView()
     }
@@ -50,6 +53,24 @@ class NovelListFragment : Fragment(), IView {
                 presenter.loadNextPage()
             }
         }
+        MobileAds.initialize(activity, "ca-app-pub-3036112914192534~4631187497")
+
+        val adRequest = AdRequest.Builder()
+                .build()
+
+        // Start loading the ad in the background.
+        ad_view.loadAd(adRequest)
+
+    }
+
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
     }
 
     fun showError(message: String, e: Throwable) {

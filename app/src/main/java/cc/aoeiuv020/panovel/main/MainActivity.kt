@@ -73,12 +73,8 @@ class MainActivity : AppCompatActivity() {
         magic_indicator.navigator = commonNavigator
         ViewPagerHelper.bind(magic_indicator, container)
 
-        // Initialize the Mobile Ads SDK with an AdMob App ID.
         MobileAds.initialize(this, "ca-app-pub-3036112914192534~4631187497")
 
-        // Create an ad request. If you're running this on a physical device, check your logcat to
-        // learn how to enable test ads for it. Look for a line like this one:
-        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
         val adRequest = AdRequest.Builder()
                 .build()
 
