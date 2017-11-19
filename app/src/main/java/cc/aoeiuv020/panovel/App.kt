@@ -10,6 +10,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.reactivex.internal.functions.Functions
 import io.reactivex.plugins.RxJavaPlugins
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 
 
 /**
@@ -17,7 +19,7 @@ import io.reactivex.plugins.RxJavaPlugins
  * Created by AoEiuV020 on 2017.10.03-17:04:22.
  */
 @Suppress("MemberVisibilityCanPrivate")
-class App : Application() {
+class App : Application(), AnkoLogger {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var ctx: Context
@@ -39,7 +41,19 @@ class App : Application() {
 
         MobileAds.initialize(this, "ca-app-pub-3036112914192534~4631187497")
         adRequest = AdRequest.Builder()
-                .build()
+                .also { builder ->
+                    // 添加广告的测试设备，
+                    try {
+                        // 通过反射确保文件不存在也没问题，
+                        val id: Int = Class.forName("${R::class.java.name}\$raw").getField("admob_test_device_list").get(null) as Int
+                        resources.openRawResource(id).reader().readLines().filter(String::isNotBlank).forEach {
+                            debug { "add test device: $it" }
+                            builder.addTestDevice(it)
+                        }
+                    } catch (_: Exception) {
+                        // 什么都不做，
+                    }
+                }.build()
 
     }
 }
