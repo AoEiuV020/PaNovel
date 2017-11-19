@@ -269,7 +269,7 @@ class Qidian : NovelContext() {
         }
         val textList = root.select(query).map {
             it.text().trim()
-        }
+        }.dropLastWhile(String::isBlank)
         return NovelText(textList)
     }
 
