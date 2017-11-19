@@ -51,9 +51,7 @@ class App : Application(), AnkoLogger {
                 .also { builder ->
                     // 添加广告的测试设备，
                     try {
-                        // 通过反射确保文件不存在也没问题，
-                        val id: Int = Class.forName("${R::class.java.name}\$raw").getField("admob_test_device_list").get(null) as Int
-                        resources.openRawResource(id).reader().readLines().filter(String::isNotBlank).forEach {
+                        assets.open("admob_test_device_list").reader().readLines().filter(String::isNotBlank).forEach {
                             debug { "add test device: $it" }
                             builder.addTestDevice(it)
                         }
