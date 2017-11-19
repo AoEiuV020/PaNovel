@@ -49,6 +49,14 @@
 
         <include layout="@layout/content_novel_detail" />
 
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/ad_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-3036112914192534/4956552759" />
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabRead"
             android:layout_width="wrap_content"
@@ -56,7 +64,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
             android:tint="@android:color/white"
-            app:layout_behavior=".detail.ScrollAwareFABBehavior"
+            app:layout_behavior="cc.aoeiuv020.panovel.detail.ScrollAwareFABBehavior"
             app:srcCompat="@drawable/ic_read" />
 
         <cc.aoeiuv020.panovel.detail.CheckableFloatingActionButton
@@ -69,7 +77,6 @@
             app:layout_anchor="@id/app_bar"
             app:layout_anchorGravity="bottom|end"
             app:srcCompat="@drawable/ic_favorite_selector" />
-
 
     </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

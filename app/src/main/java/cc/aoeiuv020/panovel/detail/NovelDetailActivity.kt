@@ -6,10 +6,10 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
@@ -53,11 +53,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
 
         alertDialog = AlertDialog.Builder(this).create()
 
-        // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
-        // it's not a BUG, it's a FEATURE,
-        // https://issuetracker.google.com/issues/37100284
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
         setContentView(R.layout.activity_novel_detail)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -90,9 +85,22 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter = NovelDetailPresenter(novelItem)
         presenter.attach(this)
         presenter.start()
+
+        ad_view.loadAd(App.adRequest)
+    }
+
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
     }
 
     override fun onDestroy() {
+        ad_view.destroy()
         presenter.detach()
         super.onDestroy()
     }
@@ -118,8 +126,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
                 Bookshelf.remove(detail)
             }
         }
-        // 有可能activity已经销毁，glide会报错，
-        if (isDestroyed) return
         Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
         presenter.requestChapters(detail.requester)
     }

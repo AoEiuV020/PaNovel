@@ -6,13 +6,12 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion compile_version
-    buildToolsVersion build_version
     defaultConfig {
         applicationId "cc.aoeiuv020.panovel"
         minSdkVersion min_version
         targetSdkVersion target_version
-        versionCode 6
-        versionName "1.1.4"
+        versionCode 7
+        versionName "1.1.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "$rootProject.name-$versionName")
         vectorDrawables.useSupportLibrary = true
@@ -25,6 +24,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == 'release') {
+            variant.mergeAssets.doLast {
+                delete(fileTree(dir: variant.mergeAssets.outputDir, includes: ['admob_test_device_list']))
+            }
+        }
+    }
 }
 
 dependencies {
@@ -35,7 +41,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support:support-v4:$support_version"
     implementation "com.android.support:support-vector-drawable:$support_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.google.firebase:firebase-ads:11.6.0'
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -55,3 +61,6 @@ dependencies {
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
     implementation project(':api')
 }
+
+
+apply plugin: 'com.google.gms.google-services'

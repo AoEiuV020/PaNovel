@@ -2,6 +2,7 @@
 
 package cc.aoeiuv020.panovel.util
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
@@ -61,7 +62,9 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
         .build().show()
 
 fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground) {
-    val nb = NotificationCompat.Builder(this)
+    val channelId = "channel_default"
+    val name = "default"
+    val nb = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(text)
             .setAutoCancel(true)
@@ -73,7 +76,14 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
             setSmallIcon(icon)
         }
     }
-    (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).notify(id, nb.build())
+    val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (manager.getNotificationChannel(channelId) == null) {
+            val channel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT)
+            manager.createNotificationChannel(channel)
+        }
+    }
+    manager.notify(id, nb.build())
 }
 
 /**

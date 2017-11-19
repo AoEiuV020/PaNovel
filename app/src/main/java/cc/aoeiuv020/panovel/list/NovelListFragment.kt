@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
@@ -38,6 +39,7 @@ class NovelListFragment : Fragment(), IView {
     }
 
     override fun onDestroyView() {
+        ad_view.destroy()
         presenter.detach()
         super.onDestroyView()
     }
@@ -50,6 +52,22 @@ class NovelListFragment : Fragment(), IView {
                 presenter.loadNextPage()
             }
         }
+
+        val adRequest = App.adRequest
+
+        // Start loading the ad in the background.
+        ad_view.loadAd(adRequest)
+
+    }
+
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
     }
 
     fun showError(message: String, e: Throwable) {
