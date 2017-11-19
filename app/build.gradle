@@ -24,7 +24,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions 'default'
+    productFlavors {
+        product {
+            dimension 'default'
+        }
+        adtest {
+            dimension 'default'
+            applicationId "cc.aoeiuv020.panovel.adtest"
+        }
+    }
+
 }
+
 
 dependencies {
     implementation "com.android.support:appcompat-v7:$support_version"
