@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
@@ -90,9 +91,22 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter = NovelDetailPresenter(novelItem)
         presenter.attach(this)
         presenter.start()
+
+        ad_view.loadAd(App.adRequest)
+    }
+
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
     }
 
     override fun onDestroy() {
+        ad_view.destroy()
         presenter.detach()
         super.onDestroy()
     }
