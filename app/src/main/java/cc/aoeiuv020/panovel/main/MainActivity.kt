@@ -12,6 +12,8 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
+import cc.aoeiuv020.panovel.util.show
+import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_main.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
@@ -73,6 +75,12 @@ class MainActivity : AppCompatActivity() {
         ViewPagerHelper.bind(magic_indicator, container)
 
         val adRequest = App.adRequest
+
+        ad_view.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                ad_view.show()
+            }
+        }
 
         // Start loading the ad in the background.
         ad_view.loadAd(adRequest)
