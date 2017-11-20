@@ -67,6 +67,7 @@
     <string name="read_continue">继续阅读</string>
     <string name="read_last_chapter">阅读最新章</string>
     <string name="detail">详情</string>
+    <string name="remove">删除</string>
 
 
 </resources>

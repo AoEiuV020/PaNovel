@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
+import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.hide
@@ -79,12 +80,18 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
                         R.string.read_last_chapter to { readLastChapter() },
                         R.string.detail to { detail() },
                         R.string.refine_search to { refineSearch() },
-                        R.string.refresh to { refresh() })
+                        R.string.refresh to { refresh() },
+                        R.string.remove to { remove() })
                 context.selector(context.getString(R.string.action), list.unzip().first.map { context.getString(it) }) { _, i ->
                     list[i].second.invoke()
                 }
                 true
             }
+        }
+
+        private fun remove() {
+            Bookshelf.remove(novel)
+            bookshelfPresenter.refresh()
         }
 
         private fun refresh() {
