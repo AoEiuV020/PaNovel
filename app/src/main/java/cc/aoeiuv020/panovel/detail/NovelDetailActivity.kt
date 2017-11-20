@@ -21,7 +21,9 @@ import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.show
 import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
 import kotlinx.android.synthetic.main.content_novel_detail.*
@@ -87,6 +89,12 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.start()
 
         ad_view.loadAd(App.adRequest)
+
+        ad_view.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                ad_view.show()
+            }
+        }
     }
 
     override fun onPause() {
