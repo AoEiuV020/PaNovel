@@ -18,6 +18,7 @@ import cn.lemon.view.adapter.RecyclerAdapter
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.bookshelf_item.view.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.selector
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,27 +54,58 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
 
         init {
             name.setOnClickListener {
-                NovelDetailActivity.start(context, novel)
+                detail()
             }
 
             name.setOnLongClickListener {
-                RefineSearchActivity.start(context, novel.name, novel.author)
+                refineSearch()
                 true
             }
 
             last.setOnClickListener {
-                NovelTextActivity.start(context, novel, -1)
+                readLastChapter()
             }
 
             itemView.setOnClickListener {
-                NovelTextActivity.start(context, novel)
+                readContinue()
             }
 
             dotLayout.setOnClickListener {
-                // 单个刷新，
-                setData(novel)
-                presenter.forceRefresh(novel)
+                refresh()
             }
+
+            dotLayout.setOnLongClickListener {
+                val list = listOf(R.string.read_continue to { readContinue() },
+                        R.string.read_last_chapter to { readLastChapter() },
+                        R.string.detail to { detail() },
+                        R.string.refine_search to { refineSearch() },
+                        R.string.refresh to { refresh() })
+                context.selector(context.getString(R.string.action), list.unzip().first.map { context.getString(it) }) { _, i ->
+                    list[i].second.invoke()
+                }
+                true
+            }
+        }
+
+        private fun refresh() {
+            setData(novel)
+            presenter.forceRefresh(novel)
+        }
+
+        private fun detail() {
+            NovelDetailActivity.start(context, novel)
+        }
+
+        private fun refineSearch() {
+            RefineSearchActivity.start(context, novel.name, novel.author)
+        }
+
+        private fun readLastChapter() {
+            NovelTextActivity.start(context, novel, -1)
+        }
+
+        private fun readContinue() {
+            NovelTextActivity.start(context, novel)
         }
 
         override fun setData(data: NovelItem) {

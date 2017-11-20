@@ -63,6 +63,10 @@
     <string name="search">搜索</string>
     <string name="title_activity_refine_search">精确搜索</string>
     <string name="refine_search">精确搜索</string>
+    <string name="action">操作</string>
+    <string name="read_continue">继续阅读</string>
+    <string name="read_last_chapter">阅读最新章</string>
+    <string name="detail">详情</string>
 
 
 </resources>
