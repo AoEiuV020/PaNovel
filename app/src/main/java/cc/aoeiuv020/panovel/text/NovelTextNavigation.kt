@@ -5,7 +5,10 @@ import android.widget.SeekBar
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.alertColorPicker
+import cc.aoeiuv020.panovel.util.hide
+import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
+import kotlinx.android.synthetic.main.novel_text_read_settings.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 
@@ -14,8 +17,19 @@ import org.jetbrains.anko.debug
  * Created by AoEiuV020 on 2017.11.20-21:59:26.
  */
 class NovelTextNavigation(val view: NovelTextActivity, navigation: View) : AnkoLogger {
+    private val llDefault = navigation.llDefault
+    private val llSettings = navigation.llSettings
+
     init {
-        navigation.apply {
+        llDefault.ivContents.setOnClickListener {
+            view.showContents()
+        }
+        llDefault.ivSettings.setOnClickListener {
+            llSettings.show()
+            llDefault.hide()
+        }
+
+        llSettings.apply {
             // 设置字体大小，
             val textSize = Settings.textSize
             debug { "load textSite = $textSize" }
@@ -99,6 +113,7 @@ class NovelTextNavigation(val view: NovelTextActivity, navigation: View) : AnkoL
     }
 
     fun reset() {
-
+        llDefault.show()
+        llSettings.hide()
     }
 }

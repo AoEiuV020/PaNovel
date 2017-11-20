@@ -201,7 +201,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         presenter.download(index)
     }
 
-    private fun showContents() {
+    fun showContents() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.contents)
                 .setAdapter(NovelContentsAdapter(this, novelItem, chaptersAsc, progress.chapter)) { _, index ->
@@ -254,7 +254,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (item.itemId) {
             R.id.refresh -> refresh()
             R.id.download -> download()
-            R.id.contents -> showContents()
         }
         return super.onOptionsItemSelected(item)
     }
