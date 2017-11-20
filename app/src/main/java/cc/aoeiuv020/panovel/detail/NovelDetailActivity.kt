@@ -70,8 +70,15 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         setTitle(novelItem)
 
         fabRead.setOnClickListener {
-            novelDetail?.let {
-                NovelTextActivity.start(this, it.novel)
+            NovelTextActivity.start(this, novelItem)
+        }
+        fabStar.isChecked = Bookshelf.contains(novelItem)
+        fabStar.setOnClickListener {
+            fabStar.toggle()
+            if (fabStar.isChecked) {
+                Bookshelf.add(novelItem)
+            } else {
+                Bookshelf.remove(novelItem)
             }
         }
 
@@ -125,15 +132,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     fun showNovelDetail(detail: NovelDetail) {
         this.novelDetail = detail
         setTitle(detail.novel)
-        fabStar.isChecked = Bookshelf.contains(detail)
-        fabStar.setOnClickListener {
-            fabStar.toggle()
-            if (fabStar.isChecked) {
-                Bookshelf.add(detail)
-            } else {
-                Bookshelf.remove(detail)
-            }
-        }
         Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
         presenter.requestChapters(detail.requester)
     }
