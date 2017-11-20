@@ -73,6 +73,7 @@ object Text : LocalSource, AnkoLogger {
                 }
                 em.onNext(listOf(export, skip, left))
             }
+            output.close()
         }.async().subscribe({ (export, skip, left) ->
             exportingRunnable.set(export, skip, left)
             handler.postDelayed(exportingRunnable, 100)
