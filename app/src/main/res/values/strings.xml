@@ -62,6 +62,7 @@
     <string name="contents">目录</string>
     <string name="search">搜索</string>
     <string name="title_activity_refine_search">精确搜索</string>
+    <string name="refine_search">精确搜索</string>
 
 
 </resources>
