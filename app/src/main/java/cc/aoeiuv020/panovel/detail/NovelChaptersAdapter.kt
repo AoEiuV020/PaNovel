@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Container
+import cc.aoeiuv020.panovel.local.Progress
 import cc.aoeiuv020.panovel.local.id
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cn.lemon.view.adapter.BaseViewHolder
@@ -27,7 +28,7 @@ class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : Rec
     }
 
     private fun init() {
-        readAt = Cache.progress.get(novelItem)?.chapter ?: 0
+        readAt = Progress.load(novelItem).chapter
         container = Cache.text.container(novelItem)
     }
 

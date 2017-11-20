@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanPrivate")
+
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.panovel.api.NovelItem

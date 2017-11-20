@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.NovelId
+import cc.aoeiuv020.panovel.local.Progress
 import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
@@ -116,7 +117,7 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
                 val chapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
                         ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
                         .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
-                val progress = Cache.progress.get(novelItem)?.chapter ?: 0
+                val progress = Progress.load(novelItem).chapter
                 Pair(chapters, progress)
             }.async().subscribe({ (chapters, progress) ->
                 view?.showChapter(chapters, progress)
