@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.text.NovelTextActivity
@@ -95,12 +96,14 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.attach(this)
         presenter.start()
 
-        ad_view.loadAd(App.adRequest)
-
         ad_view.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 ad_view.show()
             }
+        }
+
+        if (Settings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
         }
     }
 
