@@ -48,6 +48,7 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
         private val last = itemView.tvLast
         private val newChapterDot = itemView.newChapterDot
         private val progressBar = itemView.progressBar
+        private val dotLayout = itemView.dotLayout
         private lateinit var novel: NovelItem
 
         init {
@@ -66,6 +67,12 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
 
             itemView.setOnClickListener {
                 NovelTextActivity.start(context, novel)
+            }
+
+            dotLayout.setOnClickListener {
+                // 单个刷新，
+                setData(novel)
+                presenter.forceRefresh(novel)
             }
         }
 
