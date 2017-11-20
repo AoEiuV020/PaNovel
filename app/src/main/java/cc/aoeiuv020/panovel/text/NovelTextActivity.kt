@@ -10,16 +10,17 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.SeekBar
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.*
-import cc.aoeiuv020.panovel.util.*
+import cc.aoeiuv020.panovel.util.alert
+import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.loading
+import cc.aoeiuv020.panovel.util.notify
 import kotlinx.android.synthetic.main.activity_novel_text.*
-import kotlinx.android.synthetic.main.novel_text_read_settings.*
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.startActivity
@@ -49,6 +50,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private var novelDetail: NovelDetail? = null
     private lateinit var novelItem: NovelItem
     private lateinit var progress: NovelProgress
+    private lateinit var navigation: NovelTextNavigation
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -89,84 +91,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
         })
 
-        // 设置字体大小，
-        val textSize = Settings.textSize
-        debug { "load textSite = $textSize" }
-        textSizeTextView.text = getString(R.string.text_size_placeholders, textSize)
-        textSizeSeekBar.progress = textSize - 12
-        textSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val iTextSize = 12 + progress
-                textSizeTextView.text = getString(R.string.text_size_placeholders, iTextSize)
-                ntpAdapter.setTextSize(iTextSize)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                val iTextSize = 12 + seekBar.progress
-                Settings.textSize = iTextSize
-            }
-        })
-
-        // 设置行间距，
-        val lineSpacing = Settings.lineSpacing
-        lineSpacingTextView.text = getString(R.string.line_spacing_placeholder, lineSpacing)
-        lineSpacingSeekBar.progress = lineSpacing
-        lineSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                lineSpacingTextView.text = getString(R.string.line_spacing_placeholder, progress)
-                ntpAdapter.setLineSpacing(progress)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                Settings.lineSpacing = seekBar.progress
-            }
-        })
-
-        // 设置段间距，
-        val paragraphSpacing = Settings.paragraphSpacing
-        paragraphSpacingTextView.text = getString(R.string.paragraph_spacing_placeholder, paragraphSpacing)
-        paragraphSpacingSeekBar.progress = paragraphSpacing
-        paragraphSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                paragraphSpacingTextView.text = getString(R.string.paragraph_spacing_placeholder, progress)
-                ntpAdapter.setParagraphSpacing(progress)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                Settings.paragraphSpacing = seekBar.progress
-            }
-        })
-
-        // 设置背景色，
-        val backgroundColor = Settings.backgroundColor
-        viewPager.setBackgroundColor(backgroundColor)
-        backgroundColorTextView.text = getString(R.string.background_color_placeholder, backgroundColor)
-        backgroundColorTextView.setOnClickListener {
-            alertColorPicker(Settings.backgroundColor) { color ->
-                Settings.backgroundColor = color
-                backgroundColorTextView.text = getString(R.string.background_color_placeholder, color)
-                viewPager.setBackgroundColor(color)
-            }
-        }
-
-        // 设置文字颜色，
-        textColorTextView.text = getString(R.string.text_color_placeholder, Settings.textColor)
-        textColorTextView.setOnClickListener {
-            alertColorPicker(Settings.textColor) { color ->
-                Settings.textColor = color
-                textColorTextView.text = getString(R.string.text_color_placeholder, color)
-                ntpAdapter.setTextColor(color)
-            }
-        }
+        navigation = NovelTextNavigation(this, nav_view)
 
         presenter = NovelTextPresenter(novelItem)
         ntpAdapter = NovelTextPagerAdapter(this, presenter)
@@ -175,6 +100,31 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         loading(progressDialog, R.string.novel_chapters)
         presenter.attach(this)
         presenter.start()
+    }
+
+    override fun show() {
+        super.show()
+        navigation.reset()
+    }
+
+    fun setTextColor(color: Int) {
+        ntpAdapter.setTextColor(color)
+    }
+
+    fun setBackgroundColor(color: Int) {
+        viewPager.setBackgroundColor(color)
+    }
+
+    fun setParagraphSpacing(progress: Int) {
+        ntpAdapter.setParagraphSpacing(progress)
+    }
+
+    fun setLineSpacing(progress: Int) {
+        ntpAdapter.setLineSpacing(progress)
+    }
+
+    fun setTextSize(textSize: Int) {
+        ntpAdapter.setTextSize(textSize)
     }
 
     override fun onDestroy() {
