@@ -10,6 +10,7 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.Text
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.hide
@@ -79,6 +80,7 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
                 val list = listOf(R.string.read_continue to { readContinue() },
                         R.string.read_last_chapter to { readLastChapter() },
                         R.string.detail to { detail() },
+                        R.string.export_exists_chapter_to_text_file to { exportExistsChapterToTextFile() },
                         R.string.refine_search to { refineSearch() },
                         R.string.refresh to { refresh() },
                         R.string.remove to { remove() })
@@ -87,6 +89,10 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
                 }
                 true
             }
+        }
+
+        private fun exportExistsChapterToTextFile() {
+            Text.exportExistsChapterToTextFile(novel)
         }
 
         private fun remove() {
