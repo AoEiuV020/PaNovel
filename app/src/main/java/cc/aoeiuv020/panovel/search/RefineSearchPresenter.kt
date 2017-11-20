@@ -12,6 +12,7 @@ import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
+import org.jetbrains.anko.verbose
 
 /**
  *
@@ -45,18 +46,20 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
                 try {
                     if (author != null) {
                         // 如果传入了作者，就可以尝试读缓存，
-                        Cache.item.get(NovelId(context.getNovelSite().name, author, name))
+                        (Cache.item.get(NovelId(context.getNovelSite().name, author, name))
                                 ?: context.getNovelList(context.searchNovelName(name).requester)
-                                .firstOrNull { it.novel.name == name }
-                                ?.novel
+                                .firstOrNull { it.novel.name == name && it.novel.author == author }
+                                ?.novel)
                                 ?.let { next(it) }
                     } else {
                         context.getNovelList(context.searchNovelName(name).requester).filter {
+                            verbose { it.novel }
                             it.novel.name == name
                         }.forEach { next(it.novel) }
                     }
-                } catch (_: Exception) {
+                } catch (e: Exception) {
                     // 一个网站搜索失败不抛异常，
+                    error { e }
                 }
             }
             em.onComplete()
