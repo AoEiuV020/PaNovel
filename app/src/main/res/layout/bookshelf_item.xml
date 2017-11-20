@@ -122,8 +122,10 @@
         app:layout_constraintTop_toTopOf="@+id/tvName">
 
         <ImageView
+            android:id="@+id/ivMoreAction"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:srcCompat="@drawable/ic_more_vert" />
 
         <ProgressBar

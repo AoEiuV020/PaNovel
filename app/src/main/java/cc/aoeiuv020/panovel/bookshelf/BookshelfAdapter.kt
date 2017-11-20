@@ -89,6 +89,7 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
                 }
                 true
             }
+            itemView.ivMoreAction.show()
         }
 
         private fun exportExistsChapterToTextFile() {
