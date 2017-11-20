@@ -64,6 +64,7 @@ object Text : LocalSource, AnkoLogger {
                 left--
                 if (novelText == null) {
                     skip++
+                    output.newLine()
                 } else {
                     export++
                     novelText.textList.forEach {
