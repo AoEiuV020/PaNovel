@@ -10,6 +10,7 @@ import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.show
@@ -74,16 +75,15 @@ class MainActivity : AppCompatActivity() {
         magic_indicator.navigator = commonNavigator
         ViewPagerHelper.bind(magic_indicator, container)
 
-        val adRequest = App.adRequest
-
         ad_view.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 ad_view.show()
             }
         }
 
-        // Start loading the ad in the background.
-        ad_view.loadAd(adRequest)
+        if (Settings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
+        }
 
     }
 

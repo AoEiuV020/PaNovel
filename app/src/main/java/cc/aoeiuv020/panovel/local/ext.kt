@@ -26,7 +26,7 @@ private fun LocalSource.folder(file: File, folder: String? = null) = (folder?.le
 private fun LocalSource.file(file: File, name: String, folder: String? = null) = File(folder(file, folder), name)
 
 enum class FileType {
-    PRIMITIVE, GSON
+    PRIMITIVE, GSON, FILE
 }
 
 private fun LocalSource.externalPrimitive(folder: String? = null) = folder(external(FileType.PRIMITIVE), folder)
@@ -109,3 +109,7 @@ fun Any.toJson(): String = App.gson.toJson(this)
 inline fun <reified T> String.toBean(): T = App.gson.fromJson(this, type<T>())
 
 fun <T> String.toBean(type: Type): T = App.gson.fromJson<T>(this, type)
+
+private fun LocalSource.externalFile(folder: String? = null) = folder(external(FileType.FILE), folder)
+private fun LocalSource.externalFile(name: String, folder: String? = null) = file(externalFile(folder), name)
+fun LocalSource.openFile(name: String, folder: String? = null) = externalFile(name, folder)

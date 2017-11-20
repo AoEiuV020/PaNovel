@@ -4,10 +4,7 @@ import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.local.Bookshelf
-import cc.aoeiuv020.panovel.local.Cache
-import cc.aoeiuv020.panovel.local.History
-import cc.aoeiuv020.panovel.local.bookId
+import cc.aoeiuv020.panovel.local.*
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.error
@@ -48,6 +45,13 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
     fun subPresenter(): ItemPresenter = ItemPresenter()
 
     inner class ItemPresenter : Presenter<BookshelfAdapter.ViewHolder>() {
+        private var itemRefreshTime = 0L
+
+        fun forceRefresh(novelItem: NovelItem) {
+            itemRefreshTime = System.currentTimeMillis()
+            view?.setData(novelItem)
+        }
+
         fun requestDetail(novelItem: NovelItem) {
             Observable.fromCallable {
                 Cache.detail.get(novelItem)
@@ -65,7 +69,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
         fun requestUpdate(novelDetail: NovelDetail) {
             val novelItem = novelDetail.novel
             Observable.fromCallable {
-                val detail = Cache.detail.get(novelItem, refreshTime = refreshTime)
+                val detail = Cache.detail.get(novelItem, refreshTime = maxOf(refreshTime, itemRefreshTime))
                         ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
                         .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
                 detail.update
@@ -81,10 +85,10 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
         fun requestChapters(detail: NovelDetail) {
             Observable.fromCallable {
                 val novelItem = detail.novel
-                val chapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
+                val chapters = Cache.chapters.get(novelItem, refreshTime = maxOf(refreshTime, itemRefreshTime))
                         ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
                         .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
-                val progress = Cache.progress.get(novelItem)?.chapter ?: 0
+                val progress = Progress.load(novelItem).chapter
                 Pair(chapters, progress)
             }.async().subscribe({ (chapters, progress) ->
                 view?.showChapter(chapters, progress)

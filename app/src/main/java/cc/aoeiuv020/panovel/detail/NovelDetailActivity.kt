@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.text.NovelTextActivity
@@ -70,8 +71,15 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         setTitle(novelItem)
 
         fabRead.setOnClickListener {
-            novelDetail?.let {
-                NovelTextActivity.start(this, it.novel)
+            NovelTextActivity.start(this, novelItem)
+        }
+        fabStar.isChecked = Bookshelf.contains(novelItem)
+        fabStar.setOnClickListener {
+            fabStar.toggle()
+            if (fabStar.isChecked) {
+                Bookshelf.add(novelItem)
+            } else {
+                Bookshelf.remove(novelItem)
             }
         }
 
@@ -88,12 +96,14 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.attach(this)
         presenter.start()
 
-        ad_view.loadAd(App.adRequest)
-
         ad_view.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 ad_view.show()
             }
+        }
+
+        if (Settings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
         }
     }
 
@@ -125,15 +135,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     fun showNovelDetail(detail: NovelDetail) {
         this.novelDetail = detail
         setTitle(detail.novel)
-        fabStar.isChecked = Bookshelf.contains(detail)
-        fabStar.setOnClickListener {
-            fabStar.toggle()
-            if (fabStar.isChecked) {
-                Bookshelf.add(detail)
-            } else {
-                Bookshelf.remove(detail)
-            }
-        }
         Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
         presenter.requestChapters(detail.requester)
     }

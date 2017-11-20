@@ -9,6 +9,8 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
+import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.Text
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.hide
@@ -18,6 +20,7 @@ import cn.lemon.view.adapter.RecyclerAdapter
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.bookshelf_item.view.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.selector
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -48,25 +51,74 @@ class BookshelfAdapter(context: Context, val bookshelfPresenter: BookshelfPresen
         private val last = itemView.tvLast
         private val newChapterDot = itemView.newChapterDot
         private val progressBar = itemView.progressBar
+        private val dotLayout = itemView.dotLayout
         private lateinit var novel: NovelItem
 
         init {
             name.setOnClickListener {
-                NovelDetailActivity.start(context, novel)
+                detail()
             }
 
             name.setOnLongClickListener {
-                RefineSearchActivity.start(context, novel.name, novel.author)
+                refineSearch()
                 true
             }
 
             last.setOnClickListener {
-                NovelTextActivity.start(context, novel, -1)
+                readLastChapter()
             }
 
             itemView.setOnClickListener {
-                NovelTextActivity.start(context, novel)
+                readContinue()
             }
+
+            dotLayout.setOnClickListener {
+                refresh()
+            }
+
+            dotLayout.setOnLongClickListener {
+                val list = listOf(R.string.read_continue to { readContinue() },
+                        R.string.read_last_chapter to { readLastChapter() },
+                        R.string.detail to { detail() },
+                        R.string.export_exists_chapter_to_text_file to { exportExistsChapterToTextFile() },
+                        R.string.refine_search to { refineSearch() },
+                        R.string.refresh to { refresh() },
+                        R.string.remove to { remove() })
+                context.selector(context.getString(R.string.action), list.unzip().first.map { context.getString(it) }) { _, i ->
+                    list[i].second.invoke()
+                }
+                true
+            }
+        }
+
+        private fun exportExistsChapterToTextFile() {
+            Text.exportExistsChapterToTextFile(novel)
+        }
+
+        private fun remove() {
+            Bookshelf.remove(novel)
+            bookshelfPresenter.refresh()
+        }
+
+        private fun refresh() {
+            setData(novel)
+            presenter.forceRefresh(novel)
+        }
+
+        private fun detail() {
+            NovelDetailActivity.start(context, novel)
+        }
+
+        private fun refineSearch() {
+            RefineSearchActivity.start(context, novel.name, novel.author)
+        }
+
+        private fun readLastChapter() {
+            NovelTextActivity.start(context, novel, -1)
+        }
+
+        private fun readContinue() {
+            NovelTextActivity.start(context, novel)
         }
 
         override fun setData(data: NovelItem) {

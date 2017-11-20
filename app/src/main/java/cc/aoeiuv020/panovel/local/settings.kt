@@ -15,5 +15,7 @@ object Settings : LocalSource {
 
     var asyncThreadCount: Int by PrimitiveDelegate(30)
     var downloadThreadCount: Int by PrimitiveDelegate(4)
+
+    var adEnabled: Boolean by PrimitiveDelegate(true)
 }
 

@@ -45,7 +45,7 @@
     <string name="download">下载</string>
     <string name="downloading_from_current_chapter_placeholder">从当前章节(%d)开始下载</string>
     <string name="downloading_title_placeholder">%s</string>
-    <string name="downloading_placeholder">下载完成 已存在%d章 下载%d章 失败%d章 剩余%d章</string>
+    <string name="downloading_placeholder">下载中 已存在%d章 下载%d章 失败%d章 剩余%d章</string>
     <string name="download_complete_placeholder">下载完成 已存在%d章 下载%d章 失败%d章</string>
     <string name="download_complete_title_placeholder">%s</string>
     <string name="title_activity_bookshelf">@string/bookshelf</string>
@@ -62,6 +62,16 @@
     <string name="contents">目录</string>
     <string name="search">搜索</string>
     <string name="title_activity_refine_search">精确搜索</string>
+    <string name="refine_search">精确搜索</string>
+    <string name="action">操作</string>
+    <string name="read_continue">继续阅读</string>
+    <string name="read_last_chapter">阅读最新章</string>
+    <string name="detail">详情</string>
+    <string name="remove">删除</string>
+    <string name="export_exists_chapter_to_text_file">导出已有章节到.txt</string>
+    <string name="exporting_placeholder">导出中 已导出%d章 跳过%d章 剩余%d章</string>
+    <string name="export_complete_placeholder">导出完成 已导出%d章 跳过%d章</string>
+    <string name="export_error_placeholder">导出失败 已导出%d章 跳过%d章 剩余%d章</string>
 
 
 </resources>

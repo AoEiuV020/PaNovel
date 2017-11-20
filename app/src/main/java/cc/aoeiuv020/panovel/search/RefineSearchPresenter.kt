@@ -6,11 +6,13 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.NovelId
+import cc.aoeiuv020.panovel.local.Progress
 import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
+import org.jetbrains.anko.verbose
 
 /**
  *
@@ -44,18 +46,20 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
                 try {
                     if (author != null) {
                         // 如果传入了作者，就可以尝试读缓存，
-                        Cache.item.get(NovelId(context.getNovelSite().name, author, name))
+                        (Cache.item.get(NovelId(context.getNovelSite().name, author, name))
                                 ?: context.getNovelList(context.searchNovelName(name).requester)
-                                .firstOrNull { it.novel.name == name }
-                                ?.novel
+                                .firstOrNull { it.novel.name == name && it.novel.author == author }
+                                ?.novel)
                                 ?.let { next(it) }
                     } else {
                         context.getNovelList(context.searchNovelName(name).requester).filter {
+                            verbose { it.novel }
                             it.novel.name == name
                         }.forEach { next(it.novel) }
                     }
-                } catch (_: Exception) {
+                } catch (e: Exception) {
                     // 一个网站搜索失败不抛异常，
+                    error { e }
                 }
             }
             em.onComplete()
@@ -116,7 +120,7 @@ class RefineSearchPresenter : Presenter<RefineSearchActivity>() {
                 val chapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
                         ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
                         .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
-                val progress = Cache.progress.get(novelItem)?.chapter ?: 0
+                val progress = Progress.load(novelItem).chapter
                 Pair(chapters, progress)
             }.async().subscribe({ (chapters, progress) ->
                 view?.showChapter(chapters, progress)
