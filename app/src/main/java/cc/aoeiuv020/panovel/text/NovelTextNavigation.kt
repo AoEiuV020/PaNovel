@@ -3,6 +3,8 @@ package cc.aoeiuv020.panovel.text
 import android.view.View
 import android.widget.SeekBar
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.alertColorPicker
 import cc.aoeiuv020.panovel.util.hide
@@ -16,7 +18,7 @@ import org.jetbrains.anko.debug
  *
  * Created by AoEiuV020 on 2017.11.20-21:59:26.
  */
-class NovelTextNavigation(val view: NovelTextActivity, navigation: View) : AnkoLogger {
+class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem, navigation: View) : AnkoLogger {
     private val llDefault = navigation.llDefault
     private val llSettings = navigation.llSettings
 
@@ -27,6 +29,17 @@ class NovelTextNavigation(val view: NovelTextActivity, navigation: View) : AnkoL
         llDefault.ivSettings.setOnClickListener {
             llSettings.show()
             llDefault.hide()
+        }
+        llDefault.ivStar.apply {
+            isChecked = Bookshelf.contains(novelItem)
+            setOnClickListener {
+                toggle()
+                if (isChecked) {
+                    Bookshelf.add(novelItem)
+                } else {
+                    Bookshelf.remove(novelItem)
+                }
+            }
         }
 
         llSettings.apply {

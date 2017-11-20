@@ -24,6 +24,13 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/ic_list" />
 
+            <cc.aoeiuv020.panovel.text.CheckableImageView
+                android:id="@+id/ivStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_favorite_selector" />
+
             <ImageView
                 android:id="@+id/ivSettings"
                 android:layout_width="wrap_content"

@@ -91,7 +91,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
         })
 
-        navigation = NovelTextNavigation(this, nav_view)
+        navigation = NovelTextNavigation(this, novelItem, nav_view)
 
         presenter = NovelTextPresenter(novelItem)
         ntpAdapter = NovelTextPagerAdapter(this, presenter)
