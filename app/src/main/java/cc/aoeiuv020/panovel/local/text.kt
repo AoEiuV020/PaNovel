@@ -57,20 +57,23 @@ object Text : LocalSource, AnkoLogger {
             var skip = 0
             var left = size
             em.onNext(listOf(export, skip, left))
+            val container = Cache.text.container(novelItem)
             chapters.forEach { chapter ->
                 output.write(chapter.name)
                 output.newLine()
-                val novelText = Cache.text.get(novelItem, chapter.id)
                 left--
-                if (novelText == null) {
-                    skip++
-                    output.newLine()
-                } else {
+                if (container.contains(chapter.id)) {
                     export++
+                    // 判断过章节存在了，这个必须非空，除非导出时删除了缓存，
+                    val novelText = Cache.text.get(novelItem, chapter.id)
+                            ?: throw Exception("线程错误，${chapter.id}找不到，")
                     novelText.textList.forEach {
                         output.write("　　" + it)
                         output.newLine()
                     }
+                } else {
+                    skip++
+                    output.newLine()
                 }
                 em.onNext(listOf(export, skip, left))
             }
