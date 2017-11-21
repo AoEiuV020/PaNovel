@@ -77,6 +77,7 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
         progressBar.show()
         chapterNameTextView.text = chapter.name
         textListAdapter.clear()
+        textListAdapter.setChapterName(chapter.name)
         presenter.attach(this)
         presenter.requestNovelText(chapter)
     }
