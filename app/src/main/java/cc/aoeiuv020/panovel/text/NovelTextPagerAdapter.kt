@@ -41,12 +41,12 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         current = obj as? NovelTextViewHolder
     }
 
-    fun getTextProgress(): Int? {
-        return current?.getTextProgress()
-    }
+    fun getCurrentTextCount(): Int? = current?.getTextCount()
 
-    fun setTextProgress(textProgress: Int) {
-        debug { "setTextProgress position ${current?.position}" }
+    fun getCurrentTextProgress(): Int? = current?.getTextProgress()
+
+    fun setCurrentTextProgress(textProgress: Int) {
+        debug { "setCurrentTextProgress position ${current?.position}" }
         current?.setTextProgress(textProgress)
     }
 

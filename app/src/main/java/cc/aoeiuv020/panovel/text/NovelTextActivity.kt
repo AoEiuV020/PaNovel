@@ -105,7 +105,19 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     override fun show() {
         super.show()
-        navigation.reset()
+        navigation.reset(ntpAdapter.getCurrentTextCount() ?: 0, ntpAdapter.getCurrentTextProgress() ?: 0)
+    }
+
+    fun previousChapter() {
+        viewPager.currentItem = viewPager.currentItem - 1
+    }
+
+    fun nextChapter() {
+        viewPager.currentItem = viewPager.currentItem + 1
+    }
+
+    fun setTextProgress(progress: Int) {
+        ntpAdapter.setCurrentTextProgress(progress)
     }
 
     fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
@@ -178,13 +190,13 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
         ntpAdapter.setChaptersAsc(chaptersAsc)
         viewPager.setCurrentItem(progress.chapter, false)
-        ntpAdapter.setTextProgress(progress.text)
+        ntpAdapter.setCurrentTextProgress(progress.text)
     }
 
     override fun onPause() {
         super.onPause()
         // 比如断网，如果没有展示出章节，就直接保存持有的进度，
-        ntpAdapter.getTextProgress()?.let { progress.text = it }
+        ntpAdapter.getCurrentTextProgress()?.let { progress.text = it }
         debug {
             "save progress $progress"
         }
@@ -194,7 +206,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private fun refresh() {
         loading(progressDialog, R.string.novel_chapters)
         // 保存一下的进度，
-        ntpAdapter.getTextProgress()?.let { progress.text = it }
+        ntpAdapter.getCurrentTextProgress()?.let { progress.text = it }
         presenter.refresh()
     }
 

@@ -57,6 +57,25 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         llDefault.ivDownload.setOnClickListener {
             view.download()
         }
+        llDefault.apply {
+            tvPreviousChapter.setOnClickListener {
+                view.previousChapter()
+            }
+            tvNextChapter.setOnClickListener {
+                view.nextChapter()
+            }
+            sbTextProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    view.setTextProgress(progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                }
+            })
+        }
 
         llSettings.apply {
             // 设置字体大小，
@@ -209,7 +228,12 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         }
     }
 
-    fun reset() {
+    fun reset(currentTextCount: Int, currentTextProgress: Int) {
         showLayout(llDefault)
+
+        llDefault.sbTextProgress.apply {
+            max = currentTextCount
+            progress = currentTextProgress
+        }
     }
 }

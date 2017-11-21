@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.info
 
 class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter.NTPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
@@ -56,7 +55,6 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
         // itemView可能没有初始化高度，所以用decorView,
         // 更靠谱的是GlobalOnLayoutListener，但要求api >= 16,
         textRecyclerView.apply {
-            info { "init margin ${this@NovelTextViewHolder.hashCode()} <${ctx.window.decorView.height}>" }
             layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
                 setMargins(leftMargin,
                         Settings.topSpacing.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() },
@@ -135,12 +133,16 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
 
     fun setTextProgress(textProgress: Int) {
         debug { "setTextProgress $textProgress" }
+        // 存起来，recyclerView可能还没得到数据，
         this.textProgress = textProgress
+        textRecyclerView.scrollToPosition(textProgress)
     }
 
-    fun getTextProgress(): Int? {
+    fun getTextProgress(): Int {
         return layoutManager.findLastVisibleItemPosition().also {
             debug { "getTextProgress $it" }
         }
     }
+
+    fun getTextCount(): Int = textListAdapter.itemCount
 }
