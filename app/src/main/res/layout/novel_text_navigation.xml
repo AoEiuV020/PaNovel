@@ -24,6 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_list"
                 tools:ignore="ContentDescription" />
 
@@ -32,6 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_favorite_selector" />
 
             <ImageView
@@ -39,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_info"
                 tools:ignore="ContentDescription" />
 
@@ -47,6 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_file_download"
                 tools:ignore="ContentDescription" />
 
@@ -55,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_settings"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
