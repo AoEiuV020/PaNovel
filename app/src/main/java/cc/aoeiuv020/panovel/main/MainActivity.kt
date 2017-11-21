@@ -4,12 +4,17 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
+import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
@@ -30,16 +35,29 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
  * Created by AoEiuV020 on 2017.10.15-15:53:19.
  */
 class MainActivity : AppCompatActivity() {
-    private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+    private lateinit var bookshelfFragment: BookshelfFragment
+    private lateinit var historyFragment: HistoryFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
-        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
-        container.adapter = mSectionsPagerAdapter
+        bookshelfFragment = BookshelfFragment()
+        historyFragment = HistoryFragment()
+
+        val pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
+            override fun getItem(position: Int): Fragment = when (position) {
+                0 -> bookshelfFragment
+                else -> historyFragment
+            }
+
+            override fun getCount(): Int = 2
+
+        }
+
+        container.adapter = pagerAdapter
 
         fab.setOnClickListener { _ ->
             BookstoreActivity.start(this)
@@ -74,6 +92,22 @@ class MainActivity : AppCompatActivity() {
         }
         magic_indicator.navigator = commonNavigator
         ViewPagerHelper.bind(magic_indicator, container)
+
+        container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                // 切回书架时刷新一下，
+                if (position == 0) {
+                    bookshelfFragment.refresh()
+                }
+            }
+
+        })
 
         ad_view.adListener = object : AdListener() {
             override fun onAdLoaded() {
