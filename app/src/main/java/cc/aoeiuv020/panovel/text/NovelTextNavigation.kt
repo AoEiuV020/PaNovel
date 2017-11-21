@@ -41,6 +41,9 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
             }
         }
+        llDefault.ivDetail.setOnClickListener {
+            view.detail()
+        }
         llDefault.ivDownload.setOnClickListener {
             view.download()
         }

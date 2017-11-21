@@ -15,6 +15,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.*
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
@@ -191,6 +192,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         // 保存一下的进度，
         ntpAdapter.getTextProgress()?.let { progress.text = it }
         presenter.refresh()
+    }
+
+    fun detail() {
+        NovelDetailActivity.start(this, novelItem)
     }
 
     fun download() {
