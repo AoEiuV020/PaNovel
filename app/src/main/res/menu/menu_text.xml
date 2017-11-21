@@ -7,10 +7,4 @@
         android:title="@string/refresh"
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/download"
-        android:icon="@drawable/ic_file_download"
-        android:title="@string/download"
-        app:iconTint="@android:color/white"
-        app:showAsAction="ifRoom" />
 </menu>

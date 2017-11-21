@@ -193,7 +193,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         presenter.refresh()
     }
 
-    private fun download() {
+    fun download() {
         val index = viewPager.currentItem
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
                 , novelItem.name
@@ -253,7 +253,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.refresh -> refresh()
-            R.id.download -> download()
         }
         return super.onOptionsItemSelected(item)
     }

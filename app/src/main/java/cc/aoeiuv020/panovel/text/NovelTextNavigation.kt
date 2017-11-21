@@ -41,6 +41,9 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
             }
         }
+        llDefault.ivDownload.setOnClickListener {
+            view.download()
+        }
 
         llSettings.apply {
             // 设置字体大小，

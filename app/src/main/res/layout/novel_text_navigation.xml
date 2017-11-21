@@ -32,6 +32,13 @@
                 app:srcCompat="@drawable/ic_favorite_selector" />
 
             <ImageView
+                android:id="@+id/ivDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_file_download" />
+
+            <ImageView
                 android:id="@+id/ivSettings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
