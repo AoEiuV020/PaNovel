@@ -17,6 +17,7 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.loading
@@ -207,6 +208,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         Progress.save(novelItem, progress)
     }
 
+    private fun refineSearch() {
+        RefineSearchActivity.start(this, novelItem)
+    }
+
     fun refreshChapterList() {
         loading(progressDialog, R.string.novel_chapters)
         // 保存一下的进度，
@@ -278,6 +283,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.refresh -> refreshChapterList()
+            R.id.search -> refineSearch()
         }
         return super.onOptionsItemSelected(item)
     }
