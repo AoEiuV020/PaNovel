@@ -22,6 +22,10 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
             context.startActivity<RefineSearchActivity>()
         }
 
+        fun start(context: Context, novelItem: NovelItem) {
+            start(context, novelItem.name, novelItem.author)
+        }
+
         fun start(context: Context, name: String) {
             context.startActivity<RefineSearchActivity>("name" to name)
         }

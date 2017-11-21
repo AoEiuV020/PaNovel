@@ -8,15 +8,9 @@
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/download"
-        android:icon="@drawable/ic_file_download"
-        android:title="@string/download"
-        app:iconTint="@android:color/white"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/contents"
-        android:icon="@drawable/ic_list"
-        android:title="@string/contents"
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search"
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
 </menu>

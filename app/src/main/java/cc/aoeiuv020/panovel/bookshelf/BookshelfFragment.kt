@@ -50,7 +50,7 @@ class BookshelfFragment : Fragment(), IView {
         refresh()
     }
 
-    private fun refresh() {
+    fun refresh() {
         recyclerView.showSwipeRefresh()
         presenter.refresh()
     }

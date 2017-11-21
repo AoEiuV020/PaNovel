@@ -7,4 +7,5 @@
     <color name="colorChapterCached">#0f0</color>
     <color name="colorChapterReadAt">#f00</color>
     <color name="colorChapterDefault">@android:color/primary_text_light</color>
+    <color name="colorFavorite">#f00</color>
 </resources>

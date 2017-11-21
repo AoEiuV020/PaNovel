@@ -2,12 +2,10 @@ package cc.aoeiuv020.panovel.text
 
 import android.annotation.SuppressLint
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.TextView
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
@@ -15,8 +13,6 @@ import cc.aoeiuv020.panovel.api.NovelText
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
-import cn.lemon.view.RefreshRecyclerView
-import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -24,27 +20,15 @@ import org.jetbrains.anko.debug
 class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter.NTPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
     var position: Int = 0
-    private val headerView: View
-    private val chapterNameTextView: TextView
-    private val textRecyclerView: RefreshRecyclerView
-    private val layoutManager: LinearLayoutManager
-    private val progressBar: ProgressBar
+    private val textRecyclerView = itemView.textRecyclerView
+    private val layoutManager: LinearLayoutManager = LinearLayoutManager(ctx)
+    private val progressBar: ProgressBar = itemView.progressBar
     private val textListAdapter = NovelTextRecyclerAdapter(ctx)
     private var textProgress: Int? = null
 
     init {
-        textRecyclerView = itemView.textRecyclerView
-        layoutManager = LinearLayoutManager(ctx)
-        textRecyclerView.setLayoutManager(layoutManager)
-        headerView = LayoutInflater.from(ctx).inflate(R.layout.novel_text_header, itemView as ViewGroup, false)
-        headerView.setOnLongClickListener {
-            refresh()
-        }
-        headerView.setOnClickListener {
-            ctx.toggle()
-        }
-        textListAdapter.header = headerView
-        textRecyclerView.recyclerView.setOnTouchListener(object : View.OnTouchListener {
+        textRecyclerView.layoutManager = layoutManager
+        textRecyclerView.setOnTouchListener(object : View.OnTouchListener {
             private var previousAction: Int = MotionEvent.ACTION_UP
             @SuppressLint("ClickableViewAccessibility")
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
@@ -56,22 +40,23 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
                 return false
             }
         })
-        textRecyclerView.setAdapter(textListAdapter)
-        chapterNameTextView = headerView.chapterNameTextView
-        chapterNameTextView.setTextColor(Settings.textColor)
-        progressBar = itemView.progressBar
-    }
-
-    fun refresh(): Boolean {
-        progressBar.show()
-        presenter.refresh()
-        return true
+        textRecyclerView.adapter = textListAdapter
+        // itemView可能没有初始化高度，所以用decorView,
+        // 更靠谱的是GlobalOnLayoutListener，但要求api >= 16,
+        textRecyclerView.apply {
+            layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
+                setMargins(leftMargin,
+                        Settings.topSpacing.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() },
+                        rightMargin,
+                        Settings.bottomSpacing.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() })
+            }
+        }
     }
 
     fun apply(chapter: NovelChapter) {
         progressBar.show()
-        chapterNameTextView.text = chapter.name
         textListAdapter.clear()
+        textListAdapter.setChapterName(chapter.name)
         presenter.attach(this)
         presenter.requestNovelText(chapter)
     }
@@ -83,7 +68,7 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
     fun showText(novelText: NovelText) {
         textListAdapter.data = novelText.textList
         textProgress?.let {
-            textRecyclerView.recyclerView.run {
+            textRecyclerView.run {
                 post { scrollToPosition(it) }
             }
             textProgress = null
@@ -94,6 +79,25 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
     fun showError(message: String, e: Throwable) {
         itemView.progressBar.hide()
         ctx.showError(message, e)
+    }
+
+    fun refreshCurrentChapter() {
+        progressBar.show()
+        presenter.refresh()
+    }
+
+    fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+        textRecyclerView.apply {
+            post {
+                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    setMargins(leftMargin,
+                            top?.run { (toFloat() / 100 * itemView.height).toInt() } ?: topMargin,
+                            rightMargin,
+                            bottom?.run { (toFloat() / 100 * itemView.height).toInt() } ?: bottomMargin)
+                }
+            }
+        }
+        textListAdapter.setMargins(left, right)
     }
 
     fun setTextSize(size: Int) {
@@ -109,18 +113,21 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
     }
 
     fun setTextColor(color: Int) {
-        chapterNameTextView.setTextColor(color)
         textListAdapter.setTextColor(color)
     }
 
     fun setTextProgress(textProgress: Int) {
         debug { "setTextProgress $textProgress" }
+        // 存起来，recyclerView可能还没得到数据，
         this.textProgress = textProgress
+        textRecyclerView.scrollToPosition(textProgress)
     }
 
-    fun getTextProgress(): Int? {
+    fun getTextProgress(): Int {
         return layoutManager.findLastVisibleItemPosition().also {
             debug { "getTextProgress $it" }
         }
     }
+
+    fun getTextCount(): Int = textListAdapter.itemCount
 }

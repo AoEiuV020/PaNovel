@@ -73,8 +73,8 @@
             tools:ignore="UselessParent">
 
             <include
-                android:id="@+id/include"
-                layout="@layout/novel_text_read_settings"
+                android:id="@+id/nav_view"
+                layout="@layout/novel_text_navigation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"

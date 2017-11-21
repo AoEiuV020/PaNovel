@@ -9,12 +9,12 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.util.hide
-import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cn.lemon.view.adapter.BaseViewHolder
 import cn.lemon.view.adapter.RecyclerAdapter
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.bookshelf_item.view.*
+import kotlinx.android.synthetic.main.novel_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.text.SimpleDateFormat
@@ -29,7 +29,7 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
     private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
-            = ViewHolder(parent, R.layout.bookshelf_item)
+            = ViewHolder(parent, R.layout.novel_item)
 
     override fun onViewRecycled(holder: BaseViewHolder<NovelItem>) {
         // header和footer会强转失败，
@@ -45,10 +45,36 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
         private val update = itemView.tvUpdate
         private val readAt = itemView.tvReadAt
         private val last = itemView.tvLast
-        private val progressBar = itemView.progressBar
+        private val star = itemView.ivStar
+        private lateinit var novelItem: NovelItem
+
+        init {
+            name.setOnClickListener {
+                NovelDetailActivity.start(context, novelItem)
+            }
+
+            last.setOnClickListener {
+                NovelTextActivity.start(context, novelItem, -1)
+            }
+
+            itemView.setOnClickListener {
+                NovelTextActivity.start(context, novelItem)
+            }
+
+            star.apply {
+                setOnClickListener {
+                    toggle()
+                    if (isChecked) {
+                        Bookshelf.add(novelItem)
+                    } else {
+                        Bookshelf.remove(novelItem)
+                    }
+                }
+            }
+        }
 
         override fun setData(data: NovelItem) {
-            super.setData(data)
+            this.novelItem = data
             debug {
                 "${this.hashCode()} $layoutPosition setData $data"
             }
@@ -57,7 +83,7 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
             name.text = novel.name
             author.text = novel.author
             site.text = novel.site
-            progressBar.show()
+            star.isChecked = Bookshelf.contains(novelItem)
 
             // 清空残留数据，避免闪烁，
             update.text = ""
@@ -83,11 +109,6 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
         fun showChapter(chapters: List<NovelChapter>, progress: Int) {
             readAt.text = chapters[progress].name
             last.text = chapters.last().name
-            progressBar.hide()
-        }
-
-        override fun onItemViewClick(data: NovelItem) {
-            NovelDetailActivity.start(context, data)
         }
 
         fun destroy() {

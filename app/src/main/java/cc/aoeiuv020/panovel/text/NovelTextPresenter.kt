@@ -31,7 +31,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
         requestNovelDetail()
     }
 
-    fun refresh() {
+    fun refreshChapterList() {
         refresh = true
         requestNovelDetail()
     }

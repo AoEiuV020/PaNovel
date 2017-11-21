@@ -10,16 +10,19 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.SeekBar
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.*
-import cc.aoeiuv020.panovel.util.*
+import cc.aoeiuv020.panovel.search.RefineSearchActivity
+import cc.aoeiuv020.panovel.util.alert
+import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.loading
+import cc.aoeiuv020.panovel.util.notify
 import kotlinx.android.synthetic.main.activity_novel_text.*
-import kotlinx.android.synthetic.main.novel_text_read_settings.*
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.startActivity
@@ -49,6 +52,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private var novelDetail: NovelDetail? = null
     private lateinit var novelItem: NovelItem
     private lateinit var progress: NovelProgress
+    private lateinit var navigation: NovelTextNavigation
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -89,84 +93,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
         })
 
-        // 设置字体大小，
-        val textSize = Settings.textSize
-        debug { "load textSite = $textSize" }
-        textSizeTextView.text = getString(R.string.text_size_placeholders, textSize)
-        textSizeSeekBar.progress = textSize - 12
-        textSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val iTextSize = 12 + progress
-                textSizeTextView.text = getString(R.string.text_size_placeholders, iTextSize)
-                ntpAdapter.setTextSize(iTextSize)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                val iTextSize = 12 + seekBar.progress
-                Settings.textSize = iTextSize
-            }
-        })
-
-        // 设置行间距，
-        val lineSpacing = Settings.lineSpacing
-        lineSpacingTextView.text = getString(R.string.line_spacing_placeholder, lineSpacing)
-        lineSpacingSeekBar.progress = lineSpacing
-        lineSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                lineSpacingTextView.text = getString(R.string.line_spacing_placeholder, progress)
-                ntpAdapter.setLineSpacing(progress)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                Settings.lineSpacing = seekBar.progress
-            }
-        })
-
-        // 设置段间距，
-        val paragraphSpacing = Settings.paragraphSpacing
-        paragraphSpacingTextView.text = getString(R.string.paragraph_spacing_placeholder, paragraphSpacing)
-        paragraphSpacingSeekBar.progress = paragraphSpacing
-        paragraphSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                paragraphSpacingTextView.text = getString(R.string.paragraph_spacing_placeholder, progress)
-                ntpAdapter.setParagraphSpacing(progress)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                Settings.paragraphSpacing = seekBar.progress
-            }
-        })
-
-        // 设置背景色，
-        val backgroundColor = Settings.backgroundColor
-        viewPager.setBackgroundColor(backgroundColor)
-        backgroundColorTextView.text = getString(R.string.background_color_placeholder, backgroundColor)
-        backgroundColorTextView.setOnClickListener {
-            alertColorPicker(Settings.backgroundColor) { color ->
-                Settings.backgroundColor = color
-                backgroundColorTextView.text = getString(R.string.background_color_placeholder, color)
-                viewPager.setBackgroundColor(color)
-            }
-        }
-
-        // 设置文字颜色，
-        textColorTextView.text = getString(R.string.text_color_placeholder, Settings.textColor)
-        textColorTextView.setOnClickListener {
-            alertColorPicker(Settings.textColor) { color ->
-                Settings.textColor = color
-                textColorTextView.text = getString(R.string.text_color_placeholder, color)
-                ntpAdapter.setTextColor(color)
-            }
-        }
+        navigation = NovelTextNavigation(this, novelItem, nav_view)
 
         presenter = NovelTextPresenter(novelItem)
         ntpAdapter = NovelTextPagerAdapter(this, presenter)
@@ -175,6 +102,51 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         loading(progressDialog, R.string.novel_chapters)
         presenter.attach(this)
         presenter.start()
+    }
+
+    override fun show() {
+        super.show()
+        navigation.reset(ntpAdapter.getCurrentTextCount() ?: 0, ntpAdapter.getCurrentTextProgress() ?: 0)
+    }
+
+    fun previousChapter() {
+        viewPager.currentItem = viewPager.currentItem - 1
+    }
+
+    fun nextChapter() {
+        viewPager.currentItem = viewPager.currentItem + 1
+    }
+
+    fun setTextProgress(progress: Int) {
+        ntpAdapter.setCurrentTextProgress(progress)
+    }
+
+    fun refreshCurrentChapter() {
+        ntpAdapter.refreshCurrentChapter()
+    }
+
+    fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+        ntpAdapter.setMargins(left, top, right, bottom)
+    }
+
+    fun setTextColor(color: Int) {
+        ntpAdapter.setTextColor(color)
+    }
+
+    fun setBackgroundColor(color: Int) {
+        viewPager.setBackgroundColor(color)
+    }
+
+    fun setParagraphSpacing(progress: Int) {
+        ntpAdapter.setParagraphSpacing(progress)
+    }
+
+    fun setLineSpacing(progress: Int) {
+        ntpAdapter.setLineSpacing(progress)
+    }
+
+    fun setTextSize(textSize: Int) {
+        ntpAdapter.setTextSize(textSize)
     }
 
     override fun onDestroy() {
@@ -223,27 +195,35 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
         ntpAdapter.setChaptersAsc(chaptersAsc)
         viewPager.setCurrentItem(progress.chapter, false)
-        ntpAdapter.setTextProgress(progress.text)
+        ntpAdapter.setCurrentTextProgress(progress.text)
     }
 
     override fun onPause() {
         super.onPause()
         // 比如断网，如果没有展示出章节，就直接保存持有的进度，
-        ntpAdapter.getTextProgress()?.let { progress.text = it }
+        ntpAdapter.getCurrentTextProgress()?.let { progress.text = it }
         debug {
             "save progress $progress"
         }
         Progress.save(novelItem, progress)
     }
 
-    private fun refresh() {
-        loading(progressDialog, R.string.novel_chapters)
-        // 保存一下的进度，
-        ntpAdapter.getTextProgress()?.let { progress.text = it }
-        presenter.refresh()
+    private fun refineSearch() {
+        RefineSearchActivity.start(this, novelItem)
     }
 
-    private fun download() {
+    fun refreshChapterList() {
+        loading(progressDialog, R.string.novel_chapters)
+        // 保存一下的进度，
+        ntpAdapter.getCurrentTextProgress()?.let { progress.text = it }
+        presenter.refreshChapterList()
+    }
+
+    fun detail() {
+        NovelDetailActivity.start(this, novelItem)
+    }
+
+    fun download() {
         val index = viewPager.currentItem
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
                 , novelItem.name
@@ -251,7 +231,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         presenter.download(index)
     }
 
-    private fun showContents() {
+    fun showContents() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.contents)
                 .setAdapter(NovelContentsAdapter(this, novelItem, chaptersAsc, progress.chapter)) { _, index ->
@@ -302,9 +282,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.refresh -> refresh()
-            R.id.download -> download()
-            R.id.contents -> showContents()
+            R.id.refresh -> refreshChapterList()
+            R.id.search -> refineSearch()
         }
         return super.onOptionsItemSelected(item)
     }

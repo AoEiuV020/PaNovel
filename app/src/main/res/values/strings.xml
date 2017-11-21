@@ -72,6 +72,14 @@
     <string name="exporting_placeholder">导出中 已导出%d章 跳过%d章 剩余%d章</string>
     <string name="export_complete_placeholder">导出完成 已导出%d章 跳过%d章</string>
     <string name="export_error_placeholder">导出失败 已导出%d章 跳过%d章 剩余%d章</string>
+    <string name="typesetting">排版</string>
+    <string name="spacing_placeholder">%d%%</string>
+    <string name="left_spacing">左间距</string>
+    <string name="right_spacing">右间距</string>
+    <string name="top_spacing">上间距</string>
+    <string name="bottom_spacing">下间距</string>
+    <string name="previous_chapter">上一章</string>
+    <string name="next_chapter">下一章</string>
 
 
 </resources>
