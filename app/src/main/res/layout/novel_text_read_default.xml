@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/ivContents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/ic_list"
+        tools:ignore="ContentDescription" />
+
+    <cc.aoeiuv020.panovel.text.CheckableImageView
+        android:id="@+id/ivStar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/ic_favorite_selector" />
+
+    <ImageView
+        android:id="@+id/ivDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/ic_info"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/ivDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/ic_file_download"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/ivSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/ic_settings"
+        tools:ignore="ContentDescription" />
+</LinearLayout>
