@@ -23,6 +23,8 @@ class NovelTextRecyclerAdapter(ctx: NovelTextActivity) : RecyclerAdapter<String>
     private var mLineSpacing = Settings.lineSpacing
     private var mParagraphSpacing = Settings.paragraphSpacing
     private var mTextColor = Settings.textColor
+    private var mLeftSpacing = Settings.leftSpacing
+    private var mRightSpacing = Settings.rightSpacing
 
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<String>
             = ViewHolder(parent, R.layout.novel_text_item)
@@ -34,6 +36,7 @@ class NovelTextRecyclerAdapter(ctx: NovelTextActivity) : RecyclerAdapter<String>
         override fun setData(data: String) {
             divider.setHeight(context.dip(mParagraphSpacing))
             textView.apply {
+                debug { "initMargin <$mLeftSpacing, $mRightSpacing>" }
                 text = "　　" + data
                 textSize = mTextSize.toFloat()
                 // 直接设置字号的话不会自动调整高度，手动请求一下，
@@ -42,12 +45,26 @@ class NovelTextRecyclerAdapter(ctx: NovelTextActivity) : RecyclerAdapter<String>
                 }
                 setTextColor(mTextColor)
                 setLineSpacing(context.dip(mLineSpacing).toFloat(), 1.toFloat())
+                // 直接设置layoutParams无效，post一下，
+                post {
+                    layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
+                        setMargins((mLeftSpacing.toFloat() / 100 * itemView.width).toInt(),
+                                topMargin,
+                                (mRightSpacing.toFloat() / 100 * itemView.width).toInt(),
+                                bottomMargin)
+                    }
+                }
             }
         }
     }
 
+    fun setMargins(left: Int? = null, right: Int? = null) {
+        mLeftSpacing = left ?: mLeftSpacing
+        mRightSpacing = right ?: mRightSpacing
+        notifyDataSetChanged()
+    }
+
     fun setTextSize(size: Int) {
-        debug { "NovelTextListAdapter.setTextSize $size" }
         this.mTextSize = size
         notifyDataSetChanged()
     }

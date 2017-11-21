@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.novel_text_header.view.*
 import kotlinx.android.synthetic.main.novel_text_page_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.info
 
 class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter.NTPresenter) : IView, AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.novel_text_page_item, null)
@@ -57,6 +58,17 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
             }
         })
         textRecyclerView.setAdapter(textListAdapter)
+        // itemView可能没有初始化高度，所以用decorView,
+        // 更靠谱的是GlobalOnLayoutListener，但要求api >= 16,
+        textRecyclerView.apply {
+            info { "init margin ${this@NovelTextViewHolder.hashCode()} <${ctx.window.decorView.height}>" }
+            layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
+                setMargins(leftMargin,
+                        Settings.topSpacing.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() },
+                        rightMargin,
+                        Settings.bottomSpacing.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() })
+            }
+        }
         chapterNameTextView = headerView.chapterNameTextView
         chapterNameTextView.setTextColor(Settings.textColor)
         progressBar = itemView.progressBar
@@ -94,6 +106,20 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
     fun showError(message: String, e: Throwable) {
         itemView.progressBar.hide()
         ctx.showError(message, e)
+    }
+
+    fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+        textRecyclerView.apply {
+            post {
+                layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    setMargins(leftMargin,
+                            top?.run { (toFloat() / 100 * itemView.height).toInt() } ?: topMargin,
+                            rightMargin,
+                            bottom?.run { (toFloat() / 100 * itemView.height).toInt() } ?: bottomMargin)
+                }
+            }
+        }
+        textListAdapter.setMargins(left, right)
     }
 
     fun setTextSize(size: Int) {

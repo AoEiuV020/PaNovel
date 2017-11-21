@@ -150,19 +150,19 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                     var tv: TextView? = null
                     when (seekBar) {
                         leftSpacingSeekBar -> {
-                            view.setMargin(left = progress)
+                            view.setMargins(left = progress)
                             tv = leftSpacingTextView
                         }
                         rightSpacingSeekBar -> {
-                            view.setMargin(right = progress)
+                            view.setMargins(right = progress)
                             tv = rightSpacingTextView
                         }
                         topSpacingSeekBar -> {
-                            view.setMargin(top = progress)
+                            view.setMargins(top = progress)
                             tv = topSpacingTextView
                         }
                         bottomSpacingSeekBar -> {
-                            view.setMargin(bottom = progress)
+                            view.setMargins(bottom = progress)
                             tv = bottomSpacingTextView
                         }
                     }

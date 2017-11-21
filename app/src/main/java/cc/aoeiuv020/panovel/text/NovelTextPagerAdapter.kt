@@ -66,6 +66,12 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
 
     override fun getCount() = chaptersAsc.size
 
+    fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+        (usedHolders + unusedHolders).forEach {
+            it.setMargins(left, top, right, bottom)
+        }
+    }
+
     fun setTextSize(size: Int) {
         debug { "NovelTextPagerAdapter.setTextSize $size" }
         (usedHolders + unusedHolders).forEach {
