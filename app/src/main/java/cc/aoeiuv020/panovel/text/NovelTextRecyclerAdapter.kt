@@ -1,14 +1,14 @@
 package cc.aoeiuv020.panovel.text
 
 import android.annotation.SuppressLint
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.setHeight
-import cn.lemon.view.adapter.BaseViewHolder
-import cn.lemon.view.adapter.RecyclerAdapter
 import kotlinx.android.synthetic.main.novel_text_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -18,7 +18,12 @@ import org.jetbrains.anko.dip
  *
  * Created by AoEiuV020 on 2017.10.12-14:55:56.
  */
-class NovelTextRecyclerAdapter(ctx: NovelTextActivity) : RecyclerAdapter<String>(ctx), AnkoLogger {
+class NovelTextRecyclerAdapter(private val ctx: NovelTextActivity) : RecyclerView.Adapter<NovelTextRecyclerAdapter.ViewHolder>(), AnkoLogger {
+    var data: List<String> = emptyList()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
     private var mTextSize = Settings.textSize
     private var mLineSpacing = Settings.lineSpacing
     private var mParagraphSpacing = Settings.paragraphSpacing
@@ -26,15 +31,27 @@ class NovelTextRecyclerAdapter(ctx: NovelTextActivity) : RecyclerAdapter<String>
     private var mLeftSpacing = Settings.leftSpacing
     private var mRightSpacing = Settings.rightSpacing
 
-    override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<String>
-            = ViewHolder(parent, R.layout.novel_text_item)
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(ctx).inflate(R.layout.novel_text_item, parent, false)
+        return ViewHolder(view)
+    }
 
-    inner class ViewHolder(parent: ViewGroup?, layoutId: Int) : BaseViewHolder<String>(parent, layoutId) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.setData(data[position])
+    }
+
+    override fun getItemCount(): Int = data.size
+
+    fun clear() {
+        data = emptyList()
+    }
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val divider: View = itemView.divider
         private val textView: TextView = itemView.textView
         @SuppressLint("SetTextI18n")
-        override fun setData(data: String) {
-            divider.setHeight(context.dip(mParagraphSpacing))
+        fun setData(data: String) {
+            divider.setHeight(ctx.dip(mParagraphSpacing))
             textView.apply {
                 debug { "initMargin <$mLeftSpacing, $mRightSpacing>" }
                 text = "　　" + data
