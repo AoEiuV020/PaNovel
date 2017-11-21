@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
@@ -94,6 +95,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
         navigation = NovelTextNavigation(this, novelItem, nav_view)
 
+        viewPager.post {
+            setMargin(Settings.leftSpacing, Settings.topSpacing, Settings.rightSpacing, Settings.bottomSpacing)
+        }
+
         presenter = NovelTextPresenter(novelItem)
         ntpAdapter = NovelTextPagerAdapter(this, presenter)
         viewPager.adapter = ntpAdapter
@@ -108,12 +113,21 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         navigation.reset()
     }
 
+    fun setMargin(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+        viewPager.layoutParams = (viewPager.layoutParams as ViewGroup.MarginLayoutParams).apply {
+            setMargins(left?.run { (toFloat() / 100 * rootView.width).toInt() } ?: leftMargin,
+                    top?.run { (toFloat() / 100 * rootView.height).toInt() } ?: topMargin,
+                    right?.run { (toFloat() / 100 * rootView.width).toInt() } ?: rightMargin,
+                    bottom?.run { (toFloat() / 100 * rootView.height).toInt() } ?: bottomMargin)
+        }
+    }
+
     fun setTextColor(color: Int) {
         ntpAdapter.setTextColor(color)
     }
 
     fun setBackgroundColor(color: Int) {
-        viewPager.setBackgroundColor(color)
+        rootView.setBackgroundColor(color)
     }
 
     fun setParagraphSpacing(progress: Int) {

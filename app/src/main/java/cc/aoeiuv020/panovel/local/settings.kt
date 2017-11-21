@@ -6,8 +6,14 @@ package cc.aoeiuv020.panovel.local
  */
 object Settings : LocalSource {
     var textSize: Int by PrimitiveDelegate(18)
+
     var lineSpacing: Int by PrimitiveDelegate(2)
     var paragraphSpacing: Int by PrimitiveDelegate(4)
+    var leftSpacing: Int by PrimitiveDelegate(0)
+    var topSpacing: Int by PrimitiveDelegate(0)
+    var rightSpacing: Int by PrimitiveDelegate(0)
+    var bottomSpacing: Int by PrimitiveDelegate(0)
+
     var backgroundColor: Int by PrimitiveDelegate(0xffffffff.toInt())
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
 

@@ -143,6 +143,24 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                     Settings.paragraphSpacing = seekBar.progress
                 }
             })
+
+            // 设置左间距，
+            val leftSpacing = Settings.leftSpacing
+            leftSpacingTextView.text = view.getString(R.string.spacing_placeholder, leftSpacing)
+            leftSpacingSeekBar.progress = leftSpacing
+            leftSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    leftSpacingTextView.text = view.getString(R.string.spacing_placeholder, progress)
+                    view.setMargin(left = progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    Settings.leftSpacing = seekBar.progress
+                }
+            })
         }
     }
 

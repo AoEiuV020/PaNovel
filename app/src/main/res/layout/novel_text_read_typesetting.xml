@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,6 +75,42 @@
             android:singleLine="true"
             android:textColor="@android:color/primary_text_dark"
             tools:text="4dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxEms="4"
+            android:minEms="4"
+            android:singleLine="true"
+            android:text="@string/left_spacing"
+            android:textColor="@android:color/primary_text_dark" />
+
+        <SeekBar
+            android:id="@+id/leftSpacingSeekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/leftSpacingTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:maxEms="4"
+            android:minEms="4"
+            android:singleLine="true"
+            android:textColor="@android:color/primary_text_dark"
+            tools:text="0dp" />
 
     </LinearLayout>
 </LinearLayout>
