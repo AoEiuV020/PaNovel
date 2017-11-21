@@ -75,4 +75,14 @@
         <include layout="@layout/novel_text_read_settings" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/llTypesetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <include layout="@layout/novel_text_read_typesetting" />
+    </LinearLayout>
+
 </LinearLayout>

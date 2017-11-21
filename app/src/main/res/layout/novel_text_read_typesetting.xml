@@ -17,19 +17,19 @@
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
-            android:text="@string/text_size"
+            android:text="@string/line_spacing"
             android:textColor="@android:color/primary_text_dark" />
 
         <SeekBar
-            android:id="@+id/textSizeSeekBar"
+            android:id="@+id/lineSpacingSeekBar"
             style="@style/Widget.AppCompat.SeekBar.Discrete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="40" />
+            android:max="199" />
 
         <TextView
-            android:id="@+id/textSizeTextView"
+            android:id="@+id/lineSpacingTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
@@ -37,10 +37,9 @@
             android:minEms="4"
             android:singleLine="true"
             android:textColor="@android:color/primary_text_dark"
-            tools:text="18sp" />
+            tools:text="2dp" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,70 +53,27 @@
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
-            android:text="@string/background_color"
+            android:text="@string/paragraph_spacing"
             android:textColor="@android:color/primary_text_dark" />
 
-        <View
+        <SeekBar
+            android:id="@+id/paragraphSpacingSeekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="199" />
 
         <TextView
-            android:id="@+id/backgroundColorTextView"
+            android:id="@+id/paragraphSpacingTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:maxEms="6"
-            android:minEms="6"
-            android:singleLine="true"
-            android:textColor="@android:color/primary_text_dark"
-            tools:text="0xFFFFFFFF" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
-            android:text="@string/text_color"
-            android:textColor="@android:color/primary_text_dark" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/textColorTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:maxEms="6"
-            android:minEms="6"
-            android:singleLine="true"
             android:textColor="@android:color/primary_text_dark"
-            tools:text="0xFF000000" />
-    </LinearLayout>
+            tools:text="4dp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tvTypesetting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:text="@string/typesetting"
-            android:textColor="@android:color/primary_text_dark" />
     </LinearLayout>
 </LinearLayout>

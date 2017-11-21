@@ -11,6 +11,7 @@ import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_settings.view.*
+import kotlinx.android.synthetic.main.novel_text_read_typesetting.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 
@@ -21,14 +22,21 @@ import org.jetbrains.anko.debug
 class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem, navigation: View) : AnkoLogger {
     private val llDefault = navigation.llDefault
     private val llSettings = navigation.llSettings
+    private val llTypesetting = navigation.llTypesetting
+
+    private fun showLayout(view: View) {
+        listOf(llDefault, llSettings, llTypesetting).forEach {
+            it.takeIf { it == view }?.show()
+                    ?: it.hide()
+        }
+    }
 
     init {
         llDefault.ivContents.setOnClickListener {
             view.showContents()
         }
         llDefault.ivSettings.setOnClickListener {
-            llSettings.show()
-            llDefault.hide()
+            showLayout(llSettings)
         }
         llDefault.ivStar.apply {
             isChecked = Bookshelf.contains(novelItem)
@@ -70,6 +78,36 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
             })
 
+            // 设置背景色，
+            val backgroundColor = Settings.backgroundColor
+            view.setBackgroundColor(backgroundColor)
+            backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, backgroundColor)
+            backgroundColorTextView.setOnClickListener {
+                view.alertColorPicker(Settings.backgroundColor) { color ->
+                    Settings.backgroundColor = color
+                    backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, color)
+                    view.setBackgroundColor(color)
+                }
+            }
+
+            // 设置文字颜色，
+            textColorTextView.text = view.getString(R.string.text_color_placeholder, Settings.textColor)
+            textColorTextView.setOnClickListener {
+                view.alertColorPicker(Settings.textColor) { color ->
+                    Settings.textColor = color
+                    textColorTextView.text = view.getString(R.string.text_color_placeholder, color)
+                    view.setTextColor(color)
+                }
+            }
+
+            tvTypesetting.setOnClickListener {
+                showLayout(this@NovelTextNavigation.llTypesetting)
+            }
+
+        }
+
+        llTypesetting.apply {
+
             // 设置行间距，
             val lineSpacing = Settings.lineSpacing
             lineSpacingTextView.text = view.getString(R.string.line_spacing_placeholder, lineSpacing)
@@ -105,34 +143,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                     Settings.paragraphSpacing = seekBar.progress
                 }
             })
-
-            // 设置背景色，
-            val backgroundColor = Settings.backgroundColor
-            view.setBackgroundColor(backgroundColor)
-            backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, backgroundColor)
-            backgroundColorTextView.setOnClickListener {
-                view.alertColorPicker(Settings.backgroundColor) { color ->
-                    Settings.backgroundColor = color
-                    backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, color)
-                    view.setBackgroundColor(color)
-                }
-            }
-
-            // 设置文字颜色，
-            textColorTextView.text = view.getString(R.string.text_color_placeholder, Settings.textColor)
-            textColorTextView.setOnClickListener {
-                view.alertColorPicker(Settings.textColor) { color ->
-                    Settings.textColor = color
-                    textColorTextView.text = view.getString(R.string.text_color_placeholder, color)
-                    view.setTextColor(color)
-                }
-            }
-
         }
     }
 
     fun reset() {
-        llDefault.show()
-        llSettings.hide()
+        showLayout(llDefault)
     }
 }
