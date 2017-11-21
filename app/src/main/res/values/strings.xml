@@ -75,6 +75,9 @@
     <string name="typesetting">排版</string>
     <string name="spacing_placeholder">%d%%</string>
     <string name="left_spacing">左间距</string>
+    <string name="right_spacing">右间距</string>
+    <string name="top_spacing">上间距</string>
+    <string name="bottom_spacing">下间距</string>
 
 
 </resources>
