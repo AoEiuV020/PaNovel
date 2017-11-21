@@ -120,6 +120,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         ntpAdapter.setCurrentTextProgress(progress)
     }
 
+    fun refreshCurrentChapter() {
+        ntpAdapter.refreshCurrentChapter()
+    }
+
     fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
         ntpAdapter.setMargins(left, top, right, bottom)
     }
@@ -203,11 +207,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         Progress.save(novelItem, progress)
     }
 
-    private fun refresh() {
+    fun refreshChapterList() {
         loading(progressDialog, R.string.novel_chapters)
         // 保存一下的进度，
         ntpAdapter.getCurrentTextProgress()?.let { progress.text = it }
-        presenter.refresh()
+        presenter.refreshChapterList()
     }
 
     fun detail() {
@@ -273,7 +277,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.refresh -> refresh()
+            R.id.refresh -> refreshChapterList()
         }
         return super.onOptionsItemSelected(item)
     }

@@ -54,6 +54,15 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         llDefault.ivDetail.setOnClickListener {
             view.detail()
         }
+        llDefault.ivRefresh.apply {
+            setOnClickListener {
+                view.refreshCurrentChapter()
+            }
+            setOnLongClickListener {
+                view.refreshChapterList()
+                true
+            }
+        }
         llDefault.ivDownload.setOnClickListener {
             view.download()
         }

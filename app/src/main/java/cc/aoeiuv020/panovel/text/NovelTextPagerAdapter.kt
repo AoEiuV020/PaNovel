@@ -18,6 +18,7 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         this.chaptersAsc = chapters
         notifyDataSetChanged()
     }
+
     override fun isViewFromObject(view: View, obj: Any) = (obj as NovelTextViewHolder).itemView === view
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val holder = if (unusedHolders.isNotEmpty()) {
@@ -65,6 +66,10 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
     }
 
     override fun getCount() = chaptersAsc.size
+
+    fun refreshCurrentChapter() {
+        current?.refreshCurrentChapter()
+    }
 
     fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
         (usedHolders + unusedHolders).forEach {

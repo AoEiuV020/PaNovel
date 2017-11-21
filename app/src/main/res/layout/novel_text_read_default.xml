@@ -80,6 +80,15 @@
             tools:ignore="ContentDescription" />
 
         <ImageView
+            android:id="@+id/ivRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:tint="@android:color/white"
+            app:srcCompat="@drawable/ic_refresh"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
             android:id="@+id/ivDownload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

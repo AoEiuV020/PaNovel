@@ -34,7 +34,8 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
     init {
         textRecyclerView.layoutManager = layoutManager
         headerView.setOnLongClickListener {
-            refresh()
+            refreshCurrentChapter()
+            true
         }
         headerView.setOnClickListener {
             ctx.toggle()
@@ -65,12 +66,6 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
         chapterNameTextView.setTextColor(Settings.textColor)
     }
 
-    fun refresh(): Boolean {
-        progressBar.show()
-        presenter.refresh()
-        return true
-    }
-
     fun apply(chapter: NovelChapter) {
         progressBar.show()
         chapterNameTextView.text = chapter.name
@@ -98,6 +93,11 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
     fun showError(message: String, e: Throwable) {
         itemView.progressBar.hide()
         ctx.showError(message, e)
+    }
+
+    fun refreshCurrentChapter() {
+        progressBar.show()
+        presenter.refresh()
     }
 
     fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
