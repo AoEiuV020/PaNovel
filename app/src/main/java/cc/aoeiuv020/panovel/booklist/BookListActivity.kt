@@ -81,6 +81,7 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
     fun showNovelList(list: List<NovelItem>) {
         mAdapter.data = ArrayList(list)
         recyclerView.dismissSwipeRefresh()
+        recyclerView.showNoMore()
     }
 
     fun showSaveComplete(size: Int) {
