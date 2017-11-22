@@ -77,6 +77,11 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         refresh()
     }
 
+    override fun onDestroy() {
+        presenter.detach()
+        super.onDestroy()
+    }
+
     private fun search(name: String, author: String) {
         title = name
         mAdapter.clear()
