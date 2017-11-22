@@ -8,15 +8,16 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
 import cc.aoeiuv020.panovel.base.item.OnItemLongClickListener
-import cc.aoeiuv020.panovel.local.Bookshelf
-import cc.aoeiuv020.panovel.local.History
-import cc.aoeiuv020.panovel.local.NovelHistory
-import cc.aoeiuv020.panovel.local.bookId
+import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.util.show
+import com.google.android.gms.ads.AdListener
+import kotlinx.android.synthetic.main.activity_book_list.*
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.selector
@@ -38,7 +39,7 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.novel_item_list)
+        setContentView(R.layout.activity_book_list)
 
         val bookListName = intent.getStringExtra("bookListName")
 
@@ -52,18 +53,36 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
             forceRefresh()
         }
 
+        ad_view.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                ad_view.show()
+            }
+        }
+
+        if (Settings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
+        }
+
+
         presenter.attach(this)
         refresh()
     }
 
-    override fun onDestroy() {
-        presenter.detach()
-        super.onDestroy()
+    override fun onPause() {
+        ad_view.pause()
+        save()
+        super.onPause()
     }
 
-    override fun onPause() {
-        super.onPause()
-        save()
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
+    }
+
+    override fun onDestroy() {
+        presenter.detach()
+        ad_view.destroy()
+        super.onDestroy()
     }
 
     private fun refresh() {
