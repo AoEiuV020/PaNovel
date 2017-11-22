@@ -15,11 +15,13 @@ abstract class Presenter<T : IView> : AnkoLogger {
      * detach时全部取消，
      */
     private val disposableList = ArrayList<Disposable?>()
-    protected var view: T? = null
+    var view: T? = null
+        private set
 
-    fun attach(view: T) {
+    fun attach(view: IView) {
         debug { "$this attach $view" }
-        this.view = view
+        @Suppress("UNCHECKED_CAST")
+        this.view = view as? T
     }
 
     fun detach() {

@@ -34,7 +34,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        layout="@layout/content_bookshelf"
+        layout="@layout/novel_item_list"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
 
