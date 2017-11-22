@@ -21,6 +21,7 @@ class BookListAdapter(context: Context, val presenter: BookListFragmentPresenter
 
     inner class ViewHolder(parent: ViewGroup?, layoutId: Int) : BaseViewHolder<BookListData>(parent, layoutId) {
         private val name = itemView.ivName
+        private val count = itemView.ivCount
 
         override fun setData(data: BookListData) {
             itemView.setOnClickListener {
@@ -36,6 +37,7 @@ class BookListAdapter(context: Context, val presenter: BookListFragmentPresenter
                 true
             }
             name.text = data.name
+            count.text = data.list.size.toString()
         }
     }
 }
