@@ -29,7 +29,7 @@ class BookshelfItemListAdapter(context: Context, val presenter: BookshelfPresent
             = BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item)
 }
 
-open class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Context, parent: ViewGroup?, layoutId: Int)
+class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Context, parent: ViewGroup?, layoutId: Int)
     : BaseItemViewHolder<BookshelfItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
     private val newChapterDot = itemView.newChapterDot
     private val progressBar = itemView.progressBar
