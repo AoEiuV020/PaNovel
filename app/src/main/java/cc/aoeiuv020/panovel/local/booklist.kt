@@ -14,6 +14,9 @@ object BookList : LocalSource {
     fun add(bookListData: BookListData)
             = gsonSave(bookListData.name, bookListData)
 
+    fun get(name: String): BookListData?
+            = gsonLoad(name)
+
     fun list(): List<BookListData>
             = gsonList()
 }

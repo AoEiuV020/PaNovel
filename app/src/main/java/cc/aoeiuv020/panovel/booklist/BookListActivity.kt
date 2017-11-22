@@ -9,9 +9,6 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
-import cc.aoeiuv020.panovel.local.BookListData
-import cc.aoeiuv020.panovel.local.toBean
-import cc.aoeiuv020.panovel.local.toJson
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
@@ -22,8 +19,8 @@ import org.jetbrains.anko.startActivity
  */
 class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     companion object {
-        fun start(context: Context, bookListData: BookListData) {
-            context.startActivity<BookListActivity>("bookListData" to bookListData.toJson())
+        fun start(context: Context, bookListName: String) {
+            context.startActivity<BookListActivity>("bookListName" to bookListName)
         }
     }
 
@@ -34,10 +31,10 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.novel_item_list)
 
-        val bookListData: BookListData = intent.getStringExtra("bookListData").toBean()
+        val bookListName = intent.getStringExtra("bookListName")
 
         recyclerView.setLayoutManager(LinearLayoutManager(this))
-        presenter = BookListActivityPresenter(bookListData)
+        presenter = BookListActivityPresenter(bookListName)
         mAdapter = DefaultItemListAdapter(this, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
@@ -82,5 +79,6 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     override fun showError(message: String, e: Throwable) {
         snack.setText(message + e.message)
         snack.show()
+        recyclerView.dismissSwipeRefresh()
     }
 }
