@@ -21,9 +21,8 @@ class BookshelfFragment : Fragment(), BaseItemListView {
     private lateinit var presenter: BookshelfPresenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.novel_item_list, container, false)
-    }
+                              savedInstanceState: Bundle?): View?
+            = inflater.inflate(R.layout.novel_item_list, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -112,9 +112,8 @@ class MainActivity : AppCompatActivity() {
         }
         commonNavigator.adapter = object : CommonNavigatorAdapter() {
 
-            override fun getCount(): Int {
-                return titleList.size
-            }
+            override fun getCount(): Int
+                    = titleList.size
 
             override fun getTitleView(context: Context, index: Int): IPagerTitleView {
                 val colorTransitionPagerTitleView = ColorTransitionPagerTitleView(context)

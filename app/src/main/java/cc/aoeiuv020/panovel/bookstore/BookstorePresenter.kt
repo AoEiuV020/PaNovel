@@ -52,9 +52,8 @@ class BookstorePresenter : Presenter<BookstoreActivity>(), AnkoLogger {
     /**
      * 提供记住了的网站选择，
      */
-    private fun loadSite(): NovelSite? {
-        return Selected.site
-    }
+    private fun loadSite(): NovelSite?
+            = Selected.site
 
 
     fun requestSites() {
