@@ -25,13 +25,13 @@ import org.jetbrains.anko.selector
  * Created by AoEiuV020 on 2017.10.14-21:54.
  */
 
-class BookshelfItemListAdapter(context: Context, presenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder<*>>)
+class BookshelfItemListAdapter(context: Context, presenter: BaseItemListPresenter<out BaseItemListView>)
     : BaseItemListAdapter(context, presenter) {
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
             = BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item)
 }
 
-open class BookshelfItemViewHolder(itemListPresenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder<*>>, ctx: Context, parent: ViewGroup?, layoutId: Int)
+open class BookshelfItemViewHolder(itemListPresenter: BaseItemListPresenter<out BaseItemListView>, ctx: Context, parent: ViewGroup?, layoutId: Int)
     : BaseItemViewHolder<BookshelfPresenter.BookshelfItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
     private val newChapterDot = itemView.newChapterDot
     private val progressBar = itemView.progressBar

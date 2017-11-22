@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.bookshelf
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
 import cc.aoeiuv020.panovel.base.item.BaseItemPresenter
+import cc.aoeiuv020.panovel.base.item.BaseItemView
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.util.async
@@ -13,7 +14,7 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.14-21:54.
  */
-class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment, BookshelfItemViewHolder>() {
+class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment>() {
 
     fun start() {
         requestBookshelf()
@@ -36,9 +37,9 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment, BookshelfIte
         requestBookshelf()
     }
 
-    override fun subPresenter(): BaseItemPresenter<BookshelfItemViewHolder>
-            = BookshelfItemPresenter()
-
+    @Suppress("UNCHECKED_CAST")
+    override fun <I : BaseItemView> subPresenter(): BaseItemPresenter<I> =
+            BookshelfItemPresenter() as BaseItemPresenter<I>
 
     inner class BookshelfItemPresenter : BaseItemPresenter<BookshelfItemViewHolder>(this@BookshelfPresenter) {
         private var itemRefreshTime = 0L

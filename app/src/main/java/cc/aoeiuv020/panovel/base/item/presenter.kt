@@ -15,7 +15,7 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.11.22-10:45:36.
  */
-abstract class BaseItemListPresenter<V : BaseItemListView, I : BaseItemView> : Presenter<V>() {
+abstract class BaseItemListPresenter<V : BaseItemListView> : Presenter<V>() {
     var refreshTime = 0L
 
     abstract fun refresh()
@@ -26,10 +26,10 @@ abstract class BaseItemListPresenter<V : BaseItemListView, I : BaseItemView> : P
     }
 
     @Suppress("UNCHECKED_CAST")
-    open fun subPresenter() = BaseItemPresenter<I>(this)
+    open fun <I : BaseItemView> subPresenter() = BaseItemPresenter<I>(this)
 }
 
-open class BaseItemPresenter<T : BaseItemView>(private val itemListPresenter: BaseItemListPresenter<*, *>) : Presenter<T>() {
+open class BaseItemPresenter<T : BaseItemView>(private val itemListPresenter: BaseItemListPresenter<*>) : Presenter<T>() {
     open val refreshTime: Long
         get() = itemListPresenter.refreshTime
 
