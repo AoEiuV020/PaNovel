@@ -7,10 +7,14 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
+import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.util.show
+import com.google.android.gms.ads.AdListener
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_refine_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
@@ -70,6 +74,21 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
                 search(nameNonnull, authorNonnull)
             } ?: search(nameNonnull)
         } ?: searchView.post { searchView.showSearch() }
+
+        ad_view.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                ad_view.show()
+            }
+        }
+
+        if (Settings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
+        }
+    }
+
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
     }
 
     override fun onRestart() {
@@ -77,8 +96,14 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         refresh()
     }
 
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
+    }
+
     override fun onDestroy() {
         presenter.detach()
+        ad_view.destroy()
         super.onDestroy()
     }
 

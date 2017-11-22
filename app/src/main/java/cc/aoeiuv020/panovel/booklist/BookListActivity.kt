@@ -63,7 +63,6 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
             ad_view.loadAd(App.adRequest)
         }
 
-
         presenter.attach(this)
         refresh()
     }

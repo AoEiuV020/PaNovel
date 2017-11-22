@@ -33,9 +33,22 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        layout="@layout/novel_item_list"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include layout="@layout/novel_item_list" />
+    </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/ad_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        app:adSize="SMART_BANNER"
+        app:adUnitId="ca-app-pub-3036112914192534/5691329163" />
 
 </LinearLayout>
