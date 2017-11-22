@@ -33,6 +33,8 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
 
         val bookListName = intent.getStringExtra("bookListName")
 
+        title = bookListName
+
         recyclerView.setLayoutManager(LinearLayoutManager(this))
         presenter = BookListActivityPresenter(bookListName)
         mAdapter = DefaultItemListAdapter(this, presenter)
