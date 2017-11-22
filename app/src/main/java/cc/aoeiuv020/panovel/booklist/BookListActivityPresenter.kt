@@ -34,8 +34,19 @@ class BookListActivityPresenter(private val bookListName: String) : DefaultItemL
         requestHistory()
     }
 
+    fun addOk() {
+        view?.showNovelList(bookListData.list)
+    }
+
+    fun contains(novelItem: NovelItem)
+            = bookListData.list.contains(novelItem)
+
     fun add(novelItem: NovelItem) {
         bookListData.list.add(novelItem)
+    }
+
+    fun remove(novelItem: NovelItem) {
+        bookListData.list.remove(novelItem)
     }
 
     fun remove(position: Int) {

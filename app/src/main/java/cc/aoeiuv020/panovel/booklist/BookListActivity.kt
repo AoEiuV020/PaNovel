@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.booklist
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
@@ -14,6 +15,7 @@ import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
 import cc.aoeiuv020.panovel.base.item.OnItemLongClickListener
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
+import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.bookId
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
@@ -86,12 +88,6 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
         snack.show()
     }
 
-
-    private fun add(novelItem: NovelItem) {
-        presenter.add(novelItem)
-        mAdapter.add(novelItem)
-    }
-
     private fun remove(position: Int) {
         presenter.remove(position)
         mAdapter.remove(position)
@@ -101,20 +97,31 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
         presenter.save()
     }
 
+    private fun selectToAdd(list: List<NovelItem>) {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.contents)
+                .setMultiChoiceItems(Array(list.size) { list[it].bookId.toString() },
+                        BooleanArray(list.size) { presenter.contains(list[it]) }, { _, i, isChecked ->
+                    if (isChecked) {
+                        presenter.add(list[i])
+                    } else {
+                        presenter.remove(list[i])
+                    }
+                }).setCancelable(false)
+                .setPositiveButton(android.R.string.yes) { _, _ ->
+                    presenter.addOk()
+                }
+                .create().apply {
+            listView.isFastScrollEnabled = true
+        }.show()
+    }
+
+
     private fun add() {
         val list = listOf(R.string.bookshelf to {
-            val list = Bookshelf.list()
-            selector(getString(R.string.bookshelf), list.map { it.bookId.toString() }) { _, i ->
-                val novelItem = list[i]
-                add(novelItem)
-            }
+            selectToAdd(Bookshelf.list())
         }, R.string.history to {
-            History.list().let { list ->
-                selector(getString(R.string.history), list.map { it.novel }.map { it.bookId.toString() }) { _, i ->
-                    val novelItem = list[i].novel
-                    add(novelItem)
-                }
-            }
+            selectToAdd(History.list().map(NovelHistory::novel))
         })
         selector(getString(R.string.add_from), list.unzip().first.map { getString(it) }) { _, i ->
             list[i].second.invoke()
