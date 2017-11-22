@@ -13,6 +13,7 @@ import org.jetbrains.anko.error
  * Created by AoEiuV020 on 2017.11.22-15:47:37.
  */
 class BookListActivityPresenter(private val bookListName: String) : DefaultItemListPresenter<BookListActivity>() {
+    private lateinit var list: MutableList<NovelItem>
     private val bookListData: BookListData by lazy {
         BookList.get(bookListName)
                 ?: throw Exception("书单不存在")
@@ -20,7 +21,8 @@ class BookListActivityPresenter(private val bookListName: String) : DefaultItemL
 
     private fun requestHistory() {
         Observable.fromCallable {
-            bookListData.list
+            list = ArrayList(bookListData.list)
+            list
         }.async().subscribe({ list ->
             view?.showNovelList(list)
         }, { e ->
@@ -35,26 +37,28 @@ class BookListActivityPresenter(private val bookListName: String) : DefaultItemL
     }
 
     fun addOk() {
-        view?.showNovelList(bookListData.list)
+        view?.showNovelList(list)
     }
 
     fun contains(novelItem: NovelItem)
-            = bookListData.list.contains(novelItem)
+            = list.contains(novelItem)
 
     fun add(novelItem: NovelItem) {
-        bookListData.list.add(novelItem)
+        list.add(novelItem)
     }
 
     fun remove(novelItem: NovelItem) {
-        bookListData.list.remove(novelItem)
+        list.remove(novelItem)
     }
 
     fun remove(position: Int) {
-        bookListData.list.removeAt(position)
+        list.removeAt(position)
     }
 
     fun save() {
         Observable.fromCallable {
+            bookListData.list.clear()
+            bookListData.list.addAll(list)
             BookList.put(bookListData)
             bookListData.list.size
         }.async().subscribe({ size ->
