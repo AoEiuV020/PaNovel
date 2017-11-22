@@ -11,6 +11,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
+import cc.aoeiuv020.panovel.base.item.OnItemLongClickListener
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.local.bookId
@@ -23,7 +24,7 @@ import org.jetbrains.anko.startActivity
  *
  * Created by AoEiuV020 on 2017.11.22-14:49:22.
  */
-class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
+class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnItemLongClickListener {
     companion object {
         fun start(context: Context, bookListName: String) {
             context.startActivity<BookListActivity>("bookListName" to bookListName)
@@ -43,7 +44,7 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
 
         recyclerView.setLayoutManager(LinearLayoutManager(this))
         presenter = BookListActivityPresenter(bookListName)
-        mAdapter = DefaultItemListAdapter(this, presenter)
+        mAdapter = DefaultItemListAdapter(this, presenter, this)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()
@@ -91,6 +92,15 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         mAdapter.add(novelItem)
     }
 
+    private fun remove(position: Int) {
+        presenter.remove(position)
+        mAdapter.remove(position)
+    }
+
+    private fun save() {
+        presenter.save()
+    }
+
     private fun add() {
         val list = listOf(R.string.bookshelf to {
             val list = Bookshelf.list()
@@ -111,9 +121,15 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         }
     }
 
-    private fun save() {
-        presenter.save()
+    override fun onItemLongClick(position: Int, novelItem: NovelItem) {
+        val list = listOf(R.string.remove to {
+            remove(position)
+        })
+        selector(getString(R.string.action), list.unzip().first.map { getString(it) }) { _, i ->
+            list[i].second.invoke()
+        }
     }
+
 
     private val snack: Snackbar by lazy {
         Snackbar.make(recyclerView, "", Snackbar.LENGTH_SHORT)

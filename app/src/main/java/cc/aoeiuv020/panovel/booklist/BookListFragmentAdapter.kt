@@ -14,7 +14,7 @@ import org.jetbrains.anko.selector
  *
  * Created by AoEiuV020 on 2017.11.22-14:33:36.
  */
-class BookListAdapter(context: Context, val presenter: BookListFragmentPresenter)
+class BookListFragmentAdapter(context: Context, val presenter: BookListFragmentPresenter)
     : RecyclerAdapter<BookListData>(context) {
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<BookListData>
             = ViewHolder(parent, R.layout.book_list_item)

@@ -21,7 +21,7 @@ import org.jetbrains.anko.yesButton
  * Created by AoEiuV020 on 2017.11.22-14:07:56.
  */
 class BookListFragment : Fragment(), IView {
-    private lateinit var mAdapter: BookListAdapter
+    private lateinit var mAdapter: BookListFragmentAdapter
     private lateinit var presenter: BookListFragmentPresenter
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
@@ -31,7 +31,7 @@ class BookListFragment : Fragment(), IView {
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
         presenter = BookListFragmentPresenter()
-        mAdapter = BookListAdapter(context, presenter)
+        mAdapter = BookListFragmentAdapter(context, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             refresh()

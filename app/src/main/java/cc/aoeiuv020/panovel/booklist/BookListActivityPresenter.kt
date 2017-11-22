@@ -38,6 +38,10 @@ class BookListActivityPresenter(private val bookListName: String) : DefaultItemL
         bookListData.list.add(novelItem)
     }
 
+    fun remove(position: Int) {
+        bookListData.list.removeAt(position)
+    }
+
     fun save() {
         Observable.fromCallable {
             BookList.put(bookListData)
