@@ -16,6 +16,7 @@ abstract class Presenter<T : IView> : AnkoLogger {
      */
     private val disposableList = ArrayList<Disposable?>()
     var view: T? = null
+        private set
 
     fun attach(view: T) {
         debug { "$this attach $view" }
