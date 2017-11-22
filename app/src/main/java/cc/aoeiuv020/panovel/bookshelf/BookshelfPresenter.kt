@@ -39,17 +39,17 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment>() {
 
     @Suppress("UNCHECKED_CAST")
     override fun subPresenter(): BaseItemPresenter<BaseItemViewHolder<*>> =
-            BookshelfItemPresenter() as BaseItemPresenter<BaseItemViewHolder<*>>
+            BookshelfItemPresenter(this) as BaseItemPresenter<BaseItemViewHolder<*>>
 
-    inner class BookshelfItemPresenter : BaseItemPresenter<BookshelfItemViewHolder>(this@BookshelfPresenter) {
-        private var itemRefreshTime = 0L
-        override val refreshTime: Long
-            get() = maxOf(super.refreshTime, itemRefreshTime)
+}
 
-        fun forceRefresh(novelItem: NovelItem) {
-            itemRefreshTime = System.currentTimeMillis()
-            view?.setData(novelItem)
-        }
+class BookshelfItemPresenter(presenter: BaseItemListPresenter<*>) : BaseItemPresenter<BookshelfItemViewHolder>(presenter) {
+    private var itemRefreshTime = 0L
+    override val refreshTime: Long
+        get() = maxOf(super.refreshTime, itemRefreshTime)
+
+    fun forceRefresh(novelItem: NovelItem) {
+        itemRefreshTime = System.currentTimeMillis()
+        view?.setData(novelItem)
     }
-
 }
