@@ -44,6 +44,7 @@
             android:name=".search.RefineSearchActivity"
             android:label="@string/title_activity_refine_search"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".booklist.BookListActivity" />
     </application>
 
 </manifest>

@@ -22,7 +22,9 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.11.22-11:19:03.
  */
-abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<*, T>, protected val ctx: Context, parent: ViewGroup?, layoutId: Int)
+abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<*, T>,
+                                                                protected val ctx: Context, parent: ViewGroup?, layoutId: Int,
+                                                                listener: OnItemLongClickListener? = null)
     : BaseViewHolder<NovelItem>(parent, layoutId), BaseItemView, AnkoLogger {
     companion object {
         @SuppressLint("SimpleDateFormat")
@@ -56,6 +58,13 @@ abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val it
 
         itemView.setOnClickListener {
             NovelTextActivity.start(ctx, novelItem)
+        }
+
+        listener?.let { nonnullListener ->
+            itemView.setOnLongClickListener {
+                nonnullListener.onItemLongClick(layoutPosition, novelItem)
+                true
+            }
         }
     }
 
@@ -101,8 +110,10 @@ abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val it
     }
 }
 
-open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<*, DefaultItemPresenter>, ctx: Context, parent: ViewGroup?, layoutId: Int)
-    : BaseItemViewHolder<DefaultItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
+open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<*, DefaultItemPresenter>,
+                                 ctx: Context, parent: ViewGroup?, layoutId: Int,
+                                 listener: OnItemLongClickListener? = null)
+    : BaseItemViewHolder<DefaultItemPresenter>(itemListPresenter, ctx, parent, layoutId, listener) {
     private val star = itemView.ivStar
 
     init {

@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
@@ -37,6 +38,9 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
 class MainActivity : AppCompatActivity() {
     private lateinit var bookshelfFragment: BookshelfFragment
     private lateinit var historyFragment: HistoryFragment
+    private lateinit var bookListFragment: BookListFragment
+    private var position: Int = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,26 +50,64 @@ class MainActivity : AppCompatActivity() {
 
         bookshelfFragment = BookshelfFragment()
         historyFragment = HistoryFragment()
+        bookListFragment = BookListFragment()
 
-        val pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
-            override fun getItem(position: Int): Fragment = when (position) {
-                0 -> bookshelfFragment
-                else -> historyFragment
+        initTab(R.string.bookshelf to bookshelfFragment,
+                R.string.book_list to bookListFragment,
+                R.string.history to historyFragment)
+
+
+        container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
             }
 
-            override fun getCount(): Int = 2
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                this@MainActivity.position = position
+                // 切回书架时刷新一下，
+                if (position == 0) {
+                    bookshelfFragment.refresh()
+                }
+            }
+
+        })
+
+        fab.setOnClickListener { _ ->
+            when (position) {
+                1 -> bookListFragment.newBookList()
+                else -> BookstoreActivity.start(this)
+            }
+
+        }
+
+        ad_view.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                ad_view.show()
+            }
+        }
+
+        if (Settings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
+        }
+
+    }
+
+    private fun initTab(vararg pair: Pair<Int, Fragment>) {
+        val (titleIdList, fragmentList) = pair.unzip()
+        val pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
+            override fun getItem(position: Int): Fragment = fragmentList[position]
+
+            override fun getCount(): Int = fragmentList.size
 
         }
 
         container.adapter = pagerAdapter
 
-        fab.setOnClickListener { _ ->
-            BookstoreActivity.start(this)
-        }
-
 
         val commonNavigator = CommonNavigator(this)
-        val titleList = listOf(R.string.bookshelf, R.string.history).map {
+        val titleList = titleIdList.map {
             getString(it)
         }
         commonNavigator.adapter = object : CommonNavigatorAdapter() {
@@ -92,32 +134,6 @@ class MainActivity : AppCompatActivity() {
         }
         magic_indicator.navigator = commonNavigator
         ViewPagerHelper.bind(magic_indicator, container)
-
-        container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                // 切回书架时刷新一下，
-                if (position == 0) {
-                    bookshelfFragment.refresh()
-                }
-            }
-
-        })
-
-        ad_view.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                ad_view.show()
-            }
-        }
-
-        if (Settings.adEnabled) {
-            ad_view.loadAd(App.adRequest)
-        }
 
     }
 

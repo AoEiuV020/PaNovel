@@ -20,9 +20,10 @@ abstract class BaseItemListAdapter(context: Context)
     }
 }
 
-open class DefaultItemListAdapter(context: Context, val presenter: BaseItemListPresenter<*, DefaultItemPresenter>)
+open class DefaultItemListAdapter(context: Context, private val presenter: BaseItemListPresenter<*, DefaultItemPresenter>,
+                                  private val listener: OnItemLongClickListener? = null)
     : BaseItemListAdapter(context) {
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
-            = DefaultItemViewHolder(presenter, context, parent, R.layout.novel_item)
+            = DefaultItemViewHolder(presenter, context, parent, R.layout.novel_item, listener)
 
 }
