@@ -6,9 +6,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.main.MainActivity
 import kotlinx.android.synthetic.main.novel_item_list.*
 
@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.novel_item_list.*
  *
  * Created by AoEiuV020 on 2017.10.15-17:22:28.
  */
-class BookshelfFragment : Fragment(), IView {
-    private lateinit var mAdapter: BookshelfAdapter
+class BookshelfFragment : Fragment(), BaseItemListView {
+    private lateinit var mAdapter: BookshelfItemListAdapter
     private lateinit var presenter: BookshelfPresenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -30,7 +30,7 @@ class BookshelfFragment : Fragment(), IView {
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
         presenter = BookshelfPresenter()
-        mAdapter = BookshelfAdapter(context, presenter)
+        mAdapter = BookshelfItemListAdapter(context, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()
@@ -68,7 +68,7 @@ class BookshelfFragment : Fragment(), IView {
         recyclerView.showNoMore()
     }
 
-    fun showError(message: String, e: Throwable) {
+    override fun showError(message: String, e: Throwable) {
         (activity as? MainActivity)?.showError(message, e)
     }
 }
