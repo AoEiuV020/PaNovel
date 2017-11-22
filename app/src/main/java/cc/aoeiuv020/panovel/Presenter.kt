@@ -18,9 +18,10 @@ abstract class Presenter<T : IView> : AnkoLogger {
     var view: T? = null
         private set
 
-    fun attach(view: T) {
+    fun attach(view: IView) {
         debug { "$this attach $view" }
-        this.view = view
+        @Suppress("UNCHECKED_CAST")
+        this.view = view as? T
     }
 
     fun detach() {

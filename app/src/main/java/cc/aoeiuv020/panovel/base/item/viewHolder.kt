@@ -21,7 +21,7 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.11.22-11:19:03.
  */
-class BaseItemViewHolder(itemListPresenter: BaseItemListPresenter<out BaseItemListView, BaseItemViewHolder>, val ctx: Context, parent: ViewGroup?, layoutId: Int)
+open class BaseItemViewHolder(itemListPresenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder>, val ctx: Context, parent: ViewGroup?, layoutId: Int)
     : BaseViewHolder<NovelItem>(parent, layoutId), BaseItemView, AnkoLogger {
     companion object {
         @SuppressLint("SimpleDateFormat")
