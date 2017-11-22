@@ -157,7 +157,8 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
         when (item.itemId) {
             R.id.add -> add()
             R.id.save -> save()
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 }

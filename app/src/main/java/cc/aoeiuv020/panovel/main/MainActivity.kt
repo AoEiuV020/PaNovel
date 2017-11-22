@@ -161,8 +161,9 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.settings -> SettingsActivity.start(this)
             R.id.search -> RefineSearchActivity.start(this)
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     private val snack: Snackbar by lazy {

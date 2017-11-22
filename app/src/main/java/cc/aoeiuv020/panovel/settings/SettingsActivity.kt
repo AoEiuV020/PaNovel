@@ -46,6 +46,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)
-        }.let { return true }
+        }
+        return true
     }
 }

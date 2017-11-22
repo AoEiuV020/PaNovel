@@ -138,7 +138,8 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         when (item.itemId) {
             R.id.search -> searchView.showSearch()
             android.R.id.home -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 }

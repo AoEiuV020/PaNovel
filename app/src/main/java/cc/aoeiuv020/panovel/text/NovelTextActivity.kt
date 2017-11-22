@@ -284,8 +284,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (item.itemId) {
             R.id.refresh -> refreshChapterList()
             R.id.search -> refineSearch()
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
