@@ -22,7 +22,7 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.11.22-11:19:03.
  */
-abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<*>, protected val ctx: Context, parent: ViewGroup?, layoutId: Int)
+abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<*, T>, protected val ctx: Context, parent: ViewGroup?, layoutId: Int)
     : BaseViewHolder<NovelItem>(parent, layoutId), BaseItemView, AnkoLogger {
     companion object {
         @SuppressLint("SimpleDateFormat")
@@ -30,7 +30,7 @@ abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val it
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected val presenter: T = itemListPresenter.subPresenter() as T
+    protected val presenter: T = itemListPresenter.subPresenter()
     private val image = itemView.imageView
     private val name = itemView.tvName
     private val author = itemView.tvAuthor
@@ -101,7 +101,7 @@ abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val it
     }
 }
 
-open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<*>, ctx: Context, parent: ViewGroup?, layoutId: Int)
+open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<*, DefaultItemPresenter>, ctx: Context, parent: ViewGroup?, layoutId: Int)
     : BaseItemViewHolder<DefaultItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
     private val star = itemView.ivStar
 

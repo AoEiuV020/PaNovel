@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.search
 
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
+import cc.aoeiuv020.panovel.base.item.DefaultItemListPresenter
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.NovelId
 import cc.aoeiuv020.panovel.util.async
@@ -15,7 +15,7 @@ import org.jetbrains.anko.verbose
  *
  * Created by AoEiuV020 on 2017.10.22-18:18:58.
  */
-class RefineSearchPresenter : BaseItemListPresenter<RefineSearchActivity>() {
+class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
     private var name: String? = null
     private var author: String? = null
 

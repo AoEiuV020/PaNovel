@@ -6,7 +6,6 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListAdapter
-import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
 import cc.aoeiuv020.panovel.base.item.BaseItemViewHolder
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
@@ -24,13 +23,13 @@ import org.jetbrains.anko.selector
  * Created by AoEiuV020 on 2017.10.14-21:54.
  */
 
-class BookshelfItemListAdapter(context: Context, presenter: BaseItemListPresenter<*>)
-    : BaseItemListAdapter(context, presenter) {
+class BookshelfItemListAdapter(context: Context, val presenter: BookshelfPresenter)
+    : BaseItemListAdapter(context) {
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
             = BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item)
 }
 
-open class BookshelfItemViewHolder(itemListPresenter: BaseItemListPresenter<*>, ctx: Context, parent: ViewGroup?, layoutId: Int)
+open class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Context, parent: ViewGroup?, layoutId: Int)
     : BaseItemViewHolder<BookshelfItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
     private val newChapterDot = itemView.newChapterDot
     private val progressBar = itemView.progressBar

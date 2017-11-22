@@ -3,7 +3,6 @@ package cc.aoeiuv020.panovel.bookshelf
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
 import cc.aoeiuv020.panovel.base.item.BaseItemPresenter
-import cc.aoeiuv020.panovel.base.item.BaseItemViewHolder
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.util.async
@@ -14,7 +13,7 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.14-21:54.
  */
-class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment>() {
+class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment, BookshelfItemPresenter>() {
 
     fun start() {
         requestBookshelf()
@@ -38,12 +37,12 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment>() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun subPresenter(): BaseItemPresenter<BaseItemViewHolder<*>> =
-            BookshelfItemPresenter(this) as BaseItemPresenter<BaseItemViewHolder<*>>
+    override fun subPresenter(): BookshelfItemPresenter =
+            BookshelfItemPresenter(this)
 
 }
 
-class BookshelfItemPresenter(presenter: BaseItemListPresenter<*>) : BaseItemPresenter<BookshelfItemViewHolder>(presenter) {
+class BookshelfItemPresenter(presenter: BaseItemListPresenter<*, BookshelfItemPresenter>) : BaseItemPresenter<BookshelfItemViewHolder>(presenter) {
     private var itemRefreshTime = 0L
     override val refreshTime: Long
         get() = maxOf(super.refreshTime, itemRefreshTime)

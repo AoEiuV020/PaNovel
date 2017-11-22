@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.history
 
-import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
+import cc.aoeiuv020.panovel.base.item.DefaultItemListPresenter
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
@@ -10,7 +10,7 @@ import org.jetbrains.anko.error
  * 绝大部分照搬书架，
  * Created by AoEiuV020 on 2017.10.15-18:11:15.
  */
-class HistoryPresenter : BaseItemListPresenter<HistoryFragment>() {
+class HistoryPresenter : DefaultItemListPresenter<HistoryFragment>() {
     fun start() {
         requestHistory()
     }
