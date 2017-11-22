@@ -7,16 +7,17 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.base.item.BaseItemListAdapter
+import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_refine_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 
-class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
+class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     companion object {
         fun start(context: Context) {
             context.startActivity<RefineSearchActivity>()
@@ -36,7 +37,7 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     private lateinit var presenter: RefineSearchPresenter
-    private lateinit var mAdapter: RefineSearchAdapter
+    private lateinit var mAdapter: BaseItemListAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_refine_search)
@@ -56,7 +57,7 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         recyclerView.setLayoutManager(LinearLayoutManager(this))
         presenter = RefineSearchPresenter()
         presenter.attach(this)
-        mAdapter = RefineSearchAdapter(this, presenter)
+        mAdapter = BaseItemListAdapter(this, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()
@@ -117,7 +118,7 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         Snackbar.make(recyclerView, "", Snackbar.LENGTH_SHORT)
     }
 
-    fun showError(message: String, e: Throwable) {
+    override fun showError(message: String, e: Throwable) {
         snack.setText(message + e.message)
         snack.show()
         showOnComplete()
