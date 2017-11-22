@@ -102,7 +102,7 @@ abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val it
 }
 
 open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<*>, ctx: Context, parent: ViewGroup?, layoutId: Int)
-    : BaseItemViewHolder<BaseItemPresenter<DefaultItemViewHolder>>(itemListPresenter, ctx, parent, layoutId) {
+    : BaseItemViewHolder<DefaultItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
     private val star = itemView.ivStar
 
     init {
