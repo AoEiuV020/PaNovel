@@ -69,8 +69,11 @@ class BookListFragment : Fragment(), IView {
             val etName = EditText(context)
             customView = etName
             yesButton {
-                BookList.new(etName.text.toString())
-                refresh()
+                val name = etName.text.toString()
+                if (name.isNotEmpty()) {
+                    BookList.new(etName.text.toString())
+                    refresh()
+                }
             }
         }.show()
     }
