@@ -12,7 +12,7 @@ import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListAdapter
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.main.MainActivity
-import kotlinx.android.synthetic.main.content_bookshelf.*
+import kotlinx.android.synthetic.main.novel_item_list.*
 
 
 /**
@@ -25,7 +25,7 @@ class HistoryFragment : Fragment(), BaseItemListView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.content_bookshelf, container, false)
+        return inflater.inflate(R.layout.novel_item_list, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

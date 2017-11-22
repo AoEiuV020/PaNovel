@@ -12,7 +12,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_refine_search.*
-import kotlinx.android.synthetic.main.content_bookshelf.*
+import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 
