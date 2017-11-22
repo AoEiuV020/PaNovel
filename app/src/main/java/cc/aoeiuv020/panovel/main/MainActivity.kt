@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bookshelfFragment: BookshelfFragment
     private lateinit var historyFragment: HistoryFragment
     private lateinit var bookListFragment: BookListFragment
+    private var position: Int = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
+                this@MainActivity.position = position
                 // 切回书架时刷新一下，
                 if (position == 0) {
                     bookshelfFragment.refresh()
@@ -70,6 +73,14 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
+        fab.setOnClickListener { _ ->
+            when (position) {
+                1 -> bookListFragment.newBookList()
+                else -> BookstoreActivity.start(this)
+            }
+
+        }
 
         ad_view.adListener = object : AdListener() {
             override fun onAdLoaded() {
@@ -93,10 +104,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         container.adapter = pagerAdapter
-
-        fab.setOnClickListener { _ ->
-            BookstoreActivity.start(this)
-        }
 
 
         val commonNavigator = CommonNavigator(this)
