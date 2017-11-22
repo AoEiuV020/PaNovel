@@ -16,7 +16,7 @@ import org.jetbrains.anko.verbose
  *
  * Created by AoEiuV020 on 2017.10.22-18:18:58.
  */
-class RefineSearchPresenter : BaseItemListPresenter<RefineSearchActivity, BaseItemViewHolder>() {
+class RefineSearchPresenter : BaseItemListPresenter<RefineSearchActivity, BaseItemViewHolder<*>>() {
     private var name: String? = null
     private var author: String? = null
 

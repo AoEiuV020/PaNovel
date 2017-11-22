@@ -11,7 +11,7 @@ import org.jetbrains.anko.error
  * 绝大部分照搬书架，
  * Created by AoEiuV020 on 2017.10.15-18:11:15.
  */
-class HistoryPresenter : BaseItemListPresenter<HistoryFragment, BaseItemViewHolder>() {
+class HistoryPresenter : BaseItemListPresenter<HistoryFragment, BaseItemViewHolder<*>>() {
     fun start() {
         requestHistory()
     }

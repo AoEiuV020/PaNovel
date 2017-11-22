@@ -22,14 +22,15 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.11.22-11:19:03.
  */
-open class BaseItemViewHolder(protected val itemListPresenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder>, protected val ctx: Context, parent: ViewGroup?, layoutId: Int)
+open class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder<*>>, protected val ctx: Context, parent: ViewGroup?, layoutId: Int)
     : BaseViewHolder<NovelItem>(parent, layoutId), BaseItemView, AnkoLogger {
     companion object {
         @SuppressLint("SimpleDateFormat")
         private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     }
 
-    protected val presenter = itemListPresenter.subPresenter()
+    @Suppress("UNCHECKED_CAST")
+    protected val presenter: T = itemListPresenter.subPresenter() as T
     private val image = itemView.imageView
     private val name = itemView.tvName
     private val author = itemView.tvAuthor
@@ -100,8 +101,8 @@ open class BaseItemViewHolder(protected val itemListPresenter: BaseItemListPrese
     }
 }
 
-open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder>, ctx: Context, parent: ViewGroup?, layoutId: Int)
-    : BaseItemViewHolder(itemListPresenter, ctx, parent, layoutId) {
+open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder<*>>, ctx: Context, parent: ViewGroup?, layoutId: Int)
+    : BaseItemViewHolder<BaseItemPresenter<DefaultItemViewHolder>>(itemListPresenter, ctx, parent, layoutId) {
     private val star = itemView.ivStar
 
     init {

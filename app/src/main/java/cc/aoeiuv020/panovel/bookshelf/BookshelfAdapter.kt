@@ -25,14 +25,14 @@ import org.jetbrains.anko.selector
  * Created by AoEiuV020 on 2017.10.14-21:54.
  */
 
-class BookshelfItemListAdapter(context: Context, presenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder>)
+class BookshelfItemListAdapter(context: Context, presenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder<*>>)
     : BaseItemListAdapter(context, presenter) {
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
             = BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item)
 }
 
-open class BookshelfItemViewHolder(itemListPresenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder>, ctx: Context, parent: ViewGroup?, layoutId: Int)
-    : BaseItemViewHolder(itemListPresenter, ctx, parent, layoutId) {
+open class BookshelfItemViewHolder(itemListPresenter: BaseItemListPresenter<out BaseItemListView, out BaseItemViewHolder<*>>, ctx: Context, parent: ViewGroup?, layoutId: Int)
+    : BaseItemViewHolder<BookshelfPresenter.BookshelfItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
     private val newChapterDot = itemView.newChapterDot
     private val progressBar = itemView.progressBar
     private val dotLayout = itemView.dotLayout
@@ -83,7 +83,7 @@ open class BookshelfItemViewHolder(itemListPresenter: BaseItemListPresenter<out 
 
     private fun refresh() {
         setData(novelItem)
-        (presenter as BookshelfPresenter.BookshelfItemPresenter).forceRefresh(novelItem)
+        presenter.forceRefresh(novelItem)
     }
 
     private fun detail() {
