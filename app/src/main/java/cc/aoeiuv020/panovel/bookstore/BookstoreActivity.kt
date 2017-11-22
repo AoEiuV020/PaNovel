@@ -84,8 +84,9 @@ class BookstoreActivity : BookstoreBaseNavigationActivity(), IView, AnkoLogger {
             R.id.search -> searchView.showSearch()
             R.id.browse -> browse(url)
             R.id.refresh -> refresh()
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

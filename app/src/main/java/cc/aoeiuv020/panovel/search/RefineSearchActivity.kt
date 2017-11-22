@@ -7,16 +7,21 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import cc.aoeiuv020.panovel.IView
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.base.item.BaseItemListView
+import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
+import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.util.show
+import com.google.android.gms.ads.AdListener
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_refine_search.*
-import kotlinx.android.synthetic.main.content_bookshelf.*
+import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 
-class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
+class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     companion object {
         fun start(context: Context) {
             context.startActivity<RefineSearchActivity>()
@@ -36,7 +41,7 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     private lateinit var presenter: RefineSearchPresenter
-    private lateinit var mAdapter: RefineSearchAdapter
+    private lateinit var mAdapter: DefaultItemListAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_refine_search)
@@ -56,7 +61,7 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         recyclerView.setLayoutManager(LinearLayoutManager(this))
         presenter = RefineSearchPresenter()
         presenter.attach(this)
-        mAdapter = RefineSearchAdapter(this, presenter)
+        mAdapter = DefaultItemListAdapter(this, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()
@@ -69,11 +74,37 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
                 search(nameNonnull, authorNonnull)
             } ?: search(nameNonnull)
         } ?: searchView.post { searchView.showSearch() }
+
+        ad_view.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                ad_view.show()
+            }
+        }
+
+        if (Settings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
+        }
+    }
+
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
     }
 
     override fun onRestart() {
         super.onRestart()
         refresh()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
+    }
+
+    override fun onDestroy() {
+        presenter.detach()
+        ad_view.destroy()
+        super.onDestroy()
     }
 
     private fun search(name: String, author: String) {
@@ -117,7 +148,7 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         Snackbar.make(recyclerView, "", Snackbar.LENGTH_SHORT)
     }
 
-    fun showError(message: String, e: Throwable) {
+    override fun showError(message: String, e: Throwable) {
         snack.setText(message + e.message)
         snack.show()
         showOnComplete()
@@ -132,7 +163,8 @@ class RefineSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         when (item.itemId) {
             R.id.search -> searchView.showSearch()
             android.R.id.home -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 }

@@ -75,7 +75,9 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             }
             sbTextProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    view.setTextProgress(progress)
+                    if (fromUser) {
+                        view.setTextProgress(progress)
+                    }
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {

@@ -78,11 +78,9 @@ class ColorPickerPreference : com.flask.colorpicker.ColorPickerPreference {
         setValue(getPersistedInt(-1))
     }
 
-    override fun persistInt(value: Int): Boolean {
-        return map[key]?.run { second(value); true } ?: false
-    }
+    override fun persistInt(value: Int): Boolean
+            = map[key]?.run { second(value); true } ?: false
 
-    override fun getPersistedInt(defaultReturnValue: Int): Int {
-        return map[key]?.run { first() } ?: defaultReturnValue
-    }
+    override fun getPersistedInt(defaultReturnValue: Int): Int
+            = map[key]?.run { first() } ?: defaultReturnValue
 }

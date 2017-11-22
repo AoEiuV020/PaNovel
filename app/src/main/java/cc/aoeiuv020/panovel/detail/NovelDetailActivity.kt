@@ -168,8 +168,9 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
             R.id.info -> showNovelAbout()
             R.id.refresh -> refresh()
             android.R.id.home -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

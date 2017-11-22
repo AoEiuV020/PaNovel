@@ -29,9 +29,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    override fun onIsMultiPane(): Boolean {
-        return resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
-    }
+    override fun onIsMultiPane(): Boolean
+            = resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
 
     override fun onBuildHeaders(target: List<PreferenceActivity.Header>) {
         loadHeadersFromResource(R.xml.pref_headers, target)
@@ -47,6 +46,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)
-        }.let { return true }
+        }
+        return true
     }
 }

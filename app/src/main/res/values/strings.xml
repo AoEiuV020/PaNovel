@@ -80,6 +80,9 @@
     <string name="bottom_spacing">下间距</string>
     <string name="previous_chapter">上一章</string>
     <string name="next_chapter">下一章</string>
+    <string name="book_list">书单</string>
+    <string name="add_from">从何处添加</string>
+    <string name="add">添加</string>
 
 
 </resources>

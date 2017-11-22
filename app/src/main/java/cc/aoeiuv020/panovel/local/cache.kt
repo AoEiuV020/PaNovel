@@ -48,7 +48,7 @@ class Cache<T>(private val type: Type,
     private fun fileNameEncode(name: String) = name.replace('/', ' ')
 
     fun put(item: NovelItem, t: T, fileName: String = DEFAULT_FILE_NAME) = put(item.bookId, t, fileName)
-    fun put(id: NovelId, t: T, fileName: String = DEFAULT_FILE_NAME) = gsonSave(fileNameEncode(fileName), t, folder(id))
+    private fun put(id: NovelId, t: T, fileName: String = DEFAULT_FILE_NAME) = gsonSave(fileNameEncode(fileName), t, folder(id))
 
     /**
      * @param refreshTime 刷新时间，只能取出这个时间后保存的缓存，
@@ -65,9 +65,8 @@ class Cache<T>(private val type: Type,
     fun container(item: NovelItem) = container(item.bookId)
     fun container(id: NovelId) = object : Container {
         private val list = gsonNameList(folder(id))
-        override fun contains(name: String): Boolean {
-            return list.contains(fileNameEncode(name))
-        }
+        override fun contains(name: String): Boolean
+                = list.contains(fileNameEncode(name))
     }
 }
 
