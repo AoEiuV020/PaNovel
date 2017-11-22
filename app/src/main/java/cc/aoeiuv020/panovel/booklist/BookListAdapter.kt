@@ -3,10 +3,12 @@ package cc.aoeiuv020.panovel.booklist
 import android.content.Context
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.local.BookList
 import cc.aoeiuv020.panovel.local.BookListData
 import cn.lemon.view.adapter.BaseViewHolder
 import cn.lemon.view.adapter.RecyclerAdapter
 import kotlinx.android.synthetic.main.book_list_item.view.*
+import org.jetbrains.anko.selector
 
 /**
  *
@@ -21,13 +23,19 @@ class BookListAdapter(context: Context, val presenter: BookListFragmentPresenter
         private val name = itemView.ivName
 
         override fun setData(data: BookListData) {
-            super.setData(data)
-            name.text = data.name
-        }
+            itemView.setOnClickListener {
+                BookListActivity.start(context, data)
+            }
+            itemView.setOnLongClickListener {
+                val list = listOf(R.string.remove to { BookList.remove(data) })
+                context.selector(context.getString(R.string.action), list.unzip().first.map { context.getString(it) }) { _, i ->
+                    list[i].second.invoke()
+                    remove(layoutPosition)
+                }
 
-        override fun onItemViewClick(data: BookListData) {
-            super.onItemViewClick(data)
-            BookListActivity.start(context, data)
+                true
+            }
+            name.text = data.name
         }
     }
 }
