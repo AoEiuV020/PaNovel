@@ -15,7 +15,7 @@ abstract class Presenter<T : IView> : AnkoLogger {
      * detach时全部取消，
      */
     private val disposableList = ArrayList<Disposable?>()
-    protected var view: T? = null
+    var view: T? = null
 
     fun attach(view: T) {
         debug { "$this attach $view" }

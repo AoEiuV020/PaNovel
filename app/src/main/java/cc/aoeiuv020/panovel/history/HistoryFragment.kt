@@ -7,9 +7,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.main.MainActivity
 import kotlinx.android.synthetic.main.content_bookshelf.*
 
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.content_bookshelf.*
  * 绝大部分照搬书架，
  * Created by AoEiuV020 on 2017.10.15-18:07:39.
  */
-class HistoryFragment : Fragment(), IView {
+class HistoryFragment : Fragment(), BaseItemListView {
     private lateinit var mAdapter: HistoryAdapter
     private lateinit var presenter: HistoryPresenter
 
@@ -70,7 +70,7 @@ class HistoryFragment : Fragment(), IView {
         recyclerView.showNoMore()
     }
 
-    fun showError(message: String, e: Throwable) {
+    override fun showError(message: String, e: Throwable) {
         (activity as? MainActivity)?.showError(message, e)
     }
 }

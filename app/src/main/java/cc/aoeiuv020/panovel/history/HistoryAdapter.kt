@@ -3,11 +3,11 @@ package cc.aoeiuv020.panovel.history
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
-import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.base.item.BaseItemView
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.text.NovelTextActivity
@@ -36,7 +36,7 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
         (holder as? ViewHolder)?.destroy()
     }
 
-    inner class ViewHolder(parent: ViewGroup?, layoutId: Int) : BaseViewHolder<NovelItem>(parent, layoutId), IView, AnkoLogger {
+    inner class ViewHolder(parent: ViewGroup?, layoutId: Int) : BaseViewHolder<NovelItem>(parent, layoutId), BaseItemView, AnkoLogger {
         private val presenter = historyPresenter.subPresenter()
         private val image = itemView.imageView
         private val name = itemView.tvName
@@ -95,18 +95,18 @@ class HistoryAdapter(context: Context, val historyPresenter: HistoryPresenter) :
             presenter.requestDetail(novel)
         }
 
-        fun showDetail(detail: NovelDetail) {
-            showUpdateTime(detail.update)
-            Glide.with(context).load(detail.bigImg).into(image)
-            presenter.requestUpdate(detail)
-            presenter.requestChapters(detail)
+        override fun showDetail(novelDetail: NovelDetail) {
+            showUpdateTime(novelDetail.update)
+            Glide.with(context).load(novelDetail.bigImg).into(image)
+            presenter.requestUpdate(novelDetail)
+            presenter.requestChapters(novelDetail)
         }
 
-        fun showUpdateTime(updateTime: Date) {
+        override fun showUpdateTime(updateTime: Date) {
             update.text = sdf.format(updateTime)
         }
 
-        fun showChapter(chapters: List<NovelChapter>, progress: Int) {
+        override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
             readAt.text = chapters[progress].name
             last.text = chapters.last().name
         }
