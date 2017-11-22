@@ -11,7 +11,7 @@ import cn.lemon.view.adapter.RecyclerAdapter
  *
  * Created by AoEiuV020 on 2017.11.22-12:02:27.
  */
-abstract class BaseItemListAdapter(context: Context, protected val presenter: BaseItemListPresenter<out BaseItemListView>)
+abstract class BaseItemListAdapter(context: Context, protected val presenter: BaseItemListPresenter<*>)
     : RecyclerAdapter<NovelItem>(context) {
 
     override fun onViewRecycled(holder: BaseViewHolder<NovelItem>) {
