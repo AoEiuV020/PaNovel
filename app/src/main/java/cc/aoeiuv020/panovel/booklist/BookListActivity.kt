@@ -41,6 +41,8 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_book_list)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val bookListName = intent.getStringExtra("bookListName")
 
         title = bookListName
@@ -174,6 +176,7 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            android.R.id.home -> onBackPressed()
             R.id.add -> add()
             R.id.save -> save()
             else -> return super.onOptionsItemSelected(item)
