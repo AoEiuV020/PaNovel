@@ -5,12 +5,18 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
+import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.History
+import cc.aoeiuv020.panovel.local.bookId
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.selector
 import org.jetbrains.anko.startActivity
 
 /**
@@ -44,6 +50,7 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         }
 
         presenter.attach(this)
+        refresh()
     }
 
     override fun onDestroy() {
@@ -51,9 +58,9 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         super.onDestroy()
     }
 
-    override fun onStart() {
-        super.onStart()
-        refresh()
+    override fun onPause() {
+        super.onPause()
+        save()
     }
 
     private fun refresh() {
@@ -69,9 +76,43 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     }
 
     fun showNovelList(list: List<NovelItem>) {
-        mAdapter.data = list
+        mAdapter.data = ArrayList(list)
         recyclerView.dismissSwipeRefresh()
-        recyclerView.showNoMore()
+    }
+
+    fun showSaveComplete(size: Int) {
+        snack.setText("保存成功，共${size}本")
+        snack.show()
+    }
+
+
+    private fun add(novelItem: NovelItem) {
+        presenter.add(novelItem)
+        mAdapter.add(novelItem)
+    }
+
+    private fun add() {
+        val list = listOf(R.string.bookshelf to {
+            val list = Bookshelf.list()
+            selector(getString(R.string.bookshelf), list.map { it.bookId.toString() }) { _, i ->
+                val novelItem = list[i]
+                add(novelItem)
+            }
+        }, R.string.history to {
+            History.list().let { list ->
+                selector(getString(R.string.history), list.map { it.novel }.map { it.bookId.toString() }) { _, i ->
+                    val novelItem = list[i].novel
+                    add(novelItem)
+                }
+            }
+        })
+        selector(getString(R.string.add_from), list.unzip().first.map { getString(it) }) { _, i ->
+            list[i].second.invoke()
+        }
+    }
+
+    private fun save() {
+        presenter.save()
     }
 
     private val snack: Snackbar by lazy {
@@ -82,5 +123,18 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         snack.setText(message + e.message)
         snack.show()
         recyclerView.dismissSwipeRefresh()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_book_list, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.add -> add()
+            R.id.save -> save()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

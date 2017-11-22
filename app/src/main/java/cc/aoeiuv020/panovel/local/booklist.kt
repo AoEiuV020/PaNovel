@@ -6,12 +6,12 @@ package cc.aoeiuv020.panovel.local
  */
 object BookList : LocalSource {
     fun new(name: String)
-            = add(BookListData(name))
+            = put(BookListData(name))
 
     fun remove(bookListData: BookListData)
             = gsonRemove(bookListData.name)
 
-    fun add(bookListData: BookListData)
+    fun put(bookListData: BookListData)
             = gsonSave(bookListData.name, bookListData)
 
     fun get(name: String): BookListData?
