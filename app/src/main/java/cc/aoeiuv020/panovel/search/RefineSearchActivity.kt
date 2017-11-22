@@ -9,8 +9,8 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.base.item.BaseItemListAdapter
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
+import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_refine_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
@@ -37,7 +37,7 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     }
 
     private lateinit var presenter: RefineSearchPresenter
-    private lateinit var mAdapter: BaseItemListAdapter
+    private lateinit var mAdapter: DefaultItemListAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_refine_search)
@@ -57,7 +57,7 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         recyclerView.setLayoutManager(LinearLayoutManager(this))
         presenter = RefineSearchPresenter()
         presenter.attach(this)
-        mAdapter = BaseItemListAdapter(this, presenter)
+        mAdapter = DefaultItemListAdapter(this, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()

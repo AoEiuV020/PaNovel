@@ -26,10 +26,13 @@ abstract class BaseItemListPresenter<V : BaseItemListView> : Presenter<V>() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    open fun <I : BaseItemView> subPresenter() = BaseItemPresenter<I>(this)
+    open fun <I : BaseItemView> subPresenter(): BaseItemPresenter<I> = DefaultItemPresenter(this)
 }
 
-open class BaseItemPresenter<T : BaseItemView>(private val itemListPresenter: BaseItemListPresenter<*>) : Presenter<T>() {
+class DefaultItemPresenter<T : BaseItemView>(itemListPresenter: BaseItemListPresenter<*>)
+    : BaseItemPresenter<T>(itemListPresenter)
+
+abstract class BaseItemPresenter<T : BaseItemView>(private val itemListPresenter: BaseItemListPresenter<*>) : Presenter<T>() {
     open val refreshTime: Long
         get() = itemListPresenter.refreshTime
 

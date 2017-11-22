@@ -11,14 +11,18 @@ import cn.lemon.view.adapter.RecyclerAdapter
  *
  * Created by AoEiuV020 on 2017.11.22-12:02:27.
  */
-open class BaseItemListAdapter(context: Context, protected val presenter: BaseItemListPresenter<out BaseItemListView>)
+abstract class BaseItemListAdapter(context: Context, protected val presenter: BaseItemListPresenter<out BaseItemListView>)
     : RecyclerAdapter<NovelItem>(context) {
-
-    override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
-            = DefaultItemViewHolder(presenter, context, parent, R.layout.novel_item)
 
     override fun onViewRecycled(holder: BaseViewHolder<NovelItem>) {
         // header和footer会强转失败，
         (holder as? BaseItemViewHolder<*>)?.destroy()
     }
+}
+
+open class DefaultItemListAdapter(context: Context, presenter: BaseItemListPresenter<out BaseItemListView>)
+    : BaseItemListAdapter(context, presenter) {
+    override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
+            = DefaultItemViewHolder(presenter, context, parent, R.layout.novel_item)
+
 }

@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.base.item.BaseItemListAdapter
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
+import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
 import cc.aoeiuv020.panovel.main.MainActivity
 import kotlinx.android.synthetic.main.novel_item_list.*
 
@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.novel_item_list.*
  * Created by AoEiuV020 on 2017.10.15-18:07:39.
  */
 class HistoryFragment : Fragment(), BaseItemListView {
-    private lateinit var mAdapter: BaseItemListAdapter
+    private lateinit var mAdapter: DefaultItemListAdapter
     private lateinit var presenter: HistoryPresenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +33,7 @@ class HistoryFragment : Fragment(), BaseItemListView {
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
         presenter = HistoryPresenter()
-        mAdapter = BaseItemListAdapter(context, presenter)
+        mAdapter = DefaultItemListAdapter(context, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()

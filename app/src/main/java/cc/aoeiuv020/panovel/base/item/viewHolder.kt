@@ -22,7 +22,7 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.11.22-11:19:03.
  */
-open class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<out BaseItemListView>, protected val ctx: Context, parent: ViewGroup?, layoutId: Int)
+abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<out BaseItemListView>, protected val ctx: Context, parent: ViewGroup?, layoutId: Int)
     : BaseViewHolder<NovelItem>(parent, layoutId), BaseItemView, AnkoLogger {
     companion object {
         @SuppressLint("SimpleDateFormat")
