@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
@@ -37,6 +38,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
 class MainActivity : AppCompatActivity() {
     private lateinit var bookshelfFragment: BookshelfFragment
     private lateinit var historyFragment: HistoryFragment
+    private lateinit var bookListFragment: BookListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,52 +48,12 @@ class MainActivity : AppCompatActivity() {
 
         bookshelfFragment = BookshelfFragment()
         historyFragment = HistoryFragment()
+        bookListFragment = BookListFragment()
 
-        val pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
-            override fun getItem(position: Int): Fragment = when (position) {
-                0 -> bookshelfFragment
-                else -> historyFragment
-            }
+        initTab(R.string.bookshelf to bookshelfFragment,
+                R.string.book_list to bookListFragment,
+                R.string.history to historyFragment)
 
-            override fun getCount(): Int = 2
-
-        }
-
-        container.adapter = pagerAdapter
-
-        fab.setOnClickListener { _ ->
-            BookstoreActivity.start(this)
-        }
-
-
-        val commonNavigator = CommonNavigator(this)
-        val titleList = listOf(R.string.bookshelf, R.string.history).map {
-            getString(it)
-        }
-        commonNavigator.adapter = object : CommonNavigatorAdapter() {
-
-            override fun getCount(): Int {
-                return titleList.size
-            }
-
-            override fun getTitleView(context: Context, index: Int): IPagerTitleView {
-                val colorTransitionPagerTitleView = ColorTransitionPagerTitleView(context)
-                colorTransitionPagerTitleView.normalColor = Color.GRAY
-                colorTransitionPagerTitleView.selectedColor = Color.WHITE
-                colorTransitionPagerTitleView.text = titleList[index]
-                colorTransitionPagerTitleView.setOnClickListener { container.currentItem = index }
-                return colorTransitionPagerTitleView
-            }
-
-            override fun getIndicator(context: Context): IPagerIndicator {
-                val indicator = LinePagerIndicator(context)
-                indicator.mode = LinePagerIndicator.MODE_EXACTLY
-                indicator.setColors(Color.WHITE)
-                return indicator
-            }
-        }
-        magic_indicator.navigator = commonNavigator
-        ViewPagerHelper.bind(magic_indicator, container)
 
         container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
@@ -118,6 +80,53 @@ class MainActivity : AppCompatActivity() {
         if (Settings.adEnabled) {
             ad_view.loadAd(App.adRequest)
         }
+
+    }
+
+    private fun initTab(vararg pair: Pair<Int, Fragment>) {
+        val (titleIdList, fragmentList) = pair.unzip()
+        val pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
+            override fun getItem(position: Int): Fragment = fragmentList[position]
+
+            override fun getCount(): Int = fragmentList.size
+
+        }
+
+        container.adapter = pagerAdapter
+
+        fab.setOnClickListener { _ ->
+            BookstoreActivity.start(this)
+        }
+
+
+        val commonNavigator = CommonNavigator(this)
+        val titleList = titleIdList.map {
+            getString(it)
+        }
+        commonNavigator.adapter = object : CommonNavigatorAdapter() {
+
+            override fun getCount(): Int {
+                return titleList.size
+            }
+
+            override fun getTitleView(context: Context, index: Int): IPagerTitleView {
+                val colorTransitionPagerTitleView = ColorTransitionPagerTitleView(context)
+                colorTransitionPagerTitleView.normalColor = Color.GRAY
+                colorTransitionPagerTitleView.selectedColor = Color.WHITE
+                colorTransitionPagerTitleView.text = titleList[index]
+                colorTransitionPagerTitleView.setOnClickListener { container.currentItem = index }
+                return colorTransitionPagerTitleView
+            }
+
+            override fun getIndicator(context: Context): IPagerIndicator {
+                val indicator = LinePagerIndicator(context)
+                indicator.mode = LinePagerIndicator.MODE_EXACTLY
+                indicator.setColors(Color.WHITE)
+                return indicator
+            }
+        }
+        magic_indicator.navigator = commonNavigator
+        ViewPagerHelper.bind(magic_indicator, container)
 
     }
 
