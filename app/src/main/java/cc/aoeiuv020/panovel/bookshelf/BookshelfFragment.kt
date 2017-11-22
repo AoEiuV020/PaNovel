@@ -36,7 +36,6 @@ class BookshelfFragment : Fragment(), BaseItemListView {
             forceRefresh()
         }
 
-        recyclerView.showSwipeRefresh()
         presenter.attach(this)
     }
 

@@ -39,7 +39,6 @@ class HistoryFragment : Fragment(), BaseItemListView {
             forceRefresh()
         }
 
-        recyclerView.showSwipeRefresh()
         presenter.attach(this)
     }
 

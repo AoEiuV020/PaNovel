@@ -11,9 +11,6 @@ import org.jetbrains.anko.error
  * Created by AoEiuV020 on 2017.10.15-18:11:15.
  */
 class HistoryPresenter : DefaultItemListPresenter<HistoryFragment>() {
-    fun start() {
-        requestHistory()
-    }
 
     private fun requestHistory() {
         Observable.fromCallable {
