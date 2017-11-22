@@ -21,3 +21,6 @@ data class NovelId(val site: String, val author: String, val name: String)
     : LocalData() {
     override fun toString(): String = "$name.$author.$site"
 }
+
+data class BookListData(val name: String, val list: MutableList<NovelItem> = mutableListOf())
+    : LocalData()
