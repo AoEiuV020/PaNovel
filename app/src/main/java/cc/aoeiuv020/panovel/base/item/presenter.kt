@@ -26,7 +26,7 @@ abstract class BaseItemListPresenter<V : BaseItemListView> : Presenter<V>() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    open fun <I : BaseItemView> subPresenter(): BaseItemPresenter<I> = DefaultItemPresenter(this)
+    open fun subPresenter(): BaseItemPresenter<BaseItemViewHolder<*>> = DefaultItemPresenter(this)
 }
 
 class DefaultItemPresenter<T : BaseItemView>(itemListPresenter: BaseItemListPresenter<*>)

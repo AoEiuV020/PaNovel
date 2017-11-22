@@ -3,7 +3,7 @@ package cc.aoeiuv020.panovel.bookshelf
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
 import cc.aoeiuv020.panovel.base.item.BaseItemPresenter
-import cc.aoeiuv020.panovel.base.item.BaseItemView
+import cc.aoeiuv020.panovel.base.item.BaseItemViewHolder
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.util.async
@@ -38,8 +38,8 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment>() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <I : BaseItemView> subPresenter(): BaseItemPresenter<I> =
-            BookshelfItemPresenter() as BaseItemPresenter<I>
+    override fun subPresenter(): BaseItemPresenter<BaseItemViewHolder<*>> =
+            BookshelfItemPresenter() as BaseItemPresenter<BaseItemViewHolder<*>>
 
     inner class BookshelfItemPresenter : BaseItemPresenter<BookshelfItemViewHolder>(this@BookshelfPresenter) {
         private var itemRefreshTime = 0L

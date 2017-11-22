@@ -30,7 +30,7 @@ abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val it
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected val presenter: T = itemListPresenter.subPresenter<BaseItemViewHolder<*>>() as T
+    protected val presenter: T = itemListPresenter.subPresenter() as T
     private val image = itemView.imageView
     private val name = itemView.tvName
     private val author = itemView.tvAuthor
