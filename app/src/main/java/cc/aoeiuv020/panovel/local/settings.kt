@@ -23,5 +23,7 @@ object Settings : LocalSource {
     var downloadThreadCount: Int by PrimitiveDelegate(4)
 
     var adEnabled: Boolean by PrimitiveDelegate(true)
+
+    var bookListAutoSave: Boolean by PrimitiveDelegate(true)
 }
 
