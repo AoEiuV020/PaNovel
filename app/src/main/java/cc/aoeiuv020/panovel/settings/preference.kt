@@ -67,14 +67,26 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes)
 
+    private val map = mapOf<String, Pair<() -> Boolean, (Boolean) -> Unit>>(
+            "auto_save" to ({ Settings.bookListAutoSave } to { v -> Settings.bookListAutoSave = v }),
+            "ad_enabled" to ({ Settings.adEnabled } to { v -> Settings.adEnabled = v })
+    )
+
     override fun setChecked(checked: Boolean) {
         debug { "$title set $checked" }
-        Settings.bookListAutoSave = checked
+        try {
+            map[key]?.run { second(checked) }
+        } catch (_: Exception) {
+        }
         super.setChecked(checked)
     }
 
     override fun isChecked(): Boolean {
-        val checked = Settings.bookListAutoSave
+        val checked = try {
+            map[key]?.run { first() } ?: false
+        } catch (_: Exception) {
+            false
+        }
         debug { "$title get $checked" }
         return checked
     }

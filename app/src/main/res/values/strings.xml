@@ -89,6 +89,7 @@
     <string name="open_source_licenses">开源许可</string>
     <string name="library">库</string>
     <string name="auto_save">自动保存</string>
+    <string name="ad_enabled">展示广告</string>
 
 
 </resources>
