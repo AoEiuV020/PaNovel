@@ -12,6 +12,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.local.BookList
 import cc.aoeiuv020.panovel.local.BookListData
 import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.util.showKeyboard
 import kotlinx.android.synthetic.main.content_book_list.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
@@ -75,6 +76,7 @@ class BookListFragment : Fragment(), IView {
                     refresh()
                 }
             }
+            etName.post { etName.showKeyboard() }
         }.show()
     }
 
