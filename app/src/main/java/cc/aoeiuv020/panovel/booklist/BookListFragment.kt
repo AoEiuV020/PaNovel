@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.local.BookList
@@ -14,6 +13,7 @@ import cc.aoeiuv020.panovel.local.BookListData
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.util.showKeyboard
 import kotlinx.android.synthetic.main.content_book_list.*
+import kotlinx.android.synthetic.main.dialog_editor.view.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
 
@@ -67,8 +67,9 @@ class BookListFragment : Fragment(), IView {
     fun newBookList() {
         context.alert {
             title = "添加书单"
-            val etName = EditText(context)
-            customView = etName
+            val layout = View.inflate(context, R.layout.dialog_editor, null)
+            customView = layout
+            val etName = layout.editText
             yesButton {
                 val name = etName.text.toString()
                 if (name.isNotEmpty()) {
