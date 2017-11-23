@@ -42,4 +42,41 @@
         app:alphaSlider="true"
         app:lightnessSlider="true"
         app:wheelType="CIRCLE" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="left_spacing"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/left_spacing" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="right_spacing"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/right_spacing" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="top_spacing"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/top_spacing" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="bottom_spacing"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/bottom_spacing" />
+
 </PreferenceScreen>

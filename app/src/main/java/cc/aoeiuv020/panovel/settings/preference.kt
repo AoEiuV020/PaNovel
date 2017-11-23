@@ -24,6 +24,10 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
                 "history_count" to ({ Settings.historyCount.toString() } to { v -> Settings.historyCount = v.toInt() }),
                 "line_spacing" to ({ Settings.lineSpacing.toString() } to { v -> Settings.lineSpacing = v.toInt() }),
                 "paragraph_spacing" to ({ Settings.paragraphSpacing.toString() } to { v -> Settings.paragraphSpacing = v.toInt() }),
+                "left_spacing" to ({ Settings.leftSpacing.toString() } to { v -> Settings.leftSpacing = v.toInt() }),
+                "right_spacing" to ({ Settings.rightSpacing.toString() } to { v -> Settings.rightSpacing = v.toInt() }),
+                "top_spacing" to ({ Settings.topSpacing.toString() } to { v -> Settings.topSpacing = v.toInt() }),
+                "bottom_spacing" to ({ Settings.bottomSpacing.toString() } to { v -> Settings.bottomSpacing = v.toInt() }),
                 "text_size" to ({ Settings.textSize.toString() } to { v -> Settings.textSize = v.toInt() })
         )
     }
