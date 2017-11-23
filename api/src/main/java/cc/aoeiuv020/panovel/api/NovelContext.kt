@@ -85,7 +85,7 @@ abstract class NovelContext {
     /**
      * 封装网络请求，主要是为了统一打log,
      */
-    protected fun response(requester: Requester): Connection.Response {
+    protected fun connect(requester: Requester): Connection {
         logger.trace {
             val stack = Thread.currentThread().stackTrace
             stack.drop(2).take(6).joinToString("\n", "stack trace\n") {
@@ -93,7 +93,11 @@ abstract class NovelContext {
             }
         }
         logger.debug { "request $requester" }
-        val conn = requester.connect()
+        return requester.connect()
+    }
+
+    protected fun response(requester: Requester): Connection.Response {
+        val conn = connect(requester)
         // 设置cookies,
         cookies?.let { conn.cookies(it) }
         val res = conn.execute()

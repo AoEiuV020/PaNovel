@@ -14,6 +14,8 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import cc.aoeiuv020.panovel.R
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
@@ -103,4 +105,13 @@ fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap {
     drawable.draw(canvas)
 
     return bitmap
+}
+
+fun EditText.showKeyboard() {
+    if (hasFocus()) {
+        clearFocus()
+    }
+    requestFocus()
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(this, 0)
 }

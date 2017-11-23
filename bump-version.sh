@@ -10,8 +10,11 @@ sed -i "s/versionCode\\s*[0-9]*/versionCode $versionCode/" $buildGradleFile
 
 versionName=$1
 sed -i "s/versionName\\s*\".*\"/versionName \"$versionName\"/" $buildGradleFile
+changeLogFile=app/src/main/assets/ChangeLog.txt
+sed -i "1s/versionName/$versionName/" $changeLogFile
 
 git add $buildGradleFile
+git add $changeLogFile
 git commit -m "Bumped version number to $versionName"
 
 cd $old

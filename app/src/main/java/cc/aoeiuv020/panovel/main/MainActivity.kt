@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
@@ -100,6 +101,16 @@ class MainActivity : AppCompatActivity() {
             override fun getItem(position: Int): Fragment = fragmentList[position]
 
             override fun getCount(): Int = fragmentList.size
+
+            override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+                val fragment = super.instantiateItem(container, position)
+                when (fragment) {
+                    is BookshelfFragment -> bookshelfFragment = fragment
+                    is BookListFragment -> bookListFragment = fragment
+                    is HistoryFragment -> historyFragment = fragment
+                }
+                return fragment
+            }
 
         }
 

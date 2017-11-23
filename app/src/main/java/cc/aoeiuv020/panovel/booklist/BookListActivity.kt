@@ -71,7 +71,9 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
     override fun onPause() {
         ad_view.pause()
-        save()
+        if (Settings.bookListAutoSave) {
+            save()
+        }
         super.onPause()
     }
 

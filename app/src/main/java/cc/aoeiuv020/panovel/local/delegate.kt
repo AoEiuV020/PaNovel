@@ -22,18 +22,16 @@ class PrimitiveDelegate<T : Serializable>(private val default: T) : AnkoLogger {
         // 优先返回幕后字段，为空则读取，读出空则替换成默认，读出的设到幕后字段，
         // 线程不安全，同时多次get可能多次读取，
         return (backingField ?: (thisRef.primitiveLoad(property.name) ?: default).also { backingField = it }).also {
-            debug {
-                "${property.name} > $it"
-            }
+            debug { "${property.name} > $it" }
         }
     }
 
     operator fun setValue(thisRef: LocalSource, property: KProperty<*>, value: T) {
-        debug {
-            "${property.name} < $value"
+        debug { "${property.name} < $value" }
+        if (backingField != value) {
+            backingField = value
+            thisRef.primitiveSave(property.name, value)
         }
-        backingField = value
-        thisRef.primitiveSave(property.name, value)
     }
 }
 

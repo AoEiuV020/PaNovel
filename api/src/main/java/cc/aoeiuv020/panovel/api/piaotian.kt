@@ -47,7 +47,12 @@ class Piaotian : NovelContext() {
 
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        val response = response(requester)
+        val response = if (requester is SearchListRequester) {
+            // 搜索页不装载cookie, 避开搜索时间间隔的限制，
+            connect(requester).execute()
+        } else {
+            response(requester)
+        }
         if (isDetail(response.url().toString())) {
             val detail = getNovelDetail(DetailRequester(requester.url))
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")

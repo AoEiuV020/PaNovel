@@ -15,6 +15,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelListItem
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.alertError
 import kotlinx.android.synthetic.main.content_bookstore.*
 
@@ -53,11 +54,9 @@ class NovelListFragment : Fragment(), IView {
             }
         }
 
-        val adRequest = App.adRequest
-
-        // Start loading the ad in the background.
-        ad_view.loadAd(adRequest)
-
+        if (Settings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
+        }
     }
 
     override fun onPause() {
