@@ -4,9 +4,12 @@ package cc.aoeiuv020.panovel.settings
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
+import android.widget.TextView
 import cc.aoeiuv020.panovel.local.Settings
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.find
 
 
 /**
@@ -38,6 +41,8 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
             : super(context, attrs, defStyleAttr, defStyleRes)
 
     init {
+        widgetLayoutResource = android.R.layout.simple_list_item_1
+
         // 默认可能没有读取数据初始化，所以要这句，
         text = getPersistedString(text)
     }
@@ -53,6 +58,12 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
         return (map[key]?.run { first() } ?: defaultReturnValue).also {
             debug { "$key > $it" }
         }
+    }
+
+    override fun onBindView(view: View) {
+        super.onBindView(view)
+        val tv = view.find<TextView>(android.R.id.text1)
+        tv.text = text
     }
 }
 
