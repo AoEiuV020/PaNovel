@@ -40,6 +40,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         return PreferenceFragment::class.java.name == fragmentName
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || ReadPreferenceFragment::class.java.name == fragmentName
+                || BookListPreferenceFragment::class.java.name == fragmentName
                 || AboutFragment::class.java.name == fragmentName
     }
 

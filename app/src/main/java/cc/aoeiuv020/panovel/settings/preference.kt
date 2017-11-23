@@ -41,9 +41,7 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
     }
 
     override fun persistString(string: String): Boolean = try {
-        debug {
-            "$key < $string"
-        }
+        debug { "$key < $string" }
         map[key]?.run { second(string); true } ?: false
     } catch (_: Exception) {
         false
@@ -51,10 +49,34 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
 
     override fun getPersistedString(defaultReturnValue: String?): String? {
         return (map[key]?.run { first() } ?: defaultReturnValue).also {
-            debug {
-                "$key > $it"
-            }
+            debug { "$key > $it" }
         }
+    }
+}
+
+class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
+    constructor(context: Context)
+            : super(context)
+
+    constructor(context: Context, attrs: AttributeSet?)
+            : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
+            : super(context, attrs, defStyleAttr)
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int)
+            : super(context, attrs, defStyleAttr, defStyleRes)
+
+    override fun setChecked(checked: Boolean) {
+        debug { "$title set $checked" }
+        Settings.bookListAutoSave = checked
+        super.setChecked(checked)
+    }
+
+    override fun isChecked(): Boolean {
+        val checked = Settings.bookListAutoSave
+        debug { "$title get $checked" }
+        return checked
     }
 }
 

@@ -21,3 +21,5 @@ abstract class BasePreferenceFragment(private val prefId: Int) : PreferenceFragm
 class GeneralPreferenceFragment : BasePreferenceFragment(R.xml.pref_general)
 
 class ReadPreferenceFragment : BasePreferenceFragment(R.xml.pref_read)
+
+class BookListPreferenceFragment : BasePreferenceFragment(R.xml.pref_book_list)
