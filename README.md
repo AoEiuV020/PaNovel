@@ -1,7 +1,7 @@
 # 爬小说
 我们不生产小说，我们只做网站的搬运工，
 
-<a href="https://play.google.com/store/apps/details?id=cc.aoeiuv020.panovel"><img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="48"></a> or [releases](https://github.com/AoEiuV020/PaNovel/releases).
+[releases](https://github.com/AoEiuV020/PaNovel/releases)
 
 ## 应用简介
 这是有理想的小说神器，目前支持下列网站，  
