@@ -27,4 +27,8 @@
         android:singleLine="true"
         android:title="@string/download_thread_count" />
 
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="ad_enabled"
+        android:title="@string/ad_enabled" />
+
 </PreferenceScreen>

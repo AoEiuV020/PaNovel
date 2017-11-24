@@ -7,13 +7,14 @@ import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.R
+import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.15-19:11:34.
  */
-class SettingsActivity : AppCompatPreferenceActivity() {
+class SettingsActivity : AppCompatPreferenceActivity(), AnkoLogger {
     companion object {
         fun start(context: Context) {
             context.startActivity<SettingsActivity>()
@@ -22,11 +23,9 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupActionBar()
-    }
-
-    private fun setupActionBar() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
     }
 
     override fun onIsMultiPane(): Boolean
