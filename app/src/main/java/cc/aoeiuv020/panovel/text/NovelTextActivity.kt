@@ -26,7 +26,6 @@ import cc.aoeiuv020.panovel.util.notify
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.info
 import org.jetbrains.anko.startActivity
 
 
@@ -108,18 +107,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     private var previousAction: Int = MotionEvent.ACTION_UP
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-        info { event }
         if (previousAction == MotionEvent.ACTION_DOWN
                 && event.action == MotionEvent.ACTION_UP) {
             toggle()
         }
         previousAction = event.action
         return super.dispatchTouchEvent(event)
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        info { event }
-        return false
     }
 
     override fun show() {
