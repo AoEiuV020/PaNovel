@@ -25,5 +25,11 @@ object Settings : LocalSource {
     var adEnabled: Boolean by PrimitiveDelegate(true)
 
     var bookListAutoSave: Boolean by PrimitiveDelegate(true)
+
+    /**
+     * 阅读界面点击退出全屏的延迟，
+     * 有点延迟看着顺眼点，
+     */
+    var fullScreenDelay: Int by PrimitiveDelegate(300)
 }
 

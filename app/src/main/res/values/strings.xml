@@ -90,6 +90,7 @@
     <string name="library">库</string>
     <string name="auto_save">自动保存</string>
     <string name="ad_enabled">展示广告</string>
+    <string name="full_screen_delay">全屏延迟</string>
 
 
 </resources>

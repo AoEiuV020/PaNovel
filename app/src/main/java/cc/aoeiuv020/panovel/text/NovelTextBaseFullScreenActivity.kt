@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.activity_novel_text.*
@@ -109,6 +110,6 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
     companion object {
         private val AUTO_HIDE = true
         private val AUTO_HIDE_DELAY_MILLIS = 3000
-        private val UI_ANIMATION_DELAY = 300
+        private val UI_ANIMATION_DELAY get() = Settings.fullScreenDelay
     }
 }
