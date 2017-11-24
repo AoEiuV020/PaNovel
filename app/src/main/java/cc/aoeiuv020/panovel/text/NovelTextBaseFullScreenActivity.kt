@@ -36,7 +36,7 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         app_bar.show()
         fullscreen_content_controls.visibility = View.VISIBLE
     }
-    private var mVisible: Boolean = false
+    protected var mVisible: Boolean = false
     private val mHideRunnable = Runnable { hide() }
     private val mDelayHideTouchListener = View.OnTouchListener { _, _ ->
         @Suppress("ConstantConditionIf")

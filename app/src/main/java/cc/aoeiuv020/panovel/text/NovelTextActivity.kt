@@ -115,6 +115,14 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         return super.dispatchTouchEvent(event)
     }
 
+    override fun onBackPressed() {
+        if (Settings.backPressOutOfFullScreen && !mVisible) {
+            show()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun show() {
         super.show()
         navigation.reset(ntpAdapter.getCurrentTextCount() ?: 0, ntpAdapter.getCurrentTextProgress() ?: 0)
