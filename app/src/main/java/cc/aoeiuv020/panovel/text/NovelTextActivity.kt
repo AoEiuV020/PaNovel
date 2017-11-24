@@ -93,6 +93,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
         })
 
+        dtfRoot.activity = this
+
+
         navigation = NovelTextNavigation(this, novelItem, nav_view)
 
         presenter = NovelTextPresenter(novelItem)
@@ -102,6 +105,14 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         loading(progressDialog, R.string.novel_chapters)
         presenter.attach(this)
         presenter.start()
+    }
+
+    override fun onBackPressed() {
+        if (Settings.backPressOutOfFullScreen && !mVisible) {
+            show()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun show() {

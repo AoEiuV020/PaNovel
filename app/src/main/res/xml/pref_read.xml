@@ -5,6 +5,19 @@
     <cc.aoeiuv020.panovel.settings.EditTextPreference
         android:capitalize="words"
         android:inputType="number"
+        android:key="full_screen_delay"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/full_screen_delay" />
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="back_press_out_of_fullScreen"
+        android:title="@string/back_press_out_of_fullScreen" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
         android:key="text_size"
         android:maxLines="1"
         android:selectAllOnFocus="true"

@@ -5,10 +5,16 @@
     android:layout_height="match_parent"
     tools:context="cc.aoeiuv020.panovel.text.NovelTextActivity">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
+    <cc.aoeiuv020.panovel.text.DispatchTouchFrameLayout
+        android:id="@+id/dtfRoot"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </cc.aoeiuv020.panovel.text.DispatchTouchFrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -39,6 +45,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:focusableInTouchMode="true"

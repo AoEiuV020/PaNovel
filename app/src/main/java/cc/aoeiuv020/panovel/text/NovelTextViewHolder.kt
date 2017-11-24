@@ -1,8 +1,6 @@
 package cc.aoeiuv020.panovel.text
 
-import android.annotation.SuppressLint
 import android.support.v7.widget.LinearLayoutManager
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -28,18 +26,6 @@ class NovelTextViewHolder(private val ctx: NovelTextActivity, private val presen
 
     init {
         textRecyclerView.layoutManager = layoutManager
-        textRecyclerView.setOnTouchListener(object : View.OnTouchListener {
-            private var previousAction: Int = MotionEvent.ACTION_UP
-            @SuppressLint("ClickableViewAccessibility")
-            override fun onTouch(v: View?, event: MotionEvent): Boolean {
-                if (previousAction == MotionEvent.ACTION_DOWN
-                        && event.action == MotionEvent.ACTION_UP) {
-                    ctx.toggle()
-                }
-                previousAction = event.action
-                return false
-            }
-        })
         textRecyclerView.adapter = textListAdapter
         // itemView可能没有初始化高度，所以用decorView,
         // 更靠谱的是GlobalOnLayoutListener，但要求api >= 16,
