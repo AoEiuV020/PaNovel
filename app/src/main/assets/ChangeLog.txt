@@ -1,4 +1,4 @@
-versionName:
+更新日志：
 添加捐赠界面，
 离开捐赠界面五秒后回来就去广告，重启生效，
 
@@ -25,4 +25,3 @@ versionName:
 添加导出小说到.txt的功能,
 在，/sdcard/Android/data/cc.aoeiuv020.panovel/files/Text/
 书架中的书籍右上角长按出功能选项，
-
