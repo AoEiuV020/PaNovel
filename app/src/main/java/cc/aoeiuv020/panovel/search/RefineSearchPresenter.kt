@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.DefaultItemListPresenter
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.NovelId
+import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.debug
@@ -34,7 +35,7 @@ class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
         debug { "search <$name, $author>" }
         Observable.create<NovelItem> { em ->
             fun next(novelItem: NovelItem) {
-                debug { "search result <${novelItem.name}, ${novelItem.author}>" }
+                debug { "search result <${novelItem.bookId}>" }
                 em.onNext(novelItem)
             }
             NovelContext.getNovelContexts().forEach { context ->
@@ -65,6 +66,7 @@ class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
             val message = "搜索小说失败，"
             error(message, e)
             view?.showError(message, e)
+            view?.showOnComplete()
         }, {
             view?.showOnComplete()
         }).let { addDisposable(it) }

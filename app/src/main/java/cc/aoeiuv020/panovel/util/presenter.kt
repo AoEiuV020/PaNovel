@@ -43,3 +43,10 @@ private val asyncExecutor = object : Executor {
 fun <T : Any?> Observable<T>.async(): Observable<T> = this
         .subscribeOn(Schedulers.from(asyncExecutor))
         .observeOn(AndroidSchedulers.mainThread())
+
+fun <T> ignoreException(block: () -> T?) {
+    try {
+        block()
+    } catch (_: Exception) {
+    }
+}
