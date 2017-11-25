@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
+import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
@@ -172,6 +173,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.settings -> SettingsActivity.start(this)
             R.id.search -> RefineSearchActivity.start(this)
+            R.id.donate -> DonateActivity.start(this)
             else -> return super.onOptionsItemSelected(item)
         }
         return true
