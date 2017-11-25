@@ -36,6 +36,11 @@ class Cache<T>(private val type: Type,
         val progress: Cache<NovelProgress> = new()
 
         val item: Cache<NovelItem> = new()
+
+        /**
+         * 清除整个Cache，不只text,
+         */
+        fun clear() = text.gsonClear()
     }
 
     private fun folder(id: NovelId) = "$id${File.separatorChar}$cacheName"

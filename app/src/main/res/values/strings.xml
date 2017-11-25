@@ -57,6 +57,7 @@
     <string name="pref_header_general">全局设置</string>
     <string name="pref_header_read">阅读设置</string>
     <string name="pref_book_list">书单设置</string>
+    <string name="pref_cache_clear">清除缓存</string>
     <string name="pref_header_about">关于</string>
 
     <string name="chapters_cache_timeout">章节缓存超时</string>
@@ -98,6 +99,9 @@
     <string name="wechatpay">微信</string>
     <string name="jump_to_we_chat">跳到微信</string>
     <string name="explain">说明</string>
+    <string name="cache">缓存</string>
+    <string name="confirm_clear">确认清除</string>
+    <string name="removing">正在清除…%s</string>
 
 
 </resources>

@@ -40,6 +40,7 @@ class SettingsActivity : AppCompatPreferenceActivity(), AnkoLogger {
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || ReadPreferenceFragment::class.java.name == fragmentName
                 || BookListPreferenceFragment::class.java.name == fragmentName
+                || CacheClearPreferenceFragment::class.java.name == fragmentName
                 || AboutFragment::class.java.name == fragmentName
     }
 
