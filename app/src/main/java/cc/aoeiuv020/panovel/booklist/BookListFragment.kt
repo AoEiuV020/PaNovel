@@ -23,7 +23,7 @@ import org.jetbrains.anko.yesButton
  */
 class BookListFragment : Fragment(), IView {
     private lateinit var mAdapter: BookListFragmentAdapter
-    private lateinit var presenter: BookListFragmentPresenter
+    private val presenter: BookListFragmentPresenter = BookListFragmentPresenter()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.novel_item_list, container, false)
@@ -31,7 +31,7 @@ class BookListFragment : Fragment(), IView {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
-        presenter = BookListFragmentPresenter()
+        presenter
         mAdapter = BookListFragmentAdapter(context, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
@@ -40,12 +40,11 @@ class BookListFragment : Fragment(), IView {
 
         recyclerView.showSwipeRefresh()
         presenter.attach(this)
-
     }
 
-    override fun onDetach() {
+    override fun onDestroyView() {
         presenter.detach()
-        super.onDetach()
+        super.onDestroyView()
     }
 
     override fun onStart() {

@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.novel_item_list.*
  */
 class BookshelfFragment : Fragment(), BaseItemListView {
     private lateinit var mAdapter: BookshelfItemListAdapter
-    private lateinit var presenter: BookshelfPresenter
+    private val presenter: BookshelfPresenter = BookshelfPresenter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View?
@@ -28,7 +28,6 @@ class BookshelfFragment : Fragment(), BaseItemListView {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
-        presenter = BookshelfPresenter()
         mAdapter = BookshelfItemListAdapter(context, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
@@ -38,9 +37,9 @@ class BookshelfFragment : Fragment(), BaseItemListView {
         presenter.attach(this)
     }
 
-    override fun onDetach() {
+    override fun onDestroyView() {
         presenter.detach()
-        super.onDetach()
+        super.onDestroyView()
     }
 
     override fun onStart() {
