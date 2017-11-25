@@ -97,6 +97,7 @@
     <string name="alipay">支付宝</string>
     <string name="wechatpay">微信</string>
     <string name="jump_to_we_chat">跳到微信</string>
+    <string name="explain">说明</string>
 
 
 </resources>
