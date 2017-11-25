@@ -54,7 +54,7 @@ class Piaotian : NovelContext() {
             response(requester)
         }
         if (isDetail(response.url().toString())) {
-            val detail = getNovelDetail(DetailRequester(requester.url))
+            val detail = getNovelDetail(DetailRequester(response.url().toString()))
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
             val info = detail.run { "更新: ${sdf.format(update)} 简介: $introduction" }
             return listOf(NovelListItem(detail.novel, info))
