@@ -13,8 +13,11 @@ interface BaseItemListView : IView {
     fun showError(message: String, e: Throwable)
 }
 
-interface BaseItemView : IView {
+interface SmallItemView : IView {
     fun showDetail(novelDetail: NovelDetail)
-    fun showUpdateTime(updateTime: Date)
     fun showChapter(chapters: List<NovelChapter>, progress: Int)
+}
+
+interface BigItemView : SmallItemView {
+    fun showUpdateTime(updateTime: Date)
 }

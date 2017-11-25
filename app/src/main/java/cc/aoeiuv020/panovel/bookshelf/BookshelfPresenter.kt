@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.bookshelf
 
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
-import cc.aoeiuv020.panovel.base.item.BaseItemPresenter
+import cc.aoeiuv020.panovel.base.item.BigItemPresenter
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.util.async
@@ -42,7 +42,7 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment, BookshelfIte
 
 }
 
-class BookshelfItemPresenter(presenter: BaseItemListPresenter<*, BookshelfItemPresenter>) : BaseItemPresenter<BookshelfItemViewHolder>(presenter) {
+class BookshelfItemPresenter(presenter: BaseItemListPresenter<*, BookshelfItemPresenter>) : BigItemPresenter<BookshelfItemViewHolder>(presenter) {
     private var itemRefreshTime = 0L
     override val refreshTime: Long
         get() = maxOf(super.refreshTime, itemRefreshTime)

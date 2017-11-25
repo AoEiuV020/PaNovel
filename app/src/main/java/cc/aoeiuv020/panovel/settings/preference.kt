@@ -76,6 +76,7 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> Boolean, (Boolean) -> Unit>>(
                 "auto_save" to ({ Settings.bookListAutoSave } to { v -> Settings.bookListAutoSave = v }),
+                "book_small_layout" to ({ Settings.BookSmallLayout } to { v -> Settings.BookSmallLayout = v }),
                 "back_press_out_of_fullScreen" to ({ Settings.backPressOutOfFullScreen } to { v -> Settings.backPressOutOfFullScreen = v }),
                 "ad_enabled" to ({ Settings.adEnabled } to { v -> Settings.adEnabled = v })
         )
@@ -92,6 +93,11 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes)
+
+    init {
+        // 默认可能没有读取数据初始化，所以要这句，莫名奇妙的，
+        isChecked = getPersistedBoolean(false)
+    }
 
     override fun setChecked(checked: Boolean) {
         debug { "$title set $checked" }

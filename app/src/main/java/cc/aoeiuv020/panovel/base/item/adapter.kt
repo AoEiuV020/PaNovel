@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.local.Settings
 import cn.lemon.view.adapter.BaseViewHolder
 import cn.lemon.view.adapter.RecyclerAdapter
 
@@ -16,7 +17,7 @@ abstract class BaseItemListAdapter(context: Context)
 
     override fun onViewRecycled(holder: BaseViewHolder<NovelItem>) {
         // header和footer会强转失败，
-        (holder as? BaseItemViewHolder<*>)?.destroy()
+        (holder as? SmallItemViewHolder<*>)?.destroy()
     }
 }
 
@@ -24,6 +25,10 @@ open class DefaultItemListAdapter(context: Context, private val presenter: BaseI
                                   private val listener: OnItemLongClickListener? = null)
     : BaseItemListAdapter(context) {
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
-            = DefaultItemViewHolder(presenter, context, parent, R.layout.novel_item, listener)
+            = if (Settings.BookSmallLayout) {
+        DefaultItemViewHolder(presenter, context, parent, R.layout.novel_item_small, listener)
+    } else {
+        DefaultItemViewHolder(presenter, context, parent, R.layout.novel_item_big, listener)
+    }
 
 }

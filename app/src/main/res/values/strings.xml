@@ -102,6 +102,7 @@
     <string name="cache">缓存</string>
     <string name="confirm_clear">确认清除</string>
     <string name="removing">正在清除…%s</string>
+    <string name="book_small_layout">书本小型布局</string>
 
 
 </resources>
