@@ -45,7 +45,9 @@
             android:label="@string/title_activity_refine_search"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".booklist.BookListActivity" />
-        <activity android:name=".donate.DonateActivity" />
+        <activity
+            android:name=".donate.DonateActivity"
+            android:label="@string/donate" />
     </application>
 
 </manifest>
