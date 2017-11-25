@@ -102,9 +102,9 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
         super.setChecked(checked)
     }
 
-    override fun isChecked(): Boolean {
+    override fun getPersistedBoolean(defaultReturnValue: Boolean): Boolean {
         val checked = try {
-            map[key]?.run { first() } ?: false
+            map[key]?.run { first() } ?: super.getPersistedBoolean(defaultReturnValue)
         } catch (_: Exception) {
             false
         }
