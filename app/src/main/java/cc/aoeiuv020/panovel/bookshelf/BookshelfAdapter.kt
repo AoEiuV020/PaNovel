@@ -6,16 +6,17 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListAdapter
-import cc.aoeiuv020.panovel.base.item.BaseItemViewHolder
+import cc.aoeiuv020.panovel.base.item.DefaultItemViewHolder
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.Text
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import cn.lemon.view.adapter.BaseViewHolder
-import kotlinx.android.synthetic.main.bookshelf_item.view.*
+import kotlinx.android.synthetic.main.bookshelf_item_big.view.*
 import org.jetbrains.anko.selector
 
 /**
@@ -26,21 +27,26 @@ import org.jetbrains.anko.selector
 class BookshelfItemListAdapter(context: Context, val presenter: BookshelfPresenter)
     : BaseItemListAdapter(context) {
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
-            = BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item)
+            = if (Settings.BookSmallLayout) {
+        BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item_small)
+    } else {
+        BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item_big)
+    }
+
 }
 
 class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Context, parent: ViewGroup?, layoutId: Int)
-    : BaseItemViewHolder<BookshelfItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
+    : DefaultItemViewHolder<BookshelfItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
     private val newChapterDot = itemView.newChapterDot
     private val progressBar = itemView.progressBar
-    private val dotLayout = itemView.dotLayout
+    private val moreAction = itemView.lMoreAction
 
     init {
-        dotLayout.setOnClickListener {
+        moreAction.setOnClickListener {
             refresh()
         }
 
-        dotLayout.setOnLongClickListener {
+        moreAction.setOnLongClickListener {
             val list = listOf(R.string.read_continue to { readContinue() },
                     R.string.read_last_chapter to { readLastChapter() },
                     R.string.detail to { detail() },
@@ -53,7 +59,6 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
             }
             true
         }
-        itemView.ivMoreAction.show()
     }
 
     override fun setData(data: NovelItem) {

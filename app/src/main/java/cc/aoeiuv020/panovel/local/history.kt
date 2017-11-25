@@ -27,4 +27,6 @@ object History : LocalSource {
             list
         }
     }
+
+    fun clear() = gsonClear()
 }

@@ -18,6 +18,11 @@
         android:title="@string/pref_book_list" />
 
     <header
+        android:fragment="cc.aoeiuv020.panovel.settings.CacheClearPreferenceFragment"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/pref_cache_clear" />
+
+    <header
         android:fragment="cc.aoeiuv020.panovel.settings.AboutFragment"
         android:icon="@drawable/ic_info"
         android:title="@string/pref_header_about" />

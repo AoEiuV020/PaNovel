@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.novel_item_list.*
  */
 class HistoryFragment : Fragment(), BaseItemListView {
     private lateinit var mAdapter: DefaultItemListAdapter
-    private lateinit var presenter: HistoryPresenter
+    private val presenter: HistoryPresenter = HistoryPresenter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View?
@@ -31,7 +31,6 @@ class HistoryFragment : Fragment(), BaseItemListView {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
-        presenter = HistoryPresenter()
         mAdapter = DefaultItemListAdapter(context, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
@@ -41,9 +40,9 @@ class HistoryFragment : Fragment(), BaseItemListView {
         presenter.attach(this)
     }
 
-    override fun onDetach() {
+    override fun onDestroyView() {
         presenter.detach()
-        super.onDetach()
+        super.onDestroyView()
     }
 
     override fun onStart() {

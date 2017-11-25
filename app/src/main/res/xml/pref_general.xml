@@ -1,5 +1,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="book_small_layout"
+        android:title="@string/book_small_layout" />
+
     <cc.aoeiuv020.panovel.settings.EditTextPreference
         android:capitalize="words"
         android:inputType="number"
@@ -26,5 +30,10 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/download_thread_count" />
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:enabled="false"
+        android:key="ad_enabled"
+        android:title="@string/ad_enabled" />
 
 </PreferenceScreen>

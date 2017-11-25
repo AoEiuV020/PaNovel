@@ -31,12 +31,17 @@ abstract class Presenter<T : IView> : AnkoLogger {
     }
 
     protected fun addDisposable(disposable: Disposable, index: Int = 0) {
+        debug { "$this add disposable $disposable" }
         while (index >= disposableList.size) {
             disposableList.add(null)
         }
         val old = disposableList[index]
         disposableList[index] = disposable
         old?.dispose()
+        old?.let {
+            debug { "old $old dispose" }
+            it.dispose()
+        }
     }
 
     override fun toString(): String = "${javaClass.simpleName}@${hashCode()}"

@@ -104,6 +104,8 @@ fun LocalSource.gsonNameList(folder: String? = null) = externalGson(folder).list
     }
 }
 
+fun LocalSource.gsonClear() = externalGson().deleteRecursively()
+
 fun Any.toJson(): String = App.gson.toJson(this)
 // reified T 可以直接给gson用，没有reified的T用TypeToken包装也没用，只能传入type,
 inline fun <reified T> String.toBean(): T = App.gson.fromJson(this, type<T>())

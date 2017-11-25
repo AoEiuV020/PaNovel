@@ -2,7 +2,9 @@ package cc.aoeiuv020.panovel.settings
 
 import android.os.Bundle
 import android.preference.PreferenceFragment
+import android.view.View
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.local.Settings
 
 
 /**
@@ -18,7 +20,16 @@ abstract class BasePreferenceFragment(private val prefId: Int) : PreferenceFragm
     }
 }
 
-class GeneralPreferenceFragment : BasePreferenceFragment(R.xml.pref_general)
+class GeneralPreferenceFragment : BasePreferenceFragment(R.xml.pref_general) {
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val adEnabledPreference = findPreference("ad_enabled") as SwitchPreference
+        adEnabledPreference.apply {
+            isEnabled = !Settings.adEnabled
+        }
+    }
+}
 
 class ReadPreferenceFragment : BasePreferenceFragment(R.xml.pref_read)
 

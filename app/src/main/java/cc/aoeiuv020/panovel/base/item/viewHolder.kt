@@ -3,16 +3,18 @@ package cc.aoeiuv020.panovel.base.item
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
+import android.widget.TextView
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
+import cc.aoeiuv020.panovel.text.CheckableImageView
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cn.lemon.view.adapter.BaseViewHolder
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.novel_item.view.*
+import kotlinx.android.synthetic.main.novel_item_big.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.text.SimpleDateFormat
@@ -22,24 +24,21 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.11.22-11:19:03.
  */
-abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<*, T>,
-                                                                protected val ctx: Context, parent: ViewGroup?, layoutId: Int,
-                                                                listener: OnItemLongClickListener? = null)
-    : BaseViewHolder<NovelItem>(parent, layoutId), BaseItemView, AnkoLogger {
-    companion object {
-        @SuppressLint("SimpleDateFormat")
-        private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    }
-
+abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<*, T>,
+                                                                  protected val ctx: Context, parent: ViewGroup?, layoutId: Int,
+                                                                  listener: OnItemLongClickListener? = null)
+    : BaseViewHolder<NovelItem>(parent, layoutId), SmallItemView, AnkoLogger {
     @Suppress("UNCHECKED_CAST")
     protected val presenter: T = itemListPresenter.subPresenter()
     private val image = itemView.imageView
     private val name = itemView.tvName
     private val author = itemView.tvAuthor
     private val site = itemView.tvSite
-    private val update = itemView.tvUpdate
-    private val readAt = itemView.tvReadAt
     private val last = itemView.tvLast
+    /**
+     * 书架页没有这个star按钮，
+     */
+    private val star: CheckableImageView? = itemView.ivStar
     protected lateinit var novelItem: NovelItem
 
     init {
@@ -66,58 +65,8 @@ abstract class BaseItemViewHolder<out T : BaseItemPresenter<*>>(protected val it
                 true
             }
         }
-    }
 
-    override fun setData(data: NovelItem) {
-        this.novelItem = data
-        debug {
-            "${this.hashCode()} $layoutPosition setData $data"
-        }
-        @Suppress("UnnecessaryVariable")
-        val novel = data
-        name.text = novel.name
-        author.text = novel.author
-        site.text = novel.site
-
-        // 清空残留数据，避免闪烁，
-        update.text = ""
-        last.text = ""
-        image.setImageDrawable(null)
-        readAt.text = ""
-
-        presenter.attach(this)
-        presenter.requestDetail(novel)
-    }
-
-    override fun showDetail(novelDetail: NovelDetail) {
-        showUpdateTime(novelDetail.update)
-        Glide.with(ctx).load(novelDetail.bigImg).into(image)
-        presenter.requestUpdate(novelDetail)
-        presenter.requestChapters(novelDetail)
-    }
-
-    override fun showUpdateTime(updateTime: Date) {
-        update.text = sdf.format(updateTime)
-    }
-
-    override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
-        readAt.text = chapters[progress].name
-        last.text = chapters.last().name
-    }
-
-    fun destroy() {
-        presenter.detach()
-    }
-}
-
-open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<*, DefaultItemPresenter>,
-                                 ctx: Context, parent: ViewGroup?, layoutId: Int,
-                                 listener: OnItemLongClickListener? = null)
-    : BaseItemViewHolder<DefaultItemPresenter>(itemListPresenter, ctx, parent, layoutId, listener) {
-    private val star = itemView.ivStar
-
-    init {
-        star.apply {
+        star?.apply {
             setOnClickListener {
                 toggle()
                 if (isChecked) {
@@ -130,8 +79,77 @@ open class DefaultItemViewHolder(itemListPresenter: BaseItemListPresenter<*, Def
     }
 
     override fun setData(data: NovelItem) {
+        this.novelItem = data
+        debug {
+            "${this.hashCode()} $layoutPosition setData $data"
+        }
+        star?.isChecked = Bookshelf.contains(novelItem)
+        @Suppress("UnnecessaryVariable")
+        val novel = data
+        name.text = novel.name
+        author.text = novel.author
+        site.text = novel.site
+
+        // 清空残留数据，避免闪烁，
+        last.text = ""
+        image.setImageDrawable(null)
+
+        presenter.attach(this)
+        presenter.requestDetail(novel)
+    }
+
+    override fun showDetail(novelDetail: NovelDetail) {
+        Glide.with(ctx).load(novelDetail.bigImg).into(image)
+        presenter.requestChapters(novelDetail)
+    }
+
+    override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
+        last.text = chapters.last().name
+    }
+
+    fun destroy() {
+        presenter.detach()
+    }
+}
+
+open class DefaultItemViewHolder<out T : BigItemPresenter<*>>(itemListPresenter: BaseItemListPresenter<*, T>,
+                                                              ctx: Context, parent: ViewGroup?, layoutId: Int,
+                                                              listener: OnItemLongClickListener? = null)
+    : SmallItemViewHolder<T>(itemListPresenter, ctx, parent, layoutId, listener), BigItemView {
+    companion object {
+        @SuppressLint("SimpleDateFormat")
+        private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    }
+
+    /**
+     * 小型视图没有这两个，
+     */
+    private val update: TextView? = itemView.tvUpdate
+    private val readAt: TextView? = itemView.tvReadAt
+
+    override fun setData(data: NovelItem) {
         super.setData(data)
-        star.isChecked = Bookshelf.contains(novelItem)
+
+        // 清空残留数据，避免闪烁，
+        update?.text = ""
+        readAt?.text = ""
+    }
+
+    override fun showDetail(novelDetail: NovelDetail) {
+        super.showDetail(novelDetail)
+        showUpdateTime(novelDetail.update)
+        update?.also {
+            presenter.requestUpdate(novelDetail)
+        }
+    }
+
+    override fun showUpdateTime(updateTime: Date) {
+        update?.text = sdf.format(updateTime)
+    }
+
+    override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
+        super.showChapter(chapters, progress)
+        readAt?.text = chapters[progress].name
     }
 }
 

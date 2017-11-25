@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
+import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
@@ -30,6 +31,8 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.yesButton
 
 
 /**
@@ -162,6 +165,11 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    private fun showExplain() {
+        alert(assets.open("Explain.txt").reader().readText(), getString(R.string.explain)) {
+            yesButton { }
+        }.show()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -172,6 +180,8 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.settings -> SettingsActivity.start(this)
             R.id.search -> RefineSearchActivity.start(this)
+            R.id.donate -> DonateActivity.start(this)
+            R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)
         }
         return true

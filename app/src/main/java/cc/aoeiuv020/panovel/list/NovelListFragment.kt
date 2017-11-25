@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.content_bookstore.*
  */
 class NovelListFragment : Fragment(), IView {
     private lateinit var alertDialog: AlertDialog
-    private lateinit var presenter: NovelListPresenter
+    private val presenter: NovelListPresenter = NovelListPresenter()
     private lateinit var mAdapter: NovelListRecyclerAdapter
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.content_bookstore, container, false)
@@ -34,7 +34,6 @@ class NovelListFragment : Fragment(), IView {
 
         mAdapter = NovelListRecyclerAdapter(context)
 
-        presenter = NovelListPresenter()
         presenter.attach(this)
         return root
     }
