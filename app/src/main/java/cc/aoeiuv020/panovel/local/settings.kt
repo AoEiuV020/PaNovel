@@ -1,5 +1,7 @@
 package cc.aoeiuv020.panovel.local
 
+import android.net.Uri
+
 /**
  * 设置，
  * Created by AoEiuV020 on 2017.10.04-14:04:44.
@@ -19,8 +21,9 @@ object Settings : LocalSource {
     var rightSpacing: Int by PrimitiveDelegate(0)
     var bottomSpacing: Int by PrimitiveDelegate(0)
 
-    var backgroundColor: Int by PrimitiveDelegate(0xffffffff.toInt())
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
+    var backgroundColor: Int by PrimitiveDelegate(0xffffffff.toInt())
+    var backgroundImage: Uri? by UriDelegate()
 
 
     var historyCount: Int by PrimitiveDelegate(200)

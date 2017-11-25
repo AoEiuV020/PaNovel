@@ -1,5 +1,7 @@
 package cc.aoeiuv020.panovel.local
 
+import android.net.Uri
+import cc.aoeiuv020.panovel.App
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.io.Serializable
@@ -68,6 +70,29 @@ class GsonDelegate<T>(private val default: T? = null, private val type: Class<T>
 
     operator fun setValue(thisRef: LocalSource, property: KProperty<*>, value: T?) {
         thisRef.gsonSave(property.name, value)
+    }
+}
+
+class UriDelegate : AnkoLogger {
+    private var backingField: Uri? = null
+    operator fun getValue(thisRef: LocalSource, property: KProperty<*>): Uri? {
+        return backingField ?: thisRef.openFile(property.name).takeIf { it.exists() }?.let { Uri.fromFile(it) }.also {
+            debug { "${property.name} > $it" }
+        }
+    }
+
+    operator fun setValue(thisRef: LocalSource, property: KProperty<*>, value: Uri?) {
+        debug { "${property.name} < $value" }
+        if (backingField != value) {
+            backingField = null
+            val file = thisRef.openFile(property.name)
+            if (value == null) {
+                file.delete()
+            } else {
+                App.ctx.contentResolver.openInputStream(value).copyTo(file.outputStream())
+                backingField = getValue(thisRef, property)
+            }
+        }
     }
 }
 
