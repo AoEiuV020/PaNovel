@@ -4,6 +4,8 @@ package cc.aoeiuv020.panovel.text
 
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.view.ViewPager
@@ -144,8 +146,30 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         ntpAdapter.setTextColor(color)
     }
 
-    fun setBackgroundColor(color: Int) {
-        viewPager.setBackgroundColor(color)
+    fun setBackgroundColor(color: Int, fromUser: Boolean = false) {
+        if (fromUser) {
+            ivBackground.setImageDrawable(null)
+        }
+        ivBackground.setBackgroundColor(color)
+    }
+
+    fun requestBackgroundImage() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        startActivityForResult(intent, 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            0 -> data?.data?.let {
+                Settings.backgroundImage = it
+                setBackgroundImage(it)
+            }
+        }
+    }
+
+    fun setBackgroundImage(uri: Uri?) {
+        ivBackground.setImageURI(uri)
     }
 
     fun setParagraphSpacing(progress: Int) {

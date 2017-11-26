@@ -151,7 +151,7 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     override fun showError(message: String, e: Throwable) {
         snack.setText(message + e.message)
         snack.show()
-        showOnComplete()
+        recyclerView.dismissSwipeRefresh()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

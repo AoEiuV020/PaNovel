@@ -110,21 +110,28 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
             })
 
+            // 设置背景图，
+            view.setBackgroundImage(Settings.backgroundImage)
+            lBackgroundImage.setOnClickListener {
+                view.requestBackgroundImage()
+            }
+
             // 设置背景色，
             val backgroundColor = Settings.backgroundColor
             view.setBackgroundColor(backgroundColor)
             backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, backgroundColor)
-            backgroundColorTextView.setOnClickListener {
+            lBackgroundColor.setOnClickListener {
                 view.alertColorPicker(Settings.backgroundColor) { color ->
                     Settings.backgroundColor = color
+                    Settings.backgroundImage = null
                     backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, color)
-                    view.setBackgroundColor(color)
+                    view.setBackgroundColor(color, true)
                 }
             }
 
             // 设置文字颜色，
             textColorTextView.text = view.getString(R.string.text_color_placeholder, Settings.textColor)
-            textColorTextView.setOnClickListener {
+            lTextColor.setOnClickListener {
                 view.alertColorPicker(Settings.textColor) { color ->
                     Settings.textColor = color
                     textColorTextView.text = view.getString(R.string.text_color_placeholder, color)

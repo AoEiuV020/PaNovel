@@ -34,6 +34,7 @@
     <string name="line_spacing">行间距</string>
     <string name="paragraph_spacing_placeholder">%ddp</string>
     <string name="paragraph_spacing">段间距</string>
+    <string name="background_image">背景图</string>
     <string name="background_color_placeholder">0x%08X</string>
     <string name="background_color">背景色</string>
     <string name="text_color_placeholder">0x%08X</string>

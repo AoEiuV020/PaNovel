@@ -31,7 +31,7 @@ abstract class Presenter<T : IView> : AnkoLogger {
     }
 
     protected fun addDisposable(disposable: Disposable, index: Int = 0) {
-        debug { "$this add disposable $disposable" }
+        debug { "$this add disposable ${disposable.hashCode()} at $index" }
         while (index >= disposableList.size) {
             disposableList.add(null)
         }
@@ -39,7 +39,7 @@ abstract class Presenter<T : IView> : AnkoLogger {
         disposableList[index] = disposable
         old?.dispose()
         old?.let {
-            debug { "old $old dispose" }
+            debug { "old ${old.hashCode()} dispose" }
             it.dispose()
         }
     }
