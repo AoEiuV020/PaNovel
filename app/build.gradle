@@ -10,8 +10,8 @@ android {
         applicationId "cc.aoeiuv020.panovel"
         minSdkVersion min_version
         targetSdkVersion target_version
-        versionCode 15
-        versionName "1.2.0"
+        versionCode 16
+        versionName "1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "$rootProject.name-$versionName")
         vectorDrawables.useSupportLibrary = true
@@ -60,7 +60,6 @@ dependencies {
     implementation project(':RefreshRecyclerView')
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
     implementation project(':api')
-    implementation 'com.github.didikee:AndroidDonate:0.1.0'
 }
 
 
