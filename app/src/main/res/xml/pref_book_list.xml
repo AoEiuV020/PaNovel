@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <cc.aoeiuv020.panovel.settings.SwitchPreference
-        android:key="auto_save"
-        android:title="@string/auto_save" />
-</PreferenceScreen>
