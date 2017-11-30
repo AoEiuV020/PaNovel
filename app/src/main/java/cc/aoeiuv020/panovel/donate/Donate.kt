@@ -38,22 +38,11 @@ sealed class Donate {
      */
     class Alipay : Donate() {
         companion object {
-            private val payCode = "fkx01135qsj7nybpr0pk01"
-            @Suppress("unused")
-            private val ALIPAY_PACKAGE_NAME = "com.eg.android.AlipayGphone"
-            private val INTENT_URL = "intent://platformapi/startapp?saId=10000007&" +
-                    "clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2F$payCode%3F_s" +
-                    "%3Dweb-other&_t=1472443966571#Intent;" +
-                    "scheme=alipayqr;package=com.eg.android.AlipayGphone;end"
+            private val payCode = "FKX01135QSJ7NYBPR0PK01"
         }
 
         override fun start(context: Context) {
-            try {
-                val intent = Intent.parseUri(INTENT_URL, Intent.URI_INTENT_SCHEME)
-                context.startActivity(intent)
-            } catch (e: Exception) {
-                context.browse("https://qr.alipay.com/$payCode")
-            }
+            context.browse("https://QR.ALIPAY.COM/$payCode")
         }
     }
 

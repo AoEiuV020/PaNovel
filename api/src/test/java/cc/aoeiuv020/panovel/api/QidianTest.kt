@@ -131,7 +131,7 @@ class QidianTest {
             list.forEach {
                 println(it)
             }
-            assertEquals("第一章 我叫张夜，是一颗陨石", list.first().name)
+            assertEquals("读者重磅回馈：感恩节福利~", list.first().name)
         }
     }
 

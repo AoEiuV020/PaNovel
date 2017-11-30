@@ -15,7 +15,7 @@ import java.net.URL
 abstract class NovelContext {
     companion object {
         @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt(), Qidian())
+        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz())
         private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         private val nameMap = contexts.associateBy { it.getNovelSite().name }
         fun getNovelContexts(): List<NovelContext> = contexts
@@ -96,30 +96,35 @@ abstract class NovelContext {
         return requester.connect()
     }
 
-    protected fun response(requester: Requester): Connection.Response {
-        val conn = connect(requester)
+    protected fun connect(url: String)
+            = connect(Requester(url))
+
+    protected fun response(conn: Connection): Connection.Response {
         // 设置cookies,
         cookies?.let { conn.cookies(it) }
-        val res = conn.execute()
+        val response = conn.execute()
         // 保存cookies,
-        cookies = res.cookies()
-        return res
-    }
-
-    protected fun response(url: String) = response(Requester(url))
-
-    protected fun request(response: Connection.Response): Document {
-        val root = response.parse()
+        cookies = response.cookies()
         logger.debug { "status code: ${response.statusCode()}" }
         logger.debug { "response url: ${response.url()}" }
         logger.trace { "body length: ${response.body().length}" }
         if (!check(response.url().toString())) {
             throw IOException("网络被重定向，检查网络是否可用，")
         }
-        return root
+        return response
     }
 
-    protected fun request(requester: Requester): Document = request(response(requester))
+    protected fun response(requester: Requester): Connection.Response
+            = response(connect(requester))
 
-    protected fun request(url: String) = request(Requester(url))
+    protected fun response(url: String) = response(Requester(url))
+
+    protected fun request(response: Connection.Response): Document
+            = response.parse()
+
+    protected fun request(requester: Requester): Document
+            = request(response(requester))
+
+    protected fun request(url: String)
+            = request(Requester(url))
 }

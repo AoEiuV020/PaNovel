@@ -25,11 +25,11 @@ class BiqugeTest {
         val genres = context.getGenres()
         genres[0].let {
             assertEquals("玄幻小说", it.name)
-            assertEquals("http://www.biqubao.com/xuanhuan/", it.requester.url)
+            assertEquals("https://www.biqubao.com/xuanhuan/", it.requester.url)
         }
         genres[genres.size - 1].let {
             assertEquals("全本小说", it.name)
-            assertEquals("http://www.biqubao.com/quanben/", it.requester.url)
+            assertEquals("https://www.biqubao.com/quanben/", it.requester.url)
         }
     }
 
