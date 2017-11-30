@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <cc.aoeiuv020.panovel.settings.ColorPickerPreference
+        android:key="chapter_color_default"
+        android:title="@string/chapter_color_default"
+        app:alphaSlider="true"
+        app:lightnessSlider="true"
+        app:wheelType="CIRCLE" />
+
+    <cc.aoeiuv020.panovel.settings.ColorPickerPreference
+        android:key="chapter_color_cached"
+        android:title="@string/chapter_color_cached"
+        app:alphaSlider="true"
+        app:lightnessSlider="true"
+        app:wheelType="CIRCLE" />
+
+    <cc.aoeiuv020.panovel.settings.ColorPickerPreference
+        android:key="chapter_color_read_at"
+        android:title="@string/chapter_color_read_at"
+        app:alphaSlider="true"
+        app:lightnessSlider="true"
+        app:wheelType="CIRCLE" />
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="auto_save"
+        android:title="@string/book_list_auto_save" />
+</PreferenceScreen>

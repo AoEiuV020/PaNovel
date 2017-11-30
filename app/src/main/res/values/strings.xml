@@ -57,7 +57,7 @@
 
     <string name="pref_header_general">全局设置</string>
     <string name="pref_header_read">阅读设置</string>
-    <string name="pref_book_list">书单设置</string>
+    <string name="pref_others">杂项</string>
     <string name="pref_cache_clear">清除缓存</string>
     <string name="pref_header_about">关于</string>
 
@@ -90,7 +90,7 @@
     <string name="add">添加</string>
     <string name="open_source_licenses">开源许可</string>
     <string name="library">库</string>
-    <string name="auto_save">自动保存</string>
+    <string name="book_list_auto_save">书单修改自动保存</string>
     <string name="ad_enabled">展示广告</string>
     <string name="full_screen_delay">全屏延迟</string>
     <string name="back_press_out_of_fullScreen">返回键退出全屏</string>
@@ -104,6 +104,10 @@
     <string name="confirm_clear">确认清除</string>
     <string name="removing">正在清除…%s</string>
     <string name="book_small_layout">书本小型布局</string>
+    <string name="chapter_color_default">默认章节颜色</string>
+    <string name="chapter_color_cached">已缓存章节颜色</string>
+    <string name="chapter_color_read_at">当前章节颜色</string>
+    <string name="scan">扫一扫</string>
 
 
 </resources>

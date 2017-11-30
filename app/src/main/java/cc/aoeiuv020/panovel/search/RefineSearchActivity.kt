@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.search
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -20,6 +22,8 @@ import kotlinx.android.synthetic.main.activity_refine_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
+
 
 class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     companion object {
@@ -70,10 +74,8 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         val name = intent.getStringExtra("name")
         val author = intent.getStringExtra("author")
         name?.let { nameNonnull ->
-            author?.let { authorNonnull ->
-                search(nameNonnull, authorNonnull)
-            } ?: search(nameNonnull)
-        } ?: searchView.post { searchView.showSearch() }
+            search(nameNonnull, author)
+        } ?: searchView.post { showSearch() }
 
         ad_view.adListener = object : AdListener() {
             override fun onAdLoaded() {
@@ -84,6 +86,11 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         if (Settings.adEnabled) {
             ad_view.loadAd(App.adRequest)
         }
+    }
+
+    private fun showSearch() {
+        searchView.showSearch()
+        searchView.setQuery(presenter.name, false)
     }
 
     override fun onPause() {
@@ -107,22 +114,31 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         super.onDestroy()
     }
 
-    private fun search(name: String, author: String) {
+    private fun search(name: String, author: String? = null) {
         title = name
         mAdapter.clear()
         mAdapter.openLoadMore()
         presenter.search(name, author)
     }
 
-    private fun search(name: String) {
-        title = name
-        mAdapter.clear()
-        mAdapter.openLoadMore()
-        presenter.search(name)
-    }
-
     private fun refresh() {
         mAdapter.notifyDataSetChanged()
+    }
+
+    private fun scan() {
+        val intent = Intent("com.google.zxing.client.android.SCAN")
+        intent.putExtra("SCAN_MODE", "QR_CODE_MODE")
+        try {
+            startActivityForResult(intent, 0)
+        } catch (_: ActivityNotFoundException) {
+            toast("没安装zxing二维码扫描器，")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        data?.extras?.getString("SCAN_RESULT")?.let {
+            search(it)
+        }
     }
 
     /**
@@ -161,7 +177,8 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> searchView.showSearch()
+            R.id.search -> showSearch()
+            R.id.scan -> scan()
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)
         }

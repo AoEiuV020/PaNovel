@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
+import android.content.res.ColorStateList
 import android.net.Uri
 
 /**
@@ -36,5 +37,22 @@ object Settings : LocalSource {
 
 
     var bookListAutoSave: Boolean by PrimitiveDelegate(true)
+
+    var chapterColorDefault: Int by PrimitiveDelegate(0xff000000.toInt())
+    var chapterColorCached: Int by PrimitiveDelegate(0xff00ff00.toInt())
+    var chapterColorReadAt: Int by PrimitiveDelegate(0xffff0000.toInt())
+    val chapterColorList
+        get() = ColorStateList(
+                arrayOf(
+                        intArrayOf(android.R.attr.state_checked),
+                        intArrayOf(-android.R.attr.state_checked, android.R.attr.state_selected),
+                        intArrayOf()
+                ),
+                intArrayOf(
+                        chapterColorReadAt,
+                        chapterColorCached,
+                        chapterColorDefault
+                )
+        )
 }
 

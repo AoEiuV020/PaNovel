@@ -122,6 +122,9 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
 class ColorPickerPreference : com.flask.colorpicker.ColorPickerPreference {
     companion object {
         private val map = mapOf<String, Pair<() -> Int, (Int) -> Unit>>(
+                "chapter_color_default" to ({ Settings.chapterColorDefault } to { v -> Settings.chapterColorDefault = v }),
+                "chapter_color_cached" to ({ Settings.chapterColorCached } to { v -> Settings.chapterColorCached = v }),
+                "chapter_color_read_at" to ({ Settings.chapterColorReadAt } to { v -> Settings.chapterColorReadAt = v }),
                 "background_color" to ({ Settings.backgroundColor } to { v -> Settings.backgroundColor = v }),
                 "text_color" to ({ Settings.textColor } to { v -> Settings.textColor = v })
         )

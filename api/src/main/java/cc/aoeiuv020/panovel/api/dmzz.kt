@@ -118,9 +118,9 @@ class Dmzz : NovelContext() {
             } else {
                 "http://q.dmzj.com" + it
             }
-            request(url).select("p").map {
+            request(url).select("p").dropLastWhile { it.className() == "zlist" }.map {
                 it.text().trim()
-            }.dropLastWhile(String::isBlank)
+            }.filter(String::isNotBlank)
         }.reduce { acc, list ->
             acc + list
         }

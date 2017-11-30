@@ -6,10 +6,7 @@ import android.widget.CheckedTextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.local.Cache
-import cc.aoeiuv020.panovel.local.Container
-import cc.aoeiuv020.panovel.local.Progress
-import cc.aoeiuv020.panovel.local.id
+import cc.aoeiuv020.panovel.local.*
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cn.lemon.view.adapter.BaseViewHolder
 import cn.lemon.view.adapter.RecyclerAdapter
@@ -39,6 +36,10 @@ class NovelChaptersAdapter(ctx: Context, private val novelItem: NovelItem) : Rec
 
     inner class ViewHolder(parent: ViewGroup?) : BaseViewHolder<NovelChapter>(parent, R.layout.novel_chapter_item) {
         private val nameTextView: CheckedTextView = itemView.name
+
+        init {
+            nameTextView.setTextColor(Settings.chapterColorList)
+        }
         override fun setData(chapter: NovelChapter) {
             super.setData(chapter)
             nameTextView.apply {

@@ -13,9 +13,9 @@
         android:title="@string/pref_header_read" />
 
     <header
-        android:fragment="cc.aoeiuv020.panovel.settings.BookListPreferenceFragment"
+        android:fragment="cc.aoeiuv020.panovel.settings.OthersPreferenceFragment"
         android:icon="@drawable/ic_read"
-        android:title="@string/pref_book_list" />
+        android:title="@string/pref_others" />
 
     <header
         android:fragment="cc.aoeiuv020.panovel.settings.CacheClearPreferenceFragment"
