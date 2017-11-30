@@ -6,6 +6,7 @@ import org.junit.Before
 import org.junit.Test
 
 /**
+ *
  * Created by AoEiuV020 on 2017.11.30-18:14:03.
  */
 class DmzzTest {
@@ -90,7 +91,7 @@ class DmzzTest {
     fun regex() {
         val regex = Regex("chapter_list\\[\\d*\\]\\[\\d*\\] = '<a href=\"([^\"]*)\".*>(\\S*)</a>'.*;")
         val str = """chapter_list[0][7] = '<a href="/2137/7832/61328.shtml" alt="后记" title="后记">后记</a>';"""
-        println(str.matches(regex))
+        assertTrue(str.matches(regex))
     }
 
     @Test
@@ -98,7 +99,10 @@ class DmzzTest {
         context.getNovelText(TextRequester("http://q.dmzj.com/2137/8856/78730.shtml")).textList.let {
             assertEquals("「等、等很久了吗？」", it.first())
             assertEquals("——我们头顶上那片照耀着北方大陆的璀璨星空，今天异常闪耀。", it.last())
-            assertEquals(1257, it.size)
+            assertEquals(629, it.size)
+            it.forEach {
+                println(it)
+            }
         }
     }
 }
