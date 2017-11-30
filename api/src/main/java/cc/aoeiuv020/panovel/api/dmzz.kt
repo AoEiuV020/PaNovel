@@ -49,7 +49,7 @@ class Dmzz : NovelContext() {
         }
         return arr.map { dmzz ->
             val info = dmzz.mIntro ?: dmzz.description ?: null.toString()
-            NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author, "http://q.dmzj.com" + dmzz.lnovelUrl), info)
+            NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author, "http://q.dmzj.com" + dmzz.lnovelUrl.removePrefix("..")), info)
         }
     }
 
