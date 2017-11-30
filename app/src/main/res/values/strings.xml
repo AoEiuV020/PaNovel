@@ -107,6 +107,7 @@
     <string name="chapter_color_default">默认章节颜色</string>
     <string name="chapter_color_cached">已缓存章节颜色</string>
     <string name="chapter_color_read_at">当前章节颜色</string>
+    <string name="scan">扫一扫</string>
 
 
 </resources>

@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.search
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -20,6 +22,8 @@ import kotlinx.android.synthetic.main.activity_refine_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
+
 
 class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     companion object {
@@ -125,6 +129,22 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         mAdapter.notifyDataSetChanged()
     }
 
+    private fun scan() {
+        val intent = Intent("com.google.zxing.client.android.SCAN")
+        intent.putExtra("SCAN_MODE", "QR_CODE_MODE")
+        try {
+            startActivityForResult(intent, 0)
+        } catch (_: ActivityNotFoundException) {
+            toast("没安装zxing二维码扫描器，")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        data?.extras?.getString("SCAN_RESULT")?.let {
+            search(it)
+        }
+    }
+
     /**
      * 刷新列表，同时刷新小说章节信息，
      */
@@ -162,6 +182,7 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.search -> searchView.showSearch()
+            R.id.scan -> scan()
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)
         }

@@ -8,7 +8,9 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.os.BaseBundle
 import android.os.Build
+import android.os.Bundle
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -115,3 +117,8 @@ fun EditText.showKeyboard() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.showSoftInput(this, 0)
 }
+
+@Suppress("UNCHECKED_CAST")
+fun Bundle.toMap(): Map<String, Any?>
+        = BaseBundle::class.java.getDeclaredField("mMap").apply { isAccessible = true }
+        .get(this) as Map<String, *>
