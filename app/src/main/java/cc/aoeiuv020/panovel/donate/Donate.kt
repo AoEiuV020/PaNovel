@@ -38,11 +38,11 @@ sealed class Donate {
      */
     class Alipay : Donate() {
         companion object {
-            private val payCode = "fkx01135qsj7nybpr0pk01"
+            private val payCode = "FKX01135QSJ7NYBPR0PK01"
         }
 
         override fun start(context: Context) {
-            context.browse("https://qr.alipay.com/$payCode")
+            context.browse("https://QR.ALIPAY.COM/$payCode")
         }
     }
 
