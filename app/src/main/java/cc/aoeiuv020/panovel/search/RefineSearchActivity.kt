@@ -74,10 +74,8 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         val name = intent.getStringExtra("name")
         val author = intent.getStringExtra("author")
         name?.let { nameNonnull ->
-            author?.let { authorNonnull ->
-                search(nameNonnull, authorNonnull)
-            } ?: search(nameNonnull)
-        } ?: searchView.post { searchView.showSearch() }
+            search(nameNonnull, author)
+        } ?: searchView.post { showSearch() }
 
         ad_view.adListener = object : AdListener() {
             override fun onAdLoaded() {
@@ -88,6 +86,11 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         if (Settings.adEnabled) {
             ad_view.loadAd(App.adRequest)
         }
+    }
+
+    private fun showSearch() {
+        searchView.showSearch()
+        searchView.setQuery(presenter.name, false)
     }
 
     override fun onPause() {
@@ -111,18 +114,11 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         super.onDestroy()
     }
 
-    private fun search(name: String, author: String) {
+    private fun search(name: String, author: String? = null) {
         title = name
         mAdapter.clear()
         mAdapter.openLoadMore()
         presenter.search(name, author)
-    }
-
-    private fun search(name: String) {
-        title = name
-        mAdapter.clear()
-        mAdapter.openLoadMore()
-        presenter.search(name)
     }
 
     private fun refresh() {
@@ -181,7 +177,7 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> searchView.showSearch()
+            R.id.search -> showSearch()
             R.id.scan -> scan()
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)

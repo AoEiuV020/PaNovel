@@ -17,18 +17,13 @@ import org.jetbrains.anko.verbose
  * Created by AoEiuV020 on 2017.10.22-18:18:58.
  */
 class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
-    private var name: String? = null
+    var name: String? = null
     private var author: String? = null
 
-    fun search(name: String, author: String) {
+    fun search(name: String, author: String? = null) {
         this.name = name
         this.author = author
         searchActual(name, author)
-    }
-
-    fun search(name: String) {
-        this.name = name
-        searchActual(name, null)
     }
 
     private fun searchActual(name: String, author: String?) {
