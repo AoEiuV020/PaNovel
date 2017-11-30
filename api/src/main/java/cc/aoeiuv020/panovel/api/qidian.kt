@@ -276,8 +276,8 @@ class Qidian : NovelContext() {
     override fun check(url: String): Boolean {
         return super.check(url)
                 || url.startsWith("https://read.qidian.com/")
-                || url.startsWith("https://book.qidian.com/info/")
-                || url.startsWith("https://vipreader.qidian.com/chapter/")
+                || url.startsWith("https://book.qidian.com/")
+                || url.startsWith("https://vipreader.qidian.com/")
                 || url.startsWith("https://m.qidian.com/book/")
     }
 
