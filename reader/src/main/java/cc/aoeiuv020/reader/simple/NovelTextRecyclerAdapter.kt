@@ -1,14 +1,13 @@
-package cc.aoeiuv020.panovel.text
+package cc.aoeiuv020.reader.simple
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.local.Settings
-import cc.aoeiuv020.panovel.util.setHeight
-import kotlinx.android.synthetic.main.novel_text_item.view.*
+import cc.aoeiuv020.reader.R
+import cc.aoeiuv020.reader.setHeight
+import kotlinx.android.synthetic.main.simple_text_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.dip
@@ -17,22 +16,23 @@ import org.jetbrains.anko.dip
  *
  * Created by AoEiuV020 on 2017.10.12-14:55:56.
  */
-class NovelTextRecyclerAdapter(private val ctx: NovelTextActivity) : RecyclerView.Adapter<NovelTextRecyclerAdapter.ViewHolder>(), AnkoLogger {
+internal class NovelTextRecyclerAdapter(private val reader: SimpleReader) : RecyclerView.Adapter<NovelTextRecyclerAdapter.ViewHolder>(), AnkoLogger {
+    private val ctx get() = reader.ctx
     private var chapterName: String = ""
     var data: List<String> = emptyList()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-    private var mTextSize = Settings.textSize
-    private var mLineSpacing = Settings.lineSpacing
-    private var mParagraphSpacing = Settings.paragraphSpacing
-    private var mTextColor = Settings.textColor
-    private var mLeftSpacing = Settings.leftSpacing
-    private var mRightSpacing = Settings.rightSpacing
+    private val mTextSize get() = reader.config.textSize
+    private val mLineSpacing get() = reader.config.lineSpacing
+    private val mParagraphSpacing get() = reader.config.paragraphSpacing
+    private val mTextColor get() = reader.config.textColor
+    private val mLeftSpacing get() = reader.config.leftSpacing
+    private val mRightSpacing get() = reader.config.rightSpacing
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(ctx).inflate(R.layout.novel_text_item, parent, false)
+        val view = LayoutInflater.from(ctx).inflate(R.layout.simple_text_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -93,31 +93,5 @@ class NovelTextRecyclerAdapter(private val ctx: NovelTextActivity) : RecyclerVie
             setText("　　" + text)
         }
 
-    }
-
-    fun setMargins(left: Int? = null, right: Int? = null) {
-        mLeftSpacing = left ?: mLeftSpacing
-        mRightSpacing = right ?: mRightSpacing
-        notifyDataSetChanged()
-    }
-
-    fun setTextSize(size: Int) {
-        this.mTextSize = size
-        notifyDataSetChanged()
-    }
-
-    fun setLineSpacing(size: Int) {
-        this.mLineSpacing = size
-        notifyDataSetChanged()
-    }
-
-    fun setParagraphSpacing(size: Int) {
-        this.mParagraphSpacing = size
-        notifyDataSetChanged()
-    }
-
-    fun setTextColor(color: Int) {
-        this.mTextColor = color
-        notifyDataSetChanged()
     }
 }

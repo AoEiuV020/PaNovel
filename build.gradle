@@ -13,6 +13,7 @@ buildscript {
         jsoup_version = '1.10.3'
         constraint_layout_version = '1.0.2'
         glide_version = '4.1.1'
+        rxjava_version = '2.1.3'
     }
     repositories {
         google()

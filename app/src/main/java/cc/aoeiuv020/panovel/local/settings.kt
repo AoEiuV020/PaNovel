@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.local
 
 import android.content.res.ColorStateList
 import android.net.Uri
+import cc.aoeiuv020.reader.Config
 
 /**
  * 设置，
@@ -54,5 +55,18 @@ object Settings : LocalSource {
                         chapterColorDefault
                 )
         )
+
+    fun makeReaderConfig() = Config(
+            textSize,
+            lineSpacing,
+            paragraphSpacing,
+            leftSpacing,
+            topSpacing,
+            rightSpacing,
+            bottomSpacing,
+            textColor,
+            backgroundColor,
+            backgroundImage
+    )
 }
 

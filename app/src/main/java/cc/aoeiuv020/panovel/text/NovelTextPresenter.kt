@@ -9,6 +9,8 @@ import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.id
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.reader.Text
+import cc.aoeiuv020.reader.TextRequester
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
@@ -21,11 +23,12 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * Created by AoEiuV020 on 2017.10.03-19:06:50.
  */
-class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelTextActivity>(), AnkoLogger {
+class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelTextActivity>(), TextRequester, AnkoLogger {
     private val context: NovelContext by lazy {
         NovelContext.getNovelContextByUrl(novelItem.requester.url)
     }
     private var refresh = false
+    private var chapterList: List<NovelChapter> = emptyList()
 
     fun start() {
         requestNovelDetail()
@@ -115,6 +118,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                 }
             }
         }.async().subscribe({ chapters ->
+            chapterList = chapters
             view?.showChaptersAsc(chapters)
         }, { e ->
             val message = "加载小说章节列表失败，"
@@ -123,36 +127,20 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
         }).let { addDisposable(it, 1) }
     }
 
-    fun subPresenter() = NTPresenter()
+    fun getRequester(): TextRequester
+            = this
 
-    inner class NTPresenter : Presenter<NovelTextViewHolder>() {
-        private var chapter: NovelChapter? = null
-        private var refresh = false
-        fun refresh() {
-            refresh = true
-            chapter?.let { requestNovelText(it) }
+    override fun request(index: Int, refresh: Boolean): Observable<Text>
+            = Observable.fromCallable {
+        val chapter = chapterList[index]
+        if (refresh) {
+            debug { "$this refresh $chapter" }
+            context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
+        } else {
+            debug { "$this load $chapter" }
+            Cache.text.get(novelItem, chapter.id)
+                    ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
         }
+    }.map { Text(it.textList) }.async()
 
-        fun requestNovelText(chapter: NovelChapter) {
-            this.chapter = chapter
-            Observable.fromCallable {
-                if (refresh) {
-                    debug { "$this refresh $chapter" }
-                    // 一次刷新所有正在展示的章节，每个presenter刷一次，
-                    refresh = false
-                    context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
-                } else {
-                    debug { "$this load $chapter" }
-                    Cache.text.get(novelItem, chapter.id)
-                            ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
-                }
-            }.async().subscribe({ novelText ->
-                view?.showText(novelText)
-            }, { e ->
-                val message = "加载小说页面失败，"
-                error(message, e)
-                view?.showError(message, e)
-            }).let { addDisposable(it) }
-        }
-    }
 }

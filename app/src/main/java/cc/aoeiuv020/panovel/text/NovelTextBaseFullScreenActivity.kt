@@ -24,7 +24,7 @@ import org.jetbrains.anko.verbose
 abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger {
     private val mHideHandler = Handler()
     private val mHidePart2Runnable = Runnable {
-        viewPager.systemUiVisibility =
+        flContent.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LOW_PROFILE or
                         View.SYSTEM_UI_FLAG_FULLSCREEN or
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -94,7 +94,7 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
 
     open protected fun show() {
         debug { "show" }
-        viewPager.systemUiVisibility =
+        flContent.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         mVisible = true
