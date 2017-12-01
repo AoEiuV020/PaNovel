@@ -1,4 +1,4 @@
-package cc.aoeiuv020.reader
+package cc.aoeiuv020.reader.simple
 
 import android.net.Uri
 
@@ -6,7 +6,7 @@ import android.net.Uri
  *
  * Created by AoEiuV020 on 2017.12.01-17:33:51.
  */
-class Config(
+class SimpleConfig(
         textSize: Int,
         lineSpacing: Int,
         paragraphSpacing: Int,
@@ -18,7 +18,7 @@ class Config(
         backgroundColor: Int,
         backgroundImage: Uri?
 ) {
-    internal var listener: ConfigChangedListener? = null
+    internal var listener: SimpleConfigChangedListener? = null
     var textSize: Int = textSize
         set(value) {
             field = value

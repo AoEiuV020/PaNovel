@@ -1,6 +1,7 @@
 package cc.aoeiuv020.reader
 
 import android.content.Context
+import cc.aoeiuv020.reader.simple.SimpleConfig
 
 /**
  *
@@ -21,14 +22,14 @@ interface INovelReader {
     var textProgress: Int
     val maxTextProgress: Int
 
-    val config: Config
+    val config: SimpleConfig
 
     fun refreshCurrentChapter()
 
     fun onDestroy()
 }
 
-abstract class BaseNovelReader(override var novel: Novel, override var requester: TextRequester, override val config: Config) : INovelReader {
+abstract class BaseNovelReader(override var novel: Novel, override var requester: TextRequester, override val config: SimpleConfig) : INovelReader {
     override var chapterChangeListener: ChapterChangeListener? = null
     override var menuListener: MenuListener? = null
     override var currentChapter: Int = 0
