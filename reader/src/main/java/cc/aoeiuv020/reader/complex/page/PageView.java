@@ -61,12 +61,12 @@ public class PageView extends View {
     private PageAnimation.OnPageChangeListener mPageAnimListener = new PageAnimation.OnPageChangeListener() {
         @Override
         public boolean hasPrev() {
-            return PageView.this.hasPrev();
+            return mPageLoader.prev();
         }
 
         @Override
         public boolean hasNext() {
-            return PageView.this.hasNext();
+            return mPageLoader.next();
         }
 
         @Override
@@ -141,69 +141,69 @@ public class PageView extends View {
         return mPageAnim.getBgBitmap();
     }
 
-
-    public boolean autoPrevPage() {
-        //滚动暂时不支持自动翻页
-        if (mPageAnim instanceof ScrollPageAnim) {
-            return false;
-        } else {
-            startPageAnim(PageAnimation.Direction.PRE);
-            return true;
-        }
-    }
-
-    public boolean autoNextPage() {
-        if (mPageAnim instanceof ScrollPageAnim) {
-            return false;
-        } else {
-            startPageAnim(PageAnimation.Direction.NEXT);
-            return true;
-        }
-    }
-
-    private void startPageAnim(PageAnimation.Direction direction) {
-        if (mTouchListener == null) return;
-        //是否正在执行动画
-        abortAnimation();
-        if (direction == PageAnimation.Direction.NEXT) {
-            int x = mViewWidth;
-            int y = mViewHeight;
-            //初始化动画
-            mPageAnim.setStartPoint(x, y);
-            //设置点击点
-            mPageAnim.setTouchPoint(x, y);
-            //设置方向
-            Boolean hasNext = hasNext();
-
-            mPageAnim.setDirection(direction);
-            if (!hasNext) {
-                return;
-            }
-        } else {
-            int x = 0;
-            int y = mViewHeight;
-            //初始化动画
-            mPageAnim.setStartPoint(x, y);
-            //设置点击点
-            mPageAnim.setTouchPoint(x, y);
-            mPageAnim.setDirection(direction);
-            //设置方向方向
-            Boolean hashPrev = hasPrev();
-            if (!hashPrev) {
-                return;
-            }
-        }
-        mPageAnim.startAnim();
-        this.postInvalidate();
-    }
+//
+//    public boolean autoPrevPage() {
+//        //滚动暂时不支持自动翻页
+//        if (mPageAnim instanceof ScrollPageAnim) {
+//            return false;
+//        } else {
+//            startPageAnim(PageAnimation.Direction.PRE);
+//            return true;
+//        }
+//    }
+//
+//    public boolean autoNextPage() {
+//        if (mPageAnim instanceof ScrollPageAnim) {
+//            return false;
+//        } else {
+//            startPageAnim(PageAnimation.Direction.NEXT);
+//            return true;
+//        }
+//    }
+//
+//    private void startPageAnim(PageAnimation.Direction direction) {
+//        if (mTouchListener == null) return;
+//        //是否正在执行动画
+//        abortAnimation();
+//        if (direction == PageAnimation.Direction.NEXT) {
+//            int x = mViewWidth;
+//            int y = mViewHeight;
+//            //初始化动画
+//            mPageAnim.setStartPoint(x, y);
+//            //设置点击点
+//            mPageAnim.setTouchPoint(x, y);
+//            //设置方向
+//            Boolean hasNext = hasNext();
+//
+//            mPageAnim.setDirection(direction);
+//            if (!hasNext) {
+//                return;
+//            }
+//        } else {
+//            int x = 0;
+//            int y = mViewHeight;
+//            //初始化动画
+//            mPageAnim.setStartPoint(x, y);
+//            //设置点击点
+//            mPageAnim.setTouchPoint(x, y);
+//            mPageAnim.setDirection(direction);
+//            //设置方向方向
+//            Boolean hashPrev = hasPrev();
+//            if (!hashPrev) {
+//                return;
+//            }
+//        }
+//        mPageAnim.startAnim();
+//        this.postInvalidate();
+//    }
 
     public void setBgColor(int color) {
         mBgColor = color;
     }
-
-    public void canTouchable(boolean touchable) {
-        canTouch = touchable;
-    }
+//
+//    public void canTouchable(boolean touchable) {
+//        canTouch = touchable;
+//    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -265,32 +265,32 @@ public class PageView extends View {
         }
         return true;
     }
-
-    //判断是否下一页存在
-    private boolean hasNext() {
-        Boolean hasNext = false;
-        if (mTouchListener != null) {
-            hasNext = mTouchListener.nextPage();
-            //加载下一页
-            if (hasNext) {
-                hasNext = mPageLoader.next();
-            }
-        }
-        return hasNext;
-    }
-
-    //判断是否存在上一页
-    private boolean hasPrev() {
-        Boolean hasPrev = false;
-        if (mTouchListener != null) {
-            hasPrev = mTouchListener.prePage();
-            //加载下一页
-            if (hasPrev) {
-                hasPrev = mPageLoader.prev();
-            }
-        }
-        return hasPrev;
-    }
+//
+//    //判断是否下一页存在
+//    private boolean hasNext() {
+//        Boolean hasNext = false;
+//        if (mTouchListener != null) {
+//            hasNext = mTouchListener.nextPage();
+//            //加载下一页
+//            if (hasNext) {
+//                hasNext = mPageLoader.next();
+//            }
+//        }
+//        return hasNext;
+//    }
+//
+//    //判断是否存在上一页
+//    private boolean hasPrev() {
+//        Boolean hasPrev = false;
+//        if (mTouchListener != null) {
+//            hasPrev = mTouchListener.prePage();
+//            //加载下一页
+//            if (hasPrev) {
+//                hasPrev = mPageLoader.prev();
+//            }
+//        }
+//        return hasPrev;
+//    }
 
     @Override
     public void computeScroll() {
@@ -298,19 +298,19 @@ public class PageView extends View {
         mPageAnim.scrollAnim();
         super.computeScroll();
     }
-
-    //如果滑动状态没有停止就取消状态，重新设置Anim的触碰点
-    public void abortAnimation() {
-        mPageAnim.abortAnim();
-    }
-
-    public boolean isPrepare() {
-        return isPrepare;
-    }
-
-    public boolean isRunning() {
-        return mPageAnim.isRunning();
-    }
+//
+//    //如果滑动状态没有停止就取消状态，重新设置Anim的触碰点
+//    public void abortAnimation() {
+//        mPageAnim.abortAnim();
+//    }
+//
+//    public boolean isPrepare() {
+//        return isPrepare;
+//    }
+//
+//    public boolean isRunning() {
+//        return mPageAnim.isRunning();
+//    }
 
     public void setTouchListener(TouchListener mTouchListener) {
         this.mTouchListener = mTouchListener;

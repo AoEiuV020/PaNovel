@@ -43,7 +43,6 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
 
     init {
         config.listener = this
-        pageView.pageLoader = loader
         loader.apply {
             setOnPageChangeListener(object : PageLoader.OnPageChangeListener {
                 override fun onChapterChange(pos: Int) {
@@ -56,7 +55,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
                 }
 
                 override fun onPageCountChange(count: Int) {
-                    maxTextProgress = count - 1
+                    maxTextProgress = count
                 }
 
                 override fun onPageChange(pos: Int) {
