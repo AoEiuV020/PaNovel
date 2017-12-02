@@ -60,7 +60,7 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
             AnimMode.COVER -> CoverPageAnim(w, h, this, listener)
             AnimMode.SLIDE -> SlidePageAnim(w, h, this, listener)
             AnimMode.NONE -> NonePageAnim(w, h, this, listener)
-            AnimMode.SCROLL -> ScrollPageAnim(w, h, 0, 0, this, listener)
+            AnimMode.SCROLL -> ScrollPageAnim(w, h, 50, 50, this, listener)
         }
     }
 

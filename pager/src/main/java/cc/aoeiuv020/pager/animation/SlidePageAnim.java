@@ -35,16 +35,16 @@ public class SlidePageAnim extends HorizonPageAnim {
         switch (mDirection) {
             case NEXT:
                 //左半边的剩余区域
-                dis = (int) (mScreenWidth - mStartX + mTouchX);
-                if (dis > mScreenWidth) {
-                    dis = mScreenWidth;
+                dis = (int) (mBackgroundWidth - mStartX + mTouchX);
+                if (dis > mBackgroundWidth) {
+                    dis = mBackgroundWidth;
                 }
                 //计算bitmap截取的区域
-                mSrcRect.left = mScreenWidth - dis;
+                mSrcRect.left = mBackgroundWidth - dis;
                 //计算bitmap在canvas显示的区域
                 mDestRect.right = dis;
                 //计算下一页截取的区域
-                mNextSrcRect.right = mScreenWidth - dis;
+                mNextSrcRect.right = mBackgroundWidth - dis;
                 //计算下一页在canvas显示的区域
                 mNextDestRect.left = dis;
 
@@ -57,11 +57,11 @@ public class SlidePageAnim extends HorizonPageAnim {
                     dis = 0;
                     mStartX = mTouchX;
                 }
-                mSrcRect.left = mScreenWidth - dis;
+                mSrcRect.left = mBackgroundWidth - dis;
                 mDestRect.right = dis;
 
                 //计算下一页截取的区域
-                mNextSrcRect.right = mScreenWidth - dis;
+                mNextSrcRect.right = mBackgroundWidth - dis;
                 //计算下一页在canvas显示的区域
                 mNextDestRect.left = dis;
 
@@ -78,25 +78,25 @@ public class SlidePageAnim extends HorizonPageAnim {
         switch (mDirection) {
             case NEXT:
                 if (isCancel) {
-                    int dis = (int) ((mScreenWidth - mStartX) + mTouchX);
-                    if (dis > mScreenWidth) {
-                        dis = mScreenWidth;
+                    int dis = (int) ((mBackgroundWidth - mStartX) + mTouchX);
+                    if (dis > mBackgroundWidth) {
+                        dis = mBackgroundWidth;
                     }
-                    dx = mScreenWidth - dis;
+                    dx = mBackgroundWidth - dis;
                 } else {
-                    dx = (int) -(mTouchX + (mScreenWidth - mStartX));
+                    dx = (int) -(mTouchX + (mBackgroundWidth - mStartX));
                 }
                 break;
             default:
                 if (isCancel) {
                     dx = (int) -Math.abs(mTouchX - mStartX);
                 } else {
-                    dx = (int) (mScreenWidth - (mTouchX - mStartX));
+                    dx = (int) (mBackgroundWidth - (mTouchX - mStartX));
                 }
                 break;
         }
         //滑动速度保持一致
-        int duration = (400 * Math.abs(dx)) / mScreenWidth;
+        int duration = (400 * Math.abs(dx)) / mBackgroundWidth;
         mScroller.startScroll((int) mTouchX, 0, dx, 0, duration);
     }
 }

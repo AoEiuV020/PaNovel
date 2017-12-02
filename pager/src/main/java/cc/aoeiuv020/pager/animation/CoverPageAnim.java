@@ -65,7 +65,7 @@ public class CoverPageAnim extends HorizonPageAnim {
 
     //添加阴影
     public void addShadow(int left, Canvas canvas) {
-        mBackShadowDrawableLR.setBounds(left, 0, left + 30, mScreenHeight);
+        mBackShadowDrawableLR.setBounds(left, 0, left + 30, mBackgroundHeight);
         mBackShadowDrawableLR.draw(canvas);
     }
 

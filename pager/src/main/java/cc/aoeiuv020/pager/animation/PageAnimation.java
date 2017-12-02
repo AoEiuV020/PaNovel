@@ -24,13 +24,13 @@ public abstract class PageAnimation {
 
     protected boolean isRunning = false;
 
-    //屏幕的尺寸
-    protected int mScreenWidth;
-    protected int mScreenHeight;
+    //背景的尺寸，也就是整个视图的尺寸
+    protected int mBackgroundWidth;
+    protected int mBackgroundHeight;
     //屏幕的间距
     protected int mMarginWidth;
     protected int mMarginHeight;
-    //视图的尺寸
+    //内容的尺寸，背景尺寸减margins,
     protected int mViewWidth;
     protected int mViewHeight;
     //起始点
@@ -48,14 +48,14 @@ public abstract class PageAnimation {
     }
 
     public PageAnimation(int w, int h, int marginWidth, int marginHeight, View view, OnPageChangeListener listener) {
-        mScreenWidth = w;
-        mScreenHeight = h;
+        mBackgroundWidth = w;
+        mBackgroundHeight = h;
 
         mMarginWidth = marginWidth;
         mMarginHeight = marginHeight;
 
-        mViewWidth = mScreenWidth - mMarginWidth * 2;
-        mViewHeight = mScreenHeight - mMarginHeight * 2;
+        mViewWidth = mBackgroundWidth - mMarginWidth * 2;
+        mViewHeight = mBackgroundHeight - mMarginHeight * 2;
 
         mView = view;
         mListener = listener;

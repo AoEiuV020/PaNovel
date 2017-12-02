@@ -57,7 +57,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
         super(w, h, view, listener);
         mPath0 = new Path();
         mPath1 = new Path();
-        mMaxLength = (float) Math.hypot(mScreenWidth, mScreenHeight);
+        mMaxLength = (float) Math.hypot(mBackgroundWidth, mBackgroundHeight);
         mPaint = new Paint();
 
         mPaint.setStyle(Paint.Style.FILL);
@@ -116,28 +116,28 @@ public class SimulationPageAnim extends HorizonPageAnim {
         if (isCancel) {
 
             if (mCornerX > 0 && mDirection.equals(Direction.NEXT)) {
-                dx = (int) (mScreenWidth - mTouchX);
+                dx = (int) (mBackgroundWidth - mTouchX);
             } else {
                 dx = -(int) mTouchX;
             }
 
             if (!mDirection.equals(Direction.NEXT)) {
-                dx = (int) -(mScreenWidth + mTouchX);
+                dx = (int) -(mBackgroundWidth + mTouchX);
             }
 
             if (mCornerY > 0) {
-                dy = (int) (mScreenHeight - mTouchY);
+                dy = (int) (mBackgroundHeight - mTouchY);
             } else {
                 dy = -(int) mTouchY; // 防止mTouchY最终变为0
             }
         } else {
             if (mCornerX > 0 && mDirection.equals(Direction.NEXT)) {
-                dx = -(int) (mScreenWidth + mTouchX);
+                dx = -(int) (mBackgroundWidth + mTouchX);
             } else {
-                dx = (int) (mScreenWidth - mTouchX + mScreenWidth);
+                dx = (int) (mBackgroundWidth - mTouchX + mBackgroundWidth);
             }
             if (mCornerY > 0) {
-                dy = (int) (mScreenHeight - mTouchY);
+                dy = (int) (mBackgroundHeight - mTouchY);
             } else {
                 dy = (int) (1 - mTouchY); // 防止mTouchY最终变为0
             }
@@ -152,15 +152,15 @@ public class SimulationPageAnim extends HorizonPageAnim {
         switch (direction) {
             case PRE:
                 //上一页滑动不出现对角
-                if (mStartX > mScreenWidth / 2) {
-                    calcCornerXY(mStartX, mScreenHeight);
+                if (mStartX > mBackgroundWidth / 2) {
+                    calcCornerXY(mStartX, mBackgroundHeight);
                 } else {
-                    calcCornerXY(mScreenWidth - mStartX, mScreenHeight);
+                    calcCornerXY(mBackgroundWidth - mStartX, mBackgroundHeight);
                 }
                 break;
             case NEXT:
-                if (mScreenWidth / 2 > mStartX) {
-                    calcCornerXY(mScreenWidth - mStartX, mStartY);
+                if (mBackgroundWidth / 2 > mStartX) {
+                    calcCornerXY(mBackgroundWidth - mStartX, mStartY);
                 }
                 break;
         }
@@ -176,11 +176,11 @@ public class SimulationPageAnim extends HorizonPageAnim {
     public void setTouchPoint(float x, float y) {
         super.setTouchPoint(x, y);
         //触摸y中间位置吧y变成屏幕高度
-        if ((mStartY > mScreenHeight / 3 && mStartY < mScreenHeight * 2 / 3) || mDirection.equals(Direction.PRE)) {
-            mTouchY = mScreenHeight;
+        if ((mStartY > mBackgroundHeight / 3 && mStartY < mBackgroundHeight * 2 / 3) || mDirection.equals(Direction.PRE)) {
+            mTouchY = mBackgroundHeight;
         }
 
-        if (mStartY > mScreenHeight / 3 && mStartY < mScreenHeight / 2 && mDirection.equals(Direction.NEXT)) {
+        if (mStartY > mBackgroundHeight / 3 && mStartY < mBackgroundHeight / 2 && mDirection.equals(Direction.NEXT)) {
             mTouchY = 1;
         }
     }
@@ -236,7 +236,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
      * @return
      */
     public boolean canDragOver() {
-        if (mTouchToCornerDis > mScreenWidth / 10)
+        if (mTouchToCornerDis > mBackgroundWidth / 10)
             return true;
         return false;
     }
@@ -287,7 +287,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
 
         mPaint.setColorFilter(mColorMatrixFilter);
         //对Bitmap进行取色
-        int color = bitmap.getPixel(1, 1);
+        int color = getMainColor(bitmap);
         //获取对应的三色
         int red = (color & 0xff0000) >> 16;
         int green = (color & 0x00ff00) >> 8;
@@ -319,6 +319,15 @@ public class SimulationPageAnim extends HorizonPageAnim {
                 (int) (mBezierStart1.y + mMaxLength));
         mFolderShadowDrawable.draw(canvas);
         canvas.restore();
+    }
+
+    /**
+     * 对Bitmap进行取色，
+     *
+     * @return 返回图片的主要颜色，
+     */
+    private int getMainColor(Bitmap bitmap) {
+        return bitmap.getPixel(1, 1);
     }
 
     /**
@@ -413,7 +422,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
         canvas.rotate(rotateDegrees, mBezierControl2.x, mBezierControl2.y);
         float temp;
         if (mBezierControl2.y < 0)
-            temp = mBezierControl2.y - mScreenHeight;
+            temp = mBezierControl2.y - mBackgroundHeight;
         else
             temp = mBezierControl2.y;
 
@@ -501,19 +510,19 @@ public class SimulationPageAnim extends HorizonPageAnim {
      * @param y
      */
     public void calcCornerXY(float x, float y) {
-        if (x <= mScreenWidth / 2) {
+        if (x <= mBackgroundWidth / 2) {
             mCornerX = 0;
         } else {
-            mCornerX = mScreenWidth;
+            mCornerX = mBackgroundWidth;
         }
-        if (y <= mScreenHeight / 2) {
+        if (y <= mBackgroundHeight / 2) {
             mCornerY = 0;
         } else {
-            mCornerY = mScreenHeight;
+            mCornerY = mBackgroundHeight;
         }
 
-        if ((mCornerX == 0 && mCornerY == mScreenHeight)
-                || (mCornerX == mScreenWidth && mCornerY == 0)) {
+        if ((mCornerX == 0 && mCornerY == mBackgroundHeight)
+                || (mCornerX == mBackgroundWidth && mCornerY == 0)) {
             mIsRTandLB = true;
         } else {
             mIsRTandLB = false;
@@ -544,13 +553,13 @@ public class SimulationPageAnim extends HorizonPageAnim {
 
         // 当mBezierStart1.x < 0或者mBezierStart1.x > 480时
         // 如果继续翻页，会出现BUG故在此限制
-        if (mTouchX > 0 && mTouchX < mScreenWidth) {
-            if (mBezierStart1.x < 0 || mBezierStart1.x > mScreenWidth) {
+        if (mTouchX > 0 && mTouchX < mBackgroundWidth) {
+            if (mBezierStart1.x < 0 || mBezierStart1.x > mBackgroundWidth) {
                 if (mBezierStart1.x < 0)
-                    mBezierStart1.x = mScreenWidth - mBezierStart1.x;
+                    mBezierStart1.x = mBackgroundWidth - mBezierStart1.x;
 
                 float f1 = Math.abs(mCornerX - mTouchX);
-                float f2 = mScreenWidth * f1 / mBezierStart1.x;
+                float f2 = mBackgroundWidth * f1 / mBezierStart1.x;
                 mTouchX = Math.abs(mCornerX - f2);
 
                 float f3 = Math.abs(mCornerX - mTouchX)

@@ -56,7 +56,7 @@ public class ScrollPageAnim extends PageAnimation {
     }
 
     private void initWidget() {
-        mBgBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight, Bitmap.Config.RGB_565);
+        mBgBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);
 
         mScrapViews = new ArrayDeque<>(2);
         for (int i = 0; i < 2; ++i) {
