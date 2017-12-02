@@ -11,10 +11,12 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val loader = NumberPagerDrawer()
-        val view = Pager(this).apply {
-            init(loader, AnimMode.SIMULATION, Margins(10, 20, 30, 40))
+        val loader = NumberPagerDrawer(this)
+        val pager = Pager(this).apply {
+            drawer = loader
+            animMode = AnimMode.SIMULATION
+            margins = Margins(10, 20, 30, 40)
         }
-        setContentView(view)
+        setContentView(pager)
     }
 }

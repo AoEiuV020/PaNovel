@@ -14,50 +14,57 @@ import org.jetbrains.anko.debug
  * Created by AoEiuV020 on 2017.12.02-17:58:54.
  */
 class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListener, AnkoLogger {
-    private lateinit var mAnim: PageAnimation
-    private var margins: Margins = Margins()
-    private var drawer: PagerDrawer? = null
-    private var direction = PagerDirection.NONE
+    private lateinit var mAnim: PagerAnimation
     private val listener = this
-    private var animMode: AnimMode = AnimMode.SIMULATION
-
-    /**
-     * 初始化，在view布局加载完成前调用，
-     */
-    fun init(drawer: PagerDrawer, animMode: AnimMode = AnimMode.SIMULATION, margins: Margins = Margins()) {
-        this.drawer = drawer
-        drawer.pager = this
-        this.animMode = animMode
-        this.margins = margins
-    }
+    private var direction = PagerDirection.NONE
+    var drawer: PagerDrawer = BlankPagerDrawer()
+    var margins: Margins = Margins()
+        set(value) {
+            field = value
+            resetAnim()
+        }
+    var animMode: AnimMode = AnimMode.SIMULATION
+        set(value) {
+            field = value
+            resetAnim()
+        }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetAnim(w, h)
     }
 
     override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {
-        drawer?.drawCurrentPage(backgroundCanvas, nextCanvas)
+        drawer.drawCurrentPage(backgroundCanvas, nextCanvas)
     }
 
     override fun hasPrev(): Boolean {
         debug { "prev" }
         direction = PagerDirection.PREV
-        return drawer?.scrollToPrev() ?: false
+        return drawer.scrollToPrev()
     }
 
     override fun hasNext(): Boolean {
         debug { "next" }
         direction = PagerDirection.NEXT
-        return drawer?.scrollToNext() ?: false
+        return drawer.scrollToNext()
     }
 
     override fun pageCancel() {
         debug { "cancel" }
         when (direction) {
-            PagerDirection.NEXT -> drawer?.scrollToPrev()
-            PagerDirection.PREV -> drawer?.scrollToNext()
+            PagerDirection.NEXT -> drawer.scrollToPrev()
+            PagerDirection.PREV -> drawer.scrollToNext()
             PagerDirection.NONE -> {
             }
+        }
+    }
+
+    /**
+     * 如果视图没初始化就不重置动画，
+     */
+    private fun resetAnim() {
+        if (width != 0 && height != 0) {
+            resetAnim(width, height)
         }
     }
 
@@ -72,7 +79,6 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
     }
 
     override fun onDraw(canvas: Canvas) {
-        debug { "onDraw <${canvas.width}, ${canvas.height}>" }
         mAnim.draw(canvas)
     }
 
@@ -82,8 +88,6 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val mPageAnim = mAnim
-        mPageAnim.onTouchEvent(event)
-        return true
+        return mAnim.onTouchEvent(event)
     }
 }

@@ -8,13 +8,15 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
+import cc.aoeiuv020.pager.PagerAnimation;
+
 /**
  * Created by newbiechen on 17-7-24.
  * 翻页动画抽象类
  */
 
 @SuppressWarnings("All")
-public abstract class PageAnimation {
+public abstract class PageAnimation implements PagerAnimation {
     //正在使用的View
     protected View mView;
     //滑动装置

@@ -1,17 +1,19 @@
 package cc.aoeiuv020.pager.test
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import cc.aoeiuv020.pager.PagerDrawer
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.sp
 
 /**
  *
  * Created by AoEiuV020 on 2017.12.02-17:58:54.
  */
-class NumberPagerDrawer : PagerDrawer(), AnkoLogger {
+class NumberPagerDrawer(context: Context) : PagerDrawer, AnkoLogger {
     private var n = 0
     private val strokePaint = Paint().apply {
         style = Paint.Style.STROKE
@@ -19,7 +21,7 @@ class NumberPagerDrawer : PagerDrawer(), AnkoLogger {
     }
     private val textPaint = Paint().apply {
         color = 0xffff0000.toInt()
-        textSize = 70f
+        textSize = context.sp(70).toFloat()
     }
 
     private fun drawBackground(canvas: Canvas) {
