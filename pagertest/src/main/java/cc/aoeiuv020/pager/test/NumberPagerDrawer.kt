@@ -48,6 +48,7 @@ class NumberPagerDrawer : PagerDrawer() {
     }
 
     override fun drawPrevPage(background: Canvas, content: Canvas): Boolean {
+        if (n < -5) return false
         drawBackground(background)
         n--
         drawNumber(content)
@@ -55,6 +56,7 @@ class NumberPagerDrawer : PagerDrawer() {
     }
 
     override fun drawNextPage(background: Canvas, content: Canvas): Boolean {
+        if (n > 5) return false
         drawBackground(background)
         n++
         drawNumber(content)
