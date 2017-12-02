@@ -1,1 +1,1 @@
-include ':app', ':RefreshRecyclerView', ':api', 'reader'
+include ':app', ':RefreshRecyclerView', ':api', ':pager', ':pagertest', 'reader'
