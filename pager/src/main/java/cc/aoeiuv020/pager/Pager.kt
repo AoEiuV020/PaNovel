@@ -36,7 +36,7 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
     }
 
     override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {
-        drawer?.drawFirstPage(backgroundCanvas, nextCanvas)
+        drawer?.drawCurrentPage(backgroundCanvas, nextCanvas)
     }
 
     override fun drawPrev(backgroundCanvas: Canvas, nextCanvas: Canvas): Boolean {

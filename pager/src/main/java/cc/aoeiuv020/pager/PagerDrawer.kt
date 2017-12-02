@@ -9,7 +9,7 @@ import android.graphics.Canvas
 abstract class PagerDrawer {
     lateinit var pager: Pager
 
-    abstract fun drawFirstPage(background: Canvas, content: Canvas)
+    abstract fun drawCurrentPage(background: Canvas, content: Canvas)
 
     abstract fun drawPrevPage(background: Canvas, content: Canvas): Boolean
 

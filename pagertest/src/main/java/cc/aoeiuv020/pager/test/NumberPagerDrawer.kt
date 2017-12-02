@@ -42,7 +42,7 @@ class NumberPagerDrawer : PagerDrawer() {
         }
     }
 
-    override fun drawFirstPage(background: Canvas, content: Canvas) {
+    override fun drawCurrentPage(background: Canvas, content: Canvas) {
         drawBackground(background)
         drawNumber(content)
     }
