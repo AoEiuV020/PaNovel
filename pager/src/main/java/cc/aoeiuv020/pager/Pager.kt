@@ -3,8 +3,6 @@ package cc.aoeiuv020.pager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.view.MotionEvent
 import android.view.View
 import cc.aoeiuv020.pager.animation.*
@@ -21,13 +19,6 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
     private var direction = PagerDirection.NONE
     private val listener = this
     private var animMode: AnimMode = AnimMode.SIMULATION
-    private val backgroundCanvas get() = Canvas(mAnim.bgBitmap)
-    private val nextCanvas
-        get() = Canvas(mAnim.nextBitmap).apply {
-            if (mAnim is ScrollPageAnim) {
-                drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-            }
-        }
 
     /**
      * 初始化，在view布局加载完成前调用，
@@ -40,24 +31,21 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetAnim(w, h)
-        first()
     }
 
-    private fun first() {
+    override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {
         drawer?.drawFirstPage(backgroundCanvas, nextCanvas)
     }
 
-    override fun hasPrev(): Boolean {
+    override fun drawPrev(backgroundCanvas: Canvas, nextCanvas: Canvas): Boolean {
         debug { "prev" }
         direction = PagerDirection.PREV
-        (mAnim as? HorizonPageAnim)?.changePage()
         return drawer?.drawPrevPage(backgroundCanvas, nextCanvas) ?: false
     }
 
-    override fun hasNext(): Boolean {
+    override fun drawNext(backgroundCanvas: Canvas, nextCanvas: Canvas): Boolean {
         debug { "next" }
         direction = PagerDirection.NEXT
-        (mAnim as? HorizonPageAnim)?.changePage()
         return drawer?.drawNextPage(backgroundCanvas, nextCanvas) ?: false
     }
 

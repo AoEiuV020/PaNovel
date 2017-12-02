@@ -1,6 +1,5 @@
 package cc.aoeiuv020.pager.animation;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
@@ -132,12 +131,34 @@ public abstract class PageAnimation {
      *
      * @return
      */
-    public abstract Bitmap getBgBitmap();
+    public abstract Canvas getBgCanvas();
 
     /**
      * 获取内容显示版面
      */
-    public abstract Bitmap getNextBitmap();
+    public abstract Canvas getConentCanvas();
+
+    protected void drawCurrent() {
+        mListener.drawCurrent(getBgCanvas(), getConentCanvas());
+    }
+
+    protected boolean drawPrev() {
+        if (this instanceof HorizonPageAnim) {
+            ((HorizonPageAnim) this).changePage();
+        }
+        return mListener.drawPrev(getBgCanvas(), getConentCanvas());
+    }
+
+    protected boolean drawNext() {
+        if (this instanceof HorizonPageAnim) {
+            ((HorizonPageAnim) this).changePage();
+        }
+        return mListener.drawNext(getBgCanvas(), getConentCanvas());
+    }
+
+    void pageCancel() {
+        mListener.pageCancel();
+    }
 
     public enum Direction {
         NONE(true), NEXT(true), PRE(true), UP(false), DOWN(false);
@@ -150,9 +171,11 @@ public abstract class PageAnimation {
     }
 
     public interface OnPageChangeListener {
-        boolean hasPrev();
+        void drawCurrent(Canvas backgroundCanvas, Canvas nextCanvas);
 
-        boolean hasNext();
+        boolean drawPrev(Canvas backgroundCanvas, Canvas nextCanvas);
+
+        boolean drawNext(Canvas backgroundCanvas, Canvas nextCanvas);
 
         void pageCancel();
     }

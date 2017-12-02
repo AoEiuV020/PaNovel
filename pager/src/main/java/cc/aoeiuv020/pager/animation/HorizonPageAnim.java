@@ -41,6 +41,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
         //创建图片
         mCurBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
+
+        drawCurrent();
     }
 
     /**
@@ -98,7 +100,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                         if (x - mStartX > 0) {
                             //上一页的参数配置
                             isNext = false;
-                            boolean hasPrev = mListener.hasPrev();
+                            boolean hasPrev = drawPrev();
                             setDirection(Direction.PRE);
                             //如果上一页不存在
                             if (!hasPrev) {
@@ -109,7 +111,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                             //进行下一页的配置
                             isNext = true;
                             //判断是否下一页存在
-                            boolean hasNext = mListener.hasNext();
+                            boolean hasNext = drawNext();
                             //如果存在设置动画方向
                             setDirection(Direction.NEXT);
 
@@ -152,14 +154,14 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
                     if (isNext) {
                         //判断是否下一页存在
-                        boolean hasNext = mListener.hasNext();
+                        boolean hasNext = drawNext();
                         //设置动画方向
                         setDirection(Direction.NEXT);
                         if (!hasNext) {
                             return true;
                         }
                     } else {
-                        boolean hasPrev = mListener.hasPrev();
+                        boolean hasPrev = drawPrev();
                         setDirection(Direction.PRE);
                         if (!hasPrev) {
                             return true;
@@ -169,7 +171,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
                 // 是否取消翻页
                 if (isCancel) {
-                    mListener.pageCancel();
+                    pageCancel();
                 }
 
                 // 开启翻页效果
@@ -219,13 +221,21 @@ public abstract class HorizonPageAnim extends PageAnimation {
         }
     }
 
-    @Override
     public Bitmap getBgBitmap() {
         return mNextBitmap;
     }
 
-    @Override
     public Bitmap getNextBitmap() {
         return mNextBitmap;
+    }
+
+    @Override
+    public Canvas getBgCanvas() {
+        return new Canvas(getBgBitmap());
+    }
+
+    @Override
+    public Canvas getConentCanvas() {
+        return new Canvas(getNextBitmap());
     }
 }

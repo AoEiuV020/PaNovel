@@ -23,6 +23,7 @@ class NumberPagerDrawer : PagerDrawer() {
 
     private fun drawBackground(canvas: Canvas) {
         canvas.apply {
+            drawColor(0xffffffff.toInt())
             drawRect(Rect(0, 0, width, height), strokePaint.apply {
                 color = 0xff0000ff.toInt()
             })

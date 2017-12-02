@@ -2,6 +2,8 @@ package cc.aoeiuv020.pager.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -49,6 +51,8 @@ public class ScrollPageAnim extends PageAnimation {
         super(w, h, marginWidth, marginHeight, view, listener);
         //创建两个BitmapView
         initWidget();
+
+        drawCurrent();
     }
 
     private void initWidget() {
@@ -127,7 +131,7 @@ public class ScrollPageAnim extends PageAnimation {
                  * 所以就调用 pageCancel()。
                  */
                 if (!isNext) {
-                    mListener.pageCancel();
+                    pageCancel();
                     isNext = true;
                 }
             }
@@ -146,7 +150,7 @@ public class ScrollPageAnim extends PageAnimation {
             Bitmap cancelBitmap = mNextBitmap;
             mNextBitmap = view.bitmap;
             if (!isRefresh) {
-                boolean hasNext = mListener.hasNext(); //如果不成功则无法滑动
+                boolean hasNext = drawNext(); //如果不成功则无法滑动
 
                 //如果不存在next,则进行还原
                 if (!hasNext) {
@@ -207,7 +211,7 @@ public class ScrollPageAnim extends PageAnimation {
 
 
                 if (isNext) {
-                    mListener.pageCancel();
+                    pageCancel();
                     isNext = false;
                 }
             }
@@ -226,7 +230,7 @@ public class ScrollPageAnim extends PageAnimation {
             Bitmap cancelBitmap = mNextBitmap;
             mNextBitmap = view.bitmap;
             if (!isRefresh) {
-                boolean hasPrev = mListener.hasPrev(); //如果不成功则无法滑动
+                boolean hasPrev = drawPrev(); //如果不成功则无法滑动
                 //如果不存在next,则进行还原
                 if (!hasPrev) {
                     mNextBitmap = cancelBitmap;
@@ -388,14 +392,24 @@ public class ScrollPageAnim extends PageAnimation {
         }
     }
 
-    @Override
     public Bitmap getBgBitmap() {
         return mBgBitmap;
     }
 
-    @Override
     public Bitmap getNextBitmap() {
         return mNextBitmap;
+    }
+
+    @Override
+    public Canvas getBgCanvas() {
+        return new Canvas(getBgBitmap());
+    }
+
+    @Override
+    public Canvas getConentCanvas() {
+        Canvas canvas = new Canvas(getNextBitmap());
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        return canvas;
     }
 
     private static class BitmapView {
