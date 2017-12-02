@@ -54,7 +54,11 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private float mMaxLength;
 
     public SimulationPageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        super(w, h, view, listener);
+        this(w, h, new Margins(), view, listener);
+    }
+
+    public SimulationPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
+        super(w, h, margins, view, listener);
         mPath0 = new Path();
         mPath1 = new Path();
         mMaxLength = (float) Math.hypot(mBackgroundWidth, mBackgroundHeight);

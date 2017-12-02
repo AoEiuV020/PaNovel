@@ -15,6 +15,7 @@ import org.jetbrains.anko.debug
  */
 class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListener, AnkoLogger {
     private lateinit var mAnim: PageAnimation
+    private var margins: Margins = Margins()
     private var drawer: PagerDrawer? = null
     private var direction = PagerDirection.NONE
     private val listener = this
@@ -23,10 +24,11 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
     /**
      * 初始化，在view布局加载完成前调用，
      */
-    fun init(drawer: PagerDrawer, animMode: AnimMode = AnimMode.SIMULATION) {
+    fun init(drawer: PagerDrawer, animMode: AnimMode = AnimMode.SIMULATION, margins: Margins = Margins()) {
         this.drawer = drawer
         drawer.pager = this
         this.animMode = animMode
+        this.margins = margins
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -56,11 +58,11 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
 
     private fun resetAnim(w: Int, h: Int) {
         mAnim = when (animMode) {
-            AnimMode.SIMULATION -> SimulationPageAnim(w, h, this, listener)
-            AnimMode.COVER -> CoverPageAnim(w, h, this, listener)
-            AnimMode.SLIDE -> SlidePageAnim(w, h, this, listener)
-            AnimMode.NONE -> NonePageAnim(w, h, this, listener)
-            AnimMode.SCROLL -> ScrollPageAnim(w, h, 50, 50, this, listener)
+            AnimMode.SIMULATION -> SimulationPageAnim(w, h, margins, this, listener)
+            AnimMode.COVER -> CoverPageAnim(w, h, margins, this, listener)
+            AnimMode.SLIDE -> SlidePageAnim(w, h, margins, this, listener)
+            AnimMode.NONE -> NonePageAnim(w, h, margins, this, listener)
+            AnimMode.SCROLL -> ScrollPageAnim(w, h, margins, this, listener)
         }
     }
 

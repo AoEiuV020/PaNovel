@@ -44,18 +44,20 @@ public abstract class PageAnimation {
     protected float mLastY;
 
     public PageAnimation(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, 0, 0, view, listener);
+        this(w, h, new Margins(), view, listener);
     }
 
-    public PageAnimation(int w, int h, int marginWidth, int marginHeight, View view, OnPageChangeListener listener) {
+    public PageAnimation(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
         mBackgroundWidth = w;
         mBackgroundHeight = h;
 
-        mMarginWidth = marginWidth;
-        mMarginHeight = marginHeight;
+        mMarginWidth = margins.getLeft();
+        mMarginHeight = margins.getTop();
 
-        mViewWidth = mBackgroundWidth - mMarginWidth * 2;
-        mViewHeight = mBackgroundHeight - mMarginHeight * 2;
+        mViewWidth = mBackgroundWidth - margins.getLeft() - margins.getRight();
+        if (mViewWidth < 1) mViewWidth = 1;
+        mViewHeight = mBackgroundHeight - margins.getTop() - margins.getBottom();
+        if (mViewHeight < 1) mViewHeight = 1;
 
         mView = view;
         mListener = listener;

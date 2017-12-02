@@ -32,12 +32,11 @@ public abstract class HorizonPageAnim extends PageAnimation {
     private boolean noNext = false;
 
     public HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, 50, 50, view, listener);
+        this(w, h, new Margins(), view, listener);
     }
 
-    public HorizonPageAnim(int w, int h, int marginWidth, int marginHeight,
-                           View view, OnPageChangeListener listener) {
-        super(w, h, marginWidth, marginHeight, view, listener);
+    public HorizonPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
+        super(w, h, margins, view, listener);
         //创建图片
         mCurBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);

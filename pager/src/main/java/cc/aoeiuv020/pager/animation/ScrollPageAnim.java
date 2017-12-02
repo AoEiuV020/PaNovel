@@ -46,9 +46,9 @@ public class ScrollPageAnim extends PageAnimation {
     private Iterator<BitmapView> downIt;
     private Iterator<BitmapView> upIt;
 
-    public ScrollPageAnim(int w, int h, int marginWidth, int marginHeight,
+    public ScrollPageAnim(int w, int h, Margins margins,
                           View view, OnPageChangeListener listener) {
-        super(w, h, marginWidth, marginHeight, view, listener);
+        super(w, h, margins, view, listener);
         //创建两个BitmapView
         initWidget();
 

@@ -13,7 +13,11 @@ public class SlidePageAnim extends HorizonPageAnim {
     private Rect mSrcRect, mDestRect, mNextSrcRect, mNextDestRect;
 
     public SlidePageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        super(w, h, view, listener);
+        this(w, h, new Margins(), view, listener);
+    }
+
+    public SlidePageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
+        super(w, h, margins, view, listener);
         mSrcRect = new Rect(0, 0, mViewWidth, mViewHeight);
         mDestRect = new Rect(0, 0, mViewWidth, mViewHeight);
         mNextSrcRect = new Rect(0, 0, mViewWidth, mViewHeight);

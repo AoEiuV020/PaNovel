@@ -17,7 +17,11 @@ public class CoverPageAnim extends HorizonPageAnim {
     private GradientDrawable mBackShadowDrawableLR;
 
     public CoverPageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        super(w, h, view, listener);
+        this(w, h, new Margins(), view, listener);
+    }
+
+    public CoverPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
+        super(w, h, margins, view, listener);
         mSrcRect = new Rect(0, 0, mViewWidth, mViewHeight);
         mDestRect = new Rect(0, 0, mViewWidth, mViewHeight);
         int[] mBackShadowColors = new int[]{0x66000000, 0x00000000};

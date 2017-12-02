@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import cc.aoeiuv020.pager.AnimMode
 import cc.aoeiuv020.pager.Pager
+import cc.aoeiuv020.pager.animation.Margins
 
 class MainActivity : Activity() {
 
@@ -12,7 +13,7 @@ class MainActivity : Activity() {
 
         val loader = NumberPagerDrawer()
         val view = Pager(this).apply {
-            init(loader, AnimMode.SIMULATION)
+            init(loader, AnimMode.SIMULATION, Margins(10, 20, 30, 40))
         }
         setContentView(view)
     }
