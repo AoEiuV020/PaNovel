@@ -350,7 +350,7 @@ public class ScrollPageAnim extends PageAnimation {
         //绘制内容
         canvas.save();
         //移动位置
-        canvas.translate(0, mMarginHeight);
+        canvas.translate(mMarginWidth, mMarginHeight);
         //裁剪显示区域
         canvas.clipRect(0, 0, mViewWidth, mViewHeight);
 /*        //设置背景透明
