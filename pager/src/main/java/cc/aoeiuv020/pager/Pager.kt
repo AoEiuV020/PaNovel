@@ -39,21 +39,26 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
         drawer?.drawCurrentPage(backgroundCanvas, nextCanvas)
     }
 
-    override fun drawPrev(backgroundCanvas: Canvas, nextCanvas: Canvas): Boolean {
+    override fun hasPrev(): Boolean {
         debug { "prev" }
         direction = PagerDirection.PREV
-        return drawer?.drawPrevPage(backgroundCanvas, nextCanvas) ?: false
+        return drawer?.scrollToPrev() ?: false
     }
 
-    override fun drawNext(backgroundCanvas: Canvas, nextCanvas: Canvas): Boolean {
+    override fun hasNext(): Boolean {
         debug { "next" }
         direction = PagerDirection.NEXT
-        return drawer?.drawNextPage(backgroundCanvas, nextCanvas) ?: false
+        return drawer?.scrollToNext() ?: false
     }
 
     override fun pageCancel() {
         debug { "cancel" }
-        drawer?.cancel(direction)
+        when (direction) {
+            PagerDirection.NEXT -> drawer?.scrollToPrev()
+            PagerDirection.PREV -> drawer?.scrollToNext()
+            PagerDirection.NONE -> {
+            }
+        }
     }
 
     private fun resetAnim(w: Int, h: Int) {

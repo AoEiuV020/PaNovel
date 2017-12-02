@@ -148,14 +148,22 @@ public abstract class PageAnimation {
         if (this instanceof HorizonPageAnim) {
             ((HorizonPageAnim) this).changePage();
         }
-        return mListener.drawPrev(getBgCanvas(), getConentCanvas());
+        boolean hasPrev = mListener.hasPrev();
+        if (hasPrev) {
+            mListener.drawCurrent(getBgCanvas(), getConentCanvas());
+        }
+        return hasPrev;
     }
 
     protected boolean drawNext() {
         if (this instanceof HorizonPageAnim) {
             ((HorizonPageAnim) this).changePage();
         }
-        return mListener.drawNext(getBgCanvas(), getConentCanvas());
+        boolean hasNext = mListener.hasNext();
+        if (hasNext) {
+            mListener.drawCurrent(getBgCanvas(), getConentCanvas());
+        }
+        return hasNext;
     }
 
     void pageCancel() {
@@ -175,9 +183,9 @@ public abstract class PageAnimation {
     public interface OnPageChangeListener {
         void drawCurrent(Canvas backgroundCanvas, Canvas nextCanvas);
 
-        boolean drawPrev(Canvas backgroundCanvas, Canvas nextCanvas);
+        boolean hasPrev();
 
-        boolean drawNext(Canvas backgroundCanvas, Canvas nextCanvas);
+        boolean hasNext();
 
         void pageCancel();
     }

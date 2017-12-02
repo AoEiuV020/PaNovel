@@ -11,9 +11,7 @@ abstract class PagerDrawer {
 
     abstract fun drawCurrentPage(background: Canvas, content: Canvas)
 
-    abstract fun drawPrevPage(background: Canvas, content: Canvas): Boolean
+    abstract fun scrollToPrev(): Boolean
 
-    abstract fun drawNextPage(background: Canvas, content: Canvas): Boolean
-
-    abstract fun cancel(direction: PagerDirection)
+    abstract fun scrollToNext(): Boolean
 }

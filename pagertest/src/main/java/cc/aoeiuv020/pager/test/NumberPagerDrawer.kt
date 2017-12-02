@@ -3,7 +3,6 @@ package cc.aoeiuv020.pager.test
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
-import cc.aoeiuv020.pager.PagerDirection
 import cc.aoeiuv020.pager.PagerDrawer
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -50,30 +49,17 @@ class NumberPagerDrawer : PagerDrawer(), AnkoLogger {
         drawNumber(content)
     }
 
-    override fun drawPrevPage(background: Canvas, content: Canvas): Boolean {
-        debug { "drawPrevPage $n" }
+    override fun scrollToPrev(): Boolean {
+        debug { "scrollToPrev $n" }
         if (n < -5) return false
         n--
-        drawBackground(background)
-        drawNumber(content)
         return true
     }
 
-    override fun drawNextPage(background: Canvas, content: Canvas): Boolean {
-        debug { "drawNextPage $n" }
+    override fun scrollToNext(): Boolean {
+        debug { "scrollToNext $n" }
         if (n > 5) return false
         n++
-        drawBackground(background)
-        drawNumber(content)
         return true
-    }
-
-    override fun cancel(direction: PagerDirection) {
-        when (direction) {
-            PagerDirection.NEXT -> n--
-            PagerDirection.PREV -> n++
-            PagerDirection.NONE -> {
-            }
-        }
     }
 }

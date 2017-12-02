@@ -13,7 +13,7 @@ class MainActivity : Activity() {
 
         val loader = NumberPagerDrawer()
         val view = Pager(this).apply {
-            init(loader, AnimMode.SCROLL, Margins(10, 20, 30, 40))
+            init(loader, AnimMode.SIMULATION, Margins(10, 20, 30, 40))
         }
         setContentView(view)
     }
