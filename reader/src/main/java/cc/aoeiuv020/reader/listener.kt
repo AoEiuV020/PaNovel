@@ -1,6 +1,6 @@
 package cc.aoeiuv020.reader
 
-import io.reactivex.Observable
+import io.reactivex.Single
 
 /**
  *
@@ -8,7 +8,9 @@ import io.reactivex.Observable
  */
 
 interface TextRequester {
-    fun request(index: Int, refresh: Boolean): Observable<Text>
+    fun request(index: Int, refresh: Boolean = false): Text
+    fun lazyRequest(index: Int, refresh: Boolean = false): Single<Text>
+            = Single.fromCallable { request(index, refresh) }
 }
 
 /**

@@ -2,6 +2,8 @@ package cc.aoeiuv020.reader
 
 import android.content.Context
 import android.view.ViewGroup
+import cc.aoeiuv020.reader.complex.ComplexConfig
+import cc.aoeiuv020.reader.complex.ComplexReader
 import cc.aoeiuv020.reader.simple.SimpleConfig
 import cc.aoeiuv020.reader.simple.SimpleReader
 
@@ -13,4 +15,8 @@ object Readers {
     fun getSimpleReader(ctx: Context, novel: Novel, parent: ViewGroup, requester: TextRequester, config: SimpleConfig)
             : INovelReader
             = SimpleReader(ctx, novel, parent, requester, config)
+
+    fun getComplexReader(ctx: Context, novel: Novel, parent: ViewGroup, requester: TextRequester, config: ComplexConfig)
+            : INovelReader
+            = ComplexReader(ctx, novel, parent, requester, config)
 }

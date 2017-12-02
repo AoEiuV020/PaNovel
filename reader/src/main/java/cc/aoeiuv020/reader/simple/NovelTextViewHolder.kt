@@ -9,7 +9,10 @@ import cc.aoeiuv020.reader.R
 import cc.aoeiuv020.reader.Text
 import cc.aoeiuv020.reader.hide
 import cc.aoeiuv020.reader.show
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.simple_view_pager_item.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -52,7 +55,10 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
         ntrAdapter.clear()
         ntrAdapter.setChapterName(chapter.name)
         disposable?.dispose()
-        disposable = requester.request(index, refresh).subscribe({ novelText ->
+        disposable = Single.fromCallable {
+            requester.request(index, refresh)
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe({ novelText ->
             showText(novelText)
         }, { e ->
             val message = "获取小说文本失败，"

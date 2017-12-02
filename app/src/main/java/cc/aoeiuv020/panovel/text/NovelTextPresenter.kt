@@ -12,6 +12,7 @@ import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.reader.Text
 import cc.aoeiuv020.reader.TextRequester
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -130,17 +131,19 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     fun getRequester(): TextRequester
             = this
 
-    override fun request(index: Int, refresh: Boolean): Observable<Text>
-            = Observable.fromCallable {
+    override fun request(index: Int, refresh: Boolean): Text {
         val chapter = chapterList[index]
-        if (refresh) {
+        return if (refresh) {
             debug { "$this refresh $chapter" }
             context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
         } else {
             debug { "$this load $chapter" }
             Cache.text.get(novelItem, chapter.id)
                     ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
-        }
-    }.map { Text(it.textList) }.async()
+        }.let { Text(it.textList) }
+    }
 
+    override fun lazyRequest(index: Int, refresh: Boolean): Single<Text> {
+        return super.lazyRequest(index, refresh).async()
+    }
 }

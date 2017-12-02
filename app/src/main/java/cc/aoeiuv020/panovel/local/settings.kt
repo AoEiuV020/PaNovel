@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.local
 
 import android.content.res.ColorStateList
 import android.net.Uri
-import cc.aoeiuv020.reader.simple.SimpleConfig
+import cc.aoeiuv020.reader.complex.ComplexConfig
 
 /**
  * 设置，
@@ -56,7 +56,7 @@ object Settings : LocalSource {
                 )
         )
 
-    fun makeReaderConfig() = SimpleConfig(
+    fun makeReaderConfig() = ComplexConfig(
             textSize,
             lineSpacing,
             paragraphSpacing,
