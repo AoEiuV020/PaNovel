@@ -29,6 +29,9 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
             resetAnim()
         }
 
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetAnim(w, h)
     }
