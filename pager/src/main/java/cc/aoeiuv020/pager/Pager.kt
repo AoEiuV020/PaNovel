@@ -72,6 +72,7 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
     }
 
     override fun onDraw(canvas: Canvas) {
+        debug { "onDraw <${canvas.width}, ${canvas.height}>" }
         mAnim.draw(canvas)
     }
 

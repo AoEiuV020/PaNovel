@@ -237,6 +237,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     @Override
     public Canvas getConentCanvas() {
-        return new Canvas(getNextBitmap());
+        Canvas canvas = new Canvas(getNextBitmap());
+        canvas.translate(mMarginWidth, mMarginHeight);
+        canvas.scale(((float) mViewWidth) / mBackgroundWidth, ((float) mViewHeight) / mBackgroundHeight);
+        return canvas;
     }
 }

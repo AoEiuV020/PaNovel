@@ -23,6 +23,7 @@ class NumberPagerDrawer : PagerDrawer(), AnkoLogger {
     }
 
     private fun drawBackground(canvas: Canvas) {
+        debug { "drawBackground <${canvas.width}, ${canvas.height}>" }
         canvas.apply {
             drawColor(0xffffffff.toInt())
             drawRect(Rect(0, 0, width, height), strokePaint.apply {
@@ -35,6 +36,7 @@ class NumberPagerDrawer : PagerDrawer(), AnkoLogger {
     }
 
     private fun drawNumber(canvas: Canvas) {
+        debug { "drawNumber <${canvas.width}, ${canvas.height}>" }
         canvas.apply {
             drawRect(Rect(0, 0, width, height), strokePaint.apply {
                 color = 0xffff0000.toInt()

@@ -150,7 +150,7 @@ public abstract class PageAnimation {
             if (this instanceof HorizonPageAnim) {
                 ((HorizonPageAnim) this).changePage();
             }
-            mListener.drawCurrent(getBgCanvas(), getConentCanvas());
+            drawCurrent();
         }
         return hasPrev;
     }
@@ -161,7 +161,7 @@ public abstract class PageAnimation {
             if (this instanceof HorizonPageAnim) {
                 ((HorizonPageAnim) this).changePage();
             }
-            mListener.drawCurrent(getBgCanvas(), getConentCanvas());
+            drawCurrent();
         }
         return hasNext;
     }
