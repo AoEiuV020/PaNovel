@@ -145,22 +145,22 @@ public abstract class PageAnimation {
     }
 
     protected boolean drawPrev() {
-        if (this instanceof HorizonPageAnim) {
-            ((HorizonPageAnim) this).changePage();
-        }
         boolean hasPrev = mListener.hasPrev();
         if (hasPrev) {
+            if (this instanceof HorizonPageAnim) {
+                ((HorizonPageAnim) this).changePage();
+            }
             mListener.drawCurrent(getBgCanvas(), getConentCanvas());
         }
         return hasPrev;
     }
 
     protected boolean drawNext() {
-        if (this instanceof HorizonPageAnim) {
-            ((HorizonPageAnim) this).changePage();
-        }
         boolean hasNext = mListener.hasNext();
         if (hasNext) {
+            if (this instanceof HorizonPageAnim) {
+                ((HorizonPageAnim) this).changePage();
+            }
             mListener.drawCurrent(getBgCanvas(), getConentCanvas());
         }
         return hasNext;

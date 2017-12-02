@@ -86,6 +86,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 abortAnim();
                 break;
             case MotionEvent.ACTION_MOVE:
+                //是否存在下一章
+                noNext = false;
                 final int slop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
                 //判断是否移动了
                 if (!isMove) {
