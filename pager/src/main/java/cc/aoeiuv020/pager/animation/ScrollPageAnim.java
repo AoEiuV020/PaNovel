@@ -119,7 +119,7 @@ public class ScrollPageAnim extends PageAnimation {
                 //从Active中移除
                 downIt.remove();
                 //如果原先是从上加载，现在变成从下加载，则表示取消
-                /**
+                /*
                  * 滑动造成页面重复的问题：
                  * 这个问题产生的原因是这样的，代码是将下一个显示的页面，设置为 curPage ，即当前页。
                  * 那么如果上下滑动的时候，当前显示的是两个页面，那么第二个页面就是当前页。
@@ -154,6 +154,7 @@ public class ScrollPageAnim extends PageAnimation {
 
                 //如果不存在next,则进行还原
                 if (!hasNext) {
+                    isNext = false;
                     mNextBitmap = cancelBitmap;
                     for (BitmapView activeView : mActiveViews) {
                         activeView.top = 0;
@@ -233,6 +234,7 @@ public class ScrollPageAnim extends PageAnimation {
                 boolean hasPrev = drawPrev(); //如果不成功则无法滑动
                 //如果不存在next,则进行还原
                 if (!hasPrev) {
+                    isNext = true;
                     mNextBitmap = cancelBitmap;
                     for (BitmapView activeView : mActiveViews) {
                         activeView.top = 0;

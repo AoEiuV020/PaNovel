@@ -5,12 +5,14 @@ import android.graphics.Paint
 import android.graphics.Rect
 import cc.aoeiuv020.pager.PagerDirection
 import cc.aoeiuv020.pager.PagerDrawer
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 
 /**
  *
  * Created by AoEiuV020 on 2017.12.02-17:58:54.
  */
-class NumberPagerDrawer : PagerDrawer() {
+class NumberPagerDrawer : PagerDrawer(), AnkoLogger {
     private var n = 0
     private val strokePaint = Paint().apply {
         style = Paint.Style.STROKE
@@ -43,22 +45,25 @@ class NumberPagerDrawer : PagerDrawer() {
     }
 
     override fun drawCurrentPage(background: Canvas, content: Canvas) {
+        debug { "drawCurrentPage $n" }
         drawBackground(background)
         drawNumber(content)
     }
 
     override fun drawPrevPage(background: Canvas, content: Canvas): Boolean {
+        debug { "drawPrevPage $n" }
         if (n < -5) return false
-        drawBackground(background)
         n--
+        drawBackground(background)
         drawNumber(content)
         return true
     }
 
     override fun drawNextPage(background: Canvas, content: Canvas): Boolean {
+        debug { "drawNextPage $n" }
         if (n > 5) return false
-        drawBackground(background)
         n++
+        drawBackground(background)
         drawNumber(content)
         return true
     }
