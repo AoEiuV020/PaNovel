@@ -17,6 +17,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     protected Bitmap mCurBitmap;
     protected Bitmap mNextBitmap;
+    protected Bitmap mContentBitmap;
     //是否取消翻页
     protected boolean isCancel = false;
 
@@ -40,6 +41,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
         //创建图片
         mCurBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);
+        mContentBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.ARGB_8888);
 
         drawCurrent();
     }
@@ -226,8 +228,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
         return mNextBitmap;
     }
 
-    public Bitmap getNextBitmap() {
-        return mNextBitmap;
+    public Bitmap getContent() {
+        return mContentBitmap;
     }
 
     @Override
@@ -237,9 +239,10 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     @Override
     public Canvas getConentCanvas() {
-        Canvas canvas = new Canvas(getNextBitmap());
-        canvas.translate(mMarginWidth, mMarginHeight);
-        canvas.scale(((float) mViewWidth) / mBackgroundWidth, ((float) mViewHeight) / mBackgroundHeight);
-        return canvas;
+        return new Canvas(getContent());
+    }
+
+    public void copyContent(Canvas canvas) {
+        canvas.drawBitmap(mContentBitmap, mMarginWidth, mMarginHeight, null);
     }
 }

@@ -1,6 +1,8 @@
 package cc.aoeiuv020.pager.animation;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -141,7 +143,13 @@ public abstract class PageAnimation {
     public abstract Canvas getConentCanvas();
 
     protected void drawCurrent() {
-        mListener.drawCurrent(getBgCanvas(), getConentCanvas());
+        Canvas bgCanvas = getBgCanvas();
+        Canvas contentCanvas = getConentCanvas();
+        contentCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        mListener.drawCurrent(bgCanvas, getConentCanvas());
+        if (this instanceof HorizonPageAnim) {
+            ((HorizonPageAnim) this).copyContent(bgCanvas);
+        }
     }
 
     protected boolean drawPrev() {

@@ -2,8 +2,6 @@ package cc.aoeiuv020.pager.animation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -409,9 +407,7 @@ public class ScrollPageAnim extends PageAnimation {
 
     @Override
     public Canvas getConentCanvas() {
-        Canvas canvas = new Canvas(getNextBitmap());
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        return canvas;
+        return new Canvas(getNextBitmap());
     }
 
     private static class BitmapView {
