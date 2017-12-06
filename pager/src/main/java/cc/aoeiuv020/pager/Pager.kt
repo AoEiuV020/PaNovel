@@ -3,6 +3,7 @@ package cc.aoeiuv020.pager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import cc.aoeiuv020.pager.animation.*
@@ -13,8 +14,17 @@ import org.jetbrains.anko.debug
  *
  * Created by AoEiuV020 on 2017.12.02-17:58:54.
  */
-class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListener, AnkoLogger {
-    private lateinit var mAnim: PagerAnimation
+class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
+    constructor(context: Context)
+            : super(context)
+
+    constructor(context: Context, attrs: AttributeSet)
+            : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
+            : super(context, attrs, defStyleAttr)
+
+    private var mAnim: PagerAnimation? = null
     private val listener = this
     private var direction = PagerDirection.NONE
     var drawer: PagerDrawer = BlankPagerDrawer()
@@ -29,8 +39,6 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
             resetAnim()
         }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetAnim(w, h)
@@ -82,15 +90,15 @@ class Pager(context: Context) : View(context), PageAnimation.OnPageChangeListene
     }
 
     override fun onDraw(canvas: Canvas) {
-        mAnim.draw(canvas)
+        mAnim?.draw(canvas)
     }
 
     override fun computeScroll() {
-        mAnim.scrollAnim()
+        mAnim?.scrollAnim()
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return mAnim.onTouchEvent(event)
+        return mAnim?.onTouchEvent(event) ?: false
     }
 }
