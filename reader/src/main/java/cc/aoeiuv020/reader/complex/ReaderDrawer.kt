@@ -28,6 +28,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                         reader.config.animMode?.let { pager?.animMode = it }
                     }
                     else -> {
+                        pager?.margins = reader.config.margins
                         reset()
                         pager?.refresh()
                     }

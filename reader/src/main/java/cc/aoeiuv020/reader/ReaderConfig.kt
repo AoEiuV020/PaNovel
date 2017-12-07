@@ -2,6 +2,7 @@ package cc.aoeiuv020.reader
 
 import android.net.Uri
 import cc.aoeiuv020.pager.AnimMode
+import cc.aoeiuv020.pager.animation.Margins
 
 /**
  *
@@ -21,6 +22,9 @@ class ReaderConfig(
         animMode: AnimMode? = AnimMode.SIMULATION
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()
+    val margins: Margins
+        get() = Margins(leftSpacing, topSpacing, rightSpacing, bottomSpacing)
+
     var textSize: Int = textSize
         set(value) {
             field = value

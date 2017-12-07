@@ -29,6 +29,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
     override var textProgress: Int = 0
 
     init {
+        pageView.margins = config.margins
         pageView.drawer = drawer
         pageView.actionListener = object : Pager.ActionListener {
             override fun onCenterClick() {
@@ -45,6 +46,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
 
         }
         parent.addView(pageView)
+
     }
 
     override fun refreshCurrentChapter() {

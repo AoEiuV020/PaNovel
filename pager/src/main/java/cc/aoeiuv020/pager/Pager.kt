@@ -105,7 +105,8 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         if (width != 0 && height != 0) {
             drawer.attach(this,
                     Size(width, height),
-                    Size(width - margins.left - margins.right, height - margins.top - margins.bottom)
+                    Size(width - (margins.left + margins.right) * width / 100,
+                            height - (margins.top + margins.bottom) * height / 100)
             )
         }
     }
