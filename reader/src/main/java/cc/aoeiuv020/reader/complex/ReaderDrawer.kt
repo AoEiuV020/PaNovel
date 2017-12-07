@@ -65,7 +65,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         page.lines.forEach { line ->
             y += textPaint.textSize
             content.drawText(line, 0f, y, textPaint)
-            y += reader.config.lineSpacing
+            y += reader.ctx.dip(reader.config.lineSpacing)
         }
     }
 
