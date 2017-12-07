@@ -9,6 +9,7 @@ import android.view.View
 import cc.aoeiuv020.pager.animation.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.verbose
 
 /**
  *
@@ -74,7 +75,6 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             PagerDirection.NONE -> {
             }
         }
-        refresh()
     }
 
     fun refresh() {
@@ -111,6 +111,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     }
 
     override fun onDraw(canvas: Canvas) {
+        verbose { "onDraw" }
         mAnim?.draw(canvas)
     }
 

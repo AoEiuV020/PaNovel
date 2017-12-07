@@ -34,6 +34,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     }
 
     override fun drawCurrentPage(background: Canvas, content: Canvas) {
+        debug { "drawCurrentPage <$chapterIndex, $pageIndex>" }
         background.drawColor(reader.config.backgroundColor)
 
         if (pager == null) {
@@ -70,7 +71,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         page.lines.forEach { line ->
             y += textPaint.textSize.toInt()
-            debug { "draw height $y/${content.height}" }
+            verbose { "draw height $y/${content.height}" }
             when (line) {
                 is String -> content.drawText(line, 0f, y.toFloat(), textPaint)
                 is ParagraphSpacing -> y += paragraphSpacing
@@ -101,7 +102,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             var count: Int
             while (start < paragraph.length) {
                 height += textPaint.textSize.toInt() + lineSpacing
-                debug { "typesetting height $height/${contentSize.height}" }
+                verbose { "typesetting height $height/${contentSize.height}" }
                 if (height > contentSize.height) {
                     height = textPaint.textSize.toInt() + lineSpacing
                     debug { "add lines size ${lines.size}" }
