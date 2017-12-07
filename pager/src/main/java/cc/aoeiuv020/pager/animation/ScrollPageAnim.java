@@ -379,7 +379,6 @@ public class ScrollPageAnim extends PageAnimation {
             setTouchPoint(x, y);
             if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
                 isRunning = false;
-                refresh();
             }
             mView.postInvalidate();
         }
@@ -390,7 +389,6 @@ public class ScrollPageAnim extends PageAnimation {
         if (!mScroller.isFinished()) {
             mScroller.abortAnimation();
             isRunning = false;
-            refresh();
         }
     }
 
