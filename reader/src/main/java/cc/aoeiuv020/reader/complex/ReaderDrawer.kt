@@ -66,10 +66,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
 
         val page = pages[pageIndex]
-        var y = 0f
+        var y = 0
         page.lines.forEach { line ->
-            y += textPaint.textSize
-            content.drawText(line, 0f, y, textPaint)
+            y += textPaint.textSize.toInt()
+            debug { "draw height $y/${content.height}" }
+            content.drawText(line, 0f, y.toFloat(), textPaint)
             y += reader.ctx.dip(reader.config.lineSpacing)
         }
     }
@@ -95,8 +96,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             while (start < paragraph.length) {
                 // TODO 段间距没考虑，
                 height += textPaint.textSize.toInt() + reader.ctx.dip(reader.config.lineSpacing)
+                debug { "typesetting height $height/${contentSize.height}" }
                 if (height > contentSize.height) {
-                    height = 0
+                    height = textPaint.textSize.toInt() + reader.ctx.dip(reader.config.lineSpacing)
+                    debug { "add lines size ${lines.size}" }
                     pages.add(Page(ArrayList(lines)))
                     lines.clear()
                 }
