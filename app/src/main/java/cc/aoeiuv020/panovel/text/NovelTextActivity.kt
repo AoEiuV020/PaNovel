@@ -83,7 +83,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
         presenter = NovelTextPresenter(novelItem)
 
-        reader = Readers.getComplexReader(this, Novel(novelItem.name, novelItem.author), flContent, presenter.getRequester(), Settings.makeReaderConfig()).apply {
+        reader = Readers.getReader(this, Novel(novelItem.name, novelItem.author), flContent, presenter.getRequester(), Settings.makeReaderConfig()).apply {
             menuListener = object : MenuListener {
                 override fun hide() {
                     this@NovelTextActivity.hide()

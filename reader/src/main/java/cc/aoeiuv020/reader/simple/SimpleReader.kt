@@ -41,7 +41,7 @@ internal class SimpleReader(override var ctx: Context, novel: Novel, parent: Vie
         }
 
     init {
-        config.listener = this
+        config.listeners.add(this)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
                 menuListener?.hide()
@@ -69,45 +69,21 @@ internal class SimpleReader(override var ctx: Context, novel: Novel, parent: Vie
         ntpAdapter.refreshCurrentChapter()
     }
 
-    override fun onTextSizeChanged() {
-        ntpAdapter.notifyAllItemDataSetChanged()
+    override fun onConfigChanged(name: ReaderConfigName) {
+        when (name) {
+            ReaderConfigName.TextSize -> ntpAdapter.notifyAllItemDataSetChanged()
+            ReaderConfigName.TextColor -> ntpAdapter.notifyAllItemDataSetChanged()
+            ReaderConfigName.LineSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
+            ReaderConfigName.ParagraphSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
+            ReaderConfigName.LeftSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
+            ReaderConfigName.RightSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
+            ReaderConfigName.TopSpacing -> ntpAdapter.notifyAllItemMarginsChanged()
+            ReaderConfigName.BottomSpacing -> ntpAdapter.notifyAllItemMarginsChanged()
+            ReaderConfigName.BackgroundColor -> background.setBackgroundColor(config.backgroundColor)
+            ReaderConfigName.BackgroundImage -> background.setImageURI(config.backgroundImage)
+            else -> {
+            }
+        }
     }
-
-    override fun onTextColorChanged() {
-        ntpAdapter.notifyAllItemDataSetChanged()
-    }
-
-    override fun onBackgroundColorChanged() {
-        background.setBackgroundColor(config.backgroundColor)
-    }
-
-    override fun onBackgroundImageChanged() {
-        background.setImageURI(config.backgroundImage)
-    }
-
-    override fun onLineSpacingChanged() {
-        ntpAdapter.notifyAllItemDataSetChanged()
-    }
-
-    override fun onParagraphSpacingChanged() {
-        ntpAdapter.notifyAllItemDataSetChanged()
-    }
-
-    override fun onRightSpacingChanged() {
-        ntpAdapter.notifyAllItemDataSetChanged()
-    }
-
-    override fun onLeftSpacingChanged() {
-        ntpAdapter.notifyAllItemDataSetChanged()
-    }
-
-    override fun onTopSpacingChanged() {
-        ntpAdapter.notifyAllItemMarginsChanged()
-    }
-
-    override fun onBottomSpacingChanged() {
-        ntpAdapter.notifyAllItemMarginsChanged()
-    }
-
 }
 

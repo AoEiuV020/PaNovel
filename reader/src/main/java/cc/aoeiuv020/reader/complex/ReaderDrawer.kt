@@ -6,9 +6,7 @@ import android.text.TextPaint
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
-import cc.aoeiuv020.reader.Novel
-import cc.aoeiuv020.reader.Text
-import cc.aoeiuv020.reader.TextRequester
+import cc.aoeiuv020.reader.*
 import org.jetbrains.anko.*
 
 /**
@@ -22,9 +20,29 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     var chapterIndex = 0
     var pageIndex = 0
 
+    init {
+        reader.config.listeners.add(object : ConfigChangedListener {
+            override fun onConfigChanged(name: ReaderConfigName) {
+                when (name) {
+                    ReaderConfigName.AnimMode -> {
+                        reader.config.animMode?.let { pager?.animMode = it }
+                    }
+                    else -> {
+                        reset()
+                        pager?.refresh()
+                    }
+                }
+            }
+        })
+    }
+
     override fun attach(pager: Pager, backgroundSize: Size, contentSize: Size) {
         super.attach(pager, backgroundSize, contentSize)
 
+        reset()
+    }
+
+    private fun reset() {
         // 清空分页的缓存，
         pagesCache.evictAll()
 
@@ -61,6 +79,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return
         }
 
+        // 调小字体有可能出现页数变少，
+        if (pageIndex > pages.lastIndex) {
+            pageIndex = pages.lastIndex
+        }
+
         // 往上翻章节时pageIndex会是负数，表示倒数，
         while (pageIndex < 0) {
             pageIndex += pages.size
@@ -70,10 +93,12 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         var y = 0
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         page.lines.forEach { line ->
-            y += textPaint.textSize.toInt()
             verbose { "draw height $y/${content.height}" }
             when (line) {
-                is String -> content.drawText(line, 0f, y.toFloat(), textPaint)
+                is String -> {
+                    y += textPaint.textSize.toInt()
+                    content.drawText(line, 0f, y.toFloat(), textPaint)
+                }
                 is ParagraphSpacing -> y += paragraphSpacing
             }
             y += reader.ctx.dip(reader.config.lineSpacing)
@@ -96,15 +121,16 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val lines = mutableListOf<Any>()
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
+        val textHeight = textPaint.textSize.toInt()
         (listOf(chapter) + text.list).forEachIndexed { index, str ->
             val paragraph = if (index == 0) str else "　　" + str
             var start = 0
             var count: Int
             while (start < paragraph.length) {
-                height += textPaint.textSize.toInt() + lineSpacing
+                height += textHeight
                 verbose { "typesetting height $height/${contentSize.height}" }
                 if (height > contentSize.height) {
-                    height = textPaint.textSize.toInt() + lineSpacing
+                    height = textHeight
                     debug { "add lines size ${lines.size}" }
                     pages.add(Page(ArrayList(lines)))
                     lines.clear()
@@ -112,10 +138,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 count = textPaint.breakText(paragraph.substring(start), true, contentSize.width.toFloat(), null)
                 val line = paragraph.substring(start, start + count)
                 lines.add(line)
+                height += lineSpacing
                 start += count
             }
             height += paragraphSpacing
             lines.add(ParagraphSpacing(paragraphSpacing))
+        }
+        if (lines.isNotEmpty()) {
+            debug { "add lines size ${lines.size}" }
+            pages.add(Page(ArrayList(lines)))
         }
         debug { "pages size = ${pages.size}" }
         return pages

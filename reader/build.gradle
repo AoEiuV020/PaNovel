@@ -35,5 +35,5 @@ dependencies {
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
-    implementation project(':pager')
+    api project(':pager')
 }
