@@ -67,10 +67,14 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
         val page = pages[pageIndex]
         var y = 0
+        val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         page.lines.forEach { line ->
             y += textPaint.textSize.toInt()
             debug { "draw height $y/${content.height}" }
-            content.drawText(line, 0f, y.toFloat(), textPaint)
+            when (line) {
+                is String -> content.drawText(line, 0f, y.toFloat(), textPaint)
+                is ParagraphSpacing -> y += paragraphSpacing
+            }
             y += reader.ctx.dip(reader.config.lineSpacing)
         }
     }
@@ -88,17 +92,18 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     private fun typesetting(chapter: String, text: Text): List<Page> {
         val pages = mutableListOf<Page>()
         var height = 0
-        val lines = mutableListOf<String>()
+        val lines = mutableListOf<Any>()
+        val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
+        val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         (listOf(chapter) + text.list).forEachIndexed { index, str ->
             val paragraph = if (index == 0) str else "　　" + str
             var start = 0
             var count: Int
             while (start < paragraph.length) {
-                // TODO 段间距没考虑，
-                height += textPaint.textSize.toInt() + reader.ctx.dip(reader.config.lineSpacing)
+                height += textPaint.textSize.toInt() + lineSpacing
                 debug { "typesetting height $height/${contentSize.height}" }
                 if (height > contentSize.height) {
-                    height = textPaint.textSize.toInt() + reader.ctx.dip(reader.config.lineSpacing)
+                    height = textPaint.textSize.toInt() + lineSpacing
                     debug { "add lines size ${lines.size}" }
                     pages.add(Page(ArrayList(lines)))
                     lines.clear()
@@ -108,6 +113,8 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 lines.add(line)
                 start += count
             }
+            height += paragraphSpacing
+            lines.add(ParagraphSpacing(paragraphSpacing))
         }
         debug { "pages size = ${pages.size}" }
         return pages

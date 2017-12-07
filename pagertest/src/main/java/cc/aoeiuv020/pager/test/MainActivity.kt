@@ -17,8 +17,8 @@ class MainActivity : Activity() {
 
         val requester = object : TextRequester {
             override fun request(index: Int, refresh: Boolean): Text {
-                return Text(List(20) {
-                    List(it) {
+                return Text(List(10) {
+                    List(it + 1) {
                         "小说内容" + it
                     }.joinToString(";")
                 })
