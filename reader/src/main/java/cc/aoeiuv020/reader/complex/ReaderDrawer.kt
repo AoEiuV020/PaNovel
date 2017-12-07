@@ -106,13 +106,19 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     }
 
     private fun request(requestIndex: Int) {
-        val text = requester.request(requestIndex)
-        val pages = typesetting(reader.chapterList[requestIndex].name, text)
-        pagesCache.put(requestIndex, pages)
-        debug { "request result $requestIndex == $chapterIndex" }
-        if (requestIndex == chapterIndex) {
-            pager?.refresh()
-        }
+        requester.lazyRequest(requestIndex)
+                .subscribe({ text ->
+                    val pages = typesetting(reader.chapterList[requestIndex].name, text)
+                    pagesCache.put(requestIndex, pages)
+                    debug { "request result $requestIndex == $chapterIndex" }
+                    if (requestIndex == chapterIndex) {
+                        pager?.refresh()
+                    }
+                }, {
+                    //TODO 处理error,
+                    val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex].name}"
+                    error { message }
+                })
     }
 
     private fun typesetting(chapter: String, text: Text): List<Page> {
