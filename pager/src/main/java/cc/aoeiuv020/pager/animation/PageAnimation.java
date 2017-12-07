@@ -148,7 +148,7 @@ public abstract class PageAnimation implements PagerAnimation {
         Canvas bgCanvas = getBgCanvas();
         Canvas contentCanvas = getConentCanvas();
         contentCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        mListener.drawCurrent(bgCanvas, getConentCanvas());
+        mListener.drawCurrent(bgCanvas, contentCanvas);
         if (this instanceof HorizonPageAnim) {
             ((HorizonPageAnim) this).copyContent(bgCanvas);
         }

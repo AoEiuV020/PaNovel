@@ -25,7 +25,6 @@ class NumberPagerDrawer(context: Context) : PagerDrawer(), AnkoLogger {
     }
 
     private fun drawBackground(canvas: Canvas) {
-        debug { "drawBackground <${canvas.width}, ${canvas.height}>" }
         canvas.apply {
             drawColor(0xffffffff.toInt())
             drawRect(Rect(0, 0, width, height), strokePaint.apply {
@@ -38,7 +37,7 @@ class NumberPagerDrawer(context: Context) : PagerDrawer(), AnkoLogger {
     }
 
     private fun drawNumber(canvas: Canvas) {
-        debug { "drawNumber <${canvas.width}, ${canvas.height}>" }
+        info { "drawNumber <$n, $m>" }
         canvas.apply {
             drawRect(Rect(0, 0, width, height), strokePaint.apply {
                 color = 0xffff0000.toInt()
@@ -49,6 +48,7 @@ class NumberPagerDrawer(context: Context) : PagerDrawer(), AnkoLogger {
                 TimeUnit.SECONDS.sleep(1)
                 m = n * n
                 uiThread {
+                    info { "refresh <$n, $m>" }
                     pager?.refresh()
                 }
             }
