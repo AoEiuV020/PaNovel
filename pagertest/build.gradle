@@ -29,4 +29,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
     compile project(path: ':pager')
+    implementation project(':reader')
 }

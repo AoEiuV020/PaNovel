@@ -36,6 +36,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         set(value) {
             field = value
             resetAnim()
+            resetDrawer()
         }
     var animMode: AnimMode = AnimMode.SIMULATION
         set(value) {
@@ -44,8 +45,8 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        resetAnim(w, h)
         resetDrawer()
+        resetAnim(w, h)
     }
 
     override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {

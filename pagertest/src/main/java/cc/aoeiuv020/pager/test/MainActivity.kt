@@ -2,9 +2,9 @@ package cc.aoeiuv020.pager.test
 
 import android.app.Activity
 import android.os.Bundle
-import cc.aoeiuv020.pager.AnimMode
-import cc.aoeiuv020.pager.Pager
-import cc.aoeiuv020.pager.animation.Margins
+import android.widget.FrameLayout
+import cc.aoeiuv020.reader.*
+import cc.aoeiuv020.reader.complex.ComplexConfig
 import org.jetbrains.anko.ctx
 
 class MainActivity : Activity() {
@@ -12,11 +12,25 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val myDrawer = NumberPagerDrawer(ctx)
-        setContentView(Pager(this).apply {
-            drawer = myDrawer
-            animMode = AnimMode.SIMULATION
-            margins = Margins(10, 20, 30, 40)
-        })
+        val fl = FrameLayout(ctx)
+        setContentView(fl)
+
+        val requester = object : TextRequester {
+            override fun request(index: Int, refresh: Boolean): Text {
+                return Text(List(40) {
+                    List(it) {
+                        "小说内容" + it
+                    }.joinToString(";")
+                })
+            }
+        }
+        val config = ComplexConfig(30, 3, 8,
+                1, 5, 10, 15,
+                0xff000000.toInt(), 0xffffffff.toInt(), null)
+        val reader = Readers.getComplexReader(ctx, Novel("书名", "作者名"), fl, requester, config)
+        val chapters = List(10) {
+            Chapter("章节名" + it)
+        }
+        reader.chapterList = chapters
     }
 }
