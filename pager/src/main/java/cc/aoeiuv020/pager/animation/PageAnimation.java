@@ -152,6 +152,7 @@ public abstract class PageAnimation implements PagerAnimation {
         if (this instanceof HorizonPageAnim) {
             ((HorizonPageAnim) this).copyContent(bgCanvas);
         }
+        mView.postInvalidate();
     }
 
     protected boolean drawPrev() {

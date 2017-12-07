@@ -17,7 +17,15 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
     private val pageView: Pager = Pager(ctx)
     private val drawer = ReaderDrawer(this, novel, requester)
     override var maxTextProgress: Int = 0
-    override var currentChapter: Int = 0
+    override var currentChapter: Int
+        get() = drawer.chapterIndex
+        set(value) {
+            drawer.apply {
+                chapterIndex = value
+                pageIndex = 0
+                pager?.refresh()
+            }
+        }
     override var textProgress: Int = 0
 
     init {

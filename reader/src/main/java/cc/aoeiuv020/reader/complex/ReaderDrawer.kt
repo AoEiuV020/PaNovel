@@ -20,7 +20,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     private val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
     private lateinit var textPaint: TextPaint
     var chapterIndex = 0
-    private var pageIndex = 0
+    var pageIndex = 0
 
     override fun attach(pager: Pager, backgroundSize: Size, contentSize: Size) {
         super.attach(pager, backgroundSize, contentSize)
