@@ -1,13 +1,12 @@
 package cc.aoeiuv020.reader
 
 import android.net.Uri
-import cc.aoeiuv020.reader.simple.SimpleConfigChangedListener
 
 /**
  *
  * Created by AoEiuV020 on 2017.12.01-22:24:49.
  */
-abstract class ReaderConfig(
+class ReaderConfig(
         textSize: Int,
         lineSpacing: Int,
         paragraphSpacing: Int,
@@ -17,9 +16,10 @@ abstract class ReaderConfig(
         bottomSpacing: Int,
         textColor: Int,
         backgroundColor: Int,
-        backgroundImage: Uri?
+        backgroundImage: Uri?,
+        pageMode: Int = 0
 ) {
-    internal var listener: SimpleConfigChangedListener? = null
+    internal var listener: ConfigChangedListener? = null
     var textSize: Int = textSize
         set(value) {
             field = value

@@ -1,6 +1,6 @@
-package cc.aoeiuv020.reader.simple
+package cc.aoeiuv020.reader
 
-internal interface SimpleConfigChangedListener {
+internal interface ConfigChangedListener {
     fun onTextSizeChanged()
     fun onTextColorChanged()
 

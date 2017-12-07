@@ -13,8 +13,8 @@ import kotlinx.android.synthetic.main.simple.view.*
  *
  * Created by AoEiuV020 on 2017.12.01-02:14:20.
  */
-internal class SimpleReader(override var ctx: Context, novel: Novel, parent: ViewGroup, requester: TextRequester, override var config: SimpleConfig)
-    : BaseNovelReader(novel, requester), SimpleConfigChangedListener {
+internal class SimpleReader(override var ctx: Context, novel: Novel, parent: ViewGroup, requester: TextRequester, override var config: ReaderConfig)
+    : BaseNovelReader(novel, requester), ConfigChangedListener {
     private val layoutInflater = LayoutInflater.from(ctx)
     private val contentView: View = layoutInflater.inflate(R.layout.simple, parent, true)
     private val viewPager: ViewPager = contentView.viewPager
