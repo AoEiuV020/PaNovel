@@ -17,7 +17,7 @@ import org.jetbrains.anko.*
  */
 class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, private val requester: TextRequester)
     : PagerDrawer(), AnkoLogger {
-    private val pagesCache: LruCache<Int, List<Page>> = LruCache(8)
+    private val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
     private lateinit var textPaint: TextPaint
     var chapterIndex = 0
     private var pageIndex = 0
@@ -60,7 +60,12 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return
         }
 
-        val page = pages.first()
+        // 往上翻章节时pageIndex会是负数，表示倒数，
+        while (pageIndex < 0) {
+            pageIndex += pages.size
+        }
+
+        val page = pages[pageIndex]
         var y = 0f
         page.lines.forEach { line ->
             y += textPaint.textSize
@@ -106,16 +111,37 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     }
 
     override fun scrollToPrev(): Boolean {
+        val pages = pagesCache[chapterIndex]
+        if (pages == null) {
+            request(chapterIndex)
+            return false
+        }
+        if (pageIndex - 1 in pages.indices) {
+            pageIndex--
+            return true
+        }
+
         if (chapterIndex - 1 in reader.chapterList.indices) {
             chapterIndex--
+            pageIndex = -1
             return true
         }
         return false
     }
 
     override fun scrollToNext(): Boolean {
+        val pages = pagesCache[chapterIndex]
+        if (pages == null) {
+            request(chapterIndex)
+            return false
+        }
+        if (pageIndex >= 0 && pageIndex + 1 in pages.indices) {
+            pageIndex++
+            return true
+        }
         if (chapterIndex + 1 in reader.chapterList.indices) {
             chapterIndex++
+            pageIndex = 0
             return true
         }
         return false
