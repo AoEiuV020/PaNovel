@@ -10,5 +10,6 @@ import android.view.MotionEvent
 interface PagerAnimation {
     fun draw(canvas: Canvas)
     fun scrollAnim()
+    fun refresh()
     fun onTouchEvent(event: MotionEvent): Boolean
 }

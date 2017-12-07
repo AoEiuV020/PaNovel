@@ -180,6 +180,11 @@ public abstract class PageAnimation implements PagerAnimation {
         mListener.pageCancel();
     }
 
+    @Override
+    public void refresh() {
+        drawCurrent();
+    }
+
     public enum Direction {
         NONE(true), NEXT(true), PRE(true), UP(false), DOWN(false);
 

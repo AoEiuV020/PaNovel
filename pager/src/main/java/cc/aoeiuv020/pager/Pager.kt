@@ -27,7 +27,11 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     private var mAnim: PagerAnimation? = null
     private val listener = this
     private var direction = PagerDirection.NONE
-    var drawer: PagerDrawer = BlankPagerDrawer()
+    var drawer: IPagerDrawer = BlankPagerDrawer()
+        set(value) {
+            field = value
+            resetDrawer()
+        }
     var margins: Margins = Margins()
         set(value) {
             field = value
@@ -39,9 +43,9 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             resetAnim()
         }
 
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetAnim(w, h)
+        resetDrawer()
     }
 
     override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {
@@ -68,6 +72,11 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             PagerDirection.NONE -> {
             }
         }
+        refresh()
+    }
+
+    fun refresh() {
+        mAnim?.refresh()
     }
 
     /**
@@ -76,6 +85,15 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     private fun resetAnim() {
         if (width != 0 && height != 0) {
             resetAnim(width, height)
+        }
+    }
+
+    private fun resetDrawer() {
+        if (width != 0 && height != 0) {
+            drawer.attach(this,
+                    Size(width, height),
+                    Size(width - margins.left - margins.right, height - margins.top - margins.bottom)
+            )
         }
     }
 

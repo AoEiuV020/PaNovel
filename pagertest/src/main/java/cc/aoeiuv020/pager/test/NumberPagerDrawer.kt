@@ -5,16 +5,16 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import cc.aoeiuv020.pager.PagerDrawer
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.sp
+import org.jetbrains.anko.*
+import java.util.concurrent.TimeUnit
 
 /**
  *
  * Created by AoEiuV020 on 2017.12.02-17:58:54.
  */
-class NumberPagerDrawer(context: Context) : PagerDrawer, AnkoLogger {
+class NumberPagerDrawer(context: Context) : PagerDrawer(), AnkoLogger {
     private var n = 0
+    private var m = 0
     private val strokePaint = Paint().apply {
         style = Paint.Style.STROKE
         strokeWidth = 10f
@@ -44,6 +44,14 @@ class NumberPagerDrawer(context: Context) : PagerDrawer, AnkoLogger {
                 color = 0xffff0000.toInt()
             })
             drawText(n.toString(), width.toFloat() / 2, height.toFloat() / 2, textPaint)
+            drawText(m.toString(), width.toFloat() / 2, height.toFloat() / 2 + textPaint.textSize, textPaint)
+            doAsync {
+                TimeUnit.SECONDS.sleep(1)
+                m = n * n
+                uiThread {
+                    pager?.refresh()
+                }
+            }
         }
     }
 
