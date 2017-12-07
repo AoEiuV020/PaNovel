@@ -28,6 +28,20 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
     init {
         config.listener = this
         pageView.drawer = drawer
+        pageView.actionListener = object : Pager.ActionListener {
+            override fun onCenterClick() {
+                menuListener?.toggle()
+            }
+
+            override fun onPagePrev() {
+                menuListener?.hide()
+            }
+
+            override fun onPageNext() {
+                menuListener?.hide()
+            }
+
+        }
         parent.addView(pageView)
     }
 

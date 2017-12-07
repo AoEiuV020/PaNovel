@@ -3,6 +3,7 @@ package cc.aoeiuv020.pager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -26,8 +27,10 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             : super(context, attrs, defStyleAttr)
 
     private var mAnim: PagerAnimation? = null
-    private val listener = this
+    private val drawListener = this
+    var actionListener: ActionListener? = null
     private var direction = PagerDirection.NONE
+    private var centerRect = Rect(0, 0, 0, 0)
     var drawer: IPagerDrawer = BlankPagerDrawer()
         set(value) {
             field = value
@@ -49,6 +52,11 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         resetDrawer()
         resetAnim(w, h)
         refresh()
+        centerRect = Rect(w / 4 * 1,
+                h / 4 * 1,
+                w / 4 * 3,
+                h / 4 * 3
+        )
     }
 
     override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {
@@ -58,12 +66,14 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     override fun hasPrev(): Boolean {
         debug { "prev" }
         direction = PagerDirection.PREV
+        actionListener?.onPagePrev()
         return drawer.scrollToPrev()
     }
 
     override fun hasNext(): Boolean {
         debug { "next" }
         direction = PagerDirection.NEXT
+        actionListener?.onPageNext()
         return drawer.scrollToNext()
     }
 
@@ -102,11 +112,11 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
 
     private fun resetAnim(w: Int, h: Int) {
         mAnim = when (animMode) {
-            AnimMode.SIMULATION -> SimulationPageAnim(w, h, margins, this, listener)
-            AnimMode.COVER -> CoverPageAnim(w, h, margins, this, listener)
-            AnimMode.SLIDE -> SlidePageAnim(w, h, margins, this, listener)
-            AnimMode.NONE -> NonePageAnim(w, h, margins, this, listener)
-            AnimMode.SCROLL -> ScrollPageAnim(w, h, margins, this, listener)
+            AnimMode.SIMULATION -> SimulationPageAnim(w, h, margins, this, drawListener)
+            AnimMode.COVER -> CoverPageAnim(w, h, margins, this, drawListener)
+            AnimMode.SLIDE -> SlidePageAnim(w, h, margins, this, drawListener)
+            AnimMode.NONE -> NonePageAnim(w, h, margins, this, drawListener)
+            AnimMode.SCROLL -> ScrollPageAnim(w, h, margins, this, drawListener)
         }
     }
 
@@ -119,8 +129,23 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         mAnim?.scrollAnim()
     }
 
+    private var previousAction: Int = MotionEvent.ACTION_UP
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (previousAction == MotionEvent.ACTION_DOWN
+                && event.action == MotionEvent.ACTION_UP) {
+            if (centerRect.contains(event.x.toInt(), event.y.toInt())) {
+                actionListener?.onCenterClick()
+                return true
+            }
+        }
+        previousAction = event.action
         return mAnim?.onTouchEvent(event) ?: false
+    }
+
+    interface ActionListener {
+        fun onCenterClick()
+        fun onPagePrev()
+        fun onPageNext()
     }
 }
