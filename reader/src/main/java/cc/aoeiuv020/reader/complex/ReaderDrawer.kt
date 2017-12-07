@@ -37,23 +37,25 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         background.drawColor(reader.config.backgroundColor)
 
         if (pager == null) {
+            warn { "pager is null" }
             return
         }
 
         if (chapterIndex !in reader.chapterList.indices) {
+            warn { "chapter index out of bounds <$chapterIndex/${reader.chapterList.size}>" }
             return
         }
 
         val pages = pagesCache[chapterIndex]
         if (pages == null) {
-            debug { "chapter $chapterIndex pages null" }
+            warn { "chapter $chapterIndex pages null" }
             request(chapterIndex)
             // TODO 显示正在排版，
             return
         }
 
         if (pages.isEmpty()) {
-            debug { "chapter $chapterIndex pages empty" }
+            warn { "chapter $chapterIndex pages empty" }
             // TODO 显示本章空内容，
             return
         }
@@ -71,6 +73,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val text = requester.request(requestIndex)
         val pages = typesetting(text)
         pagesCache.put(requestIndex, pages)
+        debug { "request result $requestIndex == $chapterIndex" }
         if (requestIndex == chapterIndex) {
             pager?.refresh()
         }
@@ -94,17 +97,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 }
                 count = textPaint.breakText(paragraph.substring(start), true, contentSize.width.toFloat(), null)
                 val line = paragraph.substring(start, start + count)
-                info {
-                    "<$start, $count, $height> $line"
-                }
                 lines.add(line)
                 start += count
             }
         }
         debug { "pages size = ${pages.size}" }
-        pages.forEach {
-            debug { it }
-        }
         return pages
     }
 

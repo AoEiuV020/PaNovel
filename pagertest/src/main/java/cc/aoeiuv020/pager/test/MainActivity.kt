@@ -24,7 +24,7 @@ class MainActivity : Activity() {
                 })
             }
         }
-        val config = ComplexConfig(30, 3, 8,
+        val config = ComplexConfig(15, 3, 8,
                 1, 5, 10, 15,
                 0xff000000.toInt(), 0xffffffff.toInt(), null)
         val reader = Readers.getComplexReader(ctx, Novel("书名", "作者名"), fl, requester, config)

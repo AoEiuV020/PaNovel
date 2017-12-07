@@ -47,6 +47,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetDrawer()
         resetAnim(w, h)
+        refresh()
     }
 
     override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {
@@ -78,6 +79,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
 
     fun refresh() {
         mAnim?.refresh()
+                ?: debug { "anim == null" }
     }
 
     /**
