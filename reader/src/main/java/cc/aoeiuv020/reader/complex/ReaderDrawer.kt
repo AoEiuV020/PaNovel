@@ -77,7 +77,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     private fun request(requestIndex: Int) {
         val text = requester.request(requestIndex)
-        val pages = typesetting(text)
+        val pages = typesetting(reader.chapterList[requestIndex].name, text)
         pagesCache.put(requestIndex, pages)
         debug { "request result $requestIndex == $chapterIndex" }
         if (requestIndex == chapterIndex) {
@@ -85,12 +85,12 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
     }
 
-    private fun typesetting(text: Text): List<Page> {
+    private fun typesetting(chapter: String, text: Text): List<Page> {
         val pages = mutableListOf<Page>()
         var height = 0
         val lines = mutableListOf<String>()
-        text.list.forEach {
-            val paragraph = "　　" + it
+        (listOf(chapter) + text.list).forEachIndexed { index, str ->
+            val paragraph = if (index == 0) str else "　　" + str
             var start = 0
             var count: Int
             while (start < paragraph.length) {
