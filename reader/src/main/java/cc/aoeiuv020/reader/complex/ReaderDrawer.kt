@@ -92,16 +92,17 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val page = pages[pageIndex]
         var y = 0
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
+        val textHeight = textPaint.textSize.toInt()
         page.lines.forEach { line ->
             verbose { "draw height $y/${content.height}" }
             when (line) {
                 is String -> {
-                    y += textPaint.textSize.toInt()
+                    y += textHeight
                     content.drawText(line, 0f, y.toFloat(), textPaint)
+                    y += reader.ctx.dip(reader.config.lineSpacing)
                 }
                 is ParagraphSpacing -> y += paragraphSpacing
             }
-            y += reader.ctx.dip(reader.config.lineSpacing)
         }
     }
 
