@@ -210,7 +210,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
             if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
                 isRunning = false;
                 if (isCancel) {
-                    refresh();
+                    drawCurrent();
                 }
             }
             mView.postInvalidate();
@@ -223,7 +223,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
             mScroller.abortAnimation();
             isRunning = false;
             if (isCancel) {
-                refresh();
+                drawCurrent();
             }
             setTouchPoint(mScroller.getFinalX(), mScroller.getFinalY());
             mView.postInvalidate();

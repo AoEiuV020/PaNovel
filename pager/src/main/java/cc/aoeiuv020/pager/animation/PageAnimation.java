@@ -184,6 +184,7 @@ public abstract class PageAnimation implements PagerAnimation {
     @Override
     public void refresh() {
         drawCurrent();
+        abortAnim();
     }
 
     public enum Direction {
