@@ -176,6 +176,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         if (chapterIndex - 1 in reader.chapterList.indices) {
             chapterIndex--
             pageIndex = -1
+            reader.chapterChangeListener?.onChapterChange()
             return true
         }
         return false
@@ -198,6 +199,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         if (chapterIndex + 1 in reader.chapterList.indices) {
             chapterIndex++
             pageIndex = 0
+            reader.chapterChangeListener?.onChapterChange()
             return true
         }
         return false

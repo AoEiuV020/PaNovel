@@ -125,11 +125,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun previousChapter() {
-        reader.currentChapter -= 1
+        selectChapter(reader.currentChapter - 1)
     }
 
     fun nextChapter() {
-        reader.currentChapter += 1
+        selectChapter(reader.currentChapter + 1)
     }
 
     fun setTextProgress(progress: Int) {
@@ -197,9 +197,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     private fun selectChapter(index: Int) {
         reader.currentChapter = index
+        onChapterSelected(index)
     }
 
     private fun onChapterSelected(index: Int) {
+        debug { "onChapterSelected $index" }
         progress.chapter = index
         val chapter = chaptersAsc[index]
         title = "$novelName - ${chapter.name}"
