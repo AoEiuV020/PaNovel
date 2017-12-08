@@ -253,24 +253,28 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         }
 
         llAnimation.apply {
-            val listener = View.OnClickListener {
-                val animMode = when (it) {
-                    tvSimple -> null
-                    tvSimulation -> AnimMode.SIMULATION
-                    tvCover -> AnimMode.COVER
-                    tvSlide -> AnimMode.SLIDE
-                    tvNone -> AnimMode.NONE
-                    tvScroll -> AnimMode.SCROLL
+            llRoot.check(when (Settings.animMode) {
+                null -> R.id.rbSimple
+                AnimMode.SIMULATION -> R.id.rbSimulation
+                AnimMode.COVER -> R.id.rbCover
+                AnimMode.SLIDE -> R.id.rbSlide
+                AnimMode.NONE -> R.id.rbNone
+                AnimMode.SCROLL -> R.id.rbScroll
+            })
+            llRoot.setOnCheckedChangeListener { group, checkedId ->
+                val animMode = when (checkedId) {
+                    R.id.rbSimple -> null
+                    R.id.rbSimulation -> AnimMode.SIMULATION
+                    R.id.rbCover -> AnimMode.COVER
+                    R.id.rbSlide -> AnimMode.SLIDE
+                    R.id.rbNone -> AnimMode.NONE
+                    R.id.rbScroll -> AnimMode.SCROLL
                     else -> null // 不存在的，
                 }
                 if (Settings.animMode != animMode) {
                     Settings.animMode = animMode
                     view.setAnimMode(animMode)
                 }
-            }
-            val layout = llRoot
-            repeat(layout.childCount) {
-                layout.getChildAt(it).setOnClickListener(listener)
             }
         }
     }

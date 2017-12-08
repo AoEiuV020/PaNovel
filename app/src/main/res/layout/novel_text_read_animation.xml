@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/llRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tvSimple"
+
+    <RadioButton
+        android:id="@+id/rbSimple"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -16,8 +17,8 @@
         android:text="@string/simple"
         android:textColor="@android:color/primary_text_dark" />
 
-    <TextView
-        android:id="@+id/tvSimulation"
+    <RadioButton
+        android:id="@+id/rbSimulation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -27,8 +28,8 @@
         android:text="@string/simulation"
         android:textColor="@android:color/primary_text_dark" />
 
-    <TextView
-        android:id="@+id/tvCover"
+    <RadioButton
+        android:id="@+id/rbCover"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -38,8 +39,8 @@
         android:text="@string/cover"
         android:textColor="@android:color/primary_text_dark" />
 
-    <TextView
-        android:id="@+id/tvSlide"
+    <RadioButton
+        android:id="@+id/rbSlide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -49,8 +50,8 @@
         android:text="@string/slide"
         android:textColor="@android:color/primary_text_dark" />
 
-    <TextView
-        android:id="@+id/tvNone"
+    <RadioButton
+        android:id="@+id/rbNone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -60,8 +61,8 @@
         android:text="@string/none"
         android:textColor="@android:color/primary_text_dark" />
 
-    <TextView
-        android:id="@+id/tvScroll"
+    <RadioButton
+        android:id="@+id/rbScroll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -70,4 +71,4 @@
         android:paddingTop="10dp"
         android:text="@string/scroll"
         android:textColor="@android:color/primary_text_dark" />
-</LinearLayout>
+</RadioGroup>
