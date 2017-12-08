@@ -15,6 +15,12 @@
         android:key="back_press_out_of_fullScreen"
         android:title="@string/back_press_out_of_fullScreen" />
 
+    <cc.aoeiuv020.panovel.settings.ListPreference
+        android:entries="@array/animation_names"
+        android:entryValues="@array/animation_values"
+        android:key="animation_mode"
+        android:title="@string/animation" />
+
     <cc.aoeiuv020.panovel.settings.EditTextPreference
         android:capitalize="words"
         android:inputType="number"

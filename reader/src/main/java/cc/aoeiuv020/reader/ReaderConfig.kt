@@ -1,7 +1,6 @@
 package cc.aoeiuv020.reader
 
 import android.net.Uri
-import cc.aoeiuv020.pager.AnimMode
 import cc.aoeiuv020.pager.animation.Margins
 
 /**
@@ -19,7 +18,7 @@ class ReaderConfig(
         textColor: Int,
         backgroundColor: Int,
         backgroundImage: Uri?,
-        animMode: AnimMode? = AnimMode.SIMULATION
+        animationMode: AnimationMode = AnimationMode.SIMPLE
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()
     val margins: Margins
@@ -96,11 +95,11 @@ class ReaderConfig(
                 it.onConfigChanged(ReaderConfigName.BackgroundImage)
             }
         }
-    var animMode: AnimMode? = animMode
+    var animationMode: AnimationMode = animationMode
         set(value) {
             field = value
             listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.AnimMode)
+                it.onConfigChanged(ReaderConfigName.AnimationMode)
             }
         }
 }

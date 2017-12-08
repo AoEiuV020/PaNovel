@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.local
 
 import android.content.res.ColorStateList
 import android.net.Uri
-import cc.aoeiuv020.pager.AnimMode
+import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfig
 
 /**
@@ -57,7 +57,7 @@ object Settings : LocalSource {
                 )
         )
 
-    var animMode: AnimMode? by GsonDelegate.new(null)
+    var animationMode: AnimationMode by GsonDelegate.new(AnimationMode.SIMPLE)
 
     fun makeReaderConfig() = ReaderConfig(
             textSize,
@@ -70,7 +70,7 @@ object Settings : LocalSource {
             textColor,
             backgroundColor,
             backgroundImage,
-            animMode
+            animationMode
     )
 }
 

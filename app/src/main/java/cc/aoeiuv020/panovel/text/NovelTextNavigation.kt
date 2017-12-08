@@ -3,7 +3,6 @@ package cc.aoeiuv020.panovel.text
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
-import cc.aoeiuv020.pager.AnimMode
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
@@ -11,6 +10,7 @@ import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.alertColorPicker
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.reader.AnimationMode
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_animation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_default.view.*
@@ -253,28 +253,28 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         }
 
         llAnimation.apply {
-            llRoot.check(when (Settings.animMode) {
-                null -> R.id.rbSimple
-                AnimMode.SIMULATION -> R.id.rbSimulation
-                AnimMode.COVER -> R.id.rbCover
-                AnimMode.SLIDE -> R.id.rbSlide
-                AnimMode.NONE -> R.id.rbNone
-                AnimMode.SCROLL -> R.id.rbScroll
+            llRoot.check(when (Settings.animationMode) {
+                AnimationMode.SIMPLE -> R.id.rbSimple
+                AnimationMode.SIMULATION -> R.id.rbSimulation
+                AnimationMode.COVER -> R.id.rbCover
+                AnimationMode.SLIDE -> R.id.rbSlide
+                AnimationMode.NONE -> R.id.rbNone
+                AnimationMode.SCROLL -> R.id.rbScroll
             })
-            llRoot.setOnCheckedChangeListener { group, checkedId ->
-                val animMode = when (checkedId) {
-                    R.id.rbSimple -> null
-                    R.id.rbSimulation -> AnimMode.SIMULATION
-                    R.id.rbCover -> AnimMode.COVER
-                    R.id.rbSlide -> AnimMode.SLIDE
-                    R.id.rbNone -> AnimMode.NONE
-                    R.id.rbScroll -> AnimMode.SCROLL
-                    else -> null // 不存在的，
+            llRoot.setOnCheckedChangeListener { _, checkedId ->
+                val animationMode = when (checkedId) {
+                    R.id.rbSimple -> AnimationMode.SIMPLE
+                    R.id.rbSimulation -> AnimationMode.SIMULATION
+                    R.id.rbCover -> AnimationMode.COVER
+                    R.id.rbSlide -> AnimationMode.SLIDE
+                    R.id.rbNone -> AnimationMode.NONE
+                    R.id.rbScroll -> AnimationMode.SCROLL
+                    else -> AnimationMode.SIMPLE // 不存在的，
                 }
-                val oldAnimMode = Settings.animMode
-                if (oldAnimMode != animMode) {
-                    Settings.animMode = animMode
-                    view.setAnimMode(animMode, oldAnimMode)
+                val oldAnimationMode = Settings.animationMode
+                if (oldAnimationMode != animationMode) {
+                    Settings.animationMode = animationMode
+                    view.setAnimationMode(animationMode, oldAnimationMode)
                 }
             }
         }

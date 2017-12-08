@@ -33,8 +33,8 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
             override fun onConfigChanged(name: ReaderConfigName) {
                 when (name) {
-                    ReaderConfigName.AnimMode -> {
-                        reader.config.animMode?.let { pager?.animMode = it }
+                    ReaderConfigName.AnimationMode -> {
+                        pager?.animMode = reader.config.animationMode.toAnimMode()
                     }
                     ReaderConfigName.BackgroundColor -> {
                         pager?.bgColor = reader.config.backgroundColor
