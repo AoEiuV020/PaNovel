@@ -14,6 +14,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,9 +80,10 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
         <TextView
-            android:id="@+id/tvChangeLog"
+            android:id="@+id/tvDonateExplain"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:textIsSelectable="true"
             tools:text="捐赠说明" />
     </ScrollView>
 

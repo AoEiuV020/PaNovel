@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.reader.AnimationMode
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.find
@@ -16,6 +17,53 @@ import org.jetbrains.anko.find
  *
  * Created by AoEiuV020 on 2017.10.15-20:55:31.
  */
+class ListPreference : android.preference.ListPreference, AnkoLogger {
+    companion object {
+        private val map = mapOf<String, Pair<() -> String, (String) -> Unit>>(
+                "animation_mode" to ({ Settings.animationMode.toString() } to { v -> Settings.animationMode = AnimationMode.valueOf(v) })
+        )
+    }
+
+    constructor(context: Context)
+            : super(context)
+
+    constructor(context: Context, attrs: AttributeSet?)
+            : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
+            : super(context, attrs, defStyleAttr)
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int)
+            : super(context, attrs, defStyleAttr, defStyleRes)
+
+    init {
+        widgetLayoutResource = android.R.layout.simple_list_item_1
+
+        // 默认可能没有读取数据初始化，所以要这句，
+        value = getPersistedString(value)
+    }
+
+    override fun persistString(string: String): Boolean = try {
+        debug { "$key < $string" }
+        map[key]?.run { second(string); true } ?: false
+    } catch (_: Exception) {
+        false
+    }
+
+    override fun getPersistedString(defaultReturnValue: String?): String? {
+        return (map[key]?.run { first() } ?: defaultReturnValue).also {
+            debug { "$key > $it" }
+        }
+    }
+
+    override fun onBindView(view: View) {
+        super.onBindView(view)
+        val tv = view.find<TextView>(android.R.id.text1)
+        tv.text = entry
+    }
+
+}
+
 class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> String, (String) -> Unit>>(

@@ -36,7 +36,7 @@ class DonateActivity : AppCompatActivity() {
             Donate.weChatPay.start(this@DonateActivity)
         }
 
-        tvChangeLog.text = assets.open("Donate.txt").reader().readText()
+        tvDonateExplain.text = assets.open("Donate.txt").reader().readText()
     }
 
     private var stopTime: Long = 0

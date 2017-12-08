@@ -2,13 +2,14 @@
 
 package cc.aoeiuv020.panovel.text
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.view.ViewPager
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
@@ -24,9 +25,11 @@ import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.notify
+import cc.aoeiuv020.reader.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.error
 import org.jetbrains.anko.startActivity
 
 
@@ -50,16 +53,17 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private lateinit var presenter: NovelTextPresenter
     private lateinit var novelName: String
     private lateinit var chaptersAsc: List<NovelChapter>
-    private lateinit var ntpAdapter: NovelTextPagerAdapter
     private var novelDetail: NovelDetail? = null
     private lateinit var novelItem: NovelItem
     private lateinit var progress: NovelProgress
     private lateinit var navigation: NovelTextNavigation
+    private lateinit var reader: INovelReader
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("progress", progress.toJson())
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,33 +84,38 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             browse(urlTextView.text.toString())
         }
 
-        // 监听器确保只添加一次，
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-                hide()
-            }
+        presenter = NovelTextPresenter(novelItem)
 
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                debug { "onPageSelected: $position" }
-                onChapterSelected(position)
-            }
-        })
-
-        dtfRoot.activity = this
-
+        initReader()
 
         navigation = NovelTextNavigation(this, novelItem, nav_view)
-
-        presenter = NovelTextPresenter(novelItem)
-        ntpAdapter = NovelTextPagerAdapter(this, presenter)
-        viewPager.adapter = ntpAdapter
 
         loading(progressDialog, R.string.novel_chapters)
         presenter.attach(this)
         presenter.start()
+    }
+
+    private fun initReader() {
+        reader = Readers.getReader(this, Novel(novelItem.name, novelItem.author), flContent, presenter.getRequester(), Settings.makeReaderConfig()).apply {
+            menuListener = object : MenuListener {
+                override fun hide() {
+                    this@NovelTextActivity.hide()
+                }
+
+                override fun show() {
+                    this@NovelTextActivity.show()
+                }
+
+                override fun toggle() {
+                    this@NovelTextActivity.toggle()
+                }
+            }
+            chapterChangeListener = object : ChapterChangeListener {
+                override fun onChapterChange() {
+                    onChapterSelected(reader.currentChapter)
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -119,38 +128,58 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     override fun show() {
         super.show()
-        navigation.reset(ntpAdapter.getCurrentTextCount() ?: 0, ntpAdapter.getCurrentTextProgress() ?: 0)
+        navigation.reset(reader.maxTextProgress, reader.textProgress)
     }
 
     fun previousChapter() {
-        viewPager.currentItem = viewPager.currentItem - 1
+        selectChapter(reader.currentChapter - 1)
     }
 
     fun nextChapter() {
-        viewPager.currentItem = viewPager.currentItem + 1
+        selectChapter(reader.currentChapter + 1)
     }
 
     fun setTextProgress(progress: Int) {
-        ntpAdapter.setCurrentTextProgress(progress)
+        reader.textProgress = progress
     }
 
     fun refreshCurrentChapter() {
-        ntpAdapter.refreshCurrentChapter()
+        reader.refreshCurrentChapter()
+    }
+
+    private fun resetReader() {
+        reader.onDestroy()
+        flContent.removeAllViews() // 多余，上面已经移除，
+        initReader()
+        showChaptersAsc(chaptersAsc)
+    }
+
+    fun setAnimationMode(animationMode: AnimationMode, oldAnimationMode: AnimationMode) {
+        debug { "setAnimationMode $oldAnimationMode to $animationMode" }
+        if ((animationMode == AnimationMode.SIMPLE && oldAnimationMode != AnimationMode.SIMPLE)
+                || (animationMode != AnimationMode.SIMPLE && oldAnimationMode == AnimationMode.SIMPLE)) {
+            resetReader()
+        } else {
+            reader.config.animationMode = animationMode
+        }
     }
 
     fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
-        ntpAdapter.setMargins(left, top, right, bottom)
+        left?.let { reader.config.leftSpacing = it }
+        top?.let { reader.config.topSpacing = it }
+        right?.let { reader.config.rightSpacing = it }
+        bottom?.let { reader.config.bottomSpacing = it }
     }
 
     fun setTextColor(color: Int) {
-        ntpAdapter.setTextColor(color)
+        reader.config.textColor = color
     }
 
     fun setBackgroundColor(color: Int, fromUser: Boolean = false) {
         if (fromUser) {
-            ivBackground.setImageDrawable(null)
+            reader.config.backgroundImage = null
         }
-        ivBackground.setBackgroundColor(color)
+        reader.config.backgroundColor = color
     }
 
     fun requestBackgroundImage() {
@@ -159,43 +188,66 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         startActivityForResult(intent, 0)
     }
 
+    private var cacheUri: Uri? = null
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            0 -> data?.data?.let {
-                Settings.backgroundImage = it
-                setBackgroundImage(it)
+            0 -> data?.data?.let { uri ->
+                try {
+                    Settings.backgroundImage = uri
+                    setBackgroundImage(uri)
+                } catch (e: SecurityException) {
+                    error("读取背景图失败", e)
+                    cacheUri = uri
+                    ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), 0)
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            0 -> cacheUri?.let { uri ->
+                try {
+                    Settings.backgroundImage = uri
+                    setBackgroundImage(uri)
+                } catch (e: SecurityException) {
+                    error("读取背景图还是失败", e)
+                    cacheUri = null
+                }
             }
         }
     }
 
     fun setBackgroundImage(uri: Uri?) {
-        ivBackground.setImageURI(uri)
+        reader.config.backgroundImage = uri
     }
 
     fun setParagraphSpacing(progress: Int) {
-        ntpAdapter.setParagraphSpacing(progress)
+        reader.config.paragraphSpacing = progress
     }
 
     fun setLineSpacing(progress: Int) {
-        ntpAdapter.setLineSpacing(progress)
+        reader.config.lineSpacing = progress
     }
 
     fun setTextSize(textSize: Int) {
-        ntpAdapter.setTextSize(textSize)
+        reader.config.textSize = textSize
     }
 
     override fun onDestroy() {
         presenter.detach()
-        // 清空viewPager，自动调用destroyItem切断presenter,
-        viewPager.adapter = null
+        reader.onDestroy()
         super.onDestroy()
     }
 
     private fun selectChapter(index: Int) {
-        viewPager.setCurrentItem(index, false)
+        reader.currentChapter = index
+        onChapterSelected(index)
     }
 
     private fun onChapterSelected(index: Int) {
+        debug { "onChapterSelected $index" }
         progress.chapter = index
         val chapter = chaptersAsc[index]
         title = "$novelName - ${chapter.name}"
@@ -215,6 +267,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun showChaptersAsc(chaptersAsc: List<NovelChapter>) {
+        debug { "chapters loaded ${chaptersAsc.size}" }
         this.chaptersAsc = chaptersAsc
         // 支持跳到倒数第一章，
         if (progress.chapter == -1) {
@@ -228,15 +281,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             show()
             return
         }
-        ntpAdapter.setChaptersAsc(chaptersAsc)
-        viewPager.setCurrentItem(progress.chapter, false)
-        ntpAdapter.setCurrentTextProgress(progress.text)
+        reader.chapterList = chaptersAsc.map { Chapter(it.name) }
+        reader.currentChapter = progress.chapter
+        reader.textProgress = progress.text
     }
 
     override fun onPause() {
         super.onPause()
         // 比如断网，如果没有展示出章节，就直接保存持有的进度，
-        ntpAdapter.getCurrentTextProgress()?.let { progress.text = it }
+        reader.textProgress.let { progress.text = it }
         debug {
             "save progress $progress"
         }
@@ -250,7 +303,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     fun refreshChapterList() {
         loading(progressDialog, R.string.novel_chapters)
         // 保存一下的进度，
-        ntpAdapter.getCurrentTextProgress()?.let { progress.text = it }
+        reader.textProgress.let { progress.text = it }
         presenter.refreshChapterList()
     }
 
@@ -259,7 +312,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun download() {
-        val index = viewPager.currentItem
+        val index = reader.currentChapter
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
                 , novelItem.name
                 , R.drawable.ic_file_download)

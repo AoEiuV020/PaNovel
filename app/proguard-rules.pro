@@ -4,6 +4,7 @@
 -keepclassmembers class * extends cc.aoeiuv020.panovel.api.Data { <fields>; }
 -keepclassmembers class * extends cc.aoeiuv020.panovel.api.Requester { <fields>; }
 -keepclassmembers class * extends cc.aoeiuv020.panovel.local.LocalData { <fields>; }
+-keepclassmembers class cc.aoeiuv020.reader.AnimationMode { <fields>; }
 
 # 本地保存用到类名，不混淆，
 -keepnames class * implements cc.aoeiuv020.panovel.local.LocalSource

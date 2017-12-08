@@ -3,7 +3,7 @@
 buildscript {
     ext {
         compile_version = 26
-        min_version = 15
+        min_version = 16
         target_version = compile_version
         support_version = '26.1.0'
         kotlin_version = '1.2.0'
@@ -13,6 +13,8 @@ buildscript {
         jsoup_version = '1.10.3'
         constraint_layout_version = '1.0.2'
         glide_version = '4.1.1'
+        rxjava_version = '2.1.3'
+        rxandroid_version = '2.0.1'
     }
     repositories {
         google()

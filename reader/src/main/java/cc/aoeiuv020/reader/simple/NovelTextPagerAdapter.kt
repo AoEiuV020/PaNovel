@@ -1,38 +1,32 @@
-package cc.aoeiuv020.panovel.text
+package cc.aoeiuv020.reader.simple
 
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
-import cc.aoeiuv020.panovel.api.NovelChapter
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.util.*
 
-class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val presenter: NovelTextPresenter) : PagerAdapter(), AnkoLogger {
-    private var chaptersAsc: List<NovelChapter> = emptyList()
+internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : PagerAdapter(), AnkoLogger {
+    private val chapters get() = simpleReader.chapterList
     private val unusedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
     private val usedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
     private var current: NovelTextViewHolder? = null
-
-    fun setChaptersAsc(chapters: List<NovelChapter>) {
-        this.chaptersAsc = chapters
-        notifyDataSetChanged()
-    }
 
     override fun isViewFromObject(view: View, obj: Any) = (obj as NovelTextViewHolder).itemView === view
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val holder = if (unusedHolders.isNotEmpty()) {
             unusedHolders.pop()
         } else {
-            NovelTextViewHolder(ctx, presenter.subPresenter())
+            NovelTextViewHolder(simpleReader)
         }.also { usedHolders.push(it) }
-        val chapter = chaptersAsc[position]
+        val chapter = chapters[position]
         debug {
             "instantiate $position $chapter"
         }
         container.addView(holder.itemView)
         holder.position = position
-        holder.apply(chapter)
+        holder.request(position)
         return holder
     }
 
@@ -44,9 +38,10 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
 
     fun getCurrentTextCount(): Int? = current?.getTextCount()
 
-    fun getCurrentTextProgress(): Int? = current?.getTextProgress()
-
+    private var textProgress: Int? = null
+    fun getCurrentTextProgress(): Int? = current?.getTextProgress() ?: textProgress
     fun setCurrentTextProgress(textProgress: Int) {
+        this.textProgress = textProgress
         debug { "setCurrentTextProgress position ${current?.position}" }
         current?.setTextProgress(textProgress)
     }
@@ -65,40 +60,21 @@ class NovelTextPagerAdapter(private val ctx: NovelTextActivity, private val pres
         }
     }
 
-    override fun getCount() = chaptersAsc.size
+    override fun getCount() = chapters.size
 
     fun refreshCurrentChapter() {
-        current?.refreshCurrentChapter()
+        current?.refresh()
     }
 
-    fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+    fun notifyAllItemDataSetChanged() {
         (usedHolders + unusedHolders).forEach {
-            it.setMargins(left, top, right, bottom)
+            it.ntrAdapter.notifyDataSetChanged()
         }
     }
 
-    fun setTextSize(size: Int) {
-        debug { "NovelTextPagerAdapter.setTextSize $size" }
+    fun notifyAllItemMarginsChanged() {
         (usedHolders + unusedHolders).forEach {
-            it.setTextSize(size)
-        }
-    }
-
-    fun setLineSpacing(size: Int) {
-        (usedHolders + unusedHolders).forEach {
-            it.setLineSpacing(size)
-        }
-    }
-
-    fun setParagraphSpacing(size: Int) {
-        (usedHolders + unusedHolders).forEach {
-            it.setParagraphSpacing(size)
-        }
-    }
-
-    fun setTextColor(color: Int) {
-        (usedHolders + unusedHolders).forEach {
-            it.setTextColor(color)
+            it.notifyMarginsChanged()
         }
     }
 

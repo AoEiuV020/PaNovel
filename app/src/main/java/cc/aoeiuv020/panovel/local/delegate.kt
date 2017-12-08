@@ -57,11 +57,29 @@ class NullablePrimitiveDelegate<T : Serializable>(private val default: T? = null
 
 /**
  * 用gson序列化对象储存json字符串，
+ * 非空，
+ */
+class GsonDelegate<T>(private val default: T, private val type: Class<T>) {
+    companion object {
+        inline fun <reified T> new(default: T) = GsonDelegate(default, T::class.java)
+    }
+
+    operator fun getValue(thisRef: LocalSource, property: KProperty<*>): T {
+        return thisRef.gsonLoad(property.name, type) ?: default
+    }
+
+    operator fun setValue(thisRef: LocalSource, property: KProperty<*>, value: T) {
+        thisRef.gsonSave(property.name, value)
+    }
+}
+
+/**
+ * 用gson序列化对象储存json字符串，
  * 可空，
  */
-class GsonDelegate<T>(private val default: T? = null, private val type: Class<T>) {
+class NullableGsonDelegate<T>(private val default: T? = null, private val type: Class<T>) {
     companion object {
-        inline fun <reified T> new(default: T? = null) = GsonDelegate(default, T::class.java)
+        inline fun <reified T> new(default: T? = null) = NullableGsonDelegate(default, T::class.java)
     }
 
     operator fun getValue(thisRef: LocalSource, property: KProperty<*>): T? {

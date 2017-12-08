@@ -10,7 +10,9 @@ import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.alertColorPicker
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.reader.AnimationMode
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
+import kotlinx.android.synthetic.main.novel_text_read_animation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_default.view.*
 import kotlinx.android.synthetic.main.novel_text_read_settings.view.*
 import kotlinx.android.synthetic.main.novel_text_read_typesetting.view.*
@@ -25,9 +27,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
     private val llDefault = navigation.llDefault
     private val llSettings = navigation.llSettings
     private val llTypesetting = navigation.llTypesetting
+    private val llAnimation = navigation.llAnimation
 
     private fun showLayout(view: View) {
-        listOf(llDefault, llSettings, llTypesetting).forEach {
+        listOf(llDefault, llSettings, llTypesetting, llAnimation).forEach {
             it.takeIf { it == view }?.show()
                     ?: it.hide()
         }
@@ -143,6 +146,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 showLayout(this@NovelTextNavigation.llTypesetting)
             }
 
+            tvAnimation.setOnClickListener {
+                showLayout(this@NovelTextNavigation.llAnimation)
+            }
+
         }
 
         llTypesetting.apply {
@@ -243,6 +250,33 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             bottomSpacingTextView.text = view.getString(R.string.spacing_placeholder, bottomSpacing)
             bottomSpacingSeekBar.progress = bottomSpacing
             bottomSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
+        }
+
+        llAnimation.apply {
+            llRoot.check(when (Settings.animationMode) {
+                AnimationMode.SIMPLE -> R.id.rbSimple
+                AnimationMode.SIMULATION -> R.id.rbSimulation
+                AnimationMode.COVER -> R.id.rbCover
+                AnimationMode.SLIDE -> R.id.rbSlide
+                AnimationMode.NONE -> R.id.rbNone
+                AnimationMode.SCROLL -> R.id.rbScroll
+            })
+            llRoot.setOnCheckedChangeListener { _, checkedId ->
+                val animationMode = when (checkedId) {
+                    R.id.rbSimple -> AnimationMode.SIMPLE
+                    R.id.rbSimulation -> AnimationMode.SIMULATION
+                    R.id.rbCover -> AnimationMode.COVER
+                    R.id.rbSlide -> AnimationMode.SLIDE
+                    R.id.rbNone -> AnimationMode.NONE
+                    R.id.rbScroll -> AnimationMode.SCROLL
+                    else -> AnimationMode.SIMPLE // 不存在的，
+                }
+                val oldAnimationMode = Settings.animationMode
+                if (oldAnimationMode != animationMode) {
+                    Settings.animationMode = animationMode
+                    view.setAnimationMode(animationMode, oldAnimationMode)
+                }
+            }
         }
     }
 
