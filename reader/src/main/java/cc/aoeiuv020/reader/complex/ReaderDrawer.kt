@@ -187,6 +187,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             request(chapterIndex)
             return false
         }
+        if (chapterIndex + 1 in reader.chapterList.indices) {
+            // 提前缓存一章，
+            request(chapterIndex + 1)
+        }
         if (pageIndex >= 0 && pageIndex + 1 in pages.indices) {
             pageIndex++
             return true
