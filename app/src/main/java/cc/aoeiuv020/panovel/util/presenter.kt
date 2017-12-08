@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.util
 
 import cc.aoeiuv020.panovel.local.Settings
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executor
@@ -41,6 +42,10 @@ private val asyncExecutor = object : Executor {
 }
 
 fun <T : Any?> Observable<T>.async(): Observable<T> = this
+        .subscribeOn(Schedulers.from(asyncExecutor))
+        .observeOn(AndroidSchedulers.mainThread())
+
+fun <T : Any?> Single<T>.async(): Single<T> = this
         .subscribeOn(Schedulers.from(asyncExecutor))
         .observeOn(AndroidSchedulers.mainThread())
 

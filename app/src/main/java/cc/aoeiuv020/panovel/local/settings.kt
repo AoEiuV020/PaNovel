@@ -2,6 +2,8 @@ package cc.aoeiuv020.panovel.local
 
 import android.content.res.ColorStateList
 import android.net.Uri
+import cc.aoeiuv020.reader.AnimationMode
+import cc.aoeiuv020.reader.ReaderConfig
 
 /**
  * 设置，
@@ -54,5 +56,21 @@ object Settings : LocalSource {
                         chapterColorDefault
                 )
         )
+
+    var animationMode: AnimationMode by GsonDelegate.new(AnimationMode.SIMPLE)
+
+    fun makeReaderConfig() = ReaderConfig(
+            textSize,
+            lineSpacing,
+            paragraphSpacing,
+            leftSpacing,
+            topSpacing,
+            rightSpacing,
+            bottomSpacing,
+            textColor,
+            backgroundColor,
+            backgroundImage,
+            animationMode
+    )
 }
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="animation_names">
+        <item>@string/simple</item>
+        <item>@string/simulation</item>
+        <item>@string/cover</item>
+        <item>@string/slide</item>
+        <item>@string/none</item>
+        <item>@string/scroll</item>
+    </string-array>
+    <string-array name="animation_values">
+        <item>SIMPLE</item>
+        <item>SIMULATION</item>
+        <item>COVER</item>
+        <item>SLIDE</item>
+        <item>NONE</item>
+        <item>SCROLL</item>
+    </string-array>
+
+</resources>

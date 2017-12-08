@@ -140,8 +140,18 @@
             android:id="@+id/tvTypesetting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:singleLine="true"
             android:text="@string/typesetting"
+            android:textColor="@android:color/primary_text_dark" />
+
+        <TextView
+            android:id="@+id/tvAnimation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/animation"
             android:textColor="@android:color/primary_text_dark" />
     </LinearLayout>
 </LinearLayout>
