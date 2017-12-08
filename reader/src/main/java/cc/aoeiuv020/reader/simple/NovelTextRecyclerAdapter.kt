@@ -62,7 +62,7 @@ internal class NovelTextRecyclerAdapter(private val reader: SimpleReader) : Recy
         private val divider: View = itemView.divider
         private val textView: TextView = itemView.textView
         private fun setText(string: String) {
-            divider.setHeight(ctx.dip(mParagraphSpacing))
+            divider.setHeight(ctx.dip(mLineSpacing) + ctx.dip(mParagraphSpacing))
             textView.apply {
                 debug { "initMargin <$mLeftSpacing, $mRightSpacing>" }
                 text = string
