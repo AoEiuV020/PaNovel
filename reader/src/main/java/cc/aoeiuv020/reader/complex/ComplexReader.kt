@@ -38,6 +38,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
 
     init {
         pageView.bgColor = config.backgroundColor
+        pageView.animMode = config.animMode!! // 不能是空，为空就不要用这个ComplexReader,
         pageView.margins = config.margins
         pageView.drawer = drawer
         pageView.actionListener = object : Pager.ActionListener {

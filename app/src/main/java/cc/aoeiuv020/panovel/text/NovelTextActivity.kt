@@ -11,6 +11,7 @@ import android.os.Handler
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.pager.AnimMode
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
@@ -138,6 +139,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun refreshCurrentChapter() {
         reader.refreshCurrentChapter()
+    }
+
+    fun setAnimMode(animMode: AnimMode?) {
+        reader.config.animMode = animMode
     }
 
     fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {

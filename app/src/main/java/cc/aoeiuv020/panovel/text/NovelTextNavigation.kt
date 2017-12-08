@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.text
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
+import cc.aoeiuv020.pager.AnimMode
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
@@ -11,6 +12,7 @@ import cc.aoeiuv020.panovel.util.alertColorPicker
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
+import kotlinx.android.synthetic.main.novel_text_read_animation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_default.view.*
 import kotlinx.android.synthetic.main.novel_text_read_settings.view.*
 import kotlinx.android.synthetic.main.novel_text_read_typesetting.view.*
@@ -25,9 +27,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
     private val llDefault = navigation.llDefault
     private val llSettings = navigation.llSettings
     private val llTypesetting = navigation.llTypesetting
+    private val llAnimation = navigation.llAnimation
 
     private fun showLayout(view: View) {
-        listOf(llDefault, llSettings, llTypesetting).forEach {
+        listOf(llDefault, llSettings, llTypesetting, llAnimation).forEach {
             it.takeIf { it == view }?.show()
                     ?: it.hide()
         }
@@ -143,6 +146,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 showLayout(this@NovelTextNavigation.llTypesetting)
             }
 
+            tvAnimation.setOnClickListener {
+                showLayout(this@NovelTextNavigation.llAnimation)
+            }
+
         }
 
         llTypesetting.apply {
@@ -243,6 +250,28 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             bottomSpacingTextView.text = view.getString(R.string.spacing_placeholder, bottomSpacing)
             bottomSpacingSeekBar.progress = bottomSpacing
             bottomSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
+        }
+
+        llAnimation.apply {
+            val listener = View.OnClickListener {
+                val animMode = when (it) {
+                    tvSimple -> null
+                    tvSimulation -> AnimMode.SIMULATION
+                    tvCover -> AnimMode.COVER
+                    tvSlide -> AnimMode.SLIDE
+                    tvNone -> AnimMode.NONE
+                    tvScroll -> AnimMode.SCROLL
+                    else -> null // 不存在的，
+                }
+                if (Settings.animMode != animMode) {
+                    Settings.animMode = animMode
+                    view.setAnimMode(animMode)
+                }
+            }
+            val layout = llRoot
+            repeat(layout.childCount) {
+                layout.getChildAt(it).setOnClickListener(listener)
+            }
         }
     }
 

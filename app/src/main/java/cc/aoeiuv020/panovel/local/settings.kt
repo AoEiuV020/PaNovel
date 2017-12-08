@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.local
 
 import android.content.res.ColorStateList
 import android.net.Uri
+import cc.aoeiuv020.pager.AnimMode
 import cc.aoeiuv020.reader.ReaderConfig
 
 /**
@@ -56,6 +57,8 @@ object Settings : LocalSource {
                 )
         )
 
+    var animMode: AnimMode? by GsonDelegate.new(null)
+
     fun makeReaderConfig() = ReaderConfig(
             textSize,
             lineSpacing,
@@ -66,7 +69,8 @@ object Settings : LocalSource {
             bottomSpacing,
             textColor,
             backgroundColor,
-            backgroundImage
+            backgroundImage,
+            animMode
     )
 }
 
