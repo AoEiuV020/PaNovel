@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.main
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -32,6 +34,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTit
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.yesButton
 
 
@@ -171,6 +174,22 @@ class MainActivity : AppCompatActivity() {
         }.show()
     }
 
+    private fun scan() {
+        val intent = Intent("com.google.zxing.client.android.SCAN")
+        intent.putExtra("SCAN_MODE", "QR_CODE_MODE")
+        try {
+            startActivityForResult(intent, 0)
+        } catch (_: ActivityNotFoundException) {
+            toast("没安装zxing二维码扫描器，")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        data?.extras?.getString("SCAN_RESULT")?.let {
+            RefineSearchActivity.start(this, it)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
@@ -180,6 +199,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.settings -> SettingsActivity.start(this)
             R.id.search -> RefineSearchActivity.start(this)
+            R.id.scan -> scan()
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)

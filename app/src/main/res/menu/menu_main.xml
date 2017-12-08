@@ -8,6 +8,14 @@
         android:title="@string/search"
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/scan"
+        android:icon="@drawable/ic_scan"
+        android:title="@string/scan"
+        app:iconTint="@android:color/white"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/settings"
         android:title="@string/settings"
