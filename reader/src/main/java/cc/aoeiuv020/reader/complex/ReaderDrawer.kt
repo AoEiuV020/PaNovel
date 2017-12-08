@@ -1,6 +1,9 @@
 package cc.aoeiuv020.reader.complex
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.support.v4.util.LruCache
 import android.text.TextPaint
 import cc.aoeiuv020.pager.Pager
@@ -17,6 +20,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     : PagerDrawer(), AnkoLogger {
     val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
     private lateinit var textPaint: TextPaint
+    private var backgroundImage: Bitmap? = null
     var chapterIndex = 0
     var pageIndex = 0
 
@@ -59,10 +63,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             color = reader.config.textColor
             textSize = reader.ctx.sp(reader.config.textSize).toFloat()
         }
+        backgroundImage = reader.config.backgroundImage?.let { BitmapFactory.decodeStream(reader.ctx.contentResolver.openInputStream(it)) }
     }
 
     override fun drawCurrentPage(background: Canvas, content: Canvas) {
         debug { "drawCurrentPage <$chapterIndex, $pageIndex>" }
+
+        backgroundImage?.let {
+            background.drawBitmap(it, null, Rect(0, 0, backgroundSize.width, backgroundSize.height), null)
+        }
 
         if (pager == null) {
             warn { "pager is null" }

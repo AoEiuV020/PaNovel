@@ -59,6 +59,7 @@ internal class SimpleReader(override var ctx: Context, novel: Novel, private val
         ntpAdapter = NovelTextPagerAdapter(this)
         viewPager.adapter = ntpAdapter
         background.setBackgroundColor(config.backgroundColor)
+        background.setImageURI(config.backgroundImage)
     }
 
     override fun onDestroy() {
