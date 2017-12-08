@@ -22,15 +22,23 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     init {
         reader.config.listeners.add(object : ConfigChangedListener {
+            private fun refresh() {
+                reset()
+                pager?.refresh()
+            }
+
             override fun onConfigChanged(name: ReaderConfigName) {
                 when (name) {
                     ReaderConfigName.AnimMode -> {
                         reader.config.animMode?.let { pager?.animMode = it }
                     }
+                    ReaderConfigName.BackgroundColor -> {
+                        pager?.bgColor = reader.config.backgroundColor
+                        refresh()
+                    }
                     else -> {
                         pager?.margins = reader.config.margins
-                        reset()
-                        pager?.refresh()
+                        refresh()
                     }
                 }
             }
@@ -55,7 +63,6 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     override fun drawCurrentPage(background: Canvas, content: Canvas) {
         debug { "drawCurrentPage <$chapterIndex, $pageIndex>" }
-        background.drawColor(reader.config.backgroundColor)
 
         if (pager == null) {
             warn { "pager is null" }

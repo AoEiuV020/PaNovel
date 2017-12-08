@@ -52,6 +52,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private Path mPath0;
     private Path mPath1;
     private float mMaxLength;
+    private Integer mMainColor = null;
 
     public SimulationPageAnim(int w, int h, View view, OnPageChangeListener listener) {
         this(w, h, new Margins(), view, listener);
@@ -326,12 +327,19 @@ public class SimulationPageAnim extends HorizonPageAnim {
     }
 
     /**
-     * 对Bitmap进行取色，
+     * 取出保存的颜色或者对Bitmap进行取色，
      *
      * @return 返回图片的主要颜色，
      */
-    private int getMainColor(Bitmap bitmap) {
+    public int getMainColor(Bitmap bitmap) {
+        if (mMainColor != null) {
+            return mMainColor;
+        }
         return bitmap.getPixel(1, 1);
+    }
+
+    public void setMainColor(Integer color) {
+        mMainColor = color;
     }
 
     /**

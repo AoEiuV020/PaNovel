@@ -37,6 +37,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
         }
 
     init {
+        pageView.bgColor = config.backgroundColor
         pageView.margins = config.margins
         pageView.drawer = drawer
         pageView.actionListener = object : Pager.ActionListener {

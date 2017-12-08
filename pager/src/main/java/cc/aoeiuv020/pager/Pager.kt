@@ -31,6 +31,14 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     var actionListener: ActionListener? = null
     private var direction = PagerDirection.NONE
     private var centerRect = Rect(0, 0, 0, 0)
+    /**
+     * 背景色，同时设置成仿真翻页的背面主色，
+     */
+    var bgColor: Int = 0xffffffff.toInt()
+        set(value) {
+            field = value
+            (mAnim as? SimulationPageAnim)?.setMainColor(value)
+        }
     var drawer: IPagerDrawer = BlankPagerDrawer()
         set(value) {
             field = value
@@ -60,6 +68,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     }
 
     override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {
+        backgroundCanvas.drawColor(bgColor)
         drawer.drawCurrentPage(backgroundCanvas, nextCanvas)
     }
 
