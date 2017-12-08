@@ -2,12 +2,14 @@
 
 package cc.aoeiuv020.panovel.text
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
@@ -27,6 +29,7 @@ import cc.aoeiuv020.reader.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.error
 import org.jetbrains.anko.startActivity
 
 
@@ -185,11 +188,33 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         startActivityForResult(intent, 0)
     }
 
+    private var cacheUri: Uri? = null
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            0 -> data?.data?.let {
-                Settings.backgroundImage = it
-                setBackgroundImage(it)
+            0 -> data?.data?.let { uri ->
+                try {
+                    Settings.backgroundImage = uri
+                    setBackgroundImage(uri)
+                } catch (e: SecurityException) {
+                    error("读取背景图失败", e)
+                    cacheUri = uri
+                    ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), 0)
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            0 -> cacheUri?.let { uri ->
+                try {
+                    Settings.backgroundImage = uri
+                    setBackgroundImage(uri)
+                } catch (e: SecurityException) {
+                    error("读取背景图还是失败", e)
+                    cacheUri = null
+                }
             }
         }
     }
