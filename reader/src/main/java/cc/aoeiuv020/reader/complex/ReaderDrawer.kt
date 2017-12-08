@@ -67,17 +67,19 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return
         }
 
+        val textHeight = textPaint.textSize.toInt()
+
         val pages = pagesCache[chapterIndex]
         if (pages == null) {
-            warn { "chapter $chapterIndex pages null" }
+            debug { "chapter $chapterIndex pages null" }
+            content.drawText("正在获取章节...", 0f, textHeight.toFloat(), textPaint)
             request(chapterIndex)
-            // TODO 显示正在排版，
             return
         }
 
         if (pages.isEmpty()) {
             warn { "chapter $chapterIndex pages empty" }
-            // TODO 显示本章空内容，
+            content.drawText("本章空内容", 0f, textHeight.toFloat(), textPaint)
             return
         }
 
@@ -94,7 +96,6 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val page = pages[pageIndex]
         var y = 0
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
-        val textHeight = textPaint.textSize.toInt()
         page.lines.forEach { line ->
             verbose { "draw height $y/${content.height}" }
             when (line) {
