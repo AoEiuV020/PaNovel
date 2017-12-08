@@ -271,9 +271,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                     R.id.rbScroll -> AnimMode.SCROLL
                     else -> null // 不存在的，
                 }
-                if (Settings.animMode != animMode) {
+                val oldAnimMode = Settings.animMode
+                if (oldAnimMode != animMode) {
                     Settings.animMode = animMode
-                    view.setAnimMode(animMode)
+                    view.setAnimMode(animMode, oldAnimMode)
                 }
             }
         }

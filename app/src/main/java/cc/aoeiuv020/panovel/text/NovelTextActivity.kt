@@ -84,6 +84,16 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
         presenter = NovelTextPresenter(novelItem)
 
+        initReader()
+
+        navigation = NovelTextNavigation(this, novelItem, nav_view)
+
+        loading(progressDialog, R.string.novel_chapters)
+        presenter.attach(this)
+        presenter.start()
+    }
+
+    private fun initReader() {
         reader = Readers.getReader(this, Novel(novelItem.name, novelItem.author), flContent, presenter.getRequester(), Settings.makeReaderConfig()).apply {
             menuListener = object : MenuListener {
                 override fun hide() {
@@ -104,12 +114,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 }
             }
         }
-
-        navigation = NovelTextNavigation(this, novelItem, nav_view)
-
-        loading(progressDialog, R.string.novel_chapters)
-        presenter.attach(this)
-        presenter.start()
     }
 
     override fun onBackPressed() {
@@ -141,8 +145,20 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         reader.refreshCurrentChapter()
     }
 
-    fun setAnimMode(animMode: AnimMode?) {
-        reader.config.animMode = animMode
+    private fun resetReader() {
+        reader.onDestroy()
+        flContent.removeAllViews() // 多余，上面已经移除，
+        initReader()
+        showChaptersAsc(chaptersAsc)
+    }
+
+    fun setAnimMode(animMode: AnimMode?, oldAnimMode: AnimMode?) {
+        debug { "setAnimMode $oldAnimMode to $animMode" }
+        if ((animMode == null && oldAnimMode != null) || (animMode != null && oldAnimMode == null)) {
+            resetReader()
+        } else {
+            reader.config.animMode = animMode
+        }
     }
 
     fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {

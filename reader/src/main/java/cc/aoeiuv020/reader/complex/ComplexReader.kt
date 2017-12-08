@@ -12,7 +12,7 @@ import cc.aoeiuv020.reader.TextRequester
  *
  * Created by AoEiuV020 on 2017.12.01-20:31:49.
  */
-class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, requester: TextRequester, override var config: ReaderConfig)
+class ComplexReader(override var ctx: Context, novel: Novel, private val parent: ViewGroup, requester: TextRequester, override var config: ReaderConfig)
     : BaseNovelReader(novel, requester) {
     private val pageView: Pager = Pager(ctx)
     private val drawer = ReaderDrawer(this, novel, requester)
@@ -63,5 +63,6 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
     }
 
     override fun onDestroy() {
+        parent.removeView(pageView)
     }
 }

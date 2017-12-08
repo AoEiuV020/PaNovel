@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.simple.view.*
  *
  * Created by AoEiuV020 on 2017.12.01-02:14:20.
  */
-internal class SimpleReader(override var ctx: Context, novel: Novel, parent: ViewGroup, requester: TextRequester, override var config: ReaderConfig)
+internal class SimpleReader(override var ctx: Context, novel: Novel, private val parent: ViewGroup, requester: TextRequester, override var config: ReaderConfig)
     : BaseNovelReader(novel, requester), ConfigChangedListener {
     private val layoutInflater = LayoutInflater.from(ctx)
     private val contentView: View = layoutInflater.inflate(R.layout.simple, parent, true)
@@ -58,11 +58,13 @@ internal class SimpleReader(override var ctx: Context, novel: Novel, parent: Vie
         dtfRoot.reader = this
         ntpAdapter = NovelTextPagerAdapter(this)
         viewPager.adapter = ntpAdapter
+        background.setBackgroundColor(config.backgroundColor)
     }
 
     override fun onDestroy() {
         // 清空viewPager，自动调用destroyItem切断presenter,
         viewPager.adapter = null
+        parent.removeView(contentView)
     }
 
     override fun refreshCurrentChapter() {
