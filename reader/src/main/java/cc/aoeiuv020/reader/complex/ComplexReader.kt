@@ -16,7 +16,8 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
     : BaseNovelReader(novel, requester) {
     private val pageView: Pager = Pager(ctx)
     private val drawer = ReaderDrawer(this, novel, requester)
-    override var maxTextProgress: Int = 0
+    override val maxTextProgress: Int
+        get() = drawer.pagesCache[currentChapter]?.lastIndex ?: 0
     override var currentChapter: Int
         get() = drawer.chapterIndex
         set(value) {
@@ -26,7 +27,14 @@ class ComplexReader(override var ctx: Context, novel: Novel, parent: ViewGroup, 
                 pager?.refresh()
             }
         }
-    override var textProgress: Int = 0
+    override var textProgress: Int
+        get() = drawer.pageIndex
+        set(value) {
+            drawer.apply {
+                pageIndex = value
+                pager?.refresh()
+            }
+        }
 
     init {
         pageView.margins = config.margins
