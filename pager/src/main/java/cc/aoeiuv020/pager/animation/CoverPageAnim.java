@@ -22,8 +22,8 @@ public class CoverPageAnim extends HorizonPageAnim {
 
     public CoverPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
-        mSrcRect = new Rect(0, 0, mViewWidth, mViewHeight);
-        mDestRect = new Rect(0, 0, mViewWidth, mViewHeight);
+        mSrcRect = new Rect(0, 0, mBackgroundWidth, mBackgroundHeight);
+        mDestRect = new Rect(0, 0, mBackgroundWidth, mBackgroundHeight);
         int[] mBackShadowColors = new int[]{0x66000000, 0x00000000};
         mBackShadowDrawableLR = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT, mBackShadowColors);
@@ -45,12 +45,12 @@ public class CoverPageAnim extends HorizonPageAnim {
 
         switch (mDirection) {
             case NEXT:
-                int dis = (int) (mViewWidth - mStartX + mTouchX);
-                if (dis > mViewWidth) {
-                    dis = mViewWidth;
+                int dis = (int) (mBackgroundWidth - mStartX + mTouchX);
+                if (dis > mBackgroundWidth) {
+                    dis = mBackgroundWidth;
                 }
                 //计算bitmap截取的区域
-                mSrcRect.left = mViewWidth - dis;
+                mSrcRect.left = mBackgroundWidth - dis;
                 //计算bitmap在canvas显示的区域
                 mDestRect.right = dis;
                 canvas.drawBitmap(mNextBitmap, 0, 0, null);
@@ -58,7 +58,7 @@ public class CoverPageAnim extends HorizonPageAnim {
                 addShadow(dis, canvas);
                 break;
             default:
-                mSrcRect.left = (int) (mViewWidth - mTouchX);
+                mSrcRect.left = (int) (mBackgroundWidth - mTouchX);
                 mDestRect.right = (int) mTouchX;
                 canvas.drawBitmap(mCurBitmap, 0, 0, null);
                 canvas.drawBitmap(mNextBitmap, mSrcRect, mDestRect, null);
@@ -80,26 +80,26 @@ public class CoverPageAnim extends HorizonPageAnim {
         switch (mDirection) {
             case NEXT:
                 if (isCancel) {
-                    int dis = (int) ((mViewWidth - mStartX) + mTouchX);
-                    if (dis > mViewWidth) {
-                        dis = mViewWidth;
+                    int dis = (int) ((mBackgroundWidth - mStartX) + mTouchX);
+                    if (dis > mBackgroundWidth) {
+                        dis = mBackgroundWidth;
                     }
-                    dx = mViewWidth - dis;
+                    dx = mBackgroundWidth - dis;
                 } else {
-                    dx = (int) -(mTouchX + (mViewWidth - mStartX));
+                    dx = (int) -(mTouchX + (mBackgroundWidth - mStartX));
                 }
                 break;
             default:
                 if (isCancel) {
                     dx = (int) -mTouchX;
                 } else {
-                    dx = (int) (mViewWidth - mTouchX);
+                    dx = (int) (mBackgroundWidth - mTouchX);
                 }
                 break;
         }
 
         //滑动速度保持一致
-        int duration = (400 * Math.abs(dx)) / mViewWidth;
+        int duration = (400 * Math.abs(dx)) / mBackgroundWidth;
         mScroller.startScroll((int) mTouchX, 0, dx, 0, duration);
     }
 }
