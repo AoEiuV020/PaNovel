@@ -61,11 +61,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
     }
 
     public void drawStatic(Canvas canvas) {
-        if (isCancel) {
-            canvas.drawBitmap(mCurBitmap, 0, 0, null);
-        } else {
-            canvas.drawBitmap(mNextBitmap, 0, 0, null);
-        }
+        canvas.drawBitmap(mNextBitmap, 0, 0, null);
     }
 
     public abstract void drawMove(Canvas canvas);
@@ -91,6 +87,11 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 isNext = false;
                 //是否正在执行动画
                 isRunning = false;
+                //如果是取消的动画，要切一下页面，
+                //如果不存在动画，不知道切不切，但切一下也没事，
+                if (isCancel) {
+                    changePage();
+                }
                 //取消
                 isCancel = false;
                 //设置起始位置的触摸点
@@ -201,9 +202,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
     @Override
     public void draw(Canvas canvas) {
         if (isRunning) {
-            if (isCancel) {
-                mNextBitmap = mCurBitmap.copy(Bitmap.Config.RGB_565, true);
-            }
             drawMove(canvas);
         } else {
             if (isCancel) {
