@@ -97,8 +97,13 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
 
         if (pages.isEmpty()) {
-            warn { "chapter $chapterIndex pages empty" }
-            content.drawText("本章空内容", 0f, textHeight.toFloat(), textPaint)
+            debug { "chapter $chapterIndex pages empty" }
+            var y = textHeight
+            content.drawText("本章空内容，", 0f, y.toFloat(), textPaint)
+            y += textHeight
+            content.drawText("网络问题？", 0f, y.toFloat(), textPaint)
+            y += textHeight
+            content.drawText("试试刷新？", 0f, y.toFloat(), textPaint)
             return
         }
 
@@ -138,9 +143,13 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                         pager?.refresh()
                     }
                 }, {
-                    //TODO 处理error,
                     val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex].name}"
                     error { message }
+                    // 缓存空的页面，到时候显示本章空内容，
+                    pagesCache.put(requestIndex, listOf())
+                    if (requestIndex == chapterIndex) {
+                        pager?.refresh()
+                    }
                 })
     }
 
@@ -225,6 +234,8 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     }
 
     fun refreshCurrentChapter() {
+        pagesCache.remove(chapterIndex)
+        pager?.refresh()
         request(chapterIndex, true)
     }
 }
