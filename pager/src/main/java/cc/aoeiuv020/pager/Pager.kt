@@ -128,7 +128,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     private fun resetAnim(w: Int, h: Int) {
         val config = AnimationConfig(w, h, margins, this, drawListener, animDurationMultiply)
         mAnim = when (animMode) {
-            AnimMode.SIMULATION -> SimulationPageAnim(config)
+            AnimMode.SIMULATION -> SimulationPageAnim(config).apply { setMainColor(bgColor) }
             AnimMode.COVER -> CoverPageAnim(config)
             AnimMode.SLIDE -> SlidePageAnim(config)
             AnimMode.NONE -> NonePageAnim(config)
