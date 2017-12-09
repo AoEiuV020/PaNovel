@@ -133,11 +133,17 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
     }
 
+    private val requestingList = mutableSetOf<Int>()
     private fun request(requestIndex: Int, refresh: Boolean = false) {
+        if (requestingList.contains(requestIndex)) {
+            // 已经在异步请求章节了，
+            return
+        }
         requester.lazyRequest(requestIndex, refresh)
                 .subscribe({ text ->
                     val pages = typesetting(reader.chapterList[requestIndex].name, text)
                     pagesCache.put(requestIndex, pages)
+                    requestingList.remove(requestIndex)
                     debug { "request result $requestIndex == $chapterIndex" }
                     if (requestIndex == chapterIndex) {
                         pager?.refresh()
@@ -147,6 +153,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                     error { message }
                     // 缓存空的页面，到时候显示本章空内容，
                     pagesCache.put(requestIndex, listOf())
+                    requestingList.remove(requestIndex)
                     if (requestIndex == chapterIndex) {
                         pager?.refresh()
                     }
@@ -189,6 +196,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         debug { "pages size = ${pages.size}" }
         return pages
     }
+
 
     override fun scrollToPrev(): Boolean {
         val pages = pagesCache[chapterIndex]
