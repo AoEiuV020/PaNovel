@@ -245,11 +245,21 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         super.onDestroy()
     }
 
+    /**
+     * 这个是代码主动选择章节，
+     */
     private fun selectChapter(index: Int) {
+        if (index !in chaptersAsc.indices) {
+            // 超出范围直接无视，
+            return
+        }
         reader.currentChapter = index
         onChapterSelected(index)
     }
 
+    /**
+     * 这个无论是用户翻页切换章节还是其他跳章节都要调用，
+     */
     private fun onChapterSelected(index: Int) {
         debug { "onChapterSelected $index" }
         progress.chapter = index
