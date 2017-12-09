@@ -61,6 +61,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
     }
 
     override fun refreshCurrentChapter() {
+        drawer.refreshCurrentChapter()
     }
 
     override fun onDestroy() {
