@@ -55,7 +55,13 @@ public abstract class HorizonPageAnim extends PageAnimation {
         mNextBitmap = bitmap;
     }
 
-    public abstract void drawStatic(Canvas canvas);
+    public void drawStatic(Canvas canvas) {
+        if (isCancel) {
+            canvas.drawBitmap(mCurBitmap, 0, 0, null);
+        } else {
+            canvas.drawBitmap(mNextBitmap, 0, 0, null);
+        }
+    }
 
     public abstract void drawMove(Canvas canvas);
 
