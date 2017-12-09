@@ -33,6 +33,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
             override fun onConfigChanged(name: ReaderConfigName) {
                 when (name) {
+                    ReaderConfigName.AnimDurationMultiply -> {
+                        pager?.animDurationMultiply = reader.config.animationSpeed
+                    }
                     ReaderConfigName.AnimationMode -> {
                         pager?.animMode = reader.config.animationMode.toAnimMode()
                     }

@@ -32,12 +32,17 @@ public abstract class HorizonPageAnim extends PageAnimation {
     //是否没下一页或者上一页
     private boolean noNext = false;
 
-    public HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, new Margins(), view, listener);
+    public HorizonPageAnim(AnimationConfig config) {
+        super(config);
+        init();
     }
 
     public HorizonPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
+        init();
+    }
+
+    private void init() {
         //创建图片
         mCurBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);

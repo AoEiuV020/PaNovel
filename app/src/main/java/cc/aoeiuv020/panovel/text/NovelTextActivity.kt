@@ -154,6 +154,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         showChaptersAsc(chaptersAsc)
     }
 
+    fun setAnimationSpeed(animationSpeed: Float) {
+        reader.config.animationSpeed = animationSpeed
+    }
+
     fun setAnimationMode(animationMode: AnimationMode, oldAnimationMode: AnimationMode) {
         debug { "setAnimationMode $oldAnimationMode to $animationMode" }
         if ((animationMode == AnimationMode.SIMPLE && oldAnimationMode != AnimationMode.SIMPLE)

@@ -10,8 +10,8 @@ import android.view.View;
 @SuppressWarnings("All")
 public class NonePageAnim extends HorizonPageAnim {
 
-    public NonePageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, new Margins(), view, listener);
+    public NonePageAnim(AnimationConfig config) {
+        super(config);
     }
 
     public NonePageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {

@@ -8,5 +8,5 @@ enum class ReaderConfigName {
     TextSize, LineSpacing, ParagraphSpacing,
     LeftSpacing, TopSpacing, RightSpacing, BottomSpacing,
     TextColor, BackgroundColor, BackgroundImage,
-    AnimationMode,
+    AnimationMode, AnimDurationMultiply
 }

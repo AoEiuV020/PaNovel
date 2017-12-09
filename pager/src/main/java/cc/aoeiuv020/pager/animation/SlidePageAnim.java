@@ -12,12 +12,17 @@ import android.view.View;
 public class SlidePageAnim extends HorizonPageAnim {
     private Rect mSrcRect, mDestRect, mNextSrcRect, mNextDestRect;
 
-    public SlidePageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, new Margins(), view, listener);
+    public SlidePageAnim(AnimationConfig config) {
+        super(config);
+        init();
     }
 
     public SlidePageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
+        init();
+    }
+
+    private void init() {
         mSrcRect = new Rect(0, 0, mBackgroundWidth, mBackgroundHeight);
         mDestRect = new Rect(0, 0, mBackgroundWidth, mBackgroundHeight);
         mNextSrcRect = new Rect(0, 0, mBackgroundWidth, mBackgroundHeight);
@@ -91,7 +96,7 @@ public class SlidePageAnim extends HorizonPageAnim {
                 break;
         }
         //滑动速度保持一致
-        int duration = (400 * Math.abs(dx)) / mBackgroundWidth;
+        int duration = (getDuration() * Math.abs(dx)) / mBackgroundWidth;
         mScroller.startScroll((int) mTouchX, 0, dx, 0, duration);
     }
 }

@@ -15,12 +15,17 @@ public class CoverPageAnim extends HorizonPageAnim {
     private Rect mSrcRect, mDestRect;
     private GradientDrawable mBackShadowDrawableLR;
 
-    public CoverPageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, new Margins(), view, listener);
+    public CoverPageAnim(AnimationConfig config) {
+        super(config);
+        init();
     }
 
     public CoverPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
+        init();
+    }
+
+    private void init() {
         mSrcRect = new Rect(0, 0, mBackgroundWidth, mBackgroundHeight);
         mDestRect = new Rect(0, 0, mBackgroundWidth, mBackgroundHeight);
         int[] mBackShadowColors = new int[]{0x66000000, 0x00000000};
@@ -88,7 +93,7 @@ public class CoverPageAnim extends HorizonPageAnim {
         }
 
         //滑动速度保持一致
-        int duration = (400 * Math.abs(dx)) / mBackgroundWidth;
+        int duration = (getDuration() * Math.abs(dx)) / mBackgroundWidth;
         mScroller.startScroll((int) mTouchX, 0, dx, 0, duration);
     }
 }

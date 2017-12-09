@@ -116,5 +116,7 @@
     <string name="slide">滑动</string>
     <string name="none">无</string>
     <string name="scroll">滚动</string>
+    <string name="animation_speed">动画速度</string>
+    <string name="animation_speed_placeholder">*%.2f</string>
 
 </resources>
