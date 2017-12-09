@@ -190,6 +190,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
     @Override
     public void draw(Canvas canvas) {
         if (isRunning) {
+            if (isCancel) {
+                mNextBitmap = mCurBitmap.copy(Bitmap.Config.RGB_565, true);
+            }
             drawMove(canvas);
         } else {
             if (isCancel) {
