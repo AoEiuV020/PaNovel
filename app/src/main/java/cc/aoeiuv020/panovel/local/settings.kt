@@ -58,6 +58,7 @@ object Settings : LocalSource {
         )
 
     var animationMode: AnimationMode by GsonDelegate.new(AnimationMode.SIMPLE)
+    var animationSpeed: Float  by PrimitiveDelegate(0.8f)
 
     fun makeReaderConfig() = ReaderConfig(
             textSize,
@@ -70,7 +71,8 @@ object Settings : LocalSource {
             textColor,
             backgroundColor,
             backgroundImage,
-            animationMode
+            animationMode,
+            animationSpeed
     )
 }
 

@@ -47,8 +47,13 @@ public abstract class PageAnimation implements PagerAnimation {
     protected float mLastX;
     protected float mLastY;
 
-    public PageAnimation(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, new Margins(), view, listener);
+    //动画间隔，越小越块，
+    protected int baseDuration = 400;
+    protected float durationMultiply = 0.8f;
+
+    public PageAnimation(AnimationConfig config) {
+        this(config.getWidth(), config.getHeight(), config.getMargins(), config.getView(), config.getListener());
+        durationMultiply = config.getDurationMultiply();
     }
 
     public PageAnimation(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
@@ -67,6 +72,14 @@ public abstract class PageAnimation implements PagerAnimation {
         mListener = listener;
 
         mScroller = new Scroller(mView.getContext(), new LinearInterpolator());
+    }
+
+    protected int getDuration() {
+        return (int) (baseDuration * durationMultiply);
+    }
+
+    public void setDurationMultiply(float multiply) {
+        durationMultiply = multiply;
     }
 
     public void setStartPoint(float x, float y) {

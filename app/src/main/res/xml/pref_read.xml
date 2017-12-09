@@ -23,6 +23,15 @@
 
     <cc.aoeiuv020.panovel.settings.EditTextPreference
         android:capitalize="words"
+        android:inputType="numberDecimal|numberSigned"
+        android:key="animation_speed"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/animation_speed" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
         android:inputType="number"
         android:key="text_size"
         android:maxLines="1"

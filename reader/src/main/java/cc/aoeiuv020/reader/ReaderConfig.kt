@@ -18,7 +18,8 @@ class ReaderConfig(
         textColor: Int,
         backgroundColor: Int,
         backgroundImage: Uri?,
-        animationMode: AnimationMode = AnimationMode.SIMPLE
+        animationMode: AnimationMode = AnimationMode.SIMPLE,
+        animationSpeed: Float = 0.8f
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()
     val margins: Margins
@@ -100,6 +101,13 @@ class ReaderConfig(
             field = value
             listeners.forEach {
                 it.onConfigChanged(ReaderConfigName.AnimationMode)
+            }
+        }
+    var animationSpeed: Float = animationSpeed
+        set(value) {
+            field = value
+            listeners.forEach {
+                it.onConfigChanged(ReaderConfigName.AnimDurationMultiply)
             }
         }
 }

@@ -37,6 +37,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
         }
 
     init {
+        pageView.animDurationMultiply = config.animationSpeed
         pageView.bgColor = config.backgroundColor
         pageView.animMode = config.animationMode.toAnimMode()
         pageView.margins = config.margins
@@ -60,6 +61,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
     }
 
     override fun refreshCurrentChapter() {
+        drawer.refreshCurrentChapter()
     }
 
     override fun onDestroy() {

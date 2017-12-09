@@ -5,9 +5,6 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import cc.aoeiuv020.reader.*
 import org.jetbrains.anko.ctx
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-import java.util.concurrent.TimeUnit
 
 class MainActivity : Activity() {
 
@@ -26,20 +23,14 @@ class MainActivity : Activity() {
                 })
             }
         }
-        val config = ReaderConfig(31, 23, 8,
+        val config = ReaderConfig(31, 11, 8,
                 1, 5, 10, 15,
-                0xff000000.toInt(), 0xffffffff.toInt(), null)
-        val reader = Readers.getComplexReader(ctx, Novel("书名", "作者名"), fl, requester, config)
+                0xff000000.toInt(), 0xffffffff.toInt(), null,
+                AnimationMode.SIMULATION)
+        val reader = Readers.getReader(ctx, Novel("书名", "作者名"), fl, requester, config)
         val chapters = List(20) {
             Chapter("章节名" + it)
         }
         reader.chapterList = chapters
-
-        doAsync {
-            TimeUnit.SECONDS.sleep(5)
-            uiThread {
-                reader.currentChapter = 10
-            }
-        }
     }
 }

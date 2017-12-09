@@ -23,6 +23,11 @@
         android:title="@string/pref_cache_clear" />
 
     <header
+        android:fragment="cc.aoeiuv020.panovel.settings.DisclaimerFragment"
+        android:icon="@drawable/ic_info"
+        android:title="@string/pref_header_disclaimer" />
+
+    <header
         android:fragment="cc.aoeiuv020.panovel.settings.AboutFragment"
         android:icon="@drawable/ic_info"
         android:title="@string/pref_header_about" />

@@ -33,6 +33,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
             override fun onConfigChanged(name: ReaderConfigName) {
                 when (name) {
+                    ReaderConfigName.AnimDurationMultiply -> {
+                        pager?.animDurationMultiply = reader.config.animationSpeed
+                    }
                     ReaderConfigName.AnimationMode -> {
                         pager?.animMode = reader.config.animationMode.toAnimMode()
                     }
@@ -94,8 +97,13 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
 
         if (pages.isEmpty()) {
-            warn { "chapter $chapterIndex pages empty" }
-            content.drawText("本章空内容", 0f, textHeight.toFloat(), textPaint)
+            debug { "chapter $chapterIndex pages empty" }
+            var y = textHeight
+            content.drawText("本章空内容，", 0f, y.toFloat(), textPaint)
+            y += textHeight
+            content.drawText("网络问题？", 0f, y.toFloat(), textPaint)
+            y += textHeight
+            content.drawText("试试刷新？", 0f, y.toFloat(), textPaint)
             return
         }
 
@@ -125,19 +133,30 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
     }
 
-    private fun request(requestIndex: Int) {
-        requester.lazyRequest(requestIndex)
+    private val requestingList = mutableSetOf<Int>()
+    private fun request(requestIndex: Int, refresh: Boolean = false) {
+        if (requestingList.contains(requestIndex)) {
+            // 已经在异步请求章节了，
+            return
+        }
+        requester.lazyRequest(requestIndex, refresh)
                 .subscribe({ text ->
                     val pages = typesetting(reader.chapterList[requestIndex].name, text)
                     pagesCache.put(requestIndex, pages)
+                    requestingList.remove(requestIndex)
                     debug { "request result $requestIndex == $chapterIndex" }
                     if (requestIndex == chapterIndex) {
                         pager?.refresh()
                     }
                 }, {
-                    //TODO 处理error,
                     val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex].name}"
                     error { message }
+                    // 缓存空的页面，到时候显示本章空内容，
+                    pagesCache.put(requestIndex, listOf())
+                    requestingList.remove(requestIndex)
+                    if (requestIndex == chapterIndex) {
+                        pager?.refresh()
+                    }
                 })
     }
 
@@ -178,13 +197,12 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         return pages
     }
 
+
     override fun scrollToPrev(): Boolean {
         val pages = pagesCache[chapterIndex]
         if (pages == null) {
             request(chapterIndex)
-            return false
-        }
-        if (pageIndex - 1 in pages.indices) {
+        } else if (pageIndex - 1 in pages.indices) {
             pageIndex--
             return true
         }
@@ -202,15 +220,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val pages = pagesCache[chapterIndex]
         if (pages == null) {
             request(chapterIndex)
-            return false
-        }
-        if (chapterIndex + 1 in reader.chapterList.indices) {
-            // 提前缓存一章，
-            request(chapterIndex + 1)
-        }
-        if (pageIndex >= 0 && pageIndex + 1 in pages.indices) {
-            pageIndex++
-            return true
+        } else {
+            if (chapterIndex + 1 in reader.chapterList.indices) {
+                // 提前缓存一章，
+                request(chapterIndex + 1)
+            }
+            if (pageIndex >= 0 && pageIndex + 1 in pages.indices) {
+                pageIndex++
+                return true
+            }
         }
         if (chapterIndex + 1 in reader.chapterList.indices) {
             chapterIndex++
@@ -219,5 +237,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return true
         }
         return false
+    }
+
+    fun refreshCurrentChapter() {
+        pagesCache.remove(chapterIndex)
+        pager?.refresh()
+        request(chapterIndex, true)
     }
 }

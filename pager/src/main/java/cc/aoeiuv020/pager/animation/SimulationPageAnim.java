@@ -54,12 +54,17 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private float mMaxLength;
     private Integer mMainColor = null;
 
-    public SimulationPageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, new Margins(), view, listener);
+    public SimulationPageAnim(AnimationConfig config) {
+        super(config);
+        init();
     }
 
     public SimulationPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
+        init();
+    }
+
+    private void init() {
         mPath0 = new Path();
         mPath1 = new Path();
         mMaxLength = (float) Math.hypot(mBackgroundWidth, mBackgroundHeight);
@@ -103,16 +108,6 @@ public class SimulationPageAnim extends HorizonPageAnim {
     }
 
     @Override
-    public void drawStatic(Canvas canvas) {
-        if (isCancel) {
-            mNextBitmap = mCurBitmap.copy(Bitmap.Config.RGB_565, true);
-            canvas.drawBitmap(mCurBitmap, 0, 0, null);
-        } else {
-            canvas.drawBitmap(mNextBitmap, 0, 0, null);
-        }
-    }
-
-    @Override
     public void startAnim() {
         super.startAnim();
         int dx, dy;
@@ -147,7 +142,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
                 dy = (int) (1 - mTouchY); // 防止mTouchY最终变为0
             }
         }
-        mScroller.startScroll((int) mTouchX, (int) mTouchY, dx, dy, 400);
+        mScroller.startScroll((int) mTouchX, (int) mTouchY, dx, dy, getDuration());
     }
 
     @Override

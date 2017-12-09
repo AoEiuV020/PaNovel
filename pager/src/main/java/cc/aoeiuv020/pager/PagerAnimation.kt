@@ -12,4 +12,5 @@ interface PagerAnimation {
     fun scrollAnim()
     fun refresh()
     fun onTouchEvent(event: MotionEvent): Boolean
+    fun setDurationMultiply(multiply: Float)
 }

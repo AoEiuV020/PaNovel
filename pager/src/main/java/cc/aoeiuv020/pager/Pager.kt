@@ -27,7 +27,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             : super(context, attrs, defStyleAttr)
 
     private var mAnim: PagerAnimation? = null
-    private val drawListener = this
+    private val drawListener: PageAnimation.OnPageChangeListener = this
     var actionListener: ActionListener? = null
     private var direction = PagerDirection.NONE
     private var centerRect = Rect(0, 0, 0, 0)
@@ -54,6 +54,11 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         set(value) {
             field = value
             resetAnim()
+        }
+    var animDurationMultiply: Float = 0.8f
+        set(value) {
+            field = value
+            mAnim?.setDurationMultiply(value)
         }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -121,12 +126,13 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     }
 
     private fun resetAnim(w: Int, h: Int) {
+        val config = AnimationConfig(w, h, margins, this, drawListener, animDurationMultiply)
         mAnim = when (animMode) {
-            AnimMode.SIMULATION -> SimulationPageAnim(w, h, margins, this, drawListener)
-            AnimMode.COVER -> CoverPageAnim(w, h, margins, this, drawListener)
-            AnimMode.SLIDE -> SlidePageAnim(w, h, margins, this, drawListener)
-            AnimMode.NONE -> NonePageAnim(w, h, margins, this, drawListener)
-            AnimMode.SCROLL -> ScrollPageAnim(w, h, margins, this, drawListener)
+            AnimMode.SIMULATION -> SimulationPageAnim(config).apply { setMainColor(bgColor) }
+            AnimMode.COVER -> CoverPageAnim(config)
+            AnimMode.SLIDE -> SlidePageAnim(config)
+            AnimMode.NONE -> NonePageAnim(config)
+            AnimMode.SCROLL -> ScrollPageAnim(config)
         }
     }
 

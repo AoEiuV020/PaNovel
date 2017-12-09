@@ -253,7 +253,33 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         }
 
         llAnimation.apply {
-            llRoot.check(when (Settings.animationMode) {
+            val maxSpeed = 3f
+            val animationSpeed: Float = Settings.animationSpeed
+            tvAnimationSpeed.text = view.getString(R.string.animation_speed_placeholder, animationSpeed)
+            sbAnimationSpeed.let { sb ->
+                sb.progress = (animationSpeed / maxSpeed * sb.max).toInt()
+                sb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+                    private fun progressToSpeed(seekBar: SeekBar) = maxSpeed / seekBar.max * seekBar.progress
+
+                    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                        tvAnimationSpeed.text = view.getString(R.string.animation_speed_placeholder, progressToSpeed(seekBar))
+                    }
+
+                    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    }
+
+                    override fun onStopTrackingTouch(seekBar: SeekBar) {
+                        progressToSpeed(seekBar).let {
+                            view.setAnimationSpeed(it)
+                            Settings.animationSpeed = it
+                        }
+                    }
+
+                })
+            }
+
+            rgAnimationMode.check(when (Settings.animationMode) {
                 AnimationMode.SIMPLE -> R.id.rbSimple
                 AnimationMode.SIMULATION -> R.id.rbSimulation
                 AnimationMode.COVER -> R.id.rbCover
@@ -261,7 +287,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 AnimationMode.NONE -> R.id.rbNone
                 AnimationMode.SCROLL -> R.id.rbScroll
             })
-            llRoot.setOnCheckedChangeListener { _, checkedId ->
+            rgAnimationMode.setOnCheckedChangeListener { _, checkedId ->
                 val animationMode = when (checkedId) {
                     R.id.rbSimple -> AnimationMode.SIMPLE
                     R.id.rbSimulation -> AnimationMode.SIMULATION

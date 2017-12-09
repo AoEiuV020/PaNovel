@@ -32,12 +32,17 @@ public abstract class HorizonPageAnim extends PageAnimation {
     //是否没下一页或者上一页
     private boolean noNext = false;
 
-    public HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
-        this(w, h, new Margins(), view, listener);
+    public HorizonPageAnim(AnimationConfig config) {
+        super(config);
+        init();
     }
 
     public HorizonPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
+        init();
+    }
+
+    private void init() {
         //创建图片
         mCurBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);
         mNextBitmap = Bitmap.createBitmap(mBackgroundWidth, mBackgroundHeight, Bitmap.Config.RGB_565);
@@ -55,7 +60,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
         mNextBitmap = bitmap;
     }
 
-    public abstract void drawStatic(Canvas canvas);
+    public void drawStatic(Canvas canvas) {
+        canvas.drawBitmap(mNextBitmap, 0, 0, null);
+    }
 
     public abstract void drawMove(Canvas canvas);
 
@@ -80,6 +87,11 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 isNext = false;
                 //是否正在执行动画
                 isRunning = false;
+                //如果是取消的动画，要切一下页面，
+                //如果不存在动画，不知道切不切，但切一下也没事，
+                if (isCancel) {
+                    changePage();
+                }
                 //取消
                 isCancel = false;
                 //设置起始位置的触摸点
