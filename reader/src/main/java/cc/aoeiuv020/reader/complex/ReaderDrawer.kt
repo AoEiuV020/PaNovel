@@ -194,9 +194,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val pages = pagesCache[chapterIndex]
         if (pages == null) {
             request(chapterIndex)
-            return false
-        }
-        if (pageIndex - 1 in pages.indices) {
+        } else if (pageIndex - 1 in pages.indices) {
             pageIndex--
             return true
         }
@@ -214,15 +212,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val pages = pagesCache[chapterIndex]
         if (pages == null) {
             request(chapterIndex)
-            return false
-        }
-        if (chapterIndex + 1 in reader.chapterList.indices) {
-            // 提前缓存一章，
-            request(chapterIndex + 1)
-        }
-        if (pageIndex >= 0 && pageIndex + 1 in pages.indices) {
-            pageIndex++
-            return true
+        } else {
+            if (chapterIndex + 1 in reader.chapterList.indices) {
+                // 提前缓存一章，
+                request(chapterIndex + 1)
+            }
+            if (pageIndex >= 0 && pageIndex + 1 in pages.indices) {
+                pageIndex++
+                return true
+            }
         }
         if (chapterIndex + 1 in reader.chapterList.indices) {
             chapterIndex++
