@@ -42,6 +42,7 @@ class SettingsActivity : AppCompatPreferenceActivity(), AnkoLogger {
                 || OthersPreferenceFragment::class.java.name == fragmentName
                 || CacheClearPreferenceFragment::class.java.name == fragmentName
                 || AboutFragment::class.java.name == fragmentName
+                || DisclaimerFragment::class.java.name == fragmentName
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
