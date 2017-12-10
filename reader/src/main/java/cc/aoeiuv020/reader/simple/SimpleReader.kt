@@ -75,6 +75,7 @@ internal class SimpleReader(override var ctx: Context, novel: Novel, private val
     override fun onConfigChanged(name: ReaderConfigName) {
         when (name) {
             ReaderConfigName.TextSize -> ntpAdapter.notifyAllItemDataSetChanged()
+            ReaderConfigName.Font -> ntpAdapter.notifyAllItemDataSetChanged()
             ReaderConfigName.TextColor -> ntpAdapter.notifyAllItemDataSetChanged()
             ReaderConfigName.LineSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
             ReaderConfigName.ParagraphSpacing -> ntpAdapter.notifyAllItemDataSetChanged()

@@ -3,10 +3,12 @@ package cc.aoeiuv020.pager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import cc.aoeiuv020.pager.animation.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -145,18 +147,43 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         mAnim?.scrollAnim()
     }
 
-    private var previousAction: Int = MotionEvent.ACTION_UP
+    private val startPoint = PointF()
+    private val sold = ViewConfiguration.get(context).scaledTouchSlop
+    private var isClick = false
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (previousAction == MotionEvent.ACTION_DOWN
-                && event.action == MotionEvent.ACTION_UP) {
-            if (centerRect.contains(event.x.toInt(), event.y.toInt())) {
-                actionListener?.onCenterClick()
-                return true
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (centerRect.contains(event.x.toInt(), event.y.toInt())) {
+                    isClick = true
+                    startPoint.set(event.x, event.y)
+                }
+            }
+            MotionEvent.ACTION_MOVE -> {
+                if (isClick && (Math.abs(event.x - startPoint.x) > sold || Math.abs(event.y - startPoint.y) > sold)) {
+                    isClick = false
+                }
+                if (isClick) {
+                    return true
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                if (isClick) {
+                    click()
+                    isClick = false
+                    return true
+                }
             }
         }
-        previousAction = event.action
         return mAnim?.onTouchEvent(event) ?: false
+    }
+
+    private fun click() {
+        actionListener?.onCenterClick()
+    }
+
+    override fun callOnClick(): Boolean {
+        return super.callOnClick()
     }
 
     interface ActionListener {

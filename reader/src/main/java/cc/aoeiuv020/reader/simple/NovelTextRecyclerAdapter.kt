@@ -66,6 +66,11 @@ internal class NovelTextRecyclerAdapter(private val reader: SimpleReader) : Recy
             textView.apply {
                 debug { "initMargin <$mLeftSpacing, $mRightSpacing>" }
                 text = string
+                typeface = if (layoutPosition == 0) {
+                    reader.config.titleFont
+                } else {
+                    reader.config.font
+                }
                 textSize = mTextSize.toFloat()
                 // 直接设置字号的话不会自动调整高度，手动请求一下，
                 post {

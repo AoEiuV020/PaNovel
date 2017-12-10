@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.novel_text_read_default.view.*
 import kotlinx.android.synthetic.main.novel_text_read_settings.view.*
 import kotlinx.android.synthetic.main.novel_text_read_typesetting.view.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.debug
 
 /**
@@ -113,8 +114,19 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
             })
 
+            // 设置字体，
+            llFont.setOnClickListener {
+                view.alert(R.string.select_font) {
+                    positiveButton(android.R.string.yes) {
+                        view.requestFont()
+                    }
+                    negativeButton(R.string.set_default) {
+                        view.setFont(null)
+                    }
+                }.show()
+            }
+
             // 设置背景图，
-            view.setBackgroundImage(Settings.backgroundImage)
             lBackgroundImage.setOnClickListener {
                 view.requestBackgroundImage()
             }

@@ -1,15 +1,18 @@
 package cc.aoeiuv020.panovel.local
 
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.net.Uri
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfig
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
 
 /**
  * 设置，
  * Created by AoEiuV020 on 2017.10.04-14:04:44.
  */
-object Settings : LocalSource {
+object Settings : LocalSource, AnkoLogger {
     /**
      * 阅读界面点击退出全屏的延迟，
      * 有点延迟看着顺眼点，
@@ -25,6 +28,16 @@ object Settings : LocalSource {
     var bottomSpacing: Int by PrimitiveDelegate(0)
 
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
+    var font: Uri? by UriDelegate()
+    val tfFont: Typeface?
+        get() = font?.let {
+            try {
+                Typeface.createFromFile(it.path)
+            } catch (e: Exception) {
+                error("字体生成失败", e)
+                null
+            }
+        }
     var backgroundColor: Int by PrimitiveDelegate(0xffffffff.toInt())
     var backgroundImage: Uri? by UriDelegate()
 
@@ -72,7 +85,8 @@ object Settings : LocalSource {
             backgroundColor,
             backgroundImage,
             animationMode,
-            animationSpeed
+            animationSpeed,
+            tfFont
     )
 }
 

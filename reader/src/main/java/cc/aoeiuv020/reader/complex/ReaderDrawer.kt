@@ -19,6 +19,7 @@ import org.jetbrains.anko.*
 class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, private val requester: TextRequester)
     : PagerDrawer(), AnkoLogger {
     val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
+    private lateinit var titlePaint: TextPaint
     private lateinit var textPaint: TextPaint
     private var backgroundImage: Bitmap? = null
     var chapterIndex = 0
@@ -33,6 +34,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
             override fun onConfigChanged(name: ReaderConfigName) {
                 when (name) {
+                    ReaderConfigName.Font -> {
+                        textPaint.typeface = reader.config.font
+                        titlePaint.typeface = reader.config.titleFont
+                        refresh()
+                    }
                     ReaderConfigName.AnimDurationMultiply -> {
                         pager?.animDurationMultiply = reader.config.animationSpeed
                     }
@@ -63,8 +69,13 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         pagesCache.evictAll()
 
         textPaint = TextPaint().apply {
+            isAntiAlias = true
             color = reader.config.textColor
             textSize = reader.ctx.sp(reader.config.textSize).toFloat()
+            typeface = reader.config.font
+        }
+        titlePaint = TextPaint(textPaint).apply {
+            typeface = reader.config.titleFont
         }
         backgroundImage = reader.config.backgroundImage?.let { BitmapFactory.decodeStream(reader.ctx.contentResolver.openInputStream(it)) }
     }
@@ -123,6 +134,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         page.lines.forEach { line ->
             verbose { "draw height $y/${content.height}" }
             when (line) {
+                is Title -> {
+                    y += textHeight
+                    content.drawText(line.string, 0f, y.toFloat(), titlePaint)
+                    y += reader.ctx.dip(reader.config.lineSpacing)
+                }
                 is String -> {
                     y += textHeight
                     content.drawText(line, 0f, y.toFloat(), textPaint)
@@ -139,6 +155,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             // 已经在异步请求章节了，
             return
         }
+        requestingList.add(requestIndex)
         requester.lazyRequest(requestIndex, refresh)
                 .subscribe({ text ->
                     val pages = typesetting(reader.chapterList[requestIndex].name, text)
@@ -182,7 +199,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 }
                 count = textPaint.breakText(paragraph.substring(start), true, contentSize.width.toFloat(), null)
                 val line = paragraph.substring(start, start + count)
-                lines.add(line)
+                if (index == 0) {
+                    lines.add(Title(line))
+                } else {
+                    lines.add(line)
+                }
                 height += lineSpacing
                 start += count
             }
@@ -200,14 +221,13 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     override fun scrollToPrev(): Boolean {
         val pages = pagesCache[chapterIndex]
-        if (pages == null) {
-            request(chapterIndex)
-        } else if (pageIndex - 1 in pages.indices) {
+        val prevPageIndex = pageIndex - 1
+        if (pages != null && prevPageIndex in pages.indices) {
             pageIndex--
             return true
         }
-
-        if (chapterIndex - 1 in reader.chapterList.indices) {
+        val prevChapterIndex = chapterIndex - 1
+        if (prevChapterIndex in reader.chapterList.indices) {
             chapterIndex--
             pageIndex = -1
             reader.chapterChangeListener?.onChapterChange()
@@ -218,19 +238,17 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     override fun scrollToNext(): Boolean {
         val pages = pagesCache[chapterIndex]
-        if (pages == null) {
-            request(chapterIndex)
-        } else {
-            if (chapterIndex + 1 in reader.chapterList.indices) {
+        val nextPageIndex = pageIndex + 1
+        val nextChapterIndex = chapterIndex + 1
+        if (pages != null && pageIndex >= 0 && nextPageIndex in pages.indices) {
+            pageIndex++
+            if (nextChapterIndex in reader.chapterList.indices && pagesCache.get(nextChapterIndex) == null) {
                 // 提前缓存一章，
-                request(chapterIndex + 1)
+                request(nextChapterIndex)
             }
-            if (pageIndex >= 0 && pageIndex + 1 in pages.indices) {
-                pageIndex++
-                return true
-            }
+            return true
         }
-        if (chapterIndex + 1 in reader.chapterList.indices) {
+        if (nextChapterIndex in reader.chapterList.indices) {
             chapterIndex++
             pageIndex = 0
             reader.chapterChangeListener?.onChapterChange()

@@ -105,6 +105,13 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 final int slop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
                 //判断是否移动了
                 if (!isMove) {
+                    if (x - mStartX > 0) {
+                        // 解决左右来回翻页时仿真动画闪一下的问题，
+                        // 问题在哪里并不知道，只是这里设置个方向可以基本解决问题，
+                        setDirection(Direction.PRE);
+                    } else {
+                        setDirection(Direction.NEXT);
+                    }
                     isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartY - y) > slop;
                 }
 
