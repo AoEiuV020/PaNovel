@@ -1,5 +1,6 @@
 package cc.aoeiuv020.reader
 
+import android.graphics.Typeface
 import android.net.Uri
 import cc.aoeiuv020.pager.animation.Margins
 
@@ -19,7 +20,8 @@ class ReaderConfig(
         backgroundColor: Int,
         backgroundImage: Uri?,
         animationMode: AnimationMode = AnimationMode.SIMPLE,
-        animationSpeed: Float = 0.8f
+        animationSpeed: Float = 0.8f,
+        font: Typeface? = null
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()
     val margins: Margins
@@ -108,6 +110,13 @@ class ReaderConfig(
             field = value
             listeners.forEach {
                 it.onConfigChanged(ReaderConfigName.AnimDurationMultiply)
+            }
+        }
+    var font: Typeface? = font
+        set(value) {
+            field = value
+            listeners.forEach {
+                it.onConfigChanged(ReaderConfigName.Font)
             }
         }
 }

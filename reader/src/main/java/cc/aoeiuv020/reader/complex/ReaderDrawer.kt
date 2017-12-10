@@ -33,6 +33,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
             override fun onConfigChanged(name: ReaderConfigName) {
                 when (name) {
+                    ReaderConfigName.Font -> {
+                        textPaint.typeface = reader.config.font
+                        refresh()
+                    }
                     ReaderConfigName.AnimDurationMultiply -> {
                         pager?.animDurationMultiply = reader.config.animationSpeed
                     }
@@ -66,6 +70,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             isAntiAlias = true
             color = reader.config.textColor
             textSize = reader.ctx.sp(reader.config.textSize).toFloat()
+            typeface = reader.config.font
         }
         backgroundImage = reader.config.backgroundImage?.let { BitmapFactory.decodeStream(reader.ctx.contentResolver.openInputStream(it)) }
     }

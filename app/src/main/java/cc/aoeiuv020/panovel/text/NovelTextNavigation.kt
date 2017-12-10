@@ -113,8 +113,12 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
             })
 
+            // 设置字体，
+            llFont.setOnClickListener {
+                view.requestFont()
+            }
+
             // 设置背景图，
-            view.setBackgroundImage(Settings.backgroundImage)
             lBackgroundImage.setOnClickListener {
                 view.requestBackgroundImage()
             }

@@ -192,6 +192,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         startActivityForResult(intent, 0)
     }
 
+    fun requestFont() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "file/*"
+        startActivityForResult(intent, 1)
+    }
+
     private var cacheUri: Uri? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -203,7 +209,17 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 } catch (e: SecurityException) {
                     error("读取背景图失败", e)
                     cacheUri = uri
-                    ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), 0)
+                    ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), requestCode)
+                }
+            }
+            1 -> data?.data?.let { uri ->
+                try {
+                    Settings.font = uri
+                    setFont()
+                } catch (e: SecurityException) {
+                    error("读取字体失败", e)
+                    cacheUri = uri
+                    ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), requestCode)
                 }
             }
         }
@@ -220,11 +236,24 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     cacheUri = null
                 }
             }
+            1 -> cacheUri?.let { uri ->
+                try {
+                    Settings.font = uri
+                    setFont()
+                } catch (e: SecurityException) {
+                    error("读取字体还是失败", e)
+                    cacheUri = null
+                }
+            }
         }
     }
 
-    fun setBackgroundImage(uri: Uri?) {
+    private fun setBackgroundImage(uri: Uri?) {
         reader.config.backgroundImage = uri
+    }
+
+    private fun setFont() {
+        reader.config.font = Settings.tfFont
     }
 
     fun setParagraphSpacing(progress: Int) {

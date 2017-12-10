@@ -43,6 +43,28 @@
 
 
     <LinearLayout
+        android:id="@+id/llFont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxEms="4"
+            android:minEms="4"
+            android:singleLine="true"
+            android:text="@string/font"
+            android:textColor="@android:color/primary_text_dark" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/lBackgroundImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

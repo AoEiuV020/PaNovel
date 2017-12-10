@@ -29,6 +29,7 @@
     <string name="now_loading_next_issue">正在加载下一话</string>
     <string name="bookshelf">书架</string>
     <string name="text_size">字体大</string>
+    <string name="font">字体</string>
     <string name="text_size_placeholders">%dsp</string>
     <string name="line_spacing_placeholder">%ddp</string>
     <string name="line_spacing">行间距</string>
