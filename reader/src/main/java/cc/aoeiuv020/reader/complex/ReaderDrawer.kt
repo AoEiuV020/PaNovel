@@ -203,13 +203,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     override fun scrollToPrev(): Boolean {
         val pages = pagesCache[chapterIndex]
         val prevPageIndex = pageIndex - 1
-        if (pages == null) {
-            request(chapterIndex)
-        } else if (prevPageIndex in pages.indices) {
+        if (pages != null && prevPageIndex in pages.indices) {
             pageIndex--
             return true
         }
-
         val prevChapterIndex = chapterIndex - 1
         if (prevChapterIndex in reader.chapterList.indices) {
             chapterIndex--
@@ -224,17 +221,13 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val pages = pagesCache[chapterIndex]
         val nextPageIndex = pageIndex + 1
         val nextChapterIndex = chapterIndex + 1
-        if (pages == null) {
-            request(chapterIndex)
-        } else {
+        if (pages != null && pageIndex >= 0 && nextPageIndex in pages.indices) {
+            pageIndex++
             if (nextChapterIndex in reader.chapterList.indices && pagesCache.get(nextChapterIndex) == null) {
                 // 提前缓存一章，
                 request(nextChapterIndex)
             }
-            if (pageIndex >= 0 && nextPageIndex in pages.indices) {
-                pageIndex++
-                return true
-            }
+            return true
         }
         if (nextChapterIndex in reader.chapterList.indices) {
             chapterIndex++
