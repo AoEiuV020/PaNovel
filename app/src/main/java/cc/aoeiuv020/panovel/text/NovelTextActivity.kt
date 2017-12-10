@@ -195,7 +195,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun requestFont() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "file/*"
+        intent.type = "*/*"
         startActivityForResult(intent, 1)
     }
 
