@@ -63,6 +63,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         pagesCache.evictAll()
 
         textPaint = TextPaint().apply {
+            isAntiAlias = true
             color = reader.config.textColor
             textSize = reader.ctx.sp(reader.config.textSize).toFloat()
         }
