@@ -115,7 +115,7 @@ class ReaderConfig(
     var font: Typeface? = font
         set(value) {
             field = value
-            Typeface.create(value, Typeface.BOLD)
+            titleFont = Typeface.create(value, Typeface.BOLD)
             listeners.forEach {
                 it.onConfigChanged(ReaderConfigName.Font)
             }
