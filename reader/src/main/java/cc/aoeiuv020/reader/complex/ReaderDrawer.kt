@@ -19,6 +19,7 @@ import org.jetbrains.anko.*
 class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, private val requester: TextRequester)
     : PagerDrawer(), AnkoLogger {
     val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
+    private lateinit var titlePaint: TextPaint
     private lateinit var textPaint: TextPaint
     private var backgroundImage: Bitmap? = null
     var chapterIndex = 0
@@ -35,6 +36,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 when (name) {
                     ReaderConfigName.Font -> {
                         textPaint.typeface = reader.config.font
+                        titlePaint.typeface = reader.config.titleFont
                         refresh()
                     }
                     ReaderConfigName.AnimDurationMultiply -> {
@@ -71,6 +73,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             color = reader.config.textColor
             textSize = reader.ctx.sp(reader.config.textSize).toFloat()
             typeface = reader.config.font
+        }
+        titlePaint = TextPaint(textPaint).apply {
+            typeface = reader.config.titleFont
         }
         backgroundImage = reader.config.backgroundImage?.let { BitmapFactory.decodeStream(reader.ctx.contentResolver.openInputStream(it)) }
     }
@@ -129,6 +134,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         page.lines.forEach { line ->
             verbose { "draw height $y/${content.height}" }
             when (line) {
+                is Title -> {
+                    y += textHeight
+                    content.drawText(line.string, 0f, y.toFloat(), titlePaint)
+                    y += reader.ctx.dip(reader.config.lineSpacing)
+                }
                 is String -> {
                     y += textHeight
                     content.drawText(line, 0f, y.toFloat(), textPaint)
@@ -189,7 +199,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 }
                 count = textPaint.breakText(paragraph.substring(start), true, contentSize.width.toFloat(), null)
                 val line = paragraph.substring(start, start + count)
-                lines.add(line)
+                if (index == 0) {
+                    lines.add(Title(line))
+                } else {
+                    lines.add(line)
+                }
                 height += lineSpacing
                 start += count
             }
