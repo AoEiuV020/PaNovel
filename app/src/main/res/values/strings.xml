@@ -120,5 +120,7 @@
     <string name="scroll">滚动</string>
     <string name="animation_speed">动画速度</string>
     <string name="animation_speed_placeholder">*%.2f</string>
+    <string name="select_font">选择字体？</string>
+    <string name="set_default">恢复默认</string>
 
 </resources>

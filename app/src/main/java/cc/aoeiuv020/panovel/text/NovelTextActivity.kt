@@ -6,6 +6,7 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -215,7 +216,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             1 -> data?.data?.let { uri ->
                 try {
                     Settings.font = uri
-                    setFont()
+                    setFont(Settings.tfFont)
                 } catch (e: SecurityException) {
                     error("读取字体失败", e)
                     cacheUri = uri
@@ -239,7 +240,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             1 -> cacheUri?.let { uri ->
                 try {
                     Settings.font = uri
-                    setFont()
+                    setFont(Settings.tfFont)
                 } catch (e: SecurityException) {
                     error("读取字体还是失败", e)
                     cacheUri = null
@@ -252,8 +253,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         reader.config.backgroundImage = uri
     }
 
-    private fun setFont() {
-        reader.config.font = Settings.tfFont
+    fun setFont(font: Typeface?) {
+        reader.config.font = font
     }
 
     fun setParagraphSpacing(progress: Int) {
