@@ -139,6 +139,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             // 已经在异步请求章节了，
             return
         }
+        requestingList.add(requestIndex)
         requester.lazyRequest(requestIndex, refresh)
                 .subscribe({ text ->
                     val pages = typesetting(reader.chapterList[requestIndex].name, text)
@@ -200,14 +201,16 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     override fun scrollToPrev(): Boolean {
         val pages = pagesCache[chapterIndex]
+        val prevPageIndex = pageIndex - 1
         if (pages == null) {
             request(chapterIndex)
-        } else if (pageIndex - 1 in pages.indices) {
+        } else if (prevPageIndex in pages.indices) {
             pageIndex--
             return true
         }
 
-        if (chapterIndex - 1 in reader.chapterList.indices) {
+        val prevChapterIndex = chapterIndex - 1
+        if (prevChapterIndex in reader.chapterList.indices) {
             chapterIndex--
             pageIndex = -1
             reader.chapterChangeListener?.onChapterChange()
@@ -218,19 +221,21 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     override fun scrollToNext(): Boolean {
         val pages = pagesCache[chapterIndex]
+        val nextPageIndex = pageIndex + 1
+        val nextChapterIndex = chapterIndex + 1
         if (pages == null) {
             request(chapterIndex)
         } else {
-            if (chapterIndex + 1 in reader.chapterList.indices) {
+            if (nextChapterIndex in reader.chapterList.indices && pagesCache.get(nextChapterIndex) == null) {
                 // 提前缓存一章，
-                request(chapterIndex + 1)
+                request(nextChapterIndex)
             }
-            if (pageIndex >= 0 && pageIndex + 1 in pages.indices) {
+            if (pageIndex >= 0 && nextPageIndex in pages.indices) {
                 pageIndex++
                 return true
             }
         }
-        if (chapterIndex + 1 in reader.chapterList.indices) {
+        if (nextChapterIndex in reader.chapterList.indices) {
             chapterIndex++
             pageIndex = 0
             reader.chapterChangeListener?.onChapterChange()
