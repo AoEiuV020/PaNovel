@@ -100,7 +100,7 @@ class Dmzz : NovelContext() {
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
         val root = request(requester)
         val text = root.select("#list_block > script").first().html()
-        val regex = Regex(".*chapter_list\\[\\d*\\]\\[\\d*\\] = '<a href=\"([^\"]*)\".*>(\\S*)</a>'.*;.*")
+        val regex = Regex(".*chapter_list\\[\\d*\\]\\[\\d*\\] = '<a href=\"([^\"]*)\".*>(.*)</a>'.*;.*")
         return text.lines().filter { it.matches(regex) }.map {
             val (url, name) = it.pick(regex.toPattern())
             NovelChapter(name, "http://q.dmzj.com" + url)

@@ -85,6 +85,11 @@ class DmzzTest {
             }
             assertEquals("转载信息", list.first().name)
         }
+        context.getNovelChaptersAsc(ChaptersRequester("http://q.dmzj.com/1607/index.shtml")).let { list ->
+            list.forEach {
+                println(it)
+            }
+        }
     }
 
     @Test
