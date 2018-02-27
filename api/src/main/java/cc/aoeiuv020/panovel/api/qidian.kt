@@ -302,6 +302,7 @@ class Qidian : NovelContext() {
 
     class FreeRequester(bookId: String, chapterId: String, cU: String) : MobileRequester(bookId, chapterId, cU) {
         companion object {
+            @JvmStatic
             fun new(extra: String): FreeRequester {
                 val (bookId, chapterId, cU) = MobileRequester.splitExtra(extra)
                 return FreeRequester(bookId, chapterId, cU)
@@ -313,6 +314,7 @@ class Qidian : NovelContext() {
 
     class VipRequester(bookId: String, chapterId: String) : MobileRequester(bookId, chapterId, "") {
         companion object {
+            @JvmStatic
             fun new(extra: String): VipRequester {
                 val pattern = Pattern.compile("https://vipreader.qidian.com/chapter/(\\d*)/(\\d*)")
                 return if (pattern.matcher(extra).matches()) {
