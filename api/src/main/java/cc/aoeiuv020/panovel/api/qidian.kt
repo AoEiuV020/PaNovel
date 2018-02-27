@@ -292,7 +292,7 @@ class Qidian : NovelContext() {
 
     abstract class MobileRequester(bookId: String, chapterId: String, cU: String) : TextRequester("$bookId:$chapterId:$cU") {
         companion object {
-            fun spliteExtra(extra: String): List<String> = extra.split(':')
+            fun splitExtra(extra: String): List<String> = extra.split(':')
         }
 
         private val apiUrl = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
@@ -303,7 +303,7 @@ class Qidian : NovelContext() {
     class FreeRequester(bookId: String, chapterId: String, cU: String) : MobileRequester(bookId, chapterId, cU) {
         companion object {
             fun new(extra: String): FreeRequester {
-                val (bookId, chapterId, cU) = MobileRequester.spliteExtra(extra)
+                val (bookId, chapterId, cU) = MobileRequester.splitExtra(extra)
                 return FreeRequester(bookId, chapterId, cU)
             }
         }
@@ -320,7 +320,7 @@ class Qidian : NovelContext() {
                     val (bookId, chapterId) = extra.pick(pattern)
                     VipRequester(bookId, chapterId)
                 } else {
-                    val (bookId, chapterId) = MobileRequester.spliteExtra(extra)
+                    val (bookId, chapterId) = MobileRequester.splitExtra(extra)
                     VipRequester(bookId, chapterId)
                 }
             }
