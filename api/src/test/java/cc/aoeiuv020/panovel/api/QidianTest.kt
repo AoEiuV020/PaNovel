@@ -1,5 +1,7 @@
 package cc.aoeiuv020.panovel.api
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -21,7 +23,7 @@ class QidianTest {
         context = Qidian()
     }
 
-//    @Test
+    //    @Test
     @Suppress("unused")
     fun makeGenres() {
         val all = Jsoup.connect("https://www.qidian.com/all").get()
@@ -142,15 +144,41 @@ class QidianTest {
             assertEquals("矿井区。", it.first())
             assertEquals("那冒泡的灵根潭面上，竟然悠悠浮起了半颗光头...", it.last())
         }
-        context.getNovelText(Qidian.VipRequester("https://vipreader.qidian.com/chapter/3602691/388384897")).textList.let {
+        context.getNovelText(Qidian.FreeRequester("1005983537", "357637902", "OVN-De6rNi_mkXioLmMPXw2/2iQzTaOC37pp4rPq4Fd4KQ2")).textList.let {
+            assertEquals(55, it.size)
+            assertEquals("回到教室，陈乔山心里很是激动，就在回来的路上，突然想到上辈子他也是参加过高考的，只不过时间是三年后的2006年。", it.first())
+            assertEquals("话刚说完，却见严小沁回头小心翼翼的看了他一眼，娇憨脸庞上的剪水双瞳分明蕴含一丝探究的意味。", it.last())
+        }
+        context.getNovelText(Qidian.VipRequester.new("https://vipreader.qidian.com/chapter/3602691/388384897")).textList.let {
             assertEquals(93, it.size)
             assertEquals("“楚前辈手下留情！”宋书航道。", it.first())
             assertEquals("核心世界中，除了楚阁主ｏｎｅ的脑袋外，还有其它脑袋吗？", it.last())
         }
-        context.getNovelText(Qidian.VipRequester("https://vipreader.qidian.com/chapter/1004608738/388762961")).textList.let {
+        context.getNovelText(Qidian.VipRequester.new("https://vipreader.qidian.com/chapter/1004608738/388762961")).textList.let {
             assertEquals(108, it.size)
             assertEquals("各大星系间，也不知道有多少进化者在议论，沸反盈天，主要是地球的动静大的惊人，举世瞩目。", it.first())
             assertEquals("时间过的很快，三天一转眼就过去了，再有两个时辰天就快黑了，将在东海的一艘七彩大船上举办慈善晚宴。", it.last())
         }
     }
+
+    @Test
+    fun vipTest() {
+        val url = "https://vipreader.qidian.com/chapter/3602691/388384897"
+        val requester = Qidian.VipRequester.new(url)
+        val conn = requester.connect()
+        assertEquals("https://m.qidian.com/majax/chapter/getChapterInfo?bookId=3602691&chapterId=388384897", conn.request().url().toString())
+        val res = conn.execute()
+        val body = res.body()
+        val json = Gson().fromJson(body, JsonObject::class.java)
+        val content = json.getAsJsonObject("data")
+                .getAsJsonObject("chapterInfo")
+                .getAsJsonPrimitive("content")
+                .asString
+        content.split("<p>　　").drop(1).let {
+            assertEquals(93, it.size)
+            assertEquals("“楚前辈手下留情！”宋书航道。", it.first())
+            assertEquals("核心世界中，除了楚阁主ｏｎｅ的脑袋外，还有其它脑袋吗？", it.last())
+        }
+    }
+
 }

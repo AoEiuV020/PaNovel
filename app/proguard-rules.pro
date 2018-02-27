@@ -12,6 +12,9 @@
 -keepnames class * extends cc.aoeiuv020.panovel.api.Requester
 -keepnames class * extends cc.aoeiuv020.panovel.local.LocalData
 
+# 静态方法new不混淆，为了反射方法new代替初始化，
+-keepclassmembers class * extends cc.aoeiuv020.panovel.api.Requester { public static final *** new(java.lang.String); }
+
 
 #jsoup https://stackoverflow.com/a/32169975/5615186
 -keeppackagenames org.jsoup.nodes

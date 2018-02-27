@@ -84,6 +84,7 @@ abstract class NovelContext {
 
     /**
      * 封装网络请求，主要是为了统一打log,
+     * TODO: 整理下，最终得到的有document、string两种，是否设置cookies再分两种，
      */
     protected fun connect(requester: Requester): Connection {
         logger.trace {

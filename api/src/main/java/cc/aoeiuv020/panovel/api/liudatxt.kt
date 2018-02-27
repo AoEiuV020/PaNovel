@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api
 
-import java.net.URLEncoder
+import org.jsoup.Connection
+import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 
 /**
@@ -66,9 +67,13 @@ class Liudatxt : NovelContext() {
     }
 
     override fun searchNovelName(name: String): NovelGenre {
-        val key = URLEncoder.encode(name, "UTF-8")
-        val url = "$SEARCH_PAGE_URL?searchkey=$key"
-        return NovelSearch(name, url)
+        return NovelGenre(name, SearchRequester(name))
+    }
+
+    class SearchRequester(private val name: String) : SearchListRequester(name) {
+        override fun connect(): Connection {
+            return Jsoup.connect(SEARCH_PAGE_URL).data("searchkey", name).method(Connection.Method.POST)
+        }
     }
 
     @SuppressWarnings("SimpleDateFormat")
