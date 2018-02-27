@@ -1,5 +1,7 @@
 package cc.aoeiuv020.panovel.api
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -21,7 +23,7 @@ class QidianTest {
         context = Qidian()
     }
 
-//    @Test
+    //    @Test
     @Suppress("unused")
     fun makeGenres() {
         val all = Jsoup.connect("https://www.qidian.com/all").get()
@@ -153,4 +155,25 @@ class QidianTest {
             assertEquals("时间过的很快，三天一转眼就过去了，再有两个时辰天就快黑了，将在东海的一艘七彩大船上举办慈善晚宴。", it.last())
         }
     }
+
+    @Test
+    fun vipTest() {
+        val url = "https://vipreader.qidian.com/chapter/3602691/388384897"
+        val requester = Qidian.VipRequester(url)
+        val conn = requester.connect()
+        assertEquals("https://m.qidian.com/majax/chapter/getChapterInfo?bookId=3602691&chapterId=388384897", conn.request().url().toString())
+        val res = conn.execute()
+        val body = res.body()
+        val json = Gson().fromJson(body, JsonObject::class.java)
+        val content = json.getAsJsonObject("data")
+                .getAsJsonObject("chapterInfo")
+                .getAsJsonPrimitive("content")
+                .asString
+        content.split("<p>　　").drop(1).let {
+            assertEquals(93, it.size)
+            assertEquals("“楚前辈手下留情！”宋书航道。", it.first())
+            assertEquals("核心世界中，除了楚阁主ｏｎｅ的脑袋外，还有其它脑袋吗？", it.last())
+        }
+    }
+
 }

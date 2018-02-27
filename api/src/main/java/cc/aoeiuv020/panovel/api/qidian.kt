@@ -8,6 +8,7 @@ import java.net.URLEncoder
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.DESedeKeySpec
@@ -261,6 +262,14 @@ class Qidian : NovelContext() {
     }
 
     override fun getNovelText(requester: TextRequester): NovelText {
+        if (requester is VipRequester) {
+            val json = Gson().fromJson(connect(requester).execute().body(), JsonObject::class.java)
+            val content = json.getAsJsonObject("data")
+                    .getAsJsonObject("chapterInfo")
+                    .getAsJsonPrimitive("content")
+                    .asString
+            return NovelText(content.split("<p>　　").drop(1))
+        }
         val root = request(requester)
         val query = if (requester is VipRequester) {
             "#chapterContent > section > p"
@@ -278,7 +287,7 @@ class Qidian : NovelContext() {
                 || url.startsWith("https://read.qidian.com/")
                 || url.startsWith("https://book.qidian.com/")
                 || url.startsWith("https://vipreader.qidian.com/")
-                || url.startsWith("https://m.qidian.com/book/")
+                || url.startsWith("https://m.qidian.com/majax/")
     }
 
     class VipRequester(url: String) : TextRequester(url) {
@@ -286,14 +295,20 @@ class Qidian : NovelContext() {
             private var cachedId = newId()
             private var downloadCount = 0
             private fun newId() = qidianMd5Hex(System.currentTimeMillis().toString() + Math.random().toString())
+            private val pattern = Pattern.compile("https://vipreader.qidian.com/chapter/(\\d*)/(\\d*)")
+        }
+
+        private fun replace(url: String): String {
+            val (bookId, chapterId) = url.pick(pattern)
+            return "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
         }
 
         override fun connect(): Connection {
-            val mobile = url.replace("https://vipreader.qidian.com/chapter/", "https://m.qidian.com/book/")
+            val mobile = replace(url)
             val deviceId = "878788848187878"
             if (++downloadCount > 2000) {
                 downloadCount = 0
-                cachedId = newId()
+                cachedId = newId() // 不锁也无所谓，顶多多换了一次id,
             }
             val id = cachedId
             val urlMd5 = qidianMd5Hex(url)
