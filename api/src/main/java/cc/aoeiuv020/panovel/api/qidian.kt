@@ -242,17 +242,15 @@ class Qidian : NovelContext() {
             it.asJsonObject.apply { getAsJsonPrimitive("vS").asInt.let { vipVolume = it == 1 } }
                     .getAsJsonArray("cs").map {
                 it.asJsonObject.let {
-                    val cN = it.getAsJsonPrimitive("cN").asString
+                    val chapterName = it.getAsJsonPrimitive("cN").asString
                     val cU = it.getAsJsonPrimitive("cU").asString
-                    val id = it.getAsJsonPrimitive("id").asInt
+                    val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
                     if (!vipVolume) {
                         // 免费卷，
-                        val url = "https://read.qidian.com/chapter/$cU"
-                        NovelChapter(cN, url)
+                        NovelChapter(chapterName, FreeRequester(bookId, chapterId, cU))
                     } else {
                         // VIP卷，
-                        val url = "https://vipreader.qidian.com/chapter/$bookId/$id"
-                        NovelChapter(cN, VipRequester(url))
+                        NovelChapter(chapterName, VipRequester(bookId, chapterId))
                     }
                 }
             }
@@ -262,7 +260,7 @@ class Qidian : NovelContext() {
     }
 
     override fun getNovelText(requester: TextRequester): NovelText {
-        if (requester is VipRequester) {
+        if (requester is MobileRequester) {
             val json = Gson().fromJson(connect(requester).execute().body(), JsonObject::class.java)
             val content = json.getAsJsonObject("data")
                     .getAsJsonObject("chapterInfo")
@@ -270,8 +268,10 @@ class Qidian : NovelContext() {
                     .asString
             return NovelText(content.split("<p>　　").drop(1))
         }
+        // 兼容以前的直接解析html,
         val root = request(requester)
         val query = if (requester is VipRequester) {
+            // 这部分已经废了，
             "#chapterContent > section > p"
         } else {
             "div#j_chapterBox > div > div > div.read-content.j_readContent > p"
@@ -290,21 +290,49 @@ class Qidian : NovelContext() {
                 || url.startsWith("https://m.qidian.com/majax/")
     }
 
-    class VipRequester(url: String) : TextRequester(url) {
+    abstract class MobileRequester(bookId: String, chapterId: String, cU: String) : TextRequester("$bookId:$chapterId:$cU") {
         companion object {
+            fun spliteExtra(extra: String): List<String> = extra.split(':')
+        }
+
+        private val apiUrl = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
+
+        override fun connect(): Connection = Jsoup.connect(apiUrl)
+    }
+
+    class FreeRequester(bookId: String, chapterId: String, cU: String) : MobileRequester(bookId, chapterId, cU) {
+        companion object {
+            fun new(extra: String): FreeRequester {
+                val (bookId, chapterId, cU) = MobileRequester.spliteExtra(extra)
+                return FreeRequester(bookId, chapterId, cU)
+            }
+        }
+
+        override val url = "https://read.qidian.com/chapter/$cU"
+    }
+
+    class VipRequester(bookId: String, chapterId: String) : MobileRequester(bookId, chapterId, "") {
+        companion object {
+            fun new(extra: String): VipRequester {
+                val pattern = Pattern.compile("https://vipreader.qidian.com/chapter/(\\d*)/(\\d*)")
+                return if (pattern.matcher(extra).matches()) {
+                    // 以前直接存地址的缓存也要兼容，之后可以作废，
+                    val (bookId, chapterId) = extra.pick(pattern)
+                    VipRequester(bookId, chapterId)
+                } else {
+                    val (bookId, chapterId) = MobileRequester.spliteExtra(extra)
+                    VipRequester(bookId, chapterId)
+                }
+            }
+
             private var cachedId = newId()
             private var downloadCount = 0
             private fun newId() = qidianMd5Hex(System.currentTimeMillis().toString() + Math.random().toString())
-            private val pattern = Pattern.compile("https://vipreader.qidian.com/chapter/(\\d*)/(\\d*)")
         }
 
-        private fun replace(url: String): String {
-            val (bookId, chapterId) = url.pick(pattern)
-            return "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
-        }
+        override val url = "https://vipreader.qidian.com/chapter/$bookId/$chapterId"
 
         override fun connect(): Connection {
-            val mobile = replace(url)
             val deviceId = "878788848187878"
             if (++downloadCount > 2000) {
                 downloadCount = 0
@@ -314,7 +342,7 @@ class Qidian : NovelContext() {
             val urlMd5 = qidianMd5Hex(url)
             val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
             val sign = URLEncoder.encode(qidianDes3(plain).replace(" ", ""), "ascii")
-            return Jsoup.connect(mobile).cookie("QDSign", sign)
+            return super.connect().cookie("QDSign", sign)
         }
     }
 }

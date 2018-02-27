@@ -35,9 +35,16 @@ open class Requester(val extra: String) {
                 json.asJsonObject.let {
                     val type = it.getAsJsonPrimitive("type").asString
                     val extra = it.getAsJsonPrimitive("extra").asString
-                    Class.forName(type)
-                            .getConstructor(String::class.java)
-                            .newInstance(extra) as Requester
+                    val clazz = Class.forName(type)
+                    try {
+                        val mNew = clazz.getMethod("new", String::class.java)
+                        mNew.invoke(null, extra) as Requester
+                    } catch (_: Exception) {
+                        // 可能没有new方法，也可能不是静态方法，
+                        // 静态new方法和构造方法总要有一个，
+                        clazz.getConstructor(String::class.java)
+                                .newInstance(extra) as Requester
+                    }
                 }
             })
         }
