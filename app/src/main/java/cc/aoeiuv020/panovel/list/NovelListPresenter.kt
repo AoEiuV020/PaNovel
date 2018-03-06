@@ -56,7 +56,13 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
                 context.getNovelList(genre.requester)
             }.async().subscribe({ comicList ->
                 debug { "展示小说列表，数量：${comicList.size}" }
-                view?.addNovelList(comicList)
+                if (comicList.isEmpty()) {
+                    // 正常情况不会出现这里列表小说数量为0,
+                    debug { "没有下一页" }
+                    view?.showNoMore()
+                } else {
+                    view?.addNovelList(comicList)
+                }
             }, { e ->
                 val message = "加载下一页小说列表失败，"
                 error(message, e)

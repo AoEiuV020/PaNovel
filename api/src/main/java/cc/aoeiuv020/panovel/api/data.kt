@@ -86,10 +86,17 @@ data class NovelChapter(
          * 章节名不包括小说名，
          */
         val name: String,
-        val requester: TextRequester
+        val requester: TextRequester,
+        /**
+         * 本章节更新时间，没有就没有，
+         */
+        val update: Date? = null
 ) : Data() {
     constructor(name: String, url: String)
             : this(name, TextRequester(url))
+
+    constructor(name: String, url: String, update: Date)
+            : this(name, TextRequester(url), update)
 }
 
 /**

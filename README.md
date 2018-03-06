@@ -9,6 +9,7 @@
 [笔趣阁](http://www.biqubao.com/)
 [溜达小说](http://www.liudatxt.com/)
 [起点中文](https://www.qidian.com/)
+[SF轻小说](http://book.sfacg.com/)
 
 【库】  
 kotlin + mvp + rxandroid  

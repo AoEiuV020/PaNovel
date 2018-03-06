@@ -42,7 +42,7 @@ class Sfacg : NovelContext() {
         val a = root.select("div.bsubcon > div.list_pages > ul > li.pagebarNext > a").first() ?: return null
         val url = a.absHref()
         if (url.isEmpty()) return null
-        return NovelSearch(genre.name, url)
+        return NovelGenre(genre.name, url)
     }
 
     override fun searchNovelName(name: String): NovelGenre {
