@@ -197,30 +197,25 @@ class Qidian : NovelContext() {
             sdf.parse(updateString)
         } else {
             val updateString = cf.select("> em").first().text()
-            when {
-                updateString.startsWith("今天") -> {
-                    val (hour, minute) = updateString.pick("今天(\\d*):(\\d*)更新")
-                    Calendar.getInstance().run {
-                        set(Calendar.HOUR_OF_DAY, hour.toInt())
-                        set(Calendar.MINUTE, minute.toInt())
-                        set(Calendar.SECOND, 0)
-                        time
+            try {
+                when {
+                    updateString.endsWith("小时前") -> {
+                        val (hour) = updateString.pick("(\\d*)小时前")
+                        Calendar.getInstance().run {
+                            add(Calendar.HOUR_OF_DAY, -hour.toInt())
+                            set(Calendar.MINUTE, 0)
+                            set(Calendar.SECOND, 0)
+                            time
+                        }
+                    }
+                    else -> {
+                        val sdf = SimpleDateFormat("yyyy-MM-dd")
+                        sdf.parse(updateString)
                     }
                 }
-                updateString.startsWith("昨日") -> {
-                    val (hour, minute) = updateString.pick("昨日(\\d*):(\\d*)更新")
-                    Calendar.getInstance().run {
-                        add(Calendar.DATE, -1)
-                        set(Calendar.HOUR_OF_DAY, hour.toInt())
-                        set(Calendar.MINUTE, minute.toInt())
-                        set(Calendar.SECOND, 0)
-                        time
-                    }
-                }
-                else -> {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    sdf.parse(updateString)
-                }
+            } catch (_: Exception) {
+                // 这种分段判断不靠谱，以防万一，不要因为更新时间就看不了小说了，
+                Date(0)
             }
         }
 
