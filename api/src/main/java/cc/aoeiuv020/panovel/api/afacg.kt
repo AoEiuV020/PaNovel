@@ -75,7 +75,7 @@ class Sfacg : NovelContext() {
             val url = a.absHref()
             val author = it.select("li:nth-last-child(1) > a").first().text().trim()
             val genre = it.select("> li:nth-child(2) > a:nth-child(6)").first().text()
-            val about = it.select("> li:nth-child(2)").first().let { it.childNode(it.childNodeSize() - 1) as TextNode }.wholeText
+            val about = it.select("> li:nth-child(2)").first().let { it.childNode(it.childNodeSize() - 1) as TextNode }.wholeText.trim()
             val info = "类型: $genre 简介: $about"
             NovelListItem(NovelItem(this, name, author, url), info)
         }
