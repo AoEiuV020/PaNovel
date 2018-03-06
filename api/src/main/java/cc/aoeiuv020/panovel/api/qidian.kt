@@ -240,12 +240,15 @@ class Qidian : NovelContext() {
                     val chapterName = it.getAsJsonPrimitive("cN").asString
                     val cU = it.getAsJsonPrimitive("cU").asString
                     val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
+                    val uT = it.getAsJsonPrimitive("uT").asString
+                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    val updateTime = sdf.parse(uT)
                     if (!vipVolume) {
                         // 免费卷，
-                        NovelChapter(chapterName, FreeRequester(bookId, chapterId, cU))
+                        NovelChapter(chapterName, FreeRequester(bookId, chapterId, cU), updateTime)
                     } else {
                         // VIP卷，
-                        NovelChapter(chapterName, VipRequester(bookId, chapterId))
+                        NovelChapter(chapterName, VipRequester(bookId, chapterId), updateTime)
                     }
                 }
             }

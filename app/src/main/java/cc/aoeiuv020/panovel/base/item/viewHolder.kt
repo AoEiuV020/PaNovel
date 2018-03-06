@@ -150,6 +150,7 @@ open class DefaultItemViewHolder<out T : BigItemPresenter<*>>(itemListPresenter:
     override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
         super.showChapter(chapters, progress)
         readAt?.text = chapters[progress].name
+        chapters.last().update?.let { update?.text = sdf.format(it) }
     }
 }
 
