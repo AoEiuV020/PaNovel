@@ -113,7 +113,7 @@ class Snwx : NovelContext() {
         val a = root.select("#pagelink > a.next").first() ?: return null
         val url = a.absHref()
         if (url.isEmpty()) return null
-        return NovelSearch(genre.name, url)
+        return NovelGenre(genre.name, url)
     }
 
     @SuppressWarnings("SimpleDateFormat")

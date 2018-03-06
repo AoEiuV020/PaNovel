@@ -48,6 +48,12 @@ class SfacgTest {
             }
             assertEquals(20, it.size)
         }
+        context.getNovelList(GenreListRequester("http://book.sfacg.com/List/default.aspx?tid=1&PageIndex=2")).let {
+            it.forEach { novelItem ->
+                println(novelItem)
+            }
+            assertEquals(20, it.size)
+        }
     }
 
     @Test
