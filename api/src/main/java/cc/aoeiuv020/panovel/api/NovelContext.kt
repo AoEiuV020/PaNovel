@@ -67,6 +67,8 @@ abstract class NovelContext {
      */
     abstract fun getNovelDetail(requester: DetailRequester): NovelDetail
 
+    open fun getNovelItem(url: String): NovelItem = getNovelDetail(DetailRequester(url)).novel
+
     /**
      * 获取小说章节列表，
      */

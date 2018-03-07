@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">爬小说</string>
     <string name="settings">设置</string>
-    <string name="loading">加载中..%s</string>
+    <string name="loading">加载中…%s</string>
     <string name="title_activity_novel_info">小说详情页</string>
     <string name="site">网站</string>
 
@@ -75,6 +75,8 @@
     <string name="read_last_chapter">阅读最新章</string>
     <string name="detail">详情</string>
     <string name="remove">删除</string>
+    <string name="rename">重命名</string>
+    <string name="share">分享</string>
     <string name="export_exists_chapter_to_text_file">导出已有章节到.txt</string>
     <string name="exporting_placeholder">导出中 已导出%d章 跳过%d章 剩余%d章</string>
     <string name="export_complete_placeholder">导出完成 已导出%d章 跳过%d章</string>
@@ -122,5 +124,10 @@
     <string name="animation_speed_placeholder">*%.2f</string>
     <string name="select_font">选择字体？</string>
     <string name="set_default">恢复默认</string>
+    <string name="uploading">上传中…</string>
+    <string name="add_book_list">添加书单</string>
+    <string name="book_list_downloading">书单下载中…</string>
+    <string name="open">打开</string>
+    <string name="judging">判断中…</string>
 
 </resources>
