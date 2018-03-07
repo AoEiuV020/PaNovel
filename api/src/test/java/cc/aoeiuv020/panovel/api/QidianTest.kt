@@ -135,6 +135,13 @@ class QidianTest {
             }
             assertEquals("读者重磅回馈：感恩节福利~", list.first().name)
         }
+        // 这个章节列表体积大于默认1M，
+        context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3357187")).let { list ->
+            list.forEach {
+                println(it)
+            }
+            assertEquals("第1章 撕心裂肺的背叛", list.first().name)
+        }
     }
 
     @Test
