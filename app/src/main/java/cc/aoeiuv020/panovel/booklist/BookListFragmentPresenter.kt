@@ -46,4 +46,18 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
         }).let { addDisposable(it, 1) }
     }
 
+    fun rename(bookList: BookListData, name: String) {
+        Observable.fromCallable {
+            BookList.remove(bookList)
+            BookList.put(BookListData(name, bookList.list))
+        }.async().subscribe({
+            view?.refresh()
+        }, { e ->
+            // 不能作为文件名的符号不可以存在，
+            val message = "重命名失败，"
+            error(message, e)
+            view?.showError(message, e)
+        })
+    }
+
 }
