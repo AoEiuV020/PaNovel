@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.panovel.api.NovelItem
+import java.util.*
 
 /**
  *
@@ -11,7 +12,7 @@ object History : LocalSource {
 
     private fun add(history: NovelHistory) = gsonSave(history.novel.bookId.toString(), history)
 
-    fun add(item: NovelItem) = add(NovelHistory(item))
+    fun add(item: NovelItem) = add(NovelHistory(item, Date()))
 
     private fun remove(item: NovelItem) = gsonRemove(item.bookId.toString())
 

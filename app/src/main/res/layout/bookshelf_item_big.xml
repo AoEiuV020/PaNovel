@@ -139,6 +139,7 @@
             android:id="@+id/ivMoreAction"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:srcCompat="@drawable/ic_more_vert"
             tools:ignore="ContentDescription" />
 
@@ -148,15 +149,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/newChapterDot"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            android:tint="#f00"
-            android:visibility="gone"
-            app:srcCompat="@drawable/circle_dot"
-            tools:ignore="ContentDescription" />
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/newChapterDot"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:tint="#f00"
+                android:visibility="gone"
+                app:srcCompat="@drawable/circle_dot"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
     </FrameLayout>
 
 

@@ -14,7 +14,7 @@ class HistoryPresenter : DefaultItemListPresenter<HistoryFragment>() {
 
     private fun requestHistory() {
         Observable.fromCallable {
-            History.list().map { it.novel }
+            History.list()
         }.async().subscribe({ list ->
             view?.showNovelList(list)
         }, { e ->

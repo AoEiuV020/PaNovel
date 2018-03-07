@@ -14,6 +14,16 @@ import org.jetbrains.anko.error
  */
 object Settings : LocalSource, AnkoLogger {
     /**
+     * 这名字好长，小红点提示未读或新章节，
+     * false则提示未读，也就是阅读进度不在最新章节，
+     * true则提示新章节，也就是上次阅读后有更新，
+     */
+    var bookshelfRedDotNotifyNotReadOrNewChapter: Boolean by PrimitiveDelegate(false)
+    var bookshelfRedDotSize: Float by PrimitiveDelegate(24f)
+    var bookshelfRedDotColor: Int by PrimitiveDelegate(0xffff0000.toInt())
+    var bookshelfShowMoreActionDot: Boolean by PrimitiveDelegate(true)
+
+    /**
      * 阅读界面点击退出全屏的延迟，
      * 有点延迟看着顺眼点，
      */

@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.text.CheckableImageView
 import cc.aoeiuv020.panovel.text.NovelTextActivity
@@ -27,7 +28,7 @@ import java.util.*
 abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<*, T>,
                                                                   protected val ctx: Context, parent: ViewGroup?, layoutId: Int,
                                                                   listener: OnItemLongClickListener? = null)
-    : BaseViewHolder<NovelItem>(parent, layoutId), SmallItemView, AnkoLogger {
+    : BaseViewHolder<NovelHistory>(parent, layoutId), SmallItemView, AnkoLogger {
     @Suppress("UNCHECKED_CAST")
     protected val presenter: T = itemListPresenter.subPresenter()
     private val image = itemView.imageView
@@ -36,10 +37,16 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
     private val site = itemView.tvSite
     private val last = itemView.tvLast
     /**
+     * 缓存更新时间，用来判断小红点是否显示，
+     */
+    protected lateinit var updateTime: Date
+    /**
      * 书架页没有这个star按钮，
      */
     private val star: CheckableImageView? = itemView.ivStar
-    protected lateinit var novelItem: NovelItem
+    protected lateinit var novelHistory: NovelHistory
+    protected val novelItem: NovelItem
+        get() = novelHistory.novel
 
     init {
         name.setOnClickListener {
@@ -78,14 +85,14 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
         }
     }
 
-    override fun setData(data: NovelItem) {
-        this.novelItem = data
+    override fun setData(data: NovelHistory) {
+        this.novelHistory = data
         debug {
             "${this.hashCode()} $layoutPosition setData $data"
         }
         star?.isChecked = Bookshelf.contains(novelItem)
         @Suppress("UnnecessaryVariable")
-        val novel = data
+        val novel = data.novel
         name.text = novel.name
         author.text = novel.author
         site.text = novel.site
@@ -99,12 +106,14 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
     }
 
     override fun showDetail(novelDetail: NovelDetail) {
+        updateTime = novelDetail.update
         Glide.with(ctx).load(novelDetail.bigImg).into(image)
         presenter.requestChapters(novelDetail)
     }
 
     override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
         last.text = chapters.last().name
+        chapters.last().update?.let { updateTime = it }
     }
 
     fun destroy() {
@@ -127,20 +136,12 @@ open class DefaultItemViewHolder<out T : BigItemPresenter<*>>(itemListPresenter:
     private val update: TextView? = itemView.tvUpdate
     private val readAt: TextView? = itemView.tvReadAt
 
-    override fun setData(data: NovelItem) {
+    override fun setData(data: NovelHistory) {
         super.setData(data)
 
         // 清空残留数据，避免闪烁，
         update?.text = ""
         readAt?.text = ""
-    }
-
-    override fun showDetail(novelDetail: NovelDetail) {
-        super.showDetail(novelDetail)
-        showUpdateTime(novelDetail.update)
-        update?.also {
-            presenter.requestUpdate(novelDetail)
-        }
     }
 
     override fun showUpdateTime(updateTime: Date) {
@@ -149,8 +150,8 @@ open class DefaultItemViewHolder<out T : BigItemPresenter<*>>(itemListPresenter:
 
     override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
         super.showChapter(chapters, progress)
+        showUpdateTime(updateTime)
         readAt?.text = chapters[progress].name
-        chapters.last().update?.let { update?.text = sdf.format(it) }
     }
 }
 
