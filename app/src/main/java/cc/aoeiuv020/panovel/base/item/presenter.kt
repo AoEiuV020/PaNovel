@@ -78,6 +78,9 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
 
 abstract class BigItemPresenter<T : BigItemView>(itemListPresenter: BaseItemListPresenter<*, *>) : SmallItemPresenter<T>(itemListPresenter) {
 
+    /**
+     * 貌似多余，另外有获取详情和章节，更新时间包含在内，
+     */
     fun requestUpdate(novelDetail: NovelDetail) {
         val novelItem = novelDetail.novel
         Observable.fromCallable {

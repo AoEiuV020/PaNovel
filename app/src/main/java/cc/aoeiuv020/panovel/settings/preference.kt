@@ -68,6 +68,7 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> String, (String) -> Unit>>(
                 "download_thread_count" to ({ Settings.downloadThreadCount.toString() } to { v -> Settings.downloadThreadCount = v.toInt() }),
+                "red_dot_size" to ({ Settings.bookshelfRedDotSize.toString() } to { v -> Settings.bookshelfRedDotSize = v.toFloat() }),
                 "async_thread_count" to ({ Settings.asyncThreadCount.toString() } to { v -> Settings.asyncThreadCount = v.toInt() }),
                 "history_count" to ({ Settings.historyCount.toString() } to { v -> Settings.historyCount = v.toInt() }),
                 "line_spacing" to ({ Settings.lineSpacing.toString() } to { v -> Settings.lineSpacing = v.toInt() }),
@@ -125,6 +126,9 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> Boolean, (Boolean) -> Unit>>(
                 "auto_save" to ({ Settings.bookListAutoSave } to { v -> Settings.bookListAutoSave = v }),
+                "auto_refresh" to ({ Settings.bookshelfAutoRefresh } to { v -> Settings.bookshelfAutoRefresh = v }),
+                "red_dot_notify_not_read_or_new_chapter" to ({ Settings.bookshelfRedDotNotifyNotReadOrNewChapter } to { v -> Settings.bookshelfRedDotNotifyNotReadOrNewChapter = v }),
+                "show_more_action_dot" to ({ Settings.bookshelfShowMoreActionDot } to { v -> Settings.bookshelfShowMoreActionDot = v }),
                 "book_small_layout" to ({ Settings.BookSmallLayout } to { v -> Settings.BookSmallLayout = v }),
                 "back_press_out_of_fullScreen" to ({ Settings.backPressOutOfFullScreen } to { v -> Settings.backPressOutOfFullScreen = v }),
                 "ad_enabled" to ({ Settings.adEnabled } to { v -> Settings.adEnabled = v })
@@ -172,6 +176,7 @@ class ColorPickerPreference : com.flask.colorpicker.ColorPickerPreference {
     companion object {
         private val map = mapOf<String, Pair<() -> Int, (Int) -> Unit>>(
                 "chapter_color_default" to ({ Settings.chapterColorDefault } to { v -> Settings.chapterColorDefault = v }),
+                "red_dot_color" to ({ Settings.bookshelfRedDotColor } to { v -> Settings.bookshelfRedDotColor = v }),
                 "chapter_color_cached" to ({ Settings.chapterColorCached } to { v -> Settings.chapterColorCached = v }),
                 "chapter_color_read_at" to ({ Settings.chapterColorReadAt } to { v -> Settings.chapterColorReadAt = v }),
                 "background_color" to ({ Settings.backgroundColor } to { v -> Settings.backgroundColor = v }),

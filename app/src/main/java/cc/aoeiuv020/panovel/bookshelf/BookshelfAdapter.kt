@@ -4,19 +4,22 @@ import android.content.Context
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListAdapter
 import cc.aoeiuv020.panovel.base.item.DefaultItemViewHolder
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.Text
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.hide
+import cc.aoeiuv020.panovel.util.setHeight
 import cc.aoeiuv020.panovel.util.show
 import cn.lemon.view.adapter.BaseViewHolder
 import kotlinx.android.synthetic.main.bookshelf_item_big.view.*
+import org.jetbrains.anko.debug
+import org.jetbrains.anko.dip
 import org.jetbrains.anko.selector
 
 /**
@@ -26,27 +29,27 @@ import org.jetbrains.anko.selector
 
 class BookshelfItemListAdapter(context: Context, val presenter: BookshelfPresenter)
     : BaseItemListAdapter(context) {
-    override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelItem>
+    override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<NovelHistory>
             = if (Settings.BookSmallLayout) {
         BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item_small)
     } else {
         BookshelfItemViewHolder(presenter, context, parent, R.layout.bookshelf_item_big)
     }
-
 }
 
 class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Context, parent: ViewGroup?, layoutId: Int)
     : DefaultItemViewHolder<BookshelfItemPresenter>(itemListPresenter, ctx, parent, layoutId) {
     private val newChapterDot = itemView.newChapterDot
     private val progressBar = itemView.progressBar
-    private val moreAction = itemView.lMoreAction
+    private val lMoreAction = itemView.lMoreAction
+    private val ivMoreAction = itemView.ivMoreAction
 
     init {
-        moreAction.setOnClickListener {
+        lMoreAction.setOnClickListener {
             refresh()
         }
 
-        moreAction.setOnLongClickListener {
+        lMoreAction.setOnLongClickListener {
             val list = listOf(R.string.read_continue to { readContinue() },
                     R.string.read_last_chapter to { readLastChapter() },
                     R.string.detail to { detail() },
@@ -59,19 +62,34 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
             }
             true
         }
+
+        newChapterDot.setHeight(ctx.dip(Settings.bookshelfRedDotSize))
+        newChapterDot.setColorFilter(Settings.bookshelfRedDotColor)
     }
 
-    override fun setData(data: NovelItem) {
+    override fun setData(data: NovelHistory) {
         super.setData(data)
         newChapterDot.hide()
+        ivMoreAction.hide()
         progressBar.show()
     }
 
     override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
         super.showChapter(chapters, progress)
         progressBar.hide()
-        if (chapters.lastIndex > progress) {
+        debug {
+            "update <${novelHistory.novel.name}, ${Settings.bookshelfRedDotNotifyNotReadOrNewChapter}, $updateTime, ${novelHistory.date}>"
+        }
+        val s = Settings.bookshelfRedDotNotifyNotReadOrNewChapter
+        if ((s && updateTime.time > novelHistory.date.time)
+                || (!s && chapters.lastIndex > progress)) {
             newChapterDot.show()
+            ivMoreAction.hide()
+        } else {
+            newChapterDot.hide()
+            if (Settings.bookshelfShowMoreActionDot) {
+                ivMoreAction.show()
+            }
         }
     }
 
@@ -85,8 +103,8 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
     }
 
     private fun refresh() {
-        setData(novelItem)
-        presenter.forceRefresh(novelItem)
+        setData(novelHistory)
+        presenter.forceRefresh(novelHistory)
     }
 
     private fun detail() {

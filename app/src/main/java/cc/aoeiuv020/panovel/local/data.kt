@@ -14,7 +14,10 @@ abstract class LocalData
 data class NovelProgress(var chapter: Int = 0, var text: Int = 0)
     : LocalData()
 
-data class NovelHistory(val novel: NovelItem, val date: Date = Date())
+/**
+ * 这个纠结，有的地方强行用了这个，date多余，但不用影响继承关系，
+ */
+data class NovelHistory(val novel: NovelItem, val date: Date = Date(0))
     : LocalData()
 
 data class NovelId(val site: String, val author: String, val name: String)

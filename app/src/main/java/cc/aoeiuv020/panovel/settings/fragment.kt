@@ -31,6 +31,8 @@ class GeneralPreferenceFragment : BasePreferenceFragment(R.xml.pref_general) {
     }
 }
 
+class BookshelfPreferenceFragment : BasePreferenceFragment(R.xml.pref_bookshelf)
+
 class ReadPreferenceFragment : BasePreferenceFragment(R.xml.pref_read)
 
 class OthersPreferenceFragment : BasePreferenceFragment(R.xml.pref_others)

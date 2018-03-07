@@ -57,6 +57,7 @@
     <string name="title_activity_settings">设置</string>
 
     <string name="pref_header_general">全局设置</string>
+    <string name="pref_header_bookshelf">书架设置</string>
     <string name="pref_header_read">阅读设置</string>
     <string name="pref_others">杂项</string>
     <string name="pref_cache_clear">清除缓存</string>
@@ -129,5 +130,10 @@
     <string name="book_list_downloading">书单下载中…</string>
     <string name="open">打开</string>
     <string name="judging">判断中…</string>
+    <string name="red_dot_size">小红点大小</string>
+    <string name="red_dot_color">小红点颜色</string>
+    <string name="red_dot_notify_not_read_or_new_chapter">小红点提示未阅读/新章节</string>
+    <string name="show_more_action_dot">显示更多操作的三小点</string>
+    <string name="auto_refresh">自动刷新</string>
 
 </resources>

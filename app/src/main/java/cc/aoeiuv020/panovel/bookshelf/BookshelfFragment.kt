@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
+import cc.aoeiuv020.panovel.local.NovelHistory
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.main.MainActivity
 import kotlinx.android.synthetic.main.novel_item_list.*
 
@@ -19,6 +20,12 @@ import kotlinx.android.synthetic.main.novel_item_list.*
 class BookshelfFragment : Fragment(), BaseItemListView {
     private lateinit var mAdapter: BookshelfItemListAdapter
     private val presenter: BookshelfPresenter = BookshelfPresenter()
+    /**
+     * 标记是否要强制刷新，
+     * create后需要强制刷新，其他情况回来的不需要，
+     * 强制刷新前会先验证Settings里的设置，
+     */
+    private var shouldForceRefresh = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View?
@@ -34,6 +41,8 @@ class BookshelfFragment : Fragment(), BaseItemListView {
             forceRefresh()
         }
 
+        shouldForceRefresh = true
+
         presenter.attach(this)
     }
 
@@ -42,9 +51,15 @@ class BookshelfFragment : Fragment(), BaseItemListView {
         super.onDestroyView()
     }
 
+
     override fun onStart() {
         super.onStart()
-        refresh()
+        if (shouldForceRefresh && Settings.bookshelfAutoRefresh) {
+            forceRefresh()
+        } else {
+            refresh()
+        }
+        shouldForceRefresh = false
     }
 
     fun refresh() {
@@ -59,7 +74,7 @@ class BookshelfFragment : Fragment(), BaseItemListView {
         presenter.forceRefresh()
     }
 
-    fun showNovelList(list: List<NovelItem>) {
+    fun showNovelList(list: List<NovelHistory>) {
         mAdapter.data = list
         recyclerView.dismissSwipeRefresh()
         recyclerView.showNoMore()

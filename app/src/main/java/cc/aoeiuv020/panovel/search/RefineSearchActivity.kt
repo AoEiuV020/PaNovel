@@ -12,6 +12,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
+import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
@@ -144,7 +145,7 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     }
 
     fun addNovel(item: NovelItem) {
-        mAdapter.add(item)
+        mAdapter.add(NovelHistory(item))
     }
 
     fun showOnComplete() {

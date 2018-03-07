@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="auto_refresh"
+        android:title="@string/auto_refresh" />
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="red_dot_notify_not_read_or_new_chapter"
+        android:title="@string/red_dot_notify_not_read_or_new_chapter" />
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="show_more_action_dot"
+        android:title="@string/show_more_action_dot" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="numberDecimal|numberSigned"
+        android:key="red_dot_size"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/red_dot_size" />
+
+    <cc.aoeiuv020.panovel.settings.ColorPickerPreference
+        android:key="red_dot_color"
+        android:title="@string/red_dot_color"
+        app:alphaSlider="true"
+        app:lightnessSlider="true"
+        app:wheelType="CIRCLE" />
+
+</PreferenceScreen>

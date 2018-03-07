@@ -61,7 +61,7 @@ class BookListFragmentAdapter(context: Context, val presenter: BookListFragmentP
             }
             itemView.setOnLongClickListener {
                 val list = listOf(R.string.remove to { i: Int -> remove(data, i) },
-                        R.string.rename to { i: Int -> rename(data) },
+                        R.string.rename to { _: Int -> rename(data) },
                         R.string.share to { _: Int -> shareBookList(data) })
                 context.selector(context.getString(R.string.action), list.unzip().first.map { context.getString(it) }) { _, i ->
                     list[i].second.invoke(layoutPosition)
