@@ -1,8 +1,16 @@
 package cc.aoeiuv020.panovel.share
 
+import android.content.Context
+import android.view.View
+import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.local.BookListData
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
+import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.dialog_shared.view.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.browse
+import org.jetbrains.anko.yesButton
 
 /**
  *
@@ -22,5 +30,22 @@ object Share {
     fun receiveBookList(url: String): BookListData {
         val text = paste.download(url)
         return text.toBean()
+    }
+
+    fun alert(context: Context, url: String, qrCode: String) {
+        val layout = View.inflate(context, R.layout.dialog_shared, null)
+        layout.tvUrl.apply {
+            text = url
+            setTextIsSelectable(true)
+            setOnClickListener {
+                context.browse(url)
+            }
+        }
+        Glide.with(context).load(qrCode).into(layout.ivQrCode)
+        context.alert {
+            titleResource = R.string.share
+            customView = layout
+            yesButton { }
+        }.show()
     }
 }

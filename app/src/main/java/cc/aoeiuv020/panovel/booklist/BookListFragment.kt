@@ -14,14 +14,12 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.local.BookList
 import cc.aoeiuv020.panovel.local.BookListData
 import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.showKeyboard
-import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.content_book_list.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
-import kotlinx.android.synthetic.main.dialog_shared.view.*
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.browse
 import org.jetbrains.anko.yesButton
 
 /**
@@ -76,20 +74,7 @@ class BookListFragment : Fragment(), IView {
 
     fun showSharedUrl(url: String, qrCode: String) {
         progressDialog.dismiss()
-        val layout = View.inflate(context, R.layout.dialog_shared, null)
-        layout.tvUrl.apply {
-            text = url
-            setTextIsSelectable(true)
-            setOnClickListener {
-                context.browse(url)
-            }
-        }
-        Glide.with(this).load(qrCode).into(layout.ivQrCode)
-        context.alert {
-            titleResource = R.string.share
-            customView = layout
-            yesButton { }
-        }.show()
+        Share.alert(context, url, qrCode)
     }
 
     fun newBookList() {

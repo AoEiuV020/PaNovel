@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.api.ChaptersRequester
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.qrcode.QrCodeManager
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
@@ -29,6 +30,21 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
     fun refresh() {
         refresh = true
         requestNovelDetail()
+    }
+
+    fun share() {
+        Observable.fromCallable {
+            val url = novelItem.requester.url
+            val qrCode = QrCodeManager.generate(novelItem.requester.url)
+            url to qrCode
+        }.async().subscribe({ (url, qrCode) ->
+            view?.showSharedUrl(url, qrCode)
+        }, { e ->
+            val message = "上传失败，"
+            error(message, e)
+            view?.showError(message, e)
+        }).let { addDisposable(it, 1) }
+
     }
 
     private fun requestNovelDetail() {

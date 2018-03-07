@@ -29,7 +29,6 @@ import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.show
-import cc.aoeiuv020.panovel.util.showKeyboard
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
@@ -207,7 +206,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     OpenManager.open(this@MainActivity, url)
                 }
             }
-            etName.post { etName.showKeyboard() }
         }.show()
     }
 

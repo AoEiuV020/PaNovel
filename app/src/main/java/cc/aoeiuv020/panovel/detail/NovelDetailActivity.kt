@@ -19,6 +19,7 @@ import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
+import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
@@ -146,6 +147,10 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         }
     }
 
+    fun showSharedUrl(url: String, qrCode: String) {
+        Share.alert(this, url, qrCode)
+    }
+
     fun showError(message: String, e: Throwable) {
         swipeRefreshLayout.isRefreshing = false
         alertError(alertDialog, message, e)
@@ -162,11 +167,16 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.refresh()
     }
 
+    private fun share() {
+        presenter.share()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.browse -> browse(novelItem.requester.url)
             R.id.info -> showNovelAbout()
             R.id.refresh -> refresh()
+            R.id.share -> share()
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)
         }
@@ -177,5 +187,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         menuInflater.inflate(R.menu.menu_detail, menu)
         return true
     }
+
 }
 
