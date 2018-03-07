@@ -223,6 +223,7 @@ class Qidian : NovelContext() {
         return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
+    @SuppressWarnings("SimpleDateFormat")
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
         val token = cookies?.get("_csrfToken") ?: run {
             response(requester).cookie("_csrfToken")
@@ -238,7 +239,12 @@ class Qidian : NovelContext() {
                     .getAsJsonArray("cs").map {
                 it.asJsonObject.let {
                     val chapterName = it.getAsJsonPrimitive("cN").asString
-                    val cU = it.getAsJsonPrimitive("cU").asString
+                    val cU = try {
+                        // 有用户反应这里出问题，但是没反馈清楚，直接把这字段改成不必要的，
+                        it.getAsJsonPrimitive("cU").asString
+                    } catch (_: Exception) {
+                        ""
+                    }
                     val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
                     val uT = it.getAsJsonPrimitive("uT").asString
                     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -298,7 +304,11 @@ class Qidian : NovelContext() {
         override fun connect(): Connection = Jsoup.connect(apiUrl)
     }
 
-    class FreeRequester(bookId: String, chapterId: String, cU: String) : MobileRequester(bookId, chapterId, cU) {
+    /**
+     * cU没必要，只是希望能打开电脑版最终页面，
+     * 没有的话vipreader也能打开，
+     */
+    class FreeRequester(bookId: String, chapterId: String, cU: String = "") : MobileRequester(bookId, chapterId, cU) {
         companion object {
             @JvmStatic
             fun new(extra: String): FreeRequester {
@@ -307,7 +317,11 @@ class Qidian : NovelContext() {
             }
         }
 
-        override val url = "https://read.qidian.com/chapter/$cU"
+        override val url = if (cU.isEmpty()) {
+            "https://vipreader.qidian.com/chapter/$bookId/$chapterId"
+        } else {
+            "https://read.qidian.com/chapter/$cU"
+        }
     }
 
     class VipRequester(bookId: String, chapterId: String) : MobileRequester(bookId, chapterId, "") {
