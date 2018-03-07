@@ -121,7 +121,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                         view.requestFont()
                     }
                     negativeButton(R.string.set_default) {
-                        view.setFont(null)
+                        view.resetFont()
                     }
                 }.show()
             }
