@@ -3,6 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="auto_refresh"
+        android:title="@string/auto_refresh" />
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
         android:key="red_dot_notify_not_read_or_new_chapter"
         android:title="@string/red_dot_notify_not_read_or_new_chapter" />
 

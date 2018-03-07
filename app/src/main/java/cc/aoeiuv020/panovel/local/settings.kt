@@ -22,6 +22,7 @@ object Settings : LocalSource, AnkoLogger {
     var bookshelfRedDotSize: Float by PrimitiveDelegate(24f)
     var bookshelfRedDotColor: Int by PrimitiveDelegate(0xffff0000.toInt())
     var bookshelfShowMoreActionDot: Boolean by PrimitiveDelegate(true)
+    var bookshelfAutoRefresh: Boolean by PrimitiveDelegate(false)
 
     /**
      * 阅读界面点击退出全屏的延迟，

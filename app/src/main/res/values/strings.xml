@@ -134,5 +134,6 @@
     <string name="red_dot_color">小红点颜色</string>
     <string name="red_dot_notify_not_read_or_new_chapter">小红点提示未阅读/新章节</string>
     <string name="show_more_action_dot">显示更多操作的三小点</string>
+    <string name="auto_refresh">自动刷新</string>
 
 </resources>
