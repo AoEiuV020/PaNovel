@@ -2,6 +2,8 @@ package cc.aoeiuv020.panovel.booklist
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.local.BookList
+import cc.aoeiuv020.panovel.local.BookListData
+import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.async
 import io.reactivex.Observable
 import org.jetbrains.anko.error
@@ -24,8 +26,21 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
             val message = "获取历史列表失败，"
             error(message, e)
             view?.showError(message, e)
-        }).let { addDisposable(it) }
+        }).let { addDisposable(it, 0) }
 
+    }
+
+    fun shareBookList(bookList: BookListData) {
+        view?.showUploading()
+        Observable.fromCallable {
+            Share.shareBookList(bookList)
+        }.async().subscribe({ url ->
+            view?.showSharedUrl(url)
+        }, { e ->
+            val message = "上传失败，"
+            error(message, e)
+            view?.showError(message, e)
+        }).let { addDisposable(it, 1) }
     }
 
 }

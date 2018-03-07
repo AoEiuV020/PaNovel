@@ -19,6 +19,15 @@ class BookListFragmentAdapter(context: Context, val presenter: BookListFragmentP
     override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<BookListData>
             = ViewHolder(parent, R.layout.book_list_item)
 
+    fun remove(bookList: BookListData, position: Int) {
+        BookList.remove(bookList)
+        remove(position)
+    }
+
+    fun shareBookList(bookList: BookListData) {
+        presenter.shareBookList(bookList)
+    }
+
     inner class ViewHolder(parent: ViewGroup?, layoutId: Int) : BaseViewHolder<BookListData>(parent, layoutId) {
         private val name = itemView.ivName
         private val count = itemView.ivCount
@@ -28,10 +37,10 @@ class BookListFragmentAdapter(context: Context, val presenter: BookListFragmentP
                 BookListActivity.start(context, data.name)
             }
             itemView.setOnLongClickListener {
-                val list = listOf(R.string.remove to { BookList.remove(data) })
+                val list = listOf(R.string.remove to { i: Int -> remove(data, i) },
+                        R.string.share to { _: Int -> shareBookList(data) })
                 context.selector(context.getString(R.string.action), list.unzip().first.map { context.getString(it) }) { _, i ->
-                    list[i].second.invoke()
-                    remove(layoutPosition)
+                    list[i].second.invoke(layoutPosition)
                 }
 
                 true

@@ -27,6 +27,10 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder
  *
  * Created by AoEiuV020 on 2017.10.02-21:50:34.
  */
+
+/**
+ * 这个自带"加载中.."
+ */
 fun Context.loading(dialog: ProgressDialog, id: Int) = loading(dialog, getString(R.string.loading, getString(id)))
 
 fun Context.loading(dialog: ProgressDialog, str: String) = dialog.apply {
