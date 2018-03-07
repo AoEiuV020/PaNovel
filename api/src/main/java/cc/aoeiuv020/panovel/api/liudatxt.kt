@@ -71,6 +71,7 @@ class Liudatxt : NovelContext() {
     }
 
     class SearchRequester(private val name: String) : SearchListRequester(name) {
+        override val url = SEARCH_PAGE_URL
         override fun connect(): Connection {
             return Jsoup.connect(SEARCH_PAGE_URL).data("searchkey", name).method(Connection.Method.POST)
         }
