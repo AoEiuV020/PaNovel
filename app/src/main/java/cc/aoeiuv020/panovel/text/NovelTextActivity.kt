@@ -199,6 +199,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         startActivityForResult(intent, 1)
     }
 
+    fun resetFont() {
+        Settings.font = null
+        setFont(null)
+    }
+
     private var cacheUri: Uri? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
