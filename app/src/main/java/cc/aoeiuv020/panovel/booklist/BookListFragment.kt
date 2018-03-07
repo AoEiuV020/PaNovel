@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.local.BookListData
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.showKeyboard
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.content_book_list.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import kotlinx.android.synthetic.main.dialog_shared.view.*
@@ -73,7 +74,7 @@ class BookListFragment : Fragment(), IView {
         context.loading(progressDialog, getString(R.string.uploading))
     }
 
-    fun showSharedUrl(url: String) {
+    fun showSharedUrl(url: String, qrCode: String) {
         progressDialog.dismiss()
         val layout = View.inflate(context, R.layout.dialog_shared, null)
         layout.tvUrl.apply {
@@ -83,6 +84,7 @@ class BookListFragment : Fragment(), IView {
                 context.browse(url)
             }
         }
+        Glide.with(this).load(qrCode).into(layout.ivQrCode)
         context.alert {
             titleResource = R.string.share
             customView = layout
