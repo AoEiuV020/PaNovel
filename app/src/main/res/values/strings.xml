@@ -126,5 +126,6 @@
     <string name="uploading">上传中…</string>
     <string name="add_book_list">添加书单</string>
     <string name="book_list_downloading">书单下载中…</string>
+    <string name="open">打开</string>
 
 </resources>

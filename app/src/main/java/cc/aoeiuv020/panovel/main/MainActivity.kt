@@ -24,17 +24,13 @@ import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
-import cc.aoeiuv020.panovel.local.BookList
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
-import cc.aoeiuv020.panovel.share.Share
-import cc.aoeiuv020.panovel.util.async
-import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.show
 import cc.aoeiuv020.panovel.util.showKeyboard
 import com.google.android.gms.ads.AdListener
-import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -44,7 +40,10 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.yesButton
 
 
 /**
@@ -52,10 +51,10 @@ import org.jetbrains.anko.*
  * Created by AoEiuV020 on 2017.10.15-15:53:19.
  */
 class MainActivity : AppCompatActivity(), AnkoLogger {
-    private lateinit var progressDialog: ProgressDialog
+    lateinit var progressDialog: ProgressDialog
     private lateinit var bookshelfFragment: BookshelfFragment
     private lateinit var historyFragment: HistoryFragment
-    private lateinit var bookListFragment: BookListFragment
+    lateinit var bookListFragment: BookListFragment
     private var position: Int = 0
 
 
@@ -196,45 +195,25 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
     }
 
-    private fun browse() {
+    private fun open() {
         alert {
-            titleResource = R.string.browse
+            titleResource = R.string.open
             val layout = View.inflate(this@MainActivity, R.layout.dialog_editor, null)
             customView = layout
             val etName = layout.editText
             yesButton {
                 val url = etName.text.toString()
                 if (url.isNotEmpty()) {
-                    switch(url)
+                    OpenManager.open(this@MainActivity, url)
                 }
             }
             etName.post { etName.showKeyboard() }
         }.show()
     }
 
-    private fun switch(text: String) {
-        if (Share.check(text)) {
-            loading(progressDialog, getString(R.string.book_list_downloading))
-            Observable.fromCallable {
-                val bookList = Share.receiveBookList(text)
-                BookList.put(bookList)
-            }.async().subscribe({ _ ->
-                bookListFragment.refresh()
-                progressDialog.dismiss()
-            }, { e ->
-                val message = "获取书单失败，"
-                error(message, e)
-                showError(message, e)
-            })
-        } else {
-            val message = "不支持的地址或格式，"
-            showMessage(message)
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         data?.extras?.getString("SCAN_RESULT")?.let {
-            RefineSearchActivity.start(this, it)
+            OpenManager.open(this, it)
         }
     }
 
@@ -248,7 +227,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             R.id.settings -> SettingsActivity.start(this)
             R.id.search -> RefineSearchActivity.start(this)
             R.id.scan -> scan()
-            R.id.browse -> browse()
+            R.id.open -> open()
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)
@@ -260,7 +239,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         Snackbar.make(fab, "", Snackbar.LENGTH_SHORT)
     }
 
-    private fun showMessage(message: String) {
+    fun showMessage(message: String) {
         snack.setText(message)
         snack.show()
     }

@@ -17,8 +17,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/browse"
-        android:title="@string/browse"
+        android:id="@+id/open"
+        android:title="@string/open"
         app:showAsAction="never" />
 
     <item
