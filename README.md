@@ -10,6 +10,8 @@
 [溜达小说](http://www.liudatxt.com/)
 [起点中文](https://www.qidian.com/)
 [SF轻小说](http://book.sfacg.com/)
+[少年文学](https://www.snwx8.com/)
+[动漫之家](http://q.dmzj.com)
 
 【库】  
 kotlin + mvp + rxandroid  
