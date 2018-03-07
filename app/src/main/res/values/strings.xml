@@ -127,5 +127,6 @@
     <string name="add_book_list">添加书单</string>
     <string name="book_list_downloading">书单下载中…</string>
     <string name="open">打开</string>
+    <string name="judging">判断中…</string>
 
 </resources>
