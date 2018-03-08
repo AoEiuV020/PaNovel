@@ -98,6 +98,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 setStartPoint(x, y);
                 //如果存在动画则取消动画
                 abortAnim();
+                //重新设置触摸点
+                setTouchPoint(x, y);
                 break;
             case MotionEvent.ACTION_MOVE:
                 //是否存在下一章
@@ -175,9 +177,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
                     }
 
                     if (isNext) {
-                        if (!scrollNext()) return true;
+                        if (!scrollNext(x, y)) return true;
                     } else {
-                        if (!scrollPrev()) return true;
+                        if (!scrollPrev(x, y)) return true;
                     }
                 } else {
                     // 是否取消翻页
@@ -204,8 +206,14 @@ public abstract class HorizonPageAnim extends PageAnimation {
         }
     }
 
-    @Override
-    public boolean scrollNext() {
+    /**
+     * @param x 翻页动画起始x，
+     * @param y 翻页动画起始y，
+     * @return 返回是否翻页，也就是是否有下一页，
+     */
+    private boolean scrollNext(float x, float y) {
+        // 动画起始，
+        setTouchPoint(x, y);
         //判断是否下一页存在
         boolean hasNext = drawNext();
         //设置动画方向
@@ -217,8 +225,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
         return true;
     }
 
-    @Override
-    public boolean scrollPrev() {
+    private boolean scrollPrev(float x, float y) {
+        setTouchPoint(x, y);
         boolean hasPrev = drawPrev();
         setDirection(Direction.PRE);
         if (!hasPrev) {
@@ -226,6 +234,16 @@ public abstract class HorizonPageAnim extends PageAnimation {
         }
         scroll();
         return true;
+    }
+
+    @Override
+    public boolean scrollNext() {
+        return scrollNext(mBackgroundWidth - 10, mBackgroundHeight - 10);
+    }
+
+    @Override
+    public boolean scrollPrev() {
+        return scrollPrev(10, 10);
     }
 
     @Override
@@ -266,6 +284,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
             if (isCancel) {
                 drawCurrent();
             }
+            // 通过直接设置触点到目的地来停止动画，
             setTouchPoint(mScroller.getFinalX(), mScroller.getFinalY());
             mView.postInvalidate();
         }
