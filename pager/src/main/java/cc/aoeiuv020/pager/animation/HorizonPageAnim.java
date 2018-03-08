@@ -211,7 +211,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
      * @param y 翻页动画起始y，
      * @return 返回是否翻页，也就是是否有下一页，
      */
-    private boolean scrollNext(float x, float y) {
+    @Override
+    public boolean scrollNext(float x, float y) {
         // 动画起始，
         setTouchPoint(x, y);
         //判断是否下一页存在
@@ -225,7 +226,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
         return true;
     }
 
-    private boolean scrollPrev(float x, float y) {
+    @Override
+    public boolean scrollPrev(float x, float y) {
         setTouchPoint(x, y);
         boolean hasPrev = drawPrev();
         setDirection(Direction.PRE);
@@ -234,16 +236,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
         }
         scroll();
         return true;
-    }
-
-    @Override
-    public boolean scrollNext() {
-        return scrollNext(mBackgroundWidth - 10, mBackgroundHeight / 2);
-    }
-
-    @Override
-    public boolean scrollPrev() {
-        return scrollPrev(10, 10);
     }
 
     @Override

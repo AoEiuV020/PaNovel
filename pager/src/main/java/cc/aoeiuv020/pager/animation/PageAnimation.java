@@ -129,11 +129,21 @@ public abstract class PageAnimation implements PagerAnimation {
 
     @Override
     public boolean scrollNext() {
+        return scrollNext(mBackgroundWidth - 10, mBackgroundHeight / 2);
+    }
+
+    @Override
+    public boolean scrollNext(float x, float y) {
         return false;
     }
 
     @Override
     public boolean scrollPrev() {
+        return scrollPrev(10, mBackgroundHeight / 2);
+    }
+
+    @Override
+    public boolean scrollPrev(float x, float y) {
         return false;
     }
 

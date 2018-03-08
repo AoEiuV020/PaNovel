@@ -18,6 +18,12 @@ interface PagerAnimation {
      */
     fun scrollNext(): Boolean
 
+    /**
+     * 滚动到下一页，不必支持，
+     * 传入滚动动画的起始点，
+     */
+    fun scrollNext(x: Float, y: Float): Boolean
     fun scrollPrev(): Boolean
+    fun scrollPrev(x: Float, y: Float): Boolean
     fun setDurationMultiply(multiply: Float)
 }

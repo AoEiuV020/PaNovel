@@ -185,9 +185,9 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             centerRect.contains(x.toInt(), y.toInt()) -> // 如果点击中心部分，回调退出全屏，
                 actionListener?.onCenterClick()
             !fullScreenClickNextPage && x < ((1 - (y / height)) * width) -> // 如果点击对角线左上，翻上页，
-                mAnim?.scrollPrev()
+                mAnim?.scrollPrev(x, y)
             else -> // 否则翻下页，
-                mAnim?.scrollNext()
+                mAnim?.scrollNext(x, y)
         }
     }
 
