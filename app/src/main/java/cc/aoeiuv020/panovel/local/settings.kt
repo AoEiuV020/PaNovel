@@ -84,6 +84,7 @@ object Settings : LocalSource, AnkoLogger {
     var animationMode: AnimationMode by GsonDelegate.new(AnimationMode.SIMPLE)
     var animationSpeed: Float by PrimitiveDelegate(0.8f)
     var fullScreenClickNextPage: Boolean by PrimitiveDelegate(false)
+    var volumeKeyScroll: Boolean by PrimitiveDelegate(false)
 
     fun makeReaderConfig() = ReaderConfig(
             textSize,

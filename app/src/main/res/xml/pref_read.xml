@@ -16,6 +16,10 @@
         android:title="@string/back_press_out_of_fullScreen" />
 
     <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="volume_key_scroll"
+        android:title="@string/volume_key_scroll" />
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
         android:key="full_screen_click_next_page"
         android:title="@string/full_screen_click_next_page" />
 

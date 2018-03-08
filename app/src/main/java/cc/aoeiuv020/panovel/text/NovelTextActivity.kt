@@ -419,16 +419,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_VOLUME_DOWN -> scrollNext()
-            KeyEvent.KEYCODE_VOLUME_UP -> scrollPrev()
-            KeyEvent.KEYCODE_PAGE_DOWN -> scrollNext()
-            KeyEvent.KEYCODE_DPAD_DOWN -> scrollNext()
-            KeyEvent.KEYCODE_PAGE_UP -> scrollPrev()
-            KeyEvent.KEYCODE_DPAD_UP -> scrollPrev()
-            else -> return super.onKeyDown(keyCode, event)
+        if (Settings.volumeKeyScroll) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_VOLUME_DOWN -> scrollNext()
+                KeyEvent.KEYCODE_VOLUME_UP -> scrollPrev()
+                else -> return super.onKeyDown(keyCode, event)
+            }
+            return true
         }
-        return true
+        return super.onKeyDown(keyCode, event)
     }
 
     private fun scrollNext() {

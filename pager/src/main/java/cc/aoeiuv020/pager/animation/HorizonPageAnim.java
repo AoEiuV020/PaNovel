@@ -238,7 +238,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     @Override
     public boolean scrollNext() {
-        return scrollNext(mBackgroundWidth - 10, mBackgroundHeight - 10);
+        return scrollNext(mBackgroundWidth - 10, mBackgroundHeight / 2);
     }
 
     @Override
