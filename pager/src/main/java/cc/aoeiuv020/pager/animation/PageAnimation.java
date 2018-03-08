@@ -127,6 +127,16 @@ public abstract class PageAnimation implements PagerAnimation {
      */
     public abstract boolean onTouchEvent(MotionEvent event);
 
+    @Override
+    public boolean scrollNext() {
+        return false;
+    }
+
+    @Override
+    public boolean scrollPrev() {
+        return false;
+    }
+
     /**
      * 绘制图形
      *

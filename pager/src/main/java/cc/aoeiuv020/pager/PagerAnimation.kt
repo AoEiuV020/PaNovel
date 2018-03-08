@@ -12,5 +12,12 @@ interface PagerAnimation {
     fun scrollAnim()
     fun refresh()
     fun onTouchEvent(event: MotionEvent): Boolean
+    /**
+     * 滚动到下一页，不必支持，
+     * @return 返回是否成功翻页，
+     */
+    fun scrollNext(): Boolean
+
+    fun scrollPrev(): Boolean
     fun setDurationMultiply(multiply: Float)
 }

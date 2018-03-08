@@ -175,34 +175,56 @@ public abstract class HorizonPageAnim extends PageAnimation {
                     }
 
                     if (isNext) {
-                        //判断是否下一页存在
-                        boolean hasNext = drawNext();
-                        //设置动画方向
-                        setDirection(Direction.NEXT);
-                        if (!hasNext) {
-                            return true;
-                        }
+                        if (!scrollNext()) return true;
                     } else {
-                        boolean hasPrev = drawPrev();
-                        setDirection(Direction.PRE);
-                        if (!hasPrev) {
-                            return true;
-                        }
+                        if (!scrollPrev()) return true;
                     }
+                } else {
+                    // 是否取消翻页
+                    if (isCancel) {
+                        pageCancel();
+                    }
+
+                    scroll();
                 }
 
-                // 是否取消翻页
-                if (isCancel) {
-                    pageCancel();
-                }
-
-                // 开启翻页效果
-                if (!noNext) {
-                    startAnim();
-                    mView.invalidate();
-                }
                 break;
         }
+        return true;
+    }
+
+    /**
+     * 开始滚动，
+     */
+    private void scroll() {
+        // 开启翻页效果
+        if (!noNext) {
+            startAnim();
+            mView.invalidate();
+        }
+    }
+
+    @Override
+    public boolean scrollNext() {
+        //判断是否下一页存在
+        boolean hasNext = drawNext();
+        //设置动画方向
+        setDirection(Direction.NEXT);
+        if (!hasNext) {
+            return false;
+        }
+        scroll();
+        return true;
+    }
+
+    @Override
+    public boolean scrollPrev() {
+        boolean hasPrev = drawPrev();
+        setDirection(Direction.PRE);
+        if (!hasPrev) {
+            return false;
+        }
+        scroll();
         return true;
     }
 
