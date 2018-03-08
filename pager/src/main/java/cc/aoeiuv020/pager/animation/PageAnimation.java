@@ -129,6 +129,7 @@ public abstract class PageAnimation implements PagerAnimation {
 
     @Override
     public boolean scrollNext() {
+        // TODO: 默认翻页起始点，在仿真动画里效果不定，需要看看calcPoints，
         return scrollNext(mBackgroundWidth - 10, mBackgroundHeight / 2);
     }
 
