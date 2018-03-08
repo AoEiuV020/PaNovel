@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.IView
@@ -258,7 +259,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         reader.config.backgroundImage = uri
     }
 
-    fun setFont(font: Typeface?) {
+    private fun setFont(font: Typeface?) {
         reader.config.font = font
     }
 
@@ -415,6 +416,27 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         handler.removeCallbacks(downloadingRunnable)
         notify(1, getString(R.string.download_complete_placeholder, exists, downloads, errors)
                 , novelItem.name)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_DOWN -> scrollNext()
+            KeyEvent.KEYCODE_VOLUME_UP -> scrollPrev()
+            KeyEvent.KEYCODE_PAGE_DOWN -> scrollNext()
+            KeyEvent.KEYCODE_DPAD_DOWN -> scrollNext()
+            KeyEvent.KEYCODE_PAGE_UP -> scrollPrev()
+            KeyEvent.KEYCODE_DPAD_UP -> scrollPrev()
+            else -> return super.onKeyDown(keyCode, event)
+        }
+        return true
+    }
+
+    private fun scrollNext() {
+        reader.scrollNext()
+    }
+
+    private fun scrollPrev() {
+        reader.scrollPrev()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

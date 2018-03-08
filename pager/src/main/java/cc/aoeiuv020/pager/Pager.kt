@@ -191,6 +191,9 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         }
     }
 
+    fun scrollNext() = mAnim?.scrollNext() ?: false
+    fun scrollPrev() = mAnim?.scrollPrev() ?: false
+
     interface ActionListener {
         fun onCenterClick()
         /**
