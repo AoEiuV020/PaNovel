@@ -430,6 +430,17 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (Settings.volumeKeyScroll) {
+            return when (keyCode) {
+                KeyEvent.KEYCODE_VOLUME_DOWN -> true
+                KeyEvent.KEYCODE_VOLUME_UP -> true
+                else -> super.onKeyUp(keyCode, event)
+            }
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
     private fun scrollNext() {
         reader.scrollNext()
     }
