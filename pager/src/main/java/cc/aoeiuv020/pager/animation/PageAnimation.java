@@ -127,6 +127,27 @@ public abstract class PageAnimation implements PagerAnimation {
      */
     public abstract boolean onTouchEvent(MotionEvent event);
 
+    @Override
+    public boolean scrollNext() {
+        // TODO: 默认翻页起始点，在仿真动画里效果不定，需要看看calcPoints，
+        return scrollNext(mBackgroundWidth - 10, mBackgroundHeight / 2);
+    }
+
+    @Override
+    public boolean scrollNext(float x, float y) {
+        return false;
+    }
+
+    @Override
+    public boolean scrollPrev() {
+        return scrollPrev(10, mBackgroundHeight / 2);
+    }
+
+    @Override
+    public boolean scrollPrev(float x, float y) {
+        return false;
+    }
+
     /**
      * 绘制图形
      *

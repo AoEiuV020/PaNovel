@@ -62,6 +62,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             field = value
             mAnim?.setDurationMultiply(value)
         }
+    var fullScreenClickNextPage: Boolean = false
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetDrawer()
@@ -154,10 +155,8 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (centerRect.contains(event.x.toInt(), event.y.toInt())) {
-                    isClick = true
-                    startPoint.set(event.x, event.y)
-                }
+                isClick = true
+                startPoint.set(event.x, event.y)
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isClick && (Math.abs(event.x - startPoint.x) > sold || Math.abs(event.y - startPoint.y) > sold)) {
@@ -169,7 +168,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             }
             MotionEvent.ACTION_UP -> {
                 if (isClick) {
-                    click()
+                    click(event.x, event.y)
                     isClick = false
                     return true
                 }
@@ -178,17 +177,30 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
         return mAnim?.onTouchEvent(event) ?: false
     }
 
-    private fun click() {
-        actionListener?.onCenterClick()
+    private fun click(x: Float, y: Float) {
+        debug {
+            "<$fullScreenClickNextPage, $x, $y>"
+        }
+        when {
+            centerRect.contains(x.toInt(), y.toInt()) -> // 如果点击中心部分，回调退出全屏，
+                actionListener?.onCenterClick()
+            !fullScreenClickNextPage && x < ((1 - (y / height)) * width) -> // 如果点击对角线左上，翻上页，
+                mAnim?.scrollPrev(x, y)
+            else -> // 否则翻下页，
+                mAnim?.scrollNext(x, y)
+        }
     }
 
-    override fun callOnClick(): Boolean {
-        return super.callOnClick()
-    }
+    fun scrollNext() = mAnim?.scrollNext() ?: false
+    fun scrollPrev() = mAnim?.scrollPrev() ?: false
 
     interface ActionListener {
         fun onCenterClick()
+        /**
+         * 无论是否存在上一页都会调用这个方法，
+         */
         fun onPagePrev()
+
         fun onPageNext()
     }
 }

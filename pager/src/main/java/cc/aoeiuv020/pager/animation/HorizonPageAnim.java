@@ -98,6 +98,8 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 setStartPoint(x, y);
                 //如果存在动画则取消动画
                 abortAnim();
+                //重新设置触摸点
+                setTouchPoint(x, y);
                 break;
             case MotionEvent.ACTION_MOVE:
                 //是否存在下一章
@@ -175,34 +177,64 @@ public abstract class HorizonPageAnim extends PageAnimation {
                     }
 
                     if (isNext) {
-                        //判断是否下一页存在
-                        boolean hasNext = drawNext();
-                        //设置动画方向
-                        setDirection(Direction.NEXT);
-                        if (!hasNext) {
-                            return true;
-                        }
+                        if (!scrollNext(x, y)) return true;
                     } else {
-                        boolean hasPrev = drawPrev();
-                        setDirection(Direction.PRE);
-                        if (!hasPrev) {
-                            return true;
-                        }
+                        if (!scrollPrev(x, y)) return true;
                     }
+                } else {
+                    // 是否取消翻页
+                    if (isCancel) {
+                        pageCancel();
+                    }
+
+                    scroll();
                 }
 
-                // 是否取消翻页
-                if (isCancel) {
-                    pageCancel();
-                }
-
-                // 开启翻页效果
-                if (!noNext) {
-                    startAnim();
-                    mView.invalidate();
-                }
                 break;
         }
+        return true;
+    }
+
+    /**
+     * 开始滚动，
+     */
+    private void scroll() {
+        // 开启翻页效果
+        if (!noNext) {
+            startAnim();
+            mView.invalidate();
+        }
+    }
+
+    /**
+     * @param x 翻页动画起始x，
+     * @param y 翻页动画起始y，
+     * @return 返回是否翻页，也就是是否有下一页，
+     */
+    @Override
+    public boolean scrollNext(float x, float y) {
+        // 动画起始，
+        setTouchPoint(x, y);
+        //判断是否下一页存在
+        boolean hasNext = drawNext();
+        //设置动画方向
+        setDirection(Direction.NEXT);
+        if (!hasNext) {
+            return false;
+        }
+        scroll();
+        return true;
+    }
+
+    @Override
+    public boolean scrollPrev(float x, float y) {
+        setTouchPoint(x, y);
+        boolean hasPrev = drawPrev();
+        setDirection(Direction.PRE);
+        if (!hasPrev) {
+            return false;
+        }
+        scroll();
         return true;
     }
 
@@ -244,6 +276,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
             if (isCancel) {
                 drawCurrent();
             }
+            // 通过直接设置触点到目的地来停止动画，
             setTouchPoint(mScroller.getFinalX(), mScroller.getFinalY());
             mView.postInvalidate();
         }

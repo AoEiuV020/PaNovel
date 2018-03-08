@@ -25,6 +25,9 @@ interface INovelReader {
 
     fun refreshCurrentChapter()
 
+    fun scrollNext(): Boolean
+    fun scrollPrev(): Boolean
+
     fun onDestroy()
 }
 
@@ -32,5 +35,7 @@ abstract class BaseNovelReader(override var novel: Novel, override var requester
     override var chapterChangeListener: ChapterChangeListener? = null
     override var menuListener: MenuListener? = null
     override var chapterList: List<Chapter> = emptyList()
+    override fun scrollNext(): Boolean = false
+    override fun scrollPrev(): Boolean = false
 }
 

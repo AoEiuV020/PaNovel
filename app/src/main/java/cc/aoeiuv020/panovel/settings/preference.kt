@@ -126,6 +126,8 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> Boolean, (Boolean) -> Unit>>(
                 "auto_save" to ({ Settings.bookListAutoSave } to { v -> Settings.bookListAutoSave = v }),
+                "volume_key_scroll" to ({ Settings.volumeKeyScroll } to { v -> Settings.volumeKeyScroll = v }),
+                "full_screen_click_next_page" to ({ Settings.fullScreenClickNextPage } to { v -> Settings.fullScreenClickNextPage = v }),
                 "auto_refresh" to ({ Settings.bookshelfAutoRefresh } to { v -> Settings.bookshelfAutoRefresh = v }),
                 "red_dot_notify_not_read_or_new_chapter" to ({ Settings.bookshelfRedDotNotifyNotReadOrNewChapter } to { v -> Settings.bookshelfRedDotNotifyNotReadOrNewChapter = v }),
                 "show_more_action_dot" to ({ Settings.bookshelfShowMoreActionDot } to { v -> Settings.bookshelfShowMoreActionDot = v }),
