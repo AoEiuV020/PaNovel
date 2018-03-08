@@ -82,7 +82,8 @@ object Settings : LocalSource, AnkoLogger {
         )
 
     var animationMode: AnimationMode by GsonDelegate.new(AnimationMode.SIMPLE)
-    var animationSpeed: Float  by PrimitiveDelegate(0.8f)
+    var animationSpeed: Float by PrimitiveDelegate(0.8f)
+    var fullScreenClickNextPage: Boolean by PrimitiveDelegate(false)
 
     fun makeReaderConfig() = ReaderConfig(
             textSize,
@@ -97,7 +98,8 @@ object Settings : LocalSource, AnkoLogger {
             backgroundImage,
             animationMode,
             animationSpeed,
-            tfFont
+            tfFont,
+            fullScreenClickNextPage
     )
 }
 

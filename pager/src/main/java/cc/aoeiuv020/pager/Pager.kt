@@ -62,6 +62,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             field = value
             mAnim?.setDurationMultiply(value)
         }
+    var fullScreenClickNextPage: Boolean = false
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetDrawer()
@@ -177,10 +178,13 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
     }
 
     private fun click(x: Float, y: Float) {
+        debug {
+            "<$fullScreenClickNextPage, $x, $y>"
+        }
         when {
             centerRect.contains(x.toInt(), y.toInt()) -> // 如果点击中心部分，回调退出全屏，
                 actionListener?.onCenterClick()
-            x < ((1 - (y / height)) * width) -> // 如果点击对角线左上，翻上页，
+            !fullScreenClickNextPage && x < ((1 - (y / height)) * width) -> // 如果点击对角线左上，翻上页，
                 mAnim?.scrollPrev()
             else -> // 否则翻下页，
                 mAnim?.scrollNext()

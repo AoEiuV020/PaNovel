@@ -21,7 +21,11 @@ class ReaderConfig(
         backgroundImage: Uri?,
         animationMode: AnimationMode = AnimationMode.SIMPLE,
         animationSpeed: Float = 0.8f,
-        font: Typeface? = null
+        font: Typeface? = null,
+        /**
+         * 这个不支持阅读中修改，省事，
+         */
+        var fullScreenClickNextPage: Boolean = false
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()
     val margins: Margins
@@ -120,5 +124,9 @@ class ReaderConfig(
                 it.onConfigChanged(ReaderConfigName.Font)
             }
         }
+    /**
+     * 修改字体时也要修改这个标题字体，
+     */
     var titleFont: Typeface? = Typeface.create(font, Typeface.BOLD)
+
 }
