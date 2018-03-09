@@ -119,6 +119,14 @@ class QidianTest {
                     "这个故事讲的是，张夜如何培养出一位史上最生猛的女皇。", it.introduction)
             println(it.update)
         }
+        // 小作者的小说详情页作者名不可点击，之前的规则不行，
+        context.getNovelDetail(DetailRequester("https://book.qidian.com/info/1009711354")).let {
+            assertEquals("https://qidian.qpic.cn/qdbimg/349573/1009711354/180", it.bigImg)
+            assertEquals("超级惊悚直播", it.novel.name)
+            assertEquals("宇文长弓", it.novel.author)
+            assertEquals("“欢迎大家来到超级惊悚直播间，在开启今天的直播之前，我必须要告诉你们，本直播只有三类人能够看到：身上阴气很重的人，七天之内将死之人，至于第三种，我不便细说，只能给你们一个忠告——小心身后！”", it.introduction)
+            println(it.update)
+        }
     }
 
     @Test
@@ -165,6 +173,11 @@ class QidianTest {
             assertEquals(108, it.size)
             assertEquals("各大星系间，也不知道有多少进化者在议论，沸反盈天，主要是地球的动静大的惊人，举世瞩目。", it.first())
             assertEquals("时间过的很快，三天一转眼就过去了，再有两个时辰天就快黑了，将在东海的一艘七彩大船上举办慈善晚宴。", it.last())
+        }
+        context.getNovelText(Qidian.VipRequester.new("https://vipreader.qidian.com/chapter/1009711354/400645474")).textList.let {
+            assertEquals(49, it.size)
+            assertEquals("“红楼执念果真攀附在了四号房租户身上，现在他们记忆苏醒，对我来说可不是个好消息。”我躲在草席之下，现在自己处于绝对的劣势，翻盘无望，只求能安稳逃离此界。", it.first())
+            assertEquals("“那道巨影是被墨玉貔貅吸引而来，只要我呆在隆昌之中，它应该就不会离开。”", it.last())
         }
     }
 

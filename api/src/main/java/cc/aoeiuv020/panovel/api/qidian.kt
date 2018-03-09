@@ -263,6 +263,12 @@ class Qidian : NovelContext() {
         }
     }
 
+    /**
+     * 缓存分段的正则规则，
+     *  <p> 后面可能是半角空格或全角空格，
+     */
+    private val paragraphSplitRegex = Regex("<p>[　 ]*")
+
     override fun getNovelText(requester: TextRequester): NovelText {
         if (requester is MobileRequester) {
             val json = Gson().fromJson(connect(requester).execute().body(), JsonObject::class.java)
@@ -270,7 +276,7 @@ class Qidian : NovelContext() {
                     .getAsJsonObject("chapterInfo")
                     .getAsJsonPrimitive("content")
                     .asString
-            return NovelText(content.split("<p>　　").drop(1))
+            return NovelText(content.split(paragraphSplitRegex).drop(1))
         }
         // 兼容以前的直接解析html,
         val root = request(requester)
