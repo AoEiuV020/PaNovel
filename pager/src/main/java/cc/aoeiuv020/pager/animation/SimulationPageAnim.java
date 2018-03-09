@@ -150,36 +150,13 @@ public class SimulationPageAnim extends HorizonPageAnim {
     public void setDirection(Direction direction) {
         super.setDirection(direction);
 
-
-        switch (direction) {
-            case PRE:
-                //上一页滑动不出现对角
-                if (mStartX > mBackgroundWidth / 2) {
-                    calcCornerXY(mStartX, mBackgroundHeight);
-                } else {
-                    calcCornerXY(mBackgroundWidth - mStartX, mBackgroundHeight);
-                }
-                break;
-            case NEXT:
-                if (mBackgroundWidth / 2 > mStartX) {
-                    calcCornerXY(mBackgroundWidth - mStartX, mStartY);
-                } else {
-                    calcCornerXY(mStartX, mStartY);
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void setStartPoint(float x, float y) {
-        super.setStartPoint(x, y);
-        calcCornerXY(x, y);
+        // 固定书脊在左，翻页从右往左，拖拽脚只在右边，
+        calcCornerXY(mBackgroundWidth, mStartY);
     }
 
     @Override
     public void setTouchPoint(float x, float y) {
         super.setTouchPoint(x, y);
-/*
         //触摸y中间位置吧y变成屏幕高度
         if ((mStartY > mBackgroundHeight / 3 && mStartY < mBackgroundHeight * 2 / 3) || mDirection.equals(Direction.PRE)) {
             mTouchY = mBackgroundHeight;
@@ -188,7 +165,6 @@ public class SimulationPageAnim extends HorizonPageAnim {
         if (mStartY > mBackgroundHeight / 3 && mStartY < mBackgroundHeight / 2 && mDirection.equals(Direction.NEXT)) {
             mTouchY = 1;
         }
-*/
     }
 
     /**
