@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
 import android.widget.TextView
+import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.NovelHistory
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.text.CheckableImageView
 import cc.aoeiuv020.panovel.text.NovelTextActivity
@@ -39,7 +41,7 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
     /**
      * 缓存更新时间，用来判断小红点是否显示，
      */
-    protected lateinit var updateTime: Date
+    protected var updateTime: Date? = null
     /**
      * 书架页没有这个star按钮，
      */
@@ -106,6 +108,8 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
     }
 
     override fun showDetail(novelDetail: NovelDetail) {
+        // 详情页的时间选择性无视，因为详情页是缓存的，
+        // 目前没有获取到updateTime，比如章节还没获取，或者章节里没有更新时间，
         updateTime = novelDetail.update
         Glide.with(ctx).load(novelDetail.bigImg).into(image)
         presenter.requestChapters(novelDetail)
@@ -113,7 +117,7 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
 
     override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
         last.text = chapters.last().name
-        chapters.last().update?.let { updateTime = it }
+        updateTime = chapters.last().update
     }
 
     fun destroy() {
@@ -144,14 +148,32 @@ open class DefaultItemViewHolder<out T : BigItemPresenter<*>>(itemListPresenter:
         readAt?.text = ""
     }
 
-    override fun showUpdateTime(updateTime: Date) {
-        update?.text = sdf.format(updateTime)
+    override fun showDetail(novelDetail: NovelDetail) {
+        super.showDetail(novelDetail)
+        if (updateTime != null) {
+            showUpdateTime(updateTime)
+        }
+    }
+
+    override fun showUpdateTime(updateTime: Date?) {
+        updateTime?.let {
+            update?.text = sdf.format(updateTime)
+        } ?: run {
+            update?.text = ctx.getString(R.string.unknown)
+        }
     }
 
     override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
         super.showChapter(chapters, progress)
         showUpdateTime(updateTime)
         readAt?.text = chapters[progress].name
+        /*
+         逻辑，设置要提醒时间上的更新，或者是大视图需要展示时间，则需要时间，
+          */
+        val s = Settings.bookshelfRedDotNotifyNotReadOrNewChapter
+        if ((s || update != null) && updateTime == null) {
+            presenter.requestUpdate(novelItem)
+        }
     }
 }
 

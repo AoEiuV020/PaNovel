@@ -62,6 +62,7 @@ object OpenManager : AnkoLogger {
             }, { e ->
                 val message = "不支持的地址或格式，"
                 error(message, e)
+                context.progressDialog.dismiss()
                 context.showMessage(message)
             })
         }

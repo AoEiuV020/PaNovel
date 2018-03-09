@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.bookshelf_item_big.view.*
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.selector
+import java.util.*
 
 /**
  *
@@ -74,6 +75,22 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
         progressBar.show()
     }
 
+    override fun showUpdateTime(updateTime: Date?) {
+        super.showUpdateTime(updateTime)
+        val s = Settings.bookshelfRedDotNotifyNotReadOrNewChapter
+        if (s) {
+            if (updateTime?.time ?: 0 > novelHistory.date.time) {
+                newChapterDot.show()
+                ivMoreAction.hide()
+            } else {
+                newChapterDot.hide()
+                if (Settings.bookshelfShowMoreActionDot) {
+                    ivMoreAction.show()
+                }
+            }
+        }
+    }
+
     override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
         super.showChapter(chapters, progress)
         progressBar.hide()
@@ -81,14 +98,15 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
             "update <${novelHistory.novel.name}, ${Settings.bookshelfRedDotNotifyNotReadOrNewChapter}, $updateTime, ${novelHistory.date}>"
         }
         val s = Settings.bookshelfRedDotNotifyNotReadOrNewChapter
-        if ((s && updateTime.time > novelHistory.date.time)
-                || (!s && chapters.lastIndex > progress)) {
-            newChapterDot.show()
-            ivMoreAction.hide()
-        } else {
-            newChapterDot.hide()
-            if (Settings.bookshelfShowMoreActionDot) {
-                ivMoreAction.show()
+        if (!s) {
+            if (chapters.lastIndex > progress) {
+                newChapterDot.show()
+                ivMoreAction.hide()
+            } else {
+                newChapterDot.hide()
+                if (Settings.bookshelfShowMoreActionDot) {
+                    ivMoreAction.show()
+                }
             }
         }
     }

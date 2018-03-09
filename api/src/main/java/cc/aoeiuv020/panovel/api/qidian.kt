@@ -183,7 +183,7 @@ class Qidian : NovelContext() {
         val information = detail.select("> div.book-information.cf > div.book-info").first()
         val img = detail.select("#bookImg > img").first().absSrc()
         val name = information.select("> h1 > em").first().text()
-        val author = information.select("h1 > span > a").first().text()
+        val author = information.select("h1 > span").first().text().removeSuffix(" 著")
         val info = detail.select("div.book-intro > p").first().textNodes().joinToString("\n") {
             it.toString().trim()
         }
@@ -263,6 +263,12 @@ class Qidian : NovelContext() {
         }
     }
 
+    /**
+     * 缓存分段的正则规则，
+     *  <p> 后面可能是半角空格或全角空格，
+     */
+    private val paragraphSplitRegex = Regex("<p>[　 ]*")
+
     override fun getNovelText(requester: TextRequester): NovelText {
         if (requester is MobileRequester) {
             val json = Gson().fromJson(connect(requester).execute().body(), JsonObject::class.java)
@@ -270,7 +276,7 @@ class Qidian : NovelContext() {
                     .getAsJsonObject("chapterInfo")
                     .getAsJsonPrimitive("content")
                     .asString
-            return NovelText(content.split("<p>　　").drop(1))
+            return NovelText(content.split(paragraphSplitRegex).drop(1))
         }
         // 兼容以前的直接解析html,
         val root = request(requester)

@@ -79,10 +79,12 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
 abstract class BigItemPresenter<T : BigItemView>(itemListPresenter: BaseItemListPresenter<*, *>) : SmallItemPresenter<T>(itemListPresenter) {
 
     /**
-     * 貌似多余，另外有获取详情和章节，更新时间包含在内，
+     * 另外有获取详情和章节，更新时间包含在内，
+     * 但是获取的详情是可以从缓存获取的，
+     * 目录里的章节是可能没有时间的，
+     * 如果章节里没有时间，就调用这个方法获取详情页里的时间，
      */
-    fun requestUpdate(novelDetail: NovelDetail) {
-        val novelItem = novelDetail.novel
+    fun requestUpdate(novelItem: NovelItem) {
         Observable.fromCallable {
             val detail = Cache.detail.get(novelItem, refreshTime = refreshTime)
                     ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
