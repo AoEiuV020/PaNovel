@@ -183,7 +183,7 @@ class Qidian : NovelContext() {
         val information = detail.select("> div.book-information.cf > div.book-info").first()
         val img = detail.select("#bookImg > img").first().absSrc()
         val name = information.select("> h1 > em").first().text()
-        val author = information.select("h1 > span > a").first().text()
+        val author = information.select("h1 > span").first().text().removeSuffix(" 著")
         val info = detail.select("div.book-intro > p").first().textNodes().joinToString("\n") {
             it.toString().trim()
         }
