@@ -11,7 +11,6 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -441,10 +440,6 @@ public class SimulationPageAnim extends HorizonPageAnim {
 
         mDegrees = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
                 - mCornerX, mBezierControl2.y - mCornerY));
-        Log.d("B", String.format("degrees %d, <%d, %d>, <%d, %d>, <%d, %d>", (int) mDegrees,
-                (int) mCornerX, (int) mCornerY,
-                (int) mBezierControl1.x, (int) mBezierControl1.y,
-                (int) mBezierControl2.x, (int) mBezierControl2.y));
         int leftx;
         int rightx;
         GradientDrawable mBackShadowDrawable;
@@ -540,10 +535,6 @@ public class SimulationPageAnim extends HorizonPageAnim {
             mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX)
                     * (mCornerX - mMiddleX) / (mCornerY - mMiddleY);
         }
-        Log.d("B", String.format("mBezierControl2.y %d, <%d, %d>, <%d, %d>, <%d, %d>", (int) mBezierControl2.y,
-                (int) mCornerX, (int) mCornerY,
-                (int) mTouchX, (int) mTouchY,
-                (int) mBezierControl2.x, (int) mBezierControl2.y));
         mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x)
                 / 2;
         mBezierStart1.y = mCornerY;
