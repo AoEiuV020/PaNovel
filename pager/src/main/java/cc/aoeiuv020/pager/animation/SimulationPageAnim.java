@@ -157,13 +157,13 @@ public class SimulationPageAnim extends HorizonPageAnim {
     @Override
     public void setTouchPoint(float x, float y) {
         super.setTouchPoint(x, y);
-        //触摸y中间位置吧y变成屏幕高度
+        //触摸y中间位置，调整成竖着翻页，而不是掀起书角，
         if ((mStartY > mBackgroundHeight / 3 && mStartY < mBackgroundHeight * 2 / 3) || mDirection.equals(Direction.PRE)) {
-            mTouchY = mBackgroundHeight;
-        }
-
-        if (mStartY > mBackgroundHeight / 3 && mStartY < mBackgroundHeight / 2 && mDirection.equals(Direction.NEXT)) {
-            mTouchY = 1;
+            if (mTouchY < mBackgroundHeight / 2) {
+                mTouchY = 1;
+            } else {
+                mTouchY = mBackgroundHeight;
+            }
         }
     }
 
