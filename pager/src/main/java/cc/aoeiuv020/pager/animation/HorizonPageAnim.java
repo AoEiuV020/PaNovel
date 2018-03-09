@@ -98,8 +98,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 setStartPoint(x, y);
                 //如果存在动画则取消动画
                 abortAnim();
-                //重新设置触摸点
-                setTouchPoint(x, y);
                 break;
             case MotionEvent.ACTION_MOVE:
                 //是否存在下一章
@@ -276,8 +274,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
             if (isCancel) {
                 drawCurrent();
             }
-            // 通过直接设置触点到目的地来停止动画，
-            setTouchPoint(mScroller.getFinalX(), mScroller.getFinalY());
             mView.postInvalidate();
         }
     }
