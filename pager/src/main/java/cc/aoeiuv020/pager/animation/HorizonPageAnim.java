@@ -216,6 +216,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
      */
     @Override
     public boolean scrollNext(float x, float y) {
+        setStartPoint(x, y);
         //设置动画方向
         setDirection(Direction.NEXT);
         // 动画起始，touch必须在方向设置后，
@@ -231,6 +232,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     @Override
     public boolean scrollPrev(float x, float y) {
+        setStartPoint(x, y);
         setDirection(Direction.PRE);
         setTouchPoint(x, y);
         boolean hasPrev = drawPrev();
