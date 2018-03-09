@@ -123,8 +123,10 @@ public abstract class HorizonPageAnim extends PageAnimation {
                         if (x - mStartX > 0) {
                             //上一页的参数配置
                             isNext = false;
-                            boolean hasPrev = drawPrev();
                             setDirection(Direction.PRE);
+                            // 重设touch点，
+                            setTouchPoint(x, y);
+                            boolean hasPrev = drawPrev();
                             //如果上一页不存在
                             if (!hasPrev) {
                                 noNext = true;
@@ -134,9 +136,11 @@ public abstract class HorizonPageAnim extends PageAnimation {
                             //进行下一页的配置
                             isNext = true;
                             //判断是否下一页存在
+                            setDirection(Direction.NEXT);
+                            // 重设touch点，由于受方向影响，改变方向后必须重新设置touch点，
+                            setTouchPoint(x, y);
                             boolean hasNext = drawNext();
                             //如果存在设置动画方向
-                            setDirection(Direction.NEXT);
 
                             //如果不存在表示没有下一页了
                             if (!hasNext) {

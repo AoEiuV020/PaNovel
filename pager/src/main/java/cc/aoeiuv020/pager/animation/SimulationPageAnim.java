@@ -559,8 +559,10 @@ public class SimulationPageAnim extends HorizonPageAnim {
                 float f2 = mBackgroundWidth * f1 / mBezierStart1.x;
                 mTouchX = Math.abs(mCornerX - f2);
 
+                // 这f3不就是Math.abs(mCornerY - mTouchY)？
                 float f3 = Math.abs(mCornerX - mTouchX)
                         * Math.abs(mCornerY - mTouchY) / f1;
+                // 这是确保mTouchY小于mCornerY？
                 mTouchY = Math.abs(mCornerY - f3);
 
                 mMiddleX = (mTouchX + mCornerX) / 2;
