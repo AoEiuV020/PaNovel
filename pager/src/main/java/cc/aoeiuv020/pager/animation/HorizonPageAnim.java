@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -80,7 +79,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 mMoveX = 0;
                 mMoveY = 0;
                 //是否移动
-                isMove = false;
+                isMove = true;
                 //是否存在下一章
                 noNext = false;
                 //是下一章还是前一章
@@ -102,8 +101,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
             case MotionEvent.ACTION_MOVE:
                 //是否存在下一章
                 noNext = false;
+                //判断是否移动了, 没移动的话在上层处理了，进来的不不可能执行下面一段，
+/*
                 final int slop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
-                //判断是否移动了
                 if (!isMove) {
                     if (x - mStartX > 0) {
                         // 解决左右来回翻页时仿真动画闪一下的问题，
@@ -114,6 +114,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                     }
                     isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartY - y) > slop;
                 }
+*/
 
                 if (isMove) {
                     //判断是否是准备移动的状态(将要移动但是还没有移动)
