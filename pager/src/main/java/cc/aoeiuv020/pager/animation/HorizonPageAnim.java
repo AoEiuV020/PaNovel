@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 
 /**
  * Created by newbiechen on 17-7-24.
@@ -80,7 +79,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 mMoveX = 0;
                 mMoveY = 0;
                 //是否移动
-                isMove = false;
+                isMove = true;
                 //是否存在下一章
                 noNext = false;
                 //是下一章还是前一章
@@ -98,14 +97,13 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 setStartPoint(x, y);
                 //如果存在动画则取消动画
                 abortAnim();
-                //重新设置触摸点
-                setTouchPoint(x, y);
                 break;
             case MotionEvent.ACTION_MOVE:
                 //是否存在下一章
                 noNext = false;
+                //判断是否移动了, 没移动的话在上层处理了，进来的不不可能执行下面一段，
+/*
                 final int slop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
-                //判断是否移动了
                 if (!isMove) {
                     if (x - mStartX > 0) {
                         // 解决左右来回翻页时仿真动画闪一下的问题，
@@ -116,6 +114,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
                     }
                     isMove = Math.abs(mStartX - x) > slop || Math.abs(mStartY - y) > slop;
                 }
+*/
 
                 if (isMove) {
                     //判断是否是准备移动的状态(将要移动但是还没有移动)
@@ -124,8 +123,10 @@ public abstract class HorizonPageAnim extends PageAnimation {
                         if (x - mStartX > 0) {
                             //上一页的参数配置
                             isNext = false;
-                            boolean hasPrev = drawPrev();
                             setDirection(Direction.PRE);
+                            // 重设touch点，
+                            setTouchPoint(x, y);
+                            boolean hasPrev = drawPrev();
                             //如果上一页不存在
                             if (!hasPrev) {
                                 noNext = true;
@@ -135,9 +136,11 @@ public abstract class HorizonPageAnim extends PageAnimation {
                             //进行下一页的配置
                             isNext = true;
                             //判断是否下一页存在
+                            setDirection(Direction.NEXT);
+                            // 重设touch点，由于受方向影响，改变方向后必须重新设置touch点，
+                            setTouchPoint(x, y);
                             boolean hasNext = drawNext();
                             //如果存在设置动画方向
-                            setDirection(Direction.NEXT);
 
                             //如果不存在表示没有下一页了
                             if (!hasNext) {
@@ -213,12 +216,13 @@ public abstract class HorizonPageAnim extends PageAnimation {
      */
     @Override
     public boolean scrollNext(float x, float y) {
-        // 动画起始，
+        setStartPoint(x, y);
+        //设置动画方向
+        setDirection(Direction.NEXT);
+        // 动画起始，touch必须在方向设置后，
         setTouchPoint(x, y);
         //判断是否下一页存在
         boolean hasNext = drawNext();
-        //设置动画方向
-        setDirection(Direction.NEXT);
         if (!hasNext) {
             return false;
         }
@@ -228,9 +232,10 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     @Override
     public boolean scrollPrev(float x, float y) {
+        setStartPoint(x, y);
+        setDirection(Direction.PRE);
         setTouchPoint(x, y);
         boolean hasPrev = drawPrev();
-        setDirection(Direction.PRE);
         if (!hasPrev) {
             return false;
         }
@@ -276,8 +281,6 @@ public abstract class HorizonPageAnim extends PageAnimation {
             if (isCancel) {
                 drawCurrent();
             }
-            // 通过直接设置触点到目的地来停止动画，
-            setTouchPoint(mScroller.getFinalX(), mScroller.getFinalY());
             mView.postInvalidate();
         }
     }
