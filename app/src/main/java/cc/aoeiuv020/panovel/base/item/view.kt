@@ -19,5 +19,5 @@ interface SmallItemView : IView {
 }
 
 interface BigItemView : SmallItemView {
-    fun showUpdateTime(updateTime: Date)
+    fun showUpdateTime(updateTime: Date?)
 }
