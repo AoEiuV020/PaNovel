@@ -37,7 +37,7 @@ class MainActivity : Activity(), AnkoLogger {
         val config = ReaderConfig(31, 11, 8,
                 1, 5, 10, 15,
                 0xff000000.toInt(), 0xffffffff.toInt(), null,
-                AnimationMode.SIMULATION)
+                AnimationMode.SIMULATION, animationSpeed = 0.2f)
         val reader = Readers.getReader(ctx, Novel("书名", "作者名"), fl, requester, config)
         val chapters = List(20) {
             Chapter("章节名" + it)
