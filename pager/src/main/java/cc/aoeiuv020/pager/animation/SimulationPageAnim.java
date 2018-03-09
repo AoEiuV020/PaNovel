@@ -11,6 +11,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -149,6 +150,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
     public void setDirection(Direction direction) {
         super.setDirection(direction);
 
+
         switch (direction) {
             case PRE:
                 //上一页滑动不出现对角
@@ -161,6 +163,8 @@ public class SimulationPageAnim extends HorizonPageAnim {
             case NEXT:
                 if (mBackgroundWidth / 2 > mStartX) {
                     calcCornerXY(mBackgroundWidth - mStartX, mStartY);
+                } else {
+                    calcCornerXY(mStartX, mStartY);
                 }
                 break;
         }
@@ -175,6 +179,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
     @Override
     public void setTouchPoint(float x, float y) {
         super.setTouchPoint(x, y);
+/*
         //触摸y中间位置吧y变成屏幕高度
         if ((mStartY > mBackgroundHeight / 3 && mStartY < mBackgroundHeight * 2 / 3) || mDirection.equals(Direction.PRE)) {
             mTouchY = mBackgroundHeight;
@@ -183,6 +188,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
         if (mStartY > mBackgroundHeight / 3 && mStartY < mBackgroundHeight / 2 && mDirection.equals(Direction.NEXT)) {
             mTouchY = 1;
         }
+*/
     }
 
     /**
@@ -459,6 +465,10 @@ public class SimulationPageAnim extends HorizonPageAnim {
 
         mDegrees = (float) Math.toDegrees(Math.atan2(mBezierControl1.x
                 - mCornerX, mBezierControl2.y - mCornerY));
+        Log.d("B", String.format("degrees %d, <%d, %d>, <%d, %d>, <%d, %d>", (int) mDegrees,
+                (int) mCornerX, (int) mCornerY,
+                (int) mBezierControl1.x, (int) mBezierControl1.y,
+                (int) mBezierControl2.x, (int) mBezierControl2.y));
         int leftx;
         int rightx;
         GradientDrawable mBackShadowDrawable;
@@ -554,6 +564,10 @@ public class SimulationPageAnim extends HorizonPageAnim {
             mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX)
                     * (mCornerX - mMiddleX) / (mCornerY - mMiddleY);
         }
+        Log.d("B", String.format("mBezierControl2.y %d, <%d, %d>, <%d, %d>, <%d, %d>", (int) mBezierControl2.y,
+                (int) mCornerX, (int) mCornerY,
+                (int) mTouchX, (int) mTouchY,
+                (int) mBezierControl2.x, (int) mBezierControl2.y));
         mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x)
                 / 2;
         mBezierStart1.y = mCornerY;
