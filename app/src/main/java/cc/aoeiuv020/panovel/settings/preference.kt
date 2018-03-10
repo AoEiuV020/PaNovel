@@ -75,11 +75,6 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
                 "line_spacing" to ({ Settings.lineSpacing.toString() } to { v -> Settings.lineSpacing = v.toInt() }),
                 "paragraph_spacing" to ({ Settings.paragraphSpacing.toString() } to { v -> Settings.paragraphSpacing = v.toInt() }),
 
-                "left_spacing" to ({ Settings.contentMargins.left.toString() } to { v -> Settings.contentMargins.left = v.toInt() }),
-                "right_spacing" to ({ Settings.contentMargins.right.toString() } to { v -> Settings.contentMargins.right = v.toInt() }),
-                "top_spacing" to ({ Settings.contentMargins.top.toString() } to { v -> Settings.contentMargins.top = v.toInt() }),
-                "bottom_spacing" to ({ Settings.contentMargins.bottom.toString() } to { v -> Settings.contentMargins.bottom = v.toInt() }),
-
                 "full_screen_delay" to ({ Settings.fullScreenDelay.toString() } to { v -> Settings.fullScreenDelay = v.toInt() }),
                 "animation_speed" to ({ Settings.animationSpeed.toString() } to { v -> Settings.animationSpeed = v.toFloat() }),
                 "text_size" to ({ Settings.textSize.toString() } to { v -> Settings.textSize = v.toInt() })
