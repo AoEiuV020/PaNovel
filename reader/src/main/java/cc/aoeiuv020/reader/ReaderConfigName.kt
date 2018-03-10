@@ -10,5 +10,5 @@ enum class ReaderConfigName {
     TextColor, BackgroundColor, BackgroundImage,
     AnimationMode, AnimDurationMultiply,
     Font,
-    FullScreenClickNextPage
+    FullScreenClickNextPage, CenterPercent
 }

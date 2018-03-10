@@ -85,6 +85,7 @@ object Settings : LocalSource, AnkoLogger {
     var animationSpeed: Float by PrimitiveDelegate(0.8f)
     var fullScreenClickNextPage: Boolean by PrimitiveDelegate(false)
     var volumeKeyScroll: Boolean by PrimitiveDelegate(false)
+    var centerPercent: Float by PrimitiveDelegate(0.5f)
 
     fun makeReaderConfig() = ReaderConfig(
             textSize,
@@ -100,6 +101,7 @@ object Settings : LocalSource, AnkoLogger {
             animationMode,
             animationSpeed,
             tfFont,
+            centerPercent,
             fullScreenClickNextPage
     )
 }

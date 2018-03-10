@@ -23,6 +23,15 @@
         android:key="full_screen_click_next_page"
         android:title="@string/full_screen_click_next_page" />
 
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="numberDecimal|numberSigned"
+        android:key="center_percent"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/center_percent" />
+
     <cc.aoeiuv020.panovel.settings.ListPreference
         android:entries="@array/animation_names"
         android:entryValues="@array/animation_values"

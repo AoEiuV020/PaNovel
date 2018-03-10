@@ -22,6 +22,7 @@ class ReaderConfig(
         animationMode: AnimationMode = AnimationMode.SIMPLE,
         animationSpeed: Float = 0.8f,
         font: Typeface? = null,
+        centerPercent: Float = 0.5f,
         /**
          * 这个不支持阅读中修改，省事，
          */
@@ -128,5 +129,12 @@ class ReaderConfig(
      * 修改字体时也要修改这个标题字体，
      */
     var titleFont: Typeface? = Typeface.create(font, Typeface.BOLD)
+    var centerPercent: Float = centerPercent
+        set(value) {
+            field = value
+            listeners.forEach {
+                it.onConfigChanged(ReaderConfigName.CenterPercent)
+            }
+        }
 
 }

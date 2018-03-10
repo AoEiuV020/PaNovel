@@ -38,6 +38,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
         }
 
     init {
+        pageView.centerPercent = config.centerPercent
         pageView.animDurationMultiply = config.animationSpeed
         pageView.fullScreenClickNextPage = config.fullScreenClickNextPage
         pageView.bgColor = config.backgroundColor

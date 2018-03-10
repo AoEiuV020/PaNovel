@@ -68,6 +68,7 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> String, (String) -> Unit>>(
                 "download_thread_count" to ({ Settings.downloadThreadCount.toString() } to { v -> Settings.downloadThreadCount = v.toInt() }),
+                "center_percent" to ({ Settings.centerPercent.toString() } to { v -> Settings.centerPercent = v.toFloat() }),
                 "red_dot_size" to ({ Settings.bookshelfRedDotSize.toString() } to { v -> Settings.bookshelfRedDotSize = v.toFloat() }),
                 "async_thread_count" to ({ Settings.asyncThreadCount.toString() } to { v -> Settings.asyncThreadCount = v.toInt() }),
                 "history_count" to ({ Settings.historyCount.toString() } to { v -> Settings.historyCount = v.toInt() }),

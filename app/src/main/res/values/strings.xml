@@ -138,5 +138,6 @@
     <string name="full_screen_click_next_page">全屏点击翻下页</string>
     <string name="volume_key_scroll">音量键翻页</string>
     <string name="unknown">unknown</string>
+    <string name="center_percent">中心百分比</string>
 
 </resources>

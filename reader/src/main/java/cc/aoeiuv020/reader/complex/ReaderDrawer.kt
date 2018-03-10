@@ -34,6 +34,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
             override fun onConfigChanged(name: ReaderConfigName) {
                 when (name) {
+                    ReaderConfigName.CenterPercent -> {
+                        pager?.centerPercent = reader.config.centerPercent
+                    }
                     ReaderConfigName.Font -> {
                         textPaint.typeface = reader.config.font
                         titlePaint.typeface = reader.config.titleFont
