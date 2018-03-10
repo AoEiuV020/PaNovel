@@ -14,6 +14,7 @@ import cc.aoeiuv020.reader.AnimationMode
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_animation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_default.view.*
+import kotlinx.android.synthetic.main.novel_text_read_margins.view.*
 import kotlinx.android.synthetic.main.novel_text_read_settings.view.*
 import kotlinx.android.synthetic.main.novel_text_read_typesetting.view.*
 import org.jetbrains.anko.AnkoLogger
