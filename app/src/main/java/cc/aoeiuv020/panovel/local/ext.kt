@@ -19,7 +19,7 @@ import java.lang.reflect.Type
  */
 
 @Suppress("UNUSED_PARAMETER")
-private fun LocalSource.external(fileType: FileType) = File(App.ctx.getExternalFilesDir(null), this.javaClass.simpleName)
+private fun LocalSource.external(fileType: FileType) = File(App.ctx.getExternalFilesDir(null), this.path)
         .apply { mkdirs() }
 
 private fun LocalSource.folder(file: File, folder: String? = null) = (folder?.let { File(file, folder) } ?: file).apply { mkdirs() }
@@ -64,7 +64,7 @@ fun md5Base64(s: String): String {
     return Base64.encodeToString(messageDigest, Base64.NO_PADDING or Base64.URL_SAFE or Base64.NO_WRAP)
 }
 
-fun LocalSource.pref(): SharedPreferences = App.ctx.getSharedPreferences(this.javaClass.name, Context.MODE_PRIVATE)
+fun LocalSource.pref(): SharedPreferences = App.ctx.getSharedPreferences(this.path, Context.MODE_PRIVATE)
 fun LocalSource.prefSave(key: String, value: String) = pref().edit().putString(key, value).apply()
 fun LocalSource.prefLoad(key: String): String? = pref().getString(key, null)
 fun LocalSource.prefRemove(key: String) = pref().edit().putString(key, null).apply()

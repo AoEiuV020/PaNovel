@@ -46,7 +46,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             field = value
             resetDrawer()
         }
-    var margins: Margins = Margins()
+    var margins: IMargins = Margins()
         set(value) {
             field = value
             resetAnim()

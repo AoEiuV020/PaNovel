@@ -170,11 +170,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
     }
 
-    fun setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
-        left?.let { reader.config.leftSpacing = it }
-        top?.let { reader.config.topSpacing = it }
-        right?.let { reader.config.rightSpacing = it }
-        bottom?.let { reader.config.bottomSpacing = it }
+    fun setContentMargins(margins: ContentMargins) {
+        reader.config.contentMargins = margins
     }
 
     fun setTextColor(color: Int) {

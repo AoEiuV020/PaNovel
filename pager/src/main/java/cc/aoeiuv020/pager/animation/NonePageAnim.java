@@ -3,6 +3,8 @@ package cc.aoeiuv020.pager.animation;
 import android.graphics.Canvas;
 import android.view.View;
 
+import cc.aoeiuv020.pager.IMargins;
+
 /**
  * Created by newbiechen on 17-7-24.
  */
@@ -14,7 +16,7 @@ public class NonePageAnim extends HorizonPageAnim {
         super(config);
     }
 
-    public NonePageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
+    public NonePageAnim(int w, int h, IMargins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
     }
 

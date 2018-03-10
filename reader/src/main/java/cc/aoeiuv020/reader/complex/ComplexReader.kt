@@ -43,7 +43,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
         pageView.fullScreenClickNextPage = config.fullScreenClickNextPage
         pageView.bgColor = config.backgroundColor
         pageView.animMode = config.animationMode.toAnimMode()
-        pageView.margins = config.margins
+        pageView.margins = config.contentMargins
         pageView.drawer = drawer
         pageView.actionListener = object : Pager.ActionListener {
             override fun onCenterClick() {

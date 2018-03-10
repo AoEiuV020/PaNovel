@@ -205,24 +205,26 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             val spacingListener = object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                     var tv: TextView? = null
+                    val margins = Settings.contentMargins
                     when (seekBar) {
                         leftSpacingSeekBar -> {
-                            view.setMargins(left = progress)
+                            margins.left = progress
                             tv = leftSpacingTextView
                         }
                         rightSpacingSeekBar -> {
-                            view.setMargins(right = progress)
+                            margins.right = progress
                             tv = rightSpacingTextView
                         }
                         topSpacingSeekBar -> {
-                            view.setMargins(top = progress)
+                            margins.top = progress
                             tv = topSpacingTextView
                         }
                         bottomSpacingSeekBar -> {
-                            view.setMargins(bottom = progress)
+                            margins.bottom = progress
                             tv = bottomSpacingTextView
                         }
                     }
+                    view.setContentMargins(margins)
                     tv?.text = view.getString(R.string.spacing_placeholder, progress)
                 }
 
@@ -231,34 +233,34 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     when (seekBar) {
-                        leftSpacingSeekBar -> Settings.leftSpacing = seekBar.progress
-                        rightSpacingSeekBar -> Settings.rightSpacing = seekBar.progress
-                        topSpacingSeekBar -> Settings.topSpacing = seekBar.progress
-                        bottomSpacingSeekBar -> Settings.bottomSpacing = seekBar.progress
+                        leftSpacingSeekBar -> Settings.contentMargins.left = seekBar.progress
+                        rightSpacingSeekBar -> Settings.contentMargins.right = seekBar.progress
+                        topSpacingSeekBar -> Settings.contentMargins.top = seekBar.progress
+                        bottomSpacingSeekBar -> Settings.contentMargins.bottom = seekBar.progress
                     }
                 }
             }
 
             // 设置左间距，
-            val leftSpacing = Settings.leftSpacing
+            val leftSpacing = Settings.contentMargins.left
             leftSpacingTextView.text = view.getString(R.string.spacing_placeholder, leftSpacing)
             leftSpacingSeekBar.progress = leftSpacing
             leftSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
 
             // 设置右间距，
-            val rightSpacing = Settings.rightSpacing
+            val rightSpacing = Settings.contentMargins.right
             rightSpacingTextView.text = view.getString(R.string.spacing_placeholder, rightSpacing)
             rightSpacingSeekBar.progress = rightSpacing
             rightSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
 
             // 设置上间距，
-            val topSpacing = Settings.topSpacing
+            val topSpacing = Settings.contentMargins.top
             topSpacingTextView.text = view.getString(R.string.spacing_placeholder, topSpacing)
             topSpacingSeekBar.progress = topSpacing
             topSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
 
             // 设置下间距，
-            val bottomSpacing = Settings.bottomSpacing
+            val bottomSpacing = Settings.contentMargins.bottom
             bottomSpacingTextView.text = view.getString(R.string.spacing_placeholder, bottomSpacing)
             bottomSpacingSeekBar.progress = bottomSpacing
             bottomSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)

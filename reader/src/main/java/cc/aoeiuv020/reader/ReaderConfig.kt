@@ -2,7 +2,7 @@ package cc.aoeiuv020.reader
 
 import android.graphics.Typeface
 import android.net.Uri
-import cc.aoeiuv020.pager.animation.Margins
+import cc.aoeiuv020.pager.IMargins
 
 /**
  *
@@ -12,10 +12,7 @@ class ReaderConfig(
         textSize: Int,
         lineSpacing: Int,
         paragraphSpacing: Int,
-        leftSpacing: Int,
-        topSpacing: Int,
-        rightSpacing: Int,
-        bottomSpacing: Int,
+        contentMargins: IMargins,
         textColor: Int,
         backgroundColor: Int,
         backgroundImage: Uri?,
@@ -29,8 +26,6 @@ class ReaderConfig(
         var fullScreenClickNextPage: Boolean = false
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()
-    val margins: Margins
-        get() = Margins(leftSpacing, topSpacing, rightSpacing, bottomSpacing)
 
     var textSize: Int = textSize
         set(value) {
@@ -53,32 +48,11 @@ class ReaderConfig(
                 it.onConfigChanged(ReaderConfigName.ParagraphSpacing)
             }
         }
-    var leftSpacing: Int = leftSpacing
+    var contentMargins: IMargins = contentMargins
         set(value) {
             field = value
             listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.LeftSpacing)
-            }
-        }
-    var topSpacing: Int = topSpacing
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.TopSpacing)
-            }
-        }
-    var rightSpacing: Int = rightSpacing
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.RightSpacing)
-            }
-        }
-    var bottomSpacing: Int = bottomSpacing
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.BottomSpacing)
+                it.onConfigChanged(ReaderConfigName.ContentSpacing)
             }
         }
 

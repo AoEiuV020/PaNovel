@@ -6,7 +6,7 @@ package cc.aoeiuv020.reader
  */
 enum class ReaderConfigName {
     TextSize, LineSpacing, ParagraphSpacing,
-    LeftSpacing, TopSpacing, RightSpacing, BottomSpacing,
+    ContentSpacing,
     TextColor, BackgroundColor, BackgroundImage,
     AnimationMode, AnimDurationMultiply,
     Font,

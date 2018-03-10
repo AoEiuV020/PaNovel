@@ -6,7 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelItem
  * 阅读进度，
  * Created by AoEiuV020 on 2017.11.20-16:34:02.
  */
-object Progress : LocalSource {
+object Progress : BaseLocalSource() {
     fun load(novelItem: NovelItem): NovelProgress
             = gsonLoad(novelItem.bookId.toString())
             ?: Cache.progress.get(novelItem) ?: NovelProgress()

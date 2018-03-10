@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit
 class Cache<T>(private val type: Type,
                private val cacheName: String,
                private val defaultTimeout: Long
-) : LocalSource {
-    companion object : LocalSource {
+) : BaseLocalSource() {
+    companion object : BaseLocalSource() {
         private val DEFAULT_FILE_NAME = "default"
         private inline fun <reified T> new(defaultName: String = Cache::class.java.simpleName,
                                            defaultTimeout: Long = Long.MAX_VALUE): Cache<T> {

@@ -12,7 +12,7 @@ import org.jetbrains.anko.error
  * 设置，
  * Created by AoEiuV020 on 2017.10.04-14:04:44.
  */
-object Settings : LocalSource, AnkoLogger {
+object Settings : BaseLocalSource(), AnkoLogger {
     /**
      * 这名字好长，小红点提示未读或新章节，
      * false则提示未读，也就是阅读进度不在最新章节，
@@ -33,10 +33,25 @@ object Settings : LocalSource, AnkoLogger {
     var textSize: Int by PrimitiveDelegate(18)
     var lineSpacing: Int by PrimitiveDelegate(2)
     var paragraphSpacing: Int by PrimitiveDelegate(4)
-    var leftSpacing: Int by PrimitiveDelegate(0)
-    var topSpacing: Int by PrimitiveDelegate(0)
-    var rightSpacing: Int by PrimitiveDelegate(0)
-    var bottomSpacing: Int by PrimitiveDelegate(0)
+
+    val contentMargins: ContentMargins = ContentMargins()
+    private val leftSpacing: Int by PrimitiveDelegate(0)
+    private val topSpacing: Int by PrimitiveDelegate(0)
+    private val rightSpacing: Int by PrimitiveDelegate(0)
+    private val bottomSpacing: Int by PrimitiveDelegate(0)
+
+    init {
+        // 迁移1.3.11及以前留白设置，
+        // 之后删了吧，跨版本的大不了作废这几个设置，
+        contentMargins.takeIf {
+            it.left == 0 && it.right == 0 && it.top == 0 && it.bottom == 0
+        }?.apply {
+            leftSpacing.takeUnless { it == 0 }?.let { left = it }
+            rightSpacing.takeUnless { it == 0 }?.let { right = it }
+            topSpacing.takeUnless { it == 0 }?.let { top = it }
+            bottomSpacing.takeUnless { it == 0 }?.let { bottom = it }
+        }
+    }
 
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
     var font: Uri? by UriDelegate()
@@ -91,10 +106,7 @@ object Settings : LocalSource, AnkoLogger {
             textSize,
             lineSpacing,
             paragraphSpacing,
-            leftSpacing,
-            topSpacing,
-            rightSpacing,
-            bottomSpacing,
+            contentMargins,
             textColor,
             backgroundColor,
             backgroundImage,

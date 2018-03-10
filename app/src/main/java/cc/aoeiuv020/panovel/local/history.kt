@@ -7,7 +7,7 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.10.10-17:59:51.
  */
-object History : LocalSource {
+object History : BaseLocalSource() {
     private val max get() = Settings.historyCount
 
     private fun add(history: NovelHistory) = gsonSave(history.novel.bookId.toString(), history)

@@ -52,9 +52,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                         pager?.bgColor = reader.config.backgroundColor
                         refresh()
                     }
-                    else -> {
-                        pager?.margins = reader.config.margins
+                    ReaderConfigName.ContentSpacing -> {
+                        pager?.margins = reader.config.contentMargins
                         refresh()
+                    }
+                    else -> {
                     }
                 }
             }

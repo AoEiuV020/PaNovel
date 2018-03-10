@@ -11,6 +11,8 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import cc.aoeiuv020.pager.IMargins;
+
 /**
  * Created by newbiechen on 17-7-23.
  * 原理:仿照ListView源码实现的上下滑动效果
@@ -49,7 +51,7 @@ public class ScrollPageAnim extends PageAnimation {
         init();
     }
 
-    public ScrollPageAnim(int w, int h, Margins margins,
+    public ScrollPageAnim(int w, int h, IMargins margins,
                           View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
         init();

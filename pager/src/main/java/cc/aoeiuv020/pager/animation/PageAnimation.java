@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
+import cc.aoeiuv020.pager.IMargins;
 import cc.aoeiuv020.pager.PagerAnimation;
 
 /**
@@ -56,7 +57,7 @@ public abstract class PageAnimation implements PagerAnimation {
         durationMultiply = config.getDurationMultiply();
     }
 
-    public PageAnimation(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
+    public PageAnimation(int w, int h, IMargins margins, View view, OnPageChangeListener listener) {
         mBackgroundWidth = w;
         mBackgroundHeight = h;
 
