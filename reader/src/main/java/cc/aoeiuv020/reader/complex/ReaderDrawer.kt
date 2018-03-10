@@ -57,6 +57,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                         refresh()
                     }
                     else -> {
+                        refresh()
                     }
                 }
             }
