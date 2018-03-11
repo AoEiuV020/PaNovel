@@ -21,6 +21,7 @@ class ReaderConfig(
         timeMargins: IMargins,
         batteryMargins: IMargins,
         messageSize: Int,
+        dateFormat: String,
         textColor: Int,
         backgroundColor: Int,
         backgroundImage: Uri?,
@@ -47,6 +48,7 @@ class ReaderConfig(
     var bookNameMargins: IMargins by ConfigDelegate(bookNameMargins, BookNameMargins)
     var chapterNameMargins: IMargins by ConfigDelegate(chapterNameMargins, ChapterNameMargins)
     var messageSize: Int by ConfigDelegate(messageSize, MessageSize)
+    var dateFormat: String by ConfigDelegate(dateFormat, DateFormat)
 
     var textColor: Int by ConfigDelegate(textColor, TextColor)
     var backgroundColor: Int by ConfigDelegate(backgroundColor, BackgroundColor)

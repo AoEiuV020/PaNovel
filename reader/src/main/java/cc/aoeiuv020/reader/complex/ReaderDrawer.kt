@@ -19,6 +19,7 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.12.03-04:09:17.
  */
+@SuppressWarnings("SimpleDateFormat")
 class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, private val requester: TextRequester)
     : PagerDrawer(), AnkoLogger {
     val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
@@ -28,6 +29,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     private var backgroundImage: Bitmap? = null
     var chapterIndex = 0
     var pageIndex = 0
+    private var sdf = SimpleDateFormat(reader.config.dateFormat)
 
     init {
         reader.config.listeners.add(object : ConfigChangedListener {
@@ -56,6 +58,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                     }
                     ContentMargins -> {
                         pager?.margins = reader.config.contentMargins
+                    }
+                    DateFormat -> {
+                        // 这个不支持在阅读时改，到不了这里，
+                        sdf = SimpleDateFormat(reader.config.dateFormat)
                     }
                     else -> {
                         // 其他设置在refresh里都重置了，
@@ -126,8 +132,6 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         drawContent(content)
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    private val sdf = SimpleDateFormat("HH:mm")
 
     private fun drawTime(canvas: Canvas) {
         val text = sdf.format(Date())

@@ -49,6 +49,8 @@ object Settings : BaseLocalSource(), AnkoLogger {
      */
     var messageSize: Int by PrimitiveDelegate(12)
 
+    var dateFormat: String by PrimitiveDelegate("HH:mm")
+
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
     var font: Uri? by UriDelegate()
     val tfFont: Typeface?
@@ -108,6 +110,7 @@ object Settings : BaseLocalSource(), AnkoLogger {
             timeMargins,
             batteryMargins,
             messageSize,
+            dateFormat,
             textColor,
             backgroundColor,
             backgroundImage,

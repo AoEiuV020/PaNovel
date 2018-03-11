@@ -147,5 +147,6 @@
     <string name="display">显示</string>
     <string name="message_size">信息字体大小</string>
     <string name="message_size_4">信息字大</string>
+    <string name="date_format">时间格式</string>
 
 </resources>

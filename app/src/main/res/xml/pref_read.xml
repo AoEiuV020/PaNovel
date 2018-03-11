@@ -33,6 +33,14 @@
         android:title="@string/center_percent" />
 
     <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:inputType="text"
+        android:key="date_format"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/date_format" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
         android:capitalize="words"
         android:inputType="number"
         android:key="message_size"
