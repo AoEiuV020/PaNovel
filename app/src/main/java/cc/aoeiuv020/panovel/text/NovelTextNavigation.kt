@@ -182,6 +182,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
 
             tvTypesetting.setOnClickListener {
                 showLayout(mPanelTypesetting)
+                view.fullScreen()
             }
 
             tvAnimation.setOnClickListener {
@@ -191,7 +192,6 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         }
 
         mPanelTypesetting.apply {
-
             // 设置行间距，
             val lineSpacing = Settings.lineSpacing
             lineSpacingTextView.text = view.getString(R.string.line_spacing_placeholder, lineSpacing)
