@@ -210,6 +210,8 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     }
 
     private fun drawContent(content: Canvas) {
+        // 重置自动刷新线程，
+        reader.autoRefreshThread.reset()
         val textHeight = textPaint.textSize.toInt()
 
         val pages = pagesCache[chapterIndex]

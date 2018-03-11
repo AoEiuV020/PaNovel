@@ -69,6 +69,7 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
         private val map = mapOf<String, Pair<() -> String, (String) -> Unit>>(
                 "download_thread_count" to ({ Settings.downloadThreadCount.toString() } to { v -> Settings.downloadThreadCount = v.toInt() }),
                 "date_format" to ({ Settings.dateFormat } to { v -> Settings.dateFormat = v }),
+                "auto_refresh_interval" to ({ Settings.autoRefreshInterval.toString() } to { v -> Settings.autoRefreshInterval = v.toInt() }),
                 "message_size" to ({ Settings.messageSize.toString() } to { v -> Settings.messageSize = v.toInt() }),
                 "center_percent" to ({ Settings.centerPercent.toString() } to { v -> Settings.centerPercent = v.toFloat() }),
                 "red_dot_size" to ({ Settings.bookshelfRedDotSize.toString() } to { v -> Settings.bookshelfRedDotSize = v.toFloat() }),

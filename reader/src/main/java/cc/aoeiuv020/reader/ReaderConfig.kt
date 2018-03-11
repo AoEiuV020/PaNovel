@@ -30,8 +30,9 @@ class ReaderConfig(
         font: Typeface? = null,
         centerPercent: Float = 0.5f,
         /**
-         * 这个不支持阅读中修改，省事，
+         * 下面的不支持阅读中修改，省事，
          */
+        var autoRefreshInterval: Int,
         var fullScreenClickNextPage: Boolean = false
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()

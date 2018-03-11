@@ -17,6 +17,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
     : BaseNovelReader(novel, requester), AnkoLogger {
     private val pageView: Pager = Pager(ctx)
     private val drawer = ReaderDrawer(this, novel, requester)
+    val autoRefreshThread: AutoRefreshThread = AutoRefreshThread()
     override val maxTextProgress: Int
         get() = drawer.pagesCache[currentChapter]?.lastIndex ?: 0
     override var currentChapter: Int
@@ -61,6 +62,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
         }
         parent.addView(pageView)
 
+        autoRefreshThread.start()
     }
 
     override fun refreshCurrentChapter() {
@@ -71,6 +73,40 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
     override fun scrollPrev(): Boolean = pageView.scrollPrev()
 
     override fun onDestroy() {
+        autoRefreshThread.cancel()
         parent.removeView(pageView)
+    }
+
+    inner class AutoRefreshThread : Thread() {
+        var canceled = false
+        var leftTime = config.autoRefreshInterval
+        fun reset() {
+            leftTime = config.autoRefreshInterval
+        }
+
+        fun cancel() {
+            canceled = true
+            interrupt()
+        }
+
+        override fun run() {
+            if (leftTime == 0) {
+                // 间隔设置为0表示不刷新，直接结束这个方法就好，
+                return
+            }
+            while (!canceled) {
+                try {
+                    sleep(1000)
+                } catch (_: Exception) {
+                }
+                if (!canceled) {
+                    leftTime--
+                    if (leftTime == 0) {
+                        drawer.pager?.refresh()
+                        reset()
+                    }
+                }
+            }
+        }
     }
 }

@@ -48,6 +48,7 @@ object Settings : BaseLocalSource(), AnkoLogger {
      * 对应上面几个，也就是页眉页脚那些信息的字体大小，
      */
     var messageSize: Int by PrimitiveDelegate(12)
+    var autoRefreshInterval: Int by PrimitiveDelegate(60)
 
     var dateFormat: String by PrimitiveDelegate("HH:mm")
 
@@ -118,6 +119,7 @@ object Settings : BaseLocalSource(), AnkoLogger {
             animationSpeed,
             tfFont,
             centerPercent,
+            autoRefreshInterval,
             fullScreenClickNextPage
     )
 }

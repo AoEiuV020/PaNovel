@@ -43,6 +43,15 @@
     <cc.aoeiuv020.panovel.settings.EditTextPreference
         android:capitalize="words"
         android:inputType="number"
+        android:key="auto_refresh_interval"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="自动刷新间隔(s)" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
         android:key="message_size"
         android:maxLines="1"
         android:selectAllOnFocus="true"
