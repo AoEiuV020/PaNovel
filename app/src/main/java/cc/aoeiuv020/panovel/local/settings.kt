@@ -37,7 +37,7 @@ object Settings : BaseLocalSource(), AnkoLogger {
     /**
      * 小说内容的留白，
      */
-    val contentMargins: Margins = Margins("ContentMargins")
+    val contentMargins: Margins = Margins("ContentMargins", true, 1, 3, 1, 3)
     private val leftSpacing: Int by PrimitiveDelegate(0)
     private val topSpacing: Int by PrimitiveDelegate(0)
     private val rightSpacing: Int by PrimitiveDelegate(0)
@@ -56,11 +56,11 @@ object Settings : BaseLocalSource(), AnkoLogger {
         }
     }
 
-    val paginationMargins: Margins = Margins("PaginationMargins")
-    val bookNameMargins: Margins = Margins("BookNameMargins")
-    val chapterNameMargins: Margins = Margins("ChapterNameMargins")
-    val timeMargins: Margins = Margins("TimeMargins")
-    val batteryMargins: Margins = Margins("BatteryMargins")
+    val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 1, 1)
+    val bookNameMargins: Margins = Margins("BookNameMargins", false, 1, 1, -1, -1)
+    val chapterNameMargins: Margins = Margins("ChapterNameMargins", false, -1, 1, 1, -1)
+    val timeMargins: Margins = Margins("TimeMargins", false, 50, -1, -1, 1)
+    val batteryMargins: Margins = Margins("BatteryMargins", false, 1, -1, -1, 1)
     /**
      * 对应上面几个，也就是页眉页脚那些信息的字体大小，
      */
