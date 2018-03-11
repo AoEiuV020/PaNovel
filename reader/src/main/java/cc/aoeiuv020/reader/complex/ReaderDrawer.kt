@@ -89,9 +89,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     override fun drawCurrentPage(background: Canvas, content: Canvas) {
         debug { "drawCurrentPage <$chapterIndex, $pageIndex>" }
 
-        backgroundImage?.let {
-            background.drawBitmap(it, null, Rect(0, 0, backgroundSize.width, backgroundSize.height), null)
-        }
+        drawBackground(background)
 
         if (pager == null) {
             warn { "pager is null" }
@@ -99,10 +97,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
 
         if (chapterIndex !in reader.chapterList.indices) {
+            // TODO: 打开小说时必到这里两次，
             warn { "chapter index out of bounds <$chapterIndex/${reader.chapterList.size}>" }
             return
         }
 
+        drawContent(content)
+    }
+
+    private fun drawContent(content: Canvas) {
         val textHeight = textPaint.textSize.toInt()
 
         val pages = pagesCache[chapterIndex]
@@ -152,6 +155,12 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 }
                 is ParagraphSpacing -> y += paragraphSpacing
             }
+        }
+    }
+
+    private fun drawBackground(background: Canvas) {
+        backgroundImage?.let {
+            background.drawBitmap(it, null, Rect(0, 0, backgroundSize.width, backgroundSize.height), null)
         }
     }
 
