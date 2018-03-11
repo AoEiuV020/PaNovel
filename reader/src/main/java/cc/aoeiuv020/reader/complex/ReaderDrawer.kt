@@ -6,10 +6,12 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.support.v4.util.LruCache
 import android.text.TextPaint
+import cc.aoeiuv020.pager.IMargins
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
 import cc.aoeiuv020.reader.*
+import cc.aoeiuv020.reader.ReaderConfigName.*
 import org.jetbrains.anko.*
 
 /**
@@ -21,6 +23,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
     val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
     private lateinit var titlePaint: TextPaint
     private lateinit var textPaint: TextPaint
+    private lateinit var messagePaint: TextPaint
     private var backgroundImage: Bitmap? = null
     var chapterIndex = 0
     var pageIndex = 0
@@ -34,32 +37,30 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
             override fun onConfigChanged(name: ReaderConfigName) {
                 when (name) {
-                    ReaderConfigName.CenterPercent -> {
+                    CenterPercent -> {
                         pager?.centerPercent = reader.config.centerPercent
                     }
-                    ReaderConfigName.Font -> {
+                    Font -> {
                         textPaint.typeface = reader.config.font
                         titlePaint.typeface = reader.config.titleFont
-                        refresh()
                     }
-                    ReaderConfigName.AnimDurationMultiply -> {
+                    AnimDurationMultiply -> {
                         pager?.animDurationMultiply = reader.config.animationSpeed
                     }
                     ReaderConfigName.AnimationMode -> {
                         pager?.animMode = reader.config.animationMode.toAnimMode()
                     }
-                    ReaderConfigName.BackgroundColor -> {
+                    BackgroundColor -> {
                         pager?.bgColor = reader.config.backgroundColor
-                        refresh()
                     }
-                    ReaderConfigName.ContentMargins -> {
+                    ContentMargins -> {
                         pager?.margins = reader.config.contentMargins
-                        refresh()
                     }
                     else -> {
-                        refresh()
+                        // 其他设置在refresh里都重置了，
                     }
                 }
+                refresh()
             }
         })
     }
@@ -84,6 +85,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             typeface = reader.config.titleFont
         }
         backgroundImage = reader.config.backgroundImage?.let { BitmapFactory.decodeStream(reader.ctx.contentResolver.openInputStream(it)) }
+        messagePaint = TextPaint(textPaint).apply {
+            textSize = reader.ctx.sp(reader.config.messageSize).toFloat()
+        }
     }
 
     override fun drawCurrentPage(background: Canvas, content: Canvas) {
@@ -102,7 +106,41 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return
         }
 
+        drawPagination(background)
+
         drawContent(content)
+    }
+
+    private fun drawPagination(canvas: Canvas) {
+        val pages = pagesCache[chapterIndex] ?: return
+
+        // 调小字体有可能出现页数变少，
+        if (pageIndex > pages.lastIndex) {
+            pageIndex = pages.lastIndex
+        }
+        // 往上翻章节时pageIndex会是负数，表示倒数，
+        while (pageIndex < 0) {
+            pageIndex += pages.size
+        }
+        val margins = reader.config.paginationMargins
+        val text = "${pageIndex + 1}/${pages.size}"
+        drawMessage(canvas, text, margins)
+    }
+
+    private fun drawMessage(canvas: Canvas, text: String, margins: IMargins) {
+        val textHeight = messagePaint.textSize
+        val textWidth = messagePaint.measureText(text)
+        val x: Float = if (margins.left > margins.right) {
+            canvas.width * margins.left / 100f
+        } else {
+            canvas.width - canvas.width * margins.right / 100f - textWidth
+        }
+        val y: Float = if (margins.top > margins.bottom) {
+            canvas.height * margins.top / 100f
+        } else {
+            canvas.height - canvas.height * margins.bottom / 100f - textHeight
+        }
+        canvas.drawText(text, x, y, messagePaint)
     }
 
     private fun drawContent(content: Canvas) {
@@ -127,11 +165,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return
         }
 
+        // 下面两个判断和上面重复，主要是没加锁，重复判断避免万一，
         // 调小字体有可能出现页数变少，
         if (pageIndex > pages.lastIndex) {
             pageIndex = pages.lastIndex
         }
-
         // 往上翻章节时pageIndex会是负数，表示倒数，
         while (pageIndex < 0) {
             pageIndex += pages.size
