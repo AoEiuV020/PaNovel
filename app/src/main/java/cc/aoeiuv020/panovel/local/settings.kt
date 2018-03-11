@@ -38,23 +38,6 @@ object Settings : BaseLocalSource(), AnkoLogger {
      * 小说内容的留白，
      */
     val contentMargins: Margins = Margins("ContentMargins", true, 1, 3, 1, 3)
-    private val leftSpacing: Int by PrimitiveDelegate(0)
-    private val topSpacing: Int by PrimitiveDelegate(0)
-    private val rightSpacing: Int by PrimitiveDelegate(0)
-    private val bottomSpacing: Int by PrimitiveDelegate(0)
-
-    init {
-        // 迁移1.3.11及以前留白设置，
-        // 之后删了吧，跨版本的大不了作废这几个设置，
-        contentMargins.takeIf {
-            it.left == 0 && it.right == 0 && it.top == 0 && it.bottom == 0
-        }?.apply {
-            leftSpacing.takeUnless { it == 0 }?.let { left = it }
-            rightSpacing.takeUnless { it == 0 }?.let { right = it }
-            topSpacing.takeUnless { it == 0 }?.let { top = it }
-            bottomSpacing.takeUnless { it == 0 }?.let { bottom = it }
-        }
-    }
 
     val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 1, 1)
     val bookNameMargins: Margins = Margins("BookNameMargins", false, 1, 1, -1, -1)
