@@ -1,16 +1,19 @@
 package cc.aoeiuv020.panovel.text
 
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.local.Margins
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.alertColorPicker
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import cc.aoeiuv020.reader.AnimationMode
+import cc.aoeiuv020.reader.ReaderConfigName
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_animation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_default.view.*
@@ -26,26 +29,27 @@ import org.jetbrains.anko.debug
  * Created by AoEiuV020 on 2017.11.20-21:59:26.
  */
 class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem, navigation: View) : AnkoLogger {
-    private val llDefault = navigation.llDefault
-    private val llSettings = navigation.llSettings
-    private val llTypesetting = navigation.llTypesetting
-    private val llAnimation = navigation.llAnimation
+    private val mPanelDefault = navigation.panelDefault
+    private val mPanelSettings = navigation.panelSettings
+    private val mPanelTypesetting = navigation.panelTypesetting
+    private val mPanelAnimation = navigation.panelAnimation
+    private val mPanelMargins = navigation.panelMargins
 
     private fun showLayout(view: View) {
-        listOf(llDefault, llSettings, llTypesetting, llAnimation).forEach {
+        listOf(mPanelDefault, mPanelSettings, mPanelTypesetting, mPanelAnimation, mPanelMargins).forEach {
             it.takeIf { it == view }?.show()
                     ?: it.hide()
         }
     }
 
     init {
-        llDefault.ivContents.setOnClickListener {
+        mPanelDefault.ivContents.setOnClickListener {
             view.showContents()
         }
-        llDefault.ivSettings.setOnClickListener {
-            showLayout(llSettings)
+        mPanelDefault.ivSettings.setOnClickListener {
+            showLayout(mPanelSettings)
         }
-        llDefault.ivStar.apply {
+        mPanelDefault.ivStar.apply {
             isChecked = Bookshelf.contains(novelItem)
             setOnClickListener {
                 toggle()
@@ -56,10 +60,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
             }
         }
-        llDefault.ivDetail.setOnClickListener {
+        mPanelDefault.ivDetail.setOnClickListener {
             view.detail()
         }
-        llDefault.ivRefresh.apply {
+        mPanelDefault.ivRefresh.apply {
             setOnClickListener {
                 view.refreshCurrentChapter()
             }
@@ -68,10 +72,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 true
             }
         }
-        llDefault.ivDownload.setOnClickListener {
+        mPanelDefault.ivDownload.setOnClickListener {
             view.download()
         }
-        llDefault.apply {
+        mPanelDefault.apply {
             tvPreviousChapter.setOnClickListener {
                 view.previousChapter()
             }
@@ -93,7 +97,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             })
         }
 
-        llSettings.apply {
+        mPanelSettings.apply {
             // 设置字体大小，
             val textSize = Settings.textSize
             debug { "load textSite = $textSize" }
@@ -156,16 +160,16 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             }
 
             tvTypesetting.setOnClickListener {
-                showLayout(this@NovelTextNavigation.llTypesetting)
+                showLayout(mPanelTypesetting)
             }
 
             tvAnimation.setOnClickListener {
-                showLayout(this@NovelTextNavigation.llAnimation)
+                showLayout(mPanelAnimation)
             }
 
         }
 
-        llTypesetting.apply {
+        mPanelTypesetting.apply {
 
             // 设置行间距，
             val lineSpacing = Settings.lineSpacing
@@ -203,71 +207,32 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
             })
 
-            val spacingListener = object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    var tv: TextView? = null
-                    val margins = Settings.contentMargins
-                    when (seekBar) {
-                        leftSpacingSeekBar -> {
-                            margins.left = progress
-                            tv = leftSpacingTextView
-                        }
-                        rightSpacingSeekBar -> {
-                            margins.right = progress
-                            tv = rightSpacingTextView
-                        }
-                        topSpacingSeekBar -> {
-                            margins.top = progress
-                            tv = topSpacingTextView
-                        }
-                        bottomSpacingSeekBar -> {
-                            margins.bottom = progress
-                            tv = bottomSpacingTextView
-                        }
-                    }
-                    view.setContentMargins(margins)
-                    tv?.text = view.getString(R.string.spacing_placeholder, progress)
-                }
+            initLayoutMargins(llMargins, Settings.contentMargins, ReaderConfigName.ContentMargins)
+            llMargins.llDisplay.hide()
 
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    when (seekBar) {
-                        leftSpacingSeekBar -> Settings.contentMargins.left = seekBar.progress
-                        rightSpacingSeekBar -> Settings.contentMargins.right = seekBar.progress
-                        topSpacingSeekBar -> Settings.contentMargins.top = seekBar.progress
-                        bottomSpacingSeekBar -> Settings.contentMargins.bottom = seekBar.progress
-                    }
-                }
+            tvPagination.setOnClickListener {
+                showLayout(mPanelMargins)
+                initLayoutMargins(mPanelMargins, Settings.paginationMargins, ReaderConfigName.PaginationMargins)
             }
-
-            // 设置左间距，
-            val leftSpacing = Settings.contentMargins.left
-            leftSpacingTextView.text = view.getString(R.string.spacing_placeholder, leftSpacing)
-            leftSpacingSeekBar.progress = leftSpacing
-            leftSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
-
-            // 设置右间距，
-            val rightSpacing = Settings.contentMargins.right
-            rightSpacingTextView.text = view.getString(R.string.spacing_placeholder, rightSpacing)
-            rightSpacingSeekBar.progress = rightSpacing
-            rightSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
-
-            // 设置上间距，
-            val topSpacing = Settings.contentMargins.top
-            topSpacingTextView.text = view.getString(R.string.spacing_placeholder, topSpacing)
-            topSpacingSeekBar.progress = topSpacing
-            topSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
-
-            // 设置下间距，
-            val bottomSpacing = Settings.contentMargins.bottom
-            bottomSpacingTextView.text = view.getString(R.string.spacing_placeholder, bottomSpacing)
-            bottomSpacingSeekBar.progress = bottomSpacing
-            bottomSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
+            tvTime.setOnClickListener {
+                showLayout(mPanelMargins)
+                initLayoutMargins(mPanelMargins, Settings.timeMargins, ReaderConfigName.TimeMargins)
+            }
+            tvBattery.setOnClickListener {
+                showLayout(mPanelMargins)
+                initLayoutMargins(mPanelMargins, Settings.batteryMargins, ReaderConfigName.BatteryMargins)
+            }
+            tvBookName.setOnClickListener {
+                showLayout(mPanelMargins)
+                initLayoutMargins(mPanelMargins, Settings.bookNameMargins, ReaderConfigName.BookNameMargins)
+            }
+            tvChapterName.setOnClickListener {
+                showLayout(mPanelMargins)
+                initLayoutMargins(mPanelMargins, Settings.chapterNameMargins, ReaderConfigName.ChapterNameMargins)
+            }
         }
 
-        llAnimation.apply {
+        mPanelAnimation.apply {
             val maxSpeed = 3f
             val animationSpeed: Float = Settings.animationSpeed
             tvAnimationSpeed.text = view.getString(R.string.animation_speed_placeholder, animationSpeed)
@@ -321,10 +286,90 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         }
     }
 
-    fun reset(currentTextCount: Int, currentTextProgress: Int) {
-        showLayout(llDefault)
+    private fun initLayoutMargins(llMargins: LinearLayout, margins: Margins, name: ReaderConfigName) {
+        debug {
+            "$name: $margins"
+        }
+        llMargins.apply {
+            val display = margins.enabled
+            cbDisplay.setOnCheckedChangeListener(null)
+            cbDisplay.isChecked = display
+            cbDisplay.setOnCheckedChangeListener { _, isChecked ->
+                margins.enabled = isChecked
+                view.setMargins(margins, name)
+            }
 
-        llDefault.sbTextProgress.apply {
+            val spacingListener = object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    if (!fromUser) {
+                        return
+                    }
+                    var tv: TextView? = null
+                    when (seekBar) {
+                        leftSpacingSeekBar -> {
+                            margins.left = progress
+                            tv = leftSpacingTextView
+                        }
+                        rightSpacingSeekBar -> {
+                            margins.right = progress
+                            tv = rightSpacingTextView
+                        }
+                        topSpacingSeekBar -> {
+                            margins.top = progress
+                            tv = topSpacingTextView
+                        }
+                        bottomSpacingSeekBar -> {
+                            margins.bottom = progress
+                            tv = bottomSpacingTextView
+                        }
+                    }
+                    view.setMargins(margins, name)
+                    tv?.text = view.getString(R.string.spacing_placeholder, progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    when (seekBar) {
+                        leftSpacingSeekBar -> margins.left = seekBar.progress
+                        rightSpacingSeekBar -> margins.right = seekBar.progress
+                        topSpacingSeekBar -> margins.top = seekBar.progress
+                        bottomSpacingSeekBar -> margins.bottom = seekBar.progress
+                    }
+                }
+            }
+
+            // 设置左间距，
+            val leftSpacing = margins.left
+            leftSpacingTextView.text = view.getString(R.string.spacing_placeholder, leftSpacing)
+            leftSpacingSeekBar.progress = leftSpacing
+            leftSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
+
+            // 设置右间距，
+            val rightSpacing = margins.right
+            rightSpacingTextView.text = view.getString(R.string.spacing_placeholder, rightSpacing)
+            rightSpacingSeekBar.progress = rightSpacing
+            rightSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
+
+            // 设置上间距，
+            val topSpacing = margins.top
+            topSpacingTextView.text = view.getString(R.string.spacing_placeholder, topSpacing)
+            topSpacingSeekBar.progress = topSpacing
+            topSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
+
+            // 设置下间距，
+            val bottomSpacing = margins.bottom
+            bottomSpacingTextView.text = view.getString(R.string.spacing_placeholder, bottomSpacing)
+            bottomSpacingSeekBar.progress = bottomSpacing
+            bottomSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
+        }
+    }
+
+    fun reset(currentTextCount: Int, currentTextProgress: Int) {
+        showLayout(mPanelDefault)
+
+        mPanelDefault.sbTextProgress.apply {
             max = currentTextCount
             progress = currentTextProgress
         }

@@ -3,6 +3,8 @@ package cc.aoeiuv020.reader
 import android.graphics.Typeface
 import android.net.Uri
 import cc.aoeiuv020.pager.IMargins
+import cc.aoeiuv020.reader.ReaderConfigName.*
+import kotlin.reflect.KProperty
 
 /**
  *
@@ -13,6 +15,16 @@ class ReaderConfig(
         lineSpacing: Int,
         paragraphSpacing: Int,
         contentMargins: IMargins,
+        paginationMargins: IMargins,
+        bookNameMargins: IMargins,
+        chapterNameMargins: IMargins,
+        timeMargins: IMargins,
+        batteryMargins: IMargins,
+        paginationEnabled: Boolean,
+        bookNameEnabled: Boolean,
+        chapterNameEnabled: Boolean,
+        timeEnabled: Boolean,
+        batteryEnabled: Boolean,
         textColor: Int,
         backgroundColor: Int,
         backgroundImage: Uri?,
@@ -27,70 +39,38 @@ class ReaderConfig(
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()
 
-    var textSize: Int = textSize
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.TextSize)
-            }
-        }
-    var lineSpacing: Int = lineSpacing
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.LineSpacing)
-            }
-        }
-    var paragraphSpacing: Int = paragraphSpacing
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.ParagraphSpacing)
-            }
-        }
-    var contentMargins: IMargins = contentMargins
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.ContentSpacing)
-            }
-        }
+    var textSize: Int by ConfigDelegate(textSize, TextSize)
+    var lineSpacing: Int by ConfigDelegate(lineSpacing, LineSpacing)
+    var paragraphSpacing: Int  by ConfigDelegate(paragraphSpacing, ParagraphSpacing)
 
-    var textColor: Int = textColor
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.TextColor)
-            }
-        }
-    var backgroundColor: Int = backgroundColor
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.BackgroundColor)
-            }
-        }
-    var backgroundImage: Uri? = backgroundImage
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.BackgroundImage)
-            }
-        }
-    var animationMode: AnimationMode = animationMode
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.AnimationMode)
-            }
-        }
-    var animationSpeed: Float = animationSpeed
-        set(value) {
-            field = value
-            listeners.forEach {
-                it.onConfigChanged(ReaderConfigName.AnimDurationMultiply)
-            }
-        }
+    var contentMargins: IMargins by ConfigDelegate(contentMargins, ContentMargins)
+
+    var paginationMargins: IMargins by ConfigDelegate(paginationMargins, PaginationMargins)
+
+    var timeMargins: IMargins by ConfigDelegate(timeMargins, TimeMargins)
+
+    var batteryMargins: IMargins by ConfigDelegate(batteryMargins, BatteryMargins)
+
+    var bookNameMargins: IMargins by ConfigDelegate(bookNameMargins, BookNameMargins)
+
+    var chapterNameMargins: IMargins by ConfigDelegate(chapterNameMargins, ChapterNameMargins)
+
+
+    var paginationEnabled: Boolean by ConfigDelegate(paginationEnabled, PaginationEnabled)
+
+    var timeEnabled: Boolean by ConfigDelegate(timeEnabled, TimeEnabled)
+
+    var batteryEnabled: Boolean by ConfigDelegate(batteryEnabled, BatteryEnabled)
+
+    var bookNameEnabled: Boolean by ConfigDelegate(bookNameEnabled, BookNameEnabled)
+
+    var chapterNameEnabled: Boolean by ConfigDelegate(chapterNameEnabled, ChapterNameEnabled)
+
+    var textColor: Int by ConfigDelegate(textColor, TextColor)
+    var backgroundColor: Int by ConfigDelegate(backgroundColor, BackgroundColor)
+    var backgroundImage: Uri? by ConfigDelegate(backgroundImage, BackgroundImage)
+    var animationMode: AnimationMode by ConfigDelegate(animationMode, ReaderConfigName.AnimationMode)
+    var animationSpeed: Float by ConfigDelegate(animationSpeed, AnimDurationMultiply)
     var font: Typeface? = font
         set(value) {
             field = value
@@ -110,5 +90,19 @@ class ReaderConfig(
                 it.onConfigChanged(ReaderConfigName.CenterPercent)
             }
         }
+
+    class ConfigDelegate<T>(default: T, val name: ReaderConfigName) {
+        private var backingField: T = default
+        operator fun getValue(thisRef: ReaderConfig, property: KProperty<*>): T {
+            return backingField
+        }
+
+        operator fun setValue(thisRef: ReaderConfig, property: KProperty<*>, value: T) {
+            backingField = value
+            thisRef.listeners.forEach {
+                it.onConfigChanged(name)
+            }
+        }
+    }
 
 }

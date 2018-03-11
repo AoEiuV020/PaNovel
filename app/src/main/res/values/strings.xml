@@ -139,5 +139,11 @@
     <string name="volume_key_scroll">音量键翻页</string>
     <string name="unknown">unknown</string>
     <string name="center_percent">中心百分比</string>
+    <string name="time">时间</string>
+    <string name="battery">电池</string>
+    <string name="pagination">页码</string>
+    <string name="book_name">书名</string>
+    <string name="chapter_name">章节名</string>
+    <string name="display">显示</string>
 
 </resources>

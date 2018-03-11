@@ -28,6 +28,8 @@ import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.notify
 import cc.aoeiuv020.reader.*
+import cc.aoeiuv020.reader.AnimationMode
+import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
@@ -170,8 +172,17 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
     }
 
-    fun setContentMargins(margins: ContentMargins) {
-        reader.config.contentMargins = margins
+    fun setMargins(margins: Margins, name: ReaderConfigName) {
+        when (name) {
+            ContentMargins -> reader.config.contentMargins = margins
+            PaginationMargins -> reader.config.paginationMargins = margins
+            TimeMargins -> reader.config.timeMargins = margins
+            BatteryMargins -> reader.config.batteryMargins = margins
+            BookNameMargins -> reader.config.bookNameMargins = margins
+            ChapterNameMargins -> reader.config.chapterNameMargins = margins
+            else -> {
+            }
+        }
     }
 
     fun setTextColor(color: Int) {

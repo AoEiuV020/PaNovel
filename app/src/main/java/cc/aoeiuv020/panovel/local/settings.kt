@@ -34,7 +34,10 @@ object Settings : BaseLocalSource(), AnkoLogger {
     var lineSpacing: Int by PrimitiveDelegate(2)
     var paragraphSpacing: Int by PrimitiveDelegate(4)
 
-    val contentMargins: ContentMargins = ContentMargins()
+    /**
+     * 小说内容的留白，
+     */
+    val contentMargins: Margins = Margins("ContentMargins")
     private val leftSpacing: Int by PrimitiveDelegate(0)
     private val topSpacing: Int by PrimitiveDelegate(0)
     private val rightSpacing: Int by PrimitiveDelegate(0)
@@ -52,6 +55,12 @@ object Settings : BaseLocalSource(), AnkoLogger {
             bottomSpacing.takeUnless { it == 0 }?.let { bottom = it }
         }
     }
+
+    val paginationMargins: Margins = Margins("PaginationMargins")
+    val bookNameMargins: Margins = Margins("BookNameMargins")
+    val chapterNameMargins: Margins = Margins("ChapterNameMargins")
+    val timeMargins: Margins = Margins("TimeMargins")
+    val batteryMargins: Margins = Margins("BatteryMargins")
 
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
     var font: Uri? by UriDelegate()
@@ -107,6 +116,16 @@ object Settings : BaseLocalSource(), AnkoLogger {
             lineSpacing,
             paragraphSpacing,
             contentMargins,
+            paginationMargins,
+            bookNameMargins,
+            chapterNameMargins,
+            timeMargins,
+            batteryMargins,
+            paginationMargins.enabled,
+            bookNameMargins.enabled,
+            chapterNameMargins.enabled,
+            timeMargins.enabled,
+            batteryMargins.enabled,
             textColor,
             backgroundColor,
             backgroundImage,
