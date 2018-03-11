@@ -279,6 +279,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         reader.config.lineSpacing = progress
     }
 
+    fun setMessageSize(textSize: Int) {
+        reader.config.messageSize = textSize
+    }
+
     fun setTextSize(textSize: Int) {
         reader.config.textSize = textSize
     }

@@ -64,7 +64,7 @@ object Settings : BaseLocalSource(), AnkoLogger {
     /**
      * 对应上面几个，也就是页眉页脚那些信息的字体大小，
      */
-    var messageSize: Int by PrimitiveDelegate(8)
+    var messageSize: Int by PrimitiveDelegate(12)
 
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
     var font: Uri? by UriDelegate()

@@ -98,6 +98,27 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         }
 
         mPanelSettings.apply {
+            // 设置信息字体大小，
+            val messageSize = Settings.messageSize
+            debug { "load textSite = $messageSize" }
+            messageSizeTextView.text = view.getString(R.string.text_size_placeholders, messageSize)
+            messageSizeSeekBar.progress = messageSize - 12
+            messageSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    val iTextSize = 12 + progress
+                    messageSizeTextView.text = view.getString(R.string.text_size_placeholders, iTextSize)
+                    view.setMessageSize(iTextSize)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    val iTextSize = 12 + seekBar.progress
+                    Settings.messageSize = iTextSize
+                }
+            })
+
             // 设置字体大小，
             val textSize = Settings.textSize
             debug { "load textSite = $textSize" }

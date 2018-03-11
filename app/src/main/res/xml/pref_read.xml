@@ -32,6 +32,15 @@
         android:singleLine="true"
         android:title="@string/center_percent" />
 
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="message_size"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/message_size" />
+
     <cc.aoeiuv020.panovel.settings.ListPreference
         android:entries="@array/animation_names"
         android:entryValues="@array/animation_values"
