@@ -1,9 +1,8 @@
 package cc.aoeiuv020.reader.complex
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Rect
+import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.*
 import android.support.v4.util.LruCache
 import android.text.TextPaint
 import cc.aoeiuv020.pager.IMargins
@@ -13,6 +12,8 @@ import cc.aoeiuv020.pager.Size
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import org.jetbrains.anko.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *
@@ -107,8 +108,29 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
 
         drawPagination(background)
+        drawMessage(background, reader.chapterList[chapterIndex].name, reader.config.chapterNameMargins)
+        drawMessage(background, novel.name, reader.config.bookNameMargins)
+        drawTime(background)
+        drawBattery(background)
 
         drawContent(content)
+    }
+
+    @SuppressWarnings("SimpleDateFormat")
+    private val sdf = SimpleDateFormat("HH:mm")
+
+    private fun drawTime(canvas: Canvas) {
+        val text = sdf.format(Date())
+        val margins = reader.config.timeMargins
+        drawMessage(canvas, text, margins)
+    }
+
+    private fun drawBattery(canvas: Canvas) {
+        val intent = reader.ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val battery = intent.getIntExtra("level", 0)
+        val text = "$battery"
+        val margins = reader.config.batteryMargins
+        drawMessage(canvas, text, margins, true)
     }
 
     private fun drawPagination(canvas: Canvas) {
@@ -127,7 +149,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         drawMessage(canvas, text, margins)
     }
 
-    private fun drawMessage(canvas: Canvas, text: String, margins: IMargins) {
+    private fun drawMessage(canvas: Canvas, text: String, margins: IMargins, isBattery: Boolean = false) {
         val textHeight = messagePaint.textSize
         val textWidth = messagePaint.measureText(text)
         val x: Float = if (margins.left > margins.right) {
@@ -139,6 +161,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             canvas.height * margins.top / 100f + textHeight
         } else {
             canvas.height - canvas.height * margins.bottom / 100f
+        }
+        if (isBattery) {
+            // 画框框，
+            messagePaint.style = Paint.Style.STROKE
+            messagePaint.strokeWidth = textHeight / 20
+            canvas.drawRect(RectF(x, y - textHeight, x + textWidth, y), messagePaint)
+            // 画电池头部那个小点，
+            messagePaint.style = Paint.Style.FILL
+            canvas.drawRect(RectF(x + textWidth, y - textHeight / 4 * 3, x + textWidth + textWidth / 15, y - textHeight / 4 * 1), messagePaint)
         }
         canvas.drawText(text, x, y, messagePaint)
     }
