@@ -12,7 +12,7 @@ import org.jetbrains.anko.error
  * 设置，
  * Created by AoEiuV020 on 2017.10.04-14:04:44.
  */
-object Settings : LocalSource, AnkoLogger {
+object Settings : BaseLocalSource(), AnkoLogger {
     /**
      * 这名字好长，小红点提示未读或新章节，
      * false则提示未读，也就是阅读进度不在最新章节，
@@ -33,10 +33,24 @@ object Settings : LocalSource, AnkoLogger {
     var textSize: Int by PrimitiveDelegate(18)
     var lineSpacing: Int by PrimitiveDelegate(2)
     var paragraphSpacing: Int by PrimitiveDelegate(4)
-    var leftSpacing: Int by PrimitiveDelegate(0)
-    var topSpacing: Int by PrimitiveDelegate(0)
-    var rightSpacing: Int by PrimitiveDelegate(0)
-    var bottomSpacing: Int by PrimitiveDelegate(0)
+
+    /**
+     * 小说内容的留白，
+     */
+    val contentMargins: Margins = Margins("ContentMargins", true, 1, 3, 1, 3)
+
+    val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 1, 1)
+    val bookNameMargins: Margins = Margins("BookNameMargins", true, 1, 1, -1, -1)
+    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, -1, 1, 1, -1)
+    val timeMargins: Margins = Margins("TimeMargins", true, 50, -1, -1, 1)
+    val batteryMargins: Margins = Margins("BatteryMargins", true, 1, -1, -1, 1)
+    /**
+     * 对应上面几个，也就是页眉页脚那些信息的字体大小，
+     */
+    var messageSize: Int by PrimitiveDelegate(12)
+    var autoRefreshInterval: Int by PrimitiveDelegate(60)
+
+    var dateFormat: String by PrimitiveDelegate("HH:mm")
 
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
     var font: Uri? by UriDelegate()
@@ -61,7 +75,6 @@ object Settings : LocalSource, AnkoLogger {
     var adEnabled: Boolean by PrimitiveDelegate(true)
     var BookSmallLayout: Boolean by PrimitiveDelegate(true)
 
-
     var bookListAutoSave: Boolean by PrimitiveDelegate(true)
 
     var chapterColorDefault: Int by PrimitiveDelegate(0xff000000.toInt())
@@ -85,21 +98,28 @@ object Settings : LocalSource, AnkoLogger {
     var animationSpeed: Float by PrimitiveDelegate(0.8f)
     var fullScreenClickNextPage: Boolean by PrimitiveDelegate(false)
     var volumeKeyScroll: Boolean by PrimitiveDelegate(false)
+    var centerPercent: Float by PrimitiveDelegate(0.5f)
 
     fun makeReaderConfig() = ReaderConfig(
             textSize,
             lineSpacing,
             paragraphSpacing,
-            leftSpacing,
-            topSpacing,
-            rightSpacing,
-            bottomSpacing,
+            contentMargins,
+            paginationMargins,
+            bookNameMargins,
+            chapterNameMargins,
+            timeMargins,
+            batteryMargins,
+            messageSize,
+            dateFormat,
             textColor,
             backgroundColor,
             backgroundImage,
             animationMode,
             animationSpeed,
             tfFont,
+            centerPercent,
+            autoRefreshInterval,
             fullScreenClickNextPage
     )
 }

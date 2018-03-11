@@ -46,7 +46,7 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             field = value
             resetDrawer()
         }
-    var margins: Margins = Margins()
+    var margins: IMargins = Margins()
         set(value) {
             field = value
             resetAnim()
@@ -63,16 +63,28 @@ class Pager : View, PageAnimation.OnPageChangeListener, AnkoLogger {
             mAnim?.setDurationMultiply(value)
         }
     var fullScreenClickNextPage: Boolean = false
+    /**
+     * 单击不翻页的中心大小，单位百分比，
+     */
+    var centerPercent: Float = 0.5f
+        set(value) {
+            field = value
+            resetCenterRect(width, height)
+        }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         resetDrawer()
         resetAnim(w, h)
         refresh()
-        centerRect = Rect(w / 4 * 1,
-                h / 4 * 1,
-                w / 4 * 3,
-                h / 4 * 3
-        )
+        resetCenterRect(w, h)
+    }
+
+    private fun resetCenterRect(w: Int, h: Int) {
+        val left = (w / 2 * (1 - centerPercent)).toInt()
+        val right = w - left
+        val top = (h / 2 * (1 - centerPercent)).toInt()
+        val bottom = h - top
+        centerRect = Rect(left, top, right, bottom)
     }
 
     override fun drawCurrent(backgroundCanvas: Canvas, nextCanvas: Canvas) {

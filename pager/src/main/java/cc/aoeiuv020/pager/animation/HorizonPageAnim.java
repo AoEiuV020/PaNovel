@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
 
+import cc.aoeiuv020.pager.IMargins;
+
 /**
  * Created by newbiechen on 17-7-24.
  * 横向动画的模板
@@ -36,7 +38,7 @@ public abstract class HorizonPageAnim extends PageAnimation {
         init();
     }
 
-    public HorizonPageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
+    public HorizonPageAnim(int w, int h, IMargins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
         init();
     }

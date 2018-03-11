@@ -16,7 +16,7 @@ import org.jetbrains.anko.error
  * 导出小说文本，
  * Created by AoEiuV020 on 2017.11.20-17:03:21.
  */
-object Text : LocalSource, AnkoLogger {
+object Text : BaseLocalSource(), AnkoLogger {
     private val handler = Handler(Looper.getMainLooper())
     private var index = 0
     fun exportExistsChapterToTextFile(novelItem: NovelItem) {

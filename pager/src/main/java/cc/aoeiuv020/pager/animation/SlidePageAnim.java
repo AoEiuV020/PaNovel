@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 
+import cc.aoeiuv020.pager.IMargins;
+
 /**
  * Created by newbiechen on 17-7-24.
  */
@@ -17,7 +19,7 @@ public class SlidePageAnim extends HorizonPageAnim {
         init();
     }
 
-    public SlidePageAnim(int w, int h, Margins margins, View view, OnPageChangeListener listener) {
+    public SlidePageAnim(int w, int h, IMargins margins, View view, OnPageChangeListener listener) {
         super(w, h, margins, view, listener);
         init();
     }

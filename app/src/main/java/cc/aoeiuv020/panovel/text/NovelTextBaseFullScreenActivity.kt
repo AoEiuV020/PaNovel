@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.text
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
@@ -22,6 +23,7 @@ import org.jetbrains.anko.debug
 @Suppress("MemberVisibilityCanPrivate", "unused")
 abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger {
     private val mHideHandler = Handler()
+    @SuppressLint("InlinedApi")
     private val mHidePart2Runnable = Runnable {
         flContent.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LOW_PROFILE or
@@ -53,6 +55,7 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         return true
     }
 
+    @SuppressLint("InlinedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,17 +75,26 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         if (mVisible) {
             hide()
         } else {
-            show()
+            if (fullscreen_content_controls.visibility != View.GONE) {
+                hide()
+            } else {
+                show()
+            }
         }
+    }
+
+    // 进入全屏但不隐藏菜单栏，
+    fun fullScreen() {
+        app_bar.hide()
+        mVisible = false
+        mHideHandler.removeCallbacks(mShowPart2Runnable)
+        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY.toLong())
     }
 
     protected fun hide() {
         debug { "hide" }
-        app_bar.hide()
         fullscreen_content_controls.visibility = View.GONE
-        mVisible = false
-        mHideHandler.removeCallbacks(mShowPart2Runnable)
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY.toLong())
+        fullScreen()
     }
 
     open protected fun show() {

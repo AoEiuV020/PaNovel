@@ -79,10 +79,7 @@ internal class SimpleReader(override var ctx: Context, novel: Novel, private val
             ReaderConfigName.TextColor -> ntpAdapter.notifyAllItemDataSetChanged()
             ReaderConfigName.LineSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
             ReaderConfigName.ParagraphSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
-            ReaderConfigName.LeftSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
-            ReaderConfigName.RightSpacing -> ntpAdapter.notifyAllItemDataSetChanged()
-            ReaderConfigName.TopSpacing -> ntpAdapter.notifyAllItemMarginsChanged()
-            ReaderConfigName.BottomSpacing -> ntpAdapter.notifyAllItemMarginsChanged()
+            ReaderConfigName.ContentMargins -> ntpAdapter.notifyAllItemContentSpacingChanged()
             ReaderConfigName.BackgroundColor -> background.setBackgroundColor(config.backgroundColor)
             ReaderConfigName.BackgroundImage -> background.setImageURI(config.backgroundImage)
             else -> {

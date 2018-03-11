@@ -28,8 +28,8 @@ internal class NovelTextRecyclerAdapter(private val reader: SimpleReader) : Recy
     private val mLineSpacing get() = reader.config.lineSpacing
     private val mParagraphSpacing get() = reader.config.paragraphSpacing
     private val mTextColor get() = reader.config.textColor
-    private val mLeftSpacing get() = reader.config.leftSpacing
-    private val mRightSpacing get() = reader.config.rightSpacing
+    private val mLeftSpacing get() = reader.config.contentMargins.left
+    private val mRightSpacing get() = reader.config.contentMargins.right
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(ctx).inflate(R.layout.simple_text_item, parent, false)

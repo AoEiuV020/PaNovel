@@ -10,7 +10,7 @@ import cc.aoeiuv020.panovel.api.NovelItem
  */
 
 @Suppress("MemberVisibilityCanPrivate")
-object Bookshelf : LocalSource {
+object Bookshelf : BaseLocalSource() {
     fun contains(novelItem: NovelItem): Boolean = gsonExists(novelItem.bookId.toString())
 
     fun add(novelDetail: NovelDetail) = add(novelDetail.novel)

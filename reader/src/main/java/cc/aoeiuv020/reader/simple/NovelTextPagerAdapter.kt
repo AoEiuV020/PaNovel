@@ -78,4 +78,14 @@ internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : P
         }
     }
 
+    /**
+     * 内容的上下左右间距改变时上面两个都要通知，
+     */
+    fun notifyAllItemContentSpacingChanged() {
+        // 左右，
+        notifyAllItemDataSetChanged()
+        // 上下，
+        notifyAllItemMarginsChanged()
+    }
+
 }

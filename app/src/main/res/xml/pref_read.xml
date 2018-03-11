@@ -23,6 +23,41 @@
         android:key="full_screen_click_next_page"
         android:title="@string/full_screen_click_next_page" />
 
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="numberDecimal|numberSigned"
+        android:key="center_percent"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/center_percent" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:inputType="text"
+        android:key="date_format"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/date_format" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="auto_refresh_interval"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="自动刷新间隔(s)" />
+
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:capitalize="words"
+        android:inputType="number"
+        android:key="message_size"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/message_size" />
+
     <cc.aoeiuv020.panovel.settings.ListPreference
         android:entries="@array/animation_names"
         android:entryValues="@array/animation_values"
@@ -78,41 +113,5 @@
         app:alphaSlider="true"
         app:lightnessSlider="true"
         app:wheelType="CIRCLE" />
-
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
-        android:capitalize="words"
-        android:inputType="number"
-        android:key="left_spacing"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/left_spacing" />
-
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
-        android:capitalize="words"
-        android:inputType="number"
-        android:key="right_spacing"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/right_spacing" />
-
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
-        android:capitalize="words"
-        android:inputType="number"
-        android:key="top_spacing"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/top_spacing" />
-
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
-        android:capitalize="words"
-        android:inputType="number"
-        android:key="bottom_spacing"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/bottom_spacing" />
 
 </PreferenceScreen>

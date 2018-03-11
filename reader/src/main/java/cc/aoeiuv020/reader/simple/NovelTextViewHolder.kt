@@ -41,9 +41,9 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
         textRecyclerView.apply {
             layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
                 setMargins(leftMargin,
-                        reader.config.topSpacing.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() },
+                        reader.config.contentMargins.top.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() },
                         rightMargin,
-                        reader.config.bottomSpacing.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() })
+                        reader.config.contentMargins.bottom.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() })
             }
         }
     }
@@ -87,6 +87,7 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
         progressBar.hide()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun showError(message: String, e: Throwable) {
         itemView.progressBar.hide()
     }
@@ -96,9 +97,9 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
             post {
                 layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
                     setMargins(leftMargin,
-                            reader.config.topSpacing.run { (toFloat() / 100 * itemView.height).toInt() },
+                            reader.config.contentMargins.top.run { (toFloat() / 100 * itemView.height).toInt() },
                             rightMargin,
-                            reader.config.bottomSpacing.run { (toFloat() / 100 * itemView.height).toInt() })
+                            reader.config.contentMargins.bottom.run { (toFloat() / 100 * itemView.height).toInt() })
                 }
             }
         }

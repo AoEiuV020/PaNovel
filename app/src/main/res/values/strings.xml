@@ -28,7 +28,7 @@
     <string name="now_loading_previous_issue">正在加载上一话</string>
     <string name="now_loading_next_issue">正在加载下一话</string>
     <string name="bookshelf">书架</string>
-    <string name="text_size">字体大</string>
+    <string name="text_size">字体大小</string>
     <string name="font">字体</string>
     <string name="text_size_placeholders">%dsp</string>
     <string name="line_spacing_placeholder">%ddp</string>
@@ -138,5 +138,15 @@
     <string name="full_screen_click_next_page">全屏点击翻下页</string>
     <string name="volume_key_scroll">音量键翻页</string>
     <string name="unknown">unknown</string>
+    <string name="center_percent">中心百分比</string>
+    <string name="time">时间</string>
+    <string name="battery">电池</string>
+    <string name="pagination">页码</string>
+    <string name="book_name">书名</string>
+    <string name="chapter_name">章节名</string>
+    <string name="display">显示</string>
+    <string name="message_size">信息字体大小</string>
+    <string name="message_size_4">信息字大</string>
+    <string name="date_format">时间格式</string>
 
 </resources>
