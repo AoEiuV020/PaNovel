@@ -325,38 +325,41 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                     if (!fromUser) {
                         return
                     }
+                    // 从-1开始，
+                    val value = progress - 1
                     var tv: TextView? = null
                     when (seekBar) {
                         leftSpacingSeekBar -> {
-                            margins.left = progress
+                            margins.left = value
                             tv = leftSpacingTextView
                         }
                         rightSpacingSeekBar -> {
-                            margins.right = progress
+                            margins.right = value
                             tv = rightSpacingTextView
                         }
                         topSpacingSeekBar -> {
-                            margins.top = progress
+                            margins.top = value
                             tv = topSpacingTextView
                         }
                         bottomSpacingSeekBar -> {
-                            margins.bottom = progress
+                            margins.bottom = value
                             tv = bottomSpacingTextView
                         }
                     }
                     view.setMargins(margins, name)
-                    tv?.text = view.getString(R.string.spacing_placeholder, progress)
+                    tv?.text = view.getString(R.string.spacing_placeholder, value)
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    val value = seekBar.progress - 1
                     when (seekBar) {
-                        leftSpacingSeekBar -> margins.left = seekBar.progress
-                        rightSpacingSeekBar -> margins.right = seekBar.progress
-                        topSpacingSeekBar -> margins.top = seekBar.progress
-                        bottomSpacingSeekBar -> margins.bottom = seekBar.progress
+                        leftSpacingSeekBar -> margins.left = value
+                        rightSpacingSeekBar -> margins.right = value
+                        topSpacingSeekBar -> margins.top = value
+                        bottomSpacingSeekBar -> margins.bottom = value
                     }
                 }
             }

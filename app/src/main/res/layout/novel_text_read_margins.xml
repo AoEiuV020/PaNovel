@@ -54,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="100" />
+            android:max="101" />
 
         <TextView
             android:id="@+id/leftSpacingTextView"
@@ -90,7 +90,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="100" />
+            android:max="101" />
 
         <TextView
             android:id="@+id/rightSpacingTextView"
@@ -126,7 +126,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="100" />
+            android:max="101" />
 
         <TextView
             android:id="@+id/topSpacingTextView"
@@ -162,7 +162,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="100" />
+            android:max="101" />
 
         <TextView
             android:id="@+id/bottomSpacingTextView"
