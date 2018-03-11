@@ -25,6 +25,7 @@ class ReaderConfig(
         chapterNameEnabled: Boolean,
         timeEnabled: Boolean,
         batteryEnabled: Boolean,
+        messageSize: Int,
         textColor: Int,
         backgroundColor: Int,
         backgroundImage: Uri?,
@@ -46,25 +47,17 @@ class ReaderConfig(
     var contentMargins: IMargins by ConfigDelegate(contentMargins, ContentMargins)
 
     var paginationMargins: IMargins by ConfigDelegate(paginationMargins, PaginationMargins)
-
     var timeMargins: IMargins by ConfigDelegate(timeMargins, TimeMargins)
-
     var batteryMargins: IMargins by ConfigDelegate(batteryMargins, BatteryMargins)
-
     var bookNameMargins: IMargins by ConfigDelegate(bookNameMargins, BookNameMargins)
-
     var chapterNameMargins: IMargins by ConfigDelegate(chapterNameMargins, ChapterNameMargins)
 
-
     var paginationEnabled: Boolean by ConfigDelegate(paginationEnabled, PaginationEnabled)
-
     var timeEnabled: Boolean by ConfigDelegate(timeEnabled, TimeEnabled)
-
     var batteryEnabled: Boolean by ConfigDelegate(batteryEnabled, BatteryEnabled)
-
     var bookNameEnabled: Boolean by ConfigDelegate(bookNameEnabled, BookNameEnabled)
-
     var chapterNameEnabled: Boolean by ConfigDelegate(chapterNameEnabled, ChapterNameEnabled)
+    var messageSize: Int by ConfigDelegate(messageSize, MessageSize)
 
     var textColor: Int by ConfigDelegate(textColor, TextColor)
     var backgroundColor: Int by ConfigDelegate(backgroundColor, BackgroundColor)

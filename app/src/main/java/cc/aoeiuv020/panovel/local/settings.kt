@@ -61,6 +61,10 @@ object Settings : BaseLocalSource(), AnkoLogger {
     val chapterNameMargins: Margins = Margins("ChapterNameMargins")
     val timeMargins: Margins = Margins("TimeMargins")
     val batteryMargins: Margins = Margins("BatteryMargins")
+    /**
+     * 对应上面几个，也就是页眉页脚那些信息的字体大小，
+     */
+    var messageSize: Int by PrimitiveDelegate(8)
 
     var textColor: Int by PrimitiveDelegate(0xff000000.toInt())
     var font: Uri? by UriDelegate()
@@ -84,7 +88,6 @@ object Settings : BaseLocalSource(), AnkoLogger {
 
     var adEnabled: Boolean by PrimitiveDelegate(true)
     var BookSmallLayout: Boolean by PrimitiveDelegate(true)
-
 
     var bookListAutoSave: Boolean by PrimitiveDelegate(true)
 
@@ -126,6 +129,7 @@ object Settings : BaseLocalSource(), AnkoLogger {
             chapterNameMargins.enabled,
             timeMargins.enabled,
             batteryMargins.enabled,
+            messageSize,
             textColor,
             backgroundColor,
             backgroundImage,
