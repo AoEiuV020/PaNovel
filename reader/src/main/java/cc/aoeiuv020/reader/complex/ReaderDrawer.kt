@@ -136,9 +136,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             canvas.width - canvas.width * margins.right / 100f - textWidth
         }
         val y: Float = if (margins.top > margins.bottom) {
-            canvas.height * margins.top / 100f
+            canvas.height * margins.top / 100f + textHeight
         } else {
-            canvas.height - canvas.height * margins.bottom / 100f - textHeight
+            canvas.height - canvas.height * margins.bottom / 100f
         }
         canvas.drawText(text, x, y, messagePaint)
     }
