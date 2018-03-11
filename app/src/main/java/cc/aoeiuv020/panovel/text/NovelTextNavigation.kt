@@ -48,6 +48,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
         }
         mPanelDefault.ivSettings.setOnClickListener {
             showLayout(mPanelSettings)
+            view.fullScreen()
         }
         mPanelDefault.ivStar.apply {
             isChecked = Bookshelf.contains(novelItem)
@@ -182,7 +183,6 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
 
             tvTypesetting.setOnClickListener {
                 showLayout(mPanelTypesetting)
-                view.fullScreen()
             }
 
             tvAnimation.setOnClickListener {
