@@ -107,11 +107,21 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return
         }
 
-        drawPagination(background)
-        drawMessage(background, reader.chapterList[chapterIndex].name, reader.config.chapterNameMargins)
-        drawMessage(background, novel.name, reader.config.bookNameMargins)
-        drawTime(background)
-        drawBattery(background)
+        if (reader.config.paginationMargins.enabled) {
+            drawPagination(background)
+        }
+        if (reader.config.chapterNameMargins.enabled) {
+            drawMessage(background, reader.chapterList[chapterIndex].name, reader.config.chapterNameMargins)
+        }
+        if (reader.config.bookNameMargins.enabled) {
+            drawMessage(background, novel.name, reader.config.bookNameMargins)
+        }
+        if (reader.config.timeMargins.enabled) {
+            drawTime(background)
+        }
+        if (reader.config.batteryMargins.enabled) {
+            drawBattery(background)
+        }
 
         drawContent(content)
     }

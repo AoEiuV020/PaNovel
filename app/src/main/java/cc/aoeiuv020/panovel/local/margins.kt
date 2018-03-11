@@ -13,7 +13,7 @@ class Margins(name: String) : BaseLocalSource(), IMargins {
      * 对应的东西是否显示，
      * 除了小说内容，其他都支持不显示，
      */
-    var enabled: Boolean by PrimitiveDelegate(true)
+    override var enabled: Boolean by PrimitiveDelegate(true)
     override var left: Int by PrimitiveDelegate(0)
     override var top: Int by PrimitiveDelegate(0)
     override var right: Int by PrimitiveDelegate(0)
