@@ -159,18 +159,39 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         drawMessage(canvas, text, margins)
     }
 
+    /**
+     * 左右取大的，上下取大的，小的无视，
+     * 哪个大就贴哪个，
+     * 刚好50是居中，
+     */
     private fun drawMessage(canvas: Canvas, text: String, margins: IMargins, isBattery: Boolean = false) {
         val textHeight = messagePaint.textSize
         val textWidth = messagePaint.measureText(text)
         val x: Float = if (margins.left > margins.right) {
-            canvas.width * margins.left / 100f
+            if (margins.left == 50) {
+                canvas.width / 2 - textWidth / 2
+            } else {
+                canvas.width * margins.left / 100f
+            }
         } else {
-            canvas.width - canvas.width * margins.right / 100f - textWidth
+            if (margins.right == 50) {
+                canvas.width / 2 - textWidth / 2
+            } else {
+                canvas.width - canvas.width * margins.right / 100f - textWidth
+            }
         }
         val y: Float = if (margins.top > margins.bottom) {
-            canvas.height * margins.top / 100f + textHeight
+            if (margins.top == 50) {
+                canvas.height / 2 + textHeight / 2
+            } else {
+                canvas.height * margins.top / 100f + textHeight
+            }
         } else {
-            canvas.height - canvas.height * margins.bottom / 100f
+            if (margins.bottom == 50) {
+                canvas.height / 2 + textHeight / 2
+            } else {
+                canvas.height - canvas.height * margins.bottom / 100f
+            }
         }
         if (isBattery) {
             // 画框框，
