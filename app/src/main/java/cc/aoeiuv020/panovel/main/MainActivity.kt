@@ -132,15 +132,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         container.adapter = pagerAdapter
 
-
         val commonNavigator = CommonNavigator(this)
         val titleList = titleIdList.map {
             getString(it)
         }
         commonNavigator.adapter = object : CommonNavigatorAdapter() {
 
-            override fun getCount(): Int
-                    = titleList.size
+            override fun getCount(): Int = titleList.size
 
             override fun getTitleView(context: Context, index: Int): IPagerTitleView {
                 val colorTransitionPagerTitleView = ColorTransitionPagerTitleView(context)

@@ -9,10 +9,12 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.tencent.bugly.crashreport.CrashReport
 import io.reactivex.internal.functions.Functions
 import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.info
 
 
 /**
@@ -60,5 +62,11 @@ class App : Application(), AnkoLogger {
                     }
                 }.build()
 
+        val debug = adRequest.isTestDevice(ctx)
+        if (debug) {
+            info { "is debug mode," }
+        }
+        CrashReport.initCrashReport(ctx, "be0d684a75", debug)
+        CrashReport.setIsDevelopmentDevice(ctx, debug)
     }
 }
