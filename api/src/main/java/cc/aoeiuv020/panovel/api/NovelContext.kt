@@ -15,7 +15,7 @@ import java.net.URL
 abstract class NovelContext {
     companion object {
         @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx())
+        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx(), Syxs())
         private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         private val nameMap = contexts.associateBy { it.getNovelSite().name }
         fun getNovelContexts(): List<NovelContext> = contexts
