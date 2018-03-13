@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llMargins"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -33,147 +32,19 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+    <include
+        android:id="@+id/iLeft"
+        layout="@layout/novel_text_read_margins_item" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:text="@string/left_spacing"
-            android:textColor="@android:color/primary_text_dark" />
+    <include
+        android:id="@+id/iRight"
+        layout="@layout/novel_text_read_margins_item" />
 
-        <SeekBar
-            android:id="@+id/leftSpacingSeekBar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="101" />
+    <include
+        android:id="@+id/iTop"
+        layout="@layout/novel_text_read_margins_item" />
 
-        <TextView
-            android:id="@+id/leftSpacingTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:textColor="@android:color/primary_text_dark"
-            tools:text="0dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:text="@string/right_spacing"
-            android:textColor="@android:color/primary_text_dark" />
-
-        <SeekBar
-            android:id="@+id/rightSpacingSeekBar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="101" />
-
-        <TextView
-            android:id="@+id/rightSpacingTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:textColor="@android:color/primary_text_dark"
-            tools:text="0dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:text="@string/top_spacing"
-            android:textColor="@android:color/primary_text_dark" />
-
-        <SeekBar
-            android:id="@+id/topSpacingSeekBar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="101" />
-
-        <TextView
-            android:id="@+id/topSpacingTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:textColor="@android:color/primary_text_dark"
-            tools:text="0dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:text="@string/bottom_spacing"
-            android:textColor="@android:color/primary_text_dark" />
-
-        <SeekBar
-            android:id="@+id/bottomSpacingSeekBar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="101" />
-
-        <TextView
-            android:id="@+id/bottomSpacingTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:textColor="@android:color/primary_text_dark"
-            tools:text="0dp" />
-
-    </LinearLayout>
+    <include
+        android:id="@+id/iBottom"
+        layout="@layout/novel_text_read_margins_item" />
 </LinearLayout>

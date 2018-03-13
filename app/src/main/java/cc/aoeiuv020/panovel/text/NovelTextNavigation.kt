@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Margins
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.text.NovelTextNavigation.Direction.*
 import cc.aoeiuv020.panovel.util.alertColorPicker
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.main.novel_text_navigation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_animation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_default.view.*
 import kotlinx.android.synthetic.main.novel_text_read_margins.view.*
+import kotlinx.android.synthetic.main.novel_text_read_margins_item.view.*
 import kotlinx.android.synthetic.main.novel_text_read_settings.view.*
 import kotlinx.android.synthetic.main.novel_text_read_typesetting.view.*
 import org.jetbrains.anko.AnkoLogger
@@ -320,74 +322,80 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 view.setMargins(margins, name)
             }
 
-            val spacingListener = object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    if (!fromUser) {
-                        return
-                    }
-                    // 从-1开始，
-                    val value = progress - 1
-                    var tv: TextView? = null
-                    when (seekBar) {
-                        leftSpacingSeekBar -> {
-                            margins.left = value
-                            tv = leftSpacingTextView
-                        }
-                        rightSpacingSeekBar -> {
-                            margins.right = value
-                            tv = rightSpacingTextView
-                        }
-                        topSpacingSeekBar -> {
-                            margins.top = value
-                            tv = topSpacingTextView
-                        }
-                        bottomSpacingSeekBar -> {
-                            margins.bottom = value
-                            tv = bottomSpacingTextView
-                        }
-                    }
-                    view.setMargins(margins, name)
-                    tv?.text = view.getString(R.string.spacing_placeholder, value)
-                }
+            initMarginSeekBar(iLeft, LEFT, margins, name)
+            initMarginSeekBar(iRight, RIGHT, margins, name)
+            initMarginSeekBar(iTop, TOP, margins, name)
+            initMarginSeekBar(iBottom, BOTTOM, margins, name)
+        }
+    }
 
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                }
+    private enum class Direction {
+        LEFT, RIGHT, TOP, BOTTOM
+    }
 
-                override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    val value = seekBar.progress - 1
-                    when (seekBar) {
-                        leftSpacingSeekBar -> margins.left = value
-                        rightSpacingSeekBar -> margins.right = value
-                        topSpacingSeekBar -> margins.top = value
-                        bottomSpacingSeekBar -> margins.bottom = value
-                    }
+    private fun initMarginSeekBar(layout: View, direction: Direction, margins: Margins, name: ReaderConfigName) {
+        // 进度条从-1开始，
+        val minValue = -1
+        val nameTextView: TextView = layout.tvMarginName
+        val decreaseTextView: TextView = layout.tvDecrease
+        val seekBar: SeekBar = layout.sbMargin
+        val increaseTextView: TextView = layout.tvIncrease
+        val valueTextView: TextView = layout.tvMarginValue
+        fun getValue() = when (direction) {
+            LEFT -> margins.left
+            RIGHT -> margins.right
+            TOP -> margins.top
+            BOTTOM -> margins.bottom
+        }
+
+        fun setValue(value: Int) = when (direction) {
+            LEFT -> margins.left = value
+            RIGHT -> margins.right = value
+            TOP -> margins.top = value
+            BOTTOM -> margins.bottom = value
+        }
+        nameTextView.text = view.getString(R.string.margin_name_placeholder, view.getString(when (direction) {
+            LEFT -> R.string.left
+            RIGHT -> R.string.right
+            TOP -> R.string.top
+            BOTTOM -> R.string.bottom
+        }))
+        valueTextView.text = view.getString(R.string.margin_value_placeholder, getValue())
+        decreaseTextView.setOnClickListener {
+            val value = seekBar.progress + minValue - 1
+            seekBar.progress = value - minValue
+            setValue(value)
+            view.setMargins(margins, name)
+            valueTextView.text = view.getString(R.string.margin_value_placeholder, value)
+
+        }
+        increaseTextView.setOnClickListener {
+            val value = seekBar.progress + minValue + 1
+            seekBar.progress = value - minValue
+            setValue(value)
+            view.setMargins(margins, name)
+            valueTextView.text = view.getString(R.string.margin_value_placeholder, value)
+        }
+        seekBar.progress = getValue() + 1
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (!fromUser) {
+                    return
                 }
+                val value = progress + minValue
+                setValue(value)
+                view.setMargins(margins, name)
+                valueTextView.text = view.getString(R.string.margin_value_placeholder, value)
             }
 
-            // 设置左间距，
-            val leftSpacing = margins.left
-            leftSpacingTextView.text = view.getString(R.string.spacing_placeholder, leftSpacing)
-            leftSpacingSeekBar.progress = leftSpacing
-            leftSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
 
-            // 设置右间距，
-            val rightSpacing = margins.right
-            rightSpacingTextView.text = view.getString(R.string.spacing_placeholder, rightSpacing)
-            rightSpacingSeekBar.progress = rightSpacing
-            rightSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
-
-            // 设置上间距，
-            val topSpacing = margins.top
-            topSpacingTextView.text = view.getString(R.string.spacing_placeholder, topSpacing)
-            topSpacingSeekBar.progress = topSpacing
-            topSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
-
-            // 设置下间距，
-            val bottomSpacing = margins.bottom
-            bottomSpacingTextView.text = view.getString(R.string.spacing_placeholder, bottomSpacing)
-            bottomSpacingSeekBar.progress = bottomSpacing
-            bottomSpacingSeekBar.setOnSeekBarChangeListener(spacingListener)
-        }
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                val value = seekBar.progress + minValue
+                setValue(value)
+            }
+        })
     }
 
     fun reset(currentTextCount: Int, currentTextProgress: Int) {

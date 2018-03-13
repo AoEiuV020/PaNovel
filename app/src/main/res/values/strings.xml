@@ -83,7 +83,12 @@
     <string name="export_complete_placeholder">导出完成 已导出%d章 跳过%d章</string>
     <string name="export_error_placeholder">导出失败 已导出%d章 跳过%d章 剩余%d章</string>
     <string name="typesetting">排版</string>
-    <string name="spacing_placeholder">%d%%</string>
+    <string name="margin_value_placeholder">%d%%</string>
+    <string name="margin_name_placeholder">%s间距</string>
+    <string name="left">左</string>
+    <string name="right">右</string>
+    <string name="top">上</string>
+    <string name="bottom">下</string>
     <string name="left_spacing">左间距</string>
     <string name="right_spacing">右间距</string>
     <string name="top_spacing">上间距</string>
@@ -148,5 +153,7 @@
     <string name="message_size">信息字体大小</string>
     <string name="message_size_4">信息字大</string>
     <string name="date_format">时间格式</string>
+    <string name="button_decrease">-</string>
+    <string name="button_increase">+</string>
 
 </resources>
