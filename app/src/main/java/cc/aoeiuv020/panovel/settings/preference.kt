@@ -3,10 +3,13 @@
 package cc.aoeiuv020.panovel.settings
 
 import android.content.Context
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.share.Expiration
 import cc.aoeiuv020.reader.AnimationMode
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -20,7 +23,8 @@ import org.jetbrains.anko.find
 class ListPreference : android.preference.ListPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> String, (String) -> Unit>>(
-                "animation_mode" to ({ Settings.animationMode.toString() } to { v -> Settings.animationMode = AnimationMode.valueOf(v) })
+                "animation_mode" to ({ Settings.animationMode.toString() } to { v -> Settings.animationMode = AnimationMode.valueOf(v) }),
+                "book_list_share_expiration" to ({ Settings.shareExpiration.toString() } to { v -> Settings.shareExpiration = Expiration.valueOf(v) })
         )
     }
 
@@ -30,9 +34,11 @@ class ListPreference : android.preference.ListPreference, AnkoLogger {
     constructor(context: Context, attrs: AttributeSet?)
             : super(context, attrs)
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
             : super(context, attrs, defStyleAttr)
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes)
 
@@ -93,6 +99,7 @@ class EditTextPreference : android.preference.EditTextPreference, AnkoLogger {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
             : super(context, attrs, defStyleAttr)
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes)
 
@@ -127,6 +134,7 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> Boolean, (Boolean) -> Unit>>(
                 "auto_save" to ({ Settings.bookListAutoSave } to { v -> Settings.bookListAutoSave = v }),
+                "report_crash" to ({ Settings.reportCrash } to { v -> Settings.reportCrash = v }),
                 "volume_key_scroll" to ({ Settings.volumeKeyScroll } to { v -> Settings.volumeKeyScroll = v }),
                 "full_screen_click_next_page" to ({ Settings.fullScreenClickNextPage } to { v -> Settings.fullScreenClickNextPage = v }),
                 "auto_refresh" to ({ Settings.bookshelfAutoRefresh } to { v -> Settings.bookshelfAutoRefresh = v }),
@@ -147,6 +155,7 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
             : super(context, attrs, defStyleAttr)
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes)
 

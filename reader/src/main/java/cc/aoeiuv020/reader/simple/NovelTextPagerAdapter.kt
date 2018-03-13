@@ -30,7 +30,7 @@ internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : P
         return holder
     }
 
-    override fun setPrimaryItem(container: ViewGroup?, position: Int, obj: Any?) {
+    override fun setPrimaryItem(container: ViewGroup, position: Int, obj: Any) {
         super.setPrimaryItem(container, position, obj)
         debug { "viewpager current position $position" }
         current = obj as? NovelTextViewHolder
@@ -46,7 +46,7 @@ internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : P
         current?.setTextProgress(textProgress)
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, obj: Any?) {
+    override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
         debug {
             "destroy $position"
         }

@@ -27,11 +27,11 @@ class HistoryFragment : Fragment(), BaseItemListView {
                               savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.novel_item_list, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
-        mAdapter = DefaultItemListAdapter(context, presenter)
+        mAdapter = DefaultItemListAdapter(context!!, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()

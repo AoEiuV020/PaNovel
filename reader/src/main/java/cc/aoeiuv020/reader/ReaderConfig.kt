@@ -32,7 +32,7 @@ class ReaderConfig(
         /**
          * 下面的不支持阅读中修改，省事，
          */
-        var autoRefreshInterval: Int,
+        var autoRefreshInterval: Int = 0,
         var fullScreenClickNextPage: Boolean = false
 ) {
     internal var listeners = mutableListOf<ConfigChangedListener>()

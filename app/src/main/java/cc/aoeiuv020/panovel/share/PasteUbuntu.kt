@@ -51,7 +51,4 @@ internal class PasteUbuntu {
         }
     }
 
-    enum class Expiration(val value: String) {
-        NONE(""), DAY("day"), MONTH("month"), YEAR("year")
-    }
 }

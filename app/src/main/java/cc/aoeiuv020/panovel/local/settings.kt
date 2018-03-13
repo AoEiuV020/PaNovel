@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.local
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.net.Uri
+import cc.aoeiuv020.panovel.share.Expiration
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfig
 import org.jetbrains.anko.AnkoLogger
@@ -30,9 +31,9 @@ object Settings : BaseLocalSource(), AnkoLogger {
      */
     var fullScreenDelay: Int by PrimitiveDelegate(300)
     var backPressOutOfFullScreen: Boolean by PrimitiveDelegate(false)
-    var textSize: Int by PrimitiveDelegate(18)
-    var lineSpacing: Int by PrimitiveDelegate(2)
-    var paragraphSpacing: Int by PrimitiveDelegate(4)
+    var textSize: Int by PrimitiveDelegate(26)
+    var lineSpacing: Int by PrimitiveDelegate(13)
+    var paragraphSpacing: Int by PrimitiveDelegate(0)
 
     /**
      * 小说内容的留白，
@@ -40,9 +41,9 @@ object Settings : BaseLocalSource(), AnkoLogger {
     val contentMargins: Margins = Margins("ContentMargins", true, 1, 3, 1, 3)
 
     val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 1, 1)
-    val bookNameMargins: Margins = Margins("BookNameMargins", true, 1, 1, -1, -1)
-    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, -1, 1, 1, -1)
-    val timeMargins: Margins = Margins("TimeMargins", true, 50, -1, -1, 1)
+    val bookNameMargins: Margins = Margins("BookNameMargins", true, 50, -1, -1, 1)
+    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, 1, 1, -1, -1)
+    val timeMargins: Margins = Margins("TimeMargins", true, -1, 1, 1, -1)
     val batteryMargins: Margins = Margins("BatteryMargins", true, 1, -1, -1, 1)
     /**
      * 对应上面几个，也就是页眉页脚那些信息的字体大小，
@@ -63,7 +64,7 @@ object Settings : BaseLocalSource(), AnkoLogger {
                 null
             }
         }
-    var backgroundColor: Int by PrimitiveDelegate(0xffffffff.toInt())
+    var backgroundColor: Int by PrimitiveDelegate(0xffffe3aa.toInt())
     var backgroundImage: Uri? by UriDelegate()
 
 
@@ -94,11 +95,18 @@ object Settings : BaseLocalSource(), AnkoLogger {
                 )
         )
 
-    var animationMode: AnimationMode by GsonDelegate.new(AnimationMode.SIMPLE)
+    var animationMode: AnimationMode by GsonDelegate.new(AnimationMode.SIMULATION)
     var animationSpeed: Float by PrimitiveDelegate(0.8f)
     var fullScreenClickNextPage: Boolean by PrimitiveDelegate(false)
     var volumeKeyScroll: Boolean by PrimitiveDelegate(false)
     var centerPercent: Float by PrimitiveDelegate(0.5f)
+
+    /**
+     * 书单分享后网上保存的时限，
+     */
+    var shareExpiration: Expiration by GsonDelegate.new(Expiration.NONE)
+
+    var reportCrash: Boolean by PrimitiveDelegate(true)
 
     fun makeReaderConfig() = ReaderConfig(
             textSize,

@@ -87,7 +87,12 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
     val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         if (manager.getNotificationChannel(channelId) == null) {
-            val channel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT)
+            } else {
+                // support升级27时上面的NotificationChannel报错，只能再包一层看起来多余的if,
+                throw Exception("不可能到这里吧，")
+            }
             channel.setSound(null, null)
             manager.createNotificationChannel(channel)
         }
@@ -99,7 +104,7 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
  * https://stackoverflow.com/a/38244327/5615186
  */
 fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap {
-    var drawable = ContextCompat.getDrawable(this, drawableId)
+    var drawable = ContextCompat.getDrawable(this, drawableId)!!
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
         drawable = DrawableCompat.wrap(drawable).mutate()
     }

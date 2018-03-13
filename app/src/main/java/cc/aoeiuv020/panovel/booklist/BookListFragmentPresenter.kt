@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.booklist
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.local.BookList
 import cc.aoeiuv020.panovel.local.BookListData
+import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.qrcode.QrCodeManager
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.async
@@ -34,7 +35,7 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
     fun shareBookList(bookList: BookListData) {
         view?.showUploading()
         Observable.fromCallable {
-            val url = Share.shareBookList(bookList)
+            val url = Share.shareBookList(bookList, Settings.shareExpiration)
             val qrCode = QrCodeManager.generate(url)
             url to qrCode
         }.async().subscribe({ (url, qrCode) ->

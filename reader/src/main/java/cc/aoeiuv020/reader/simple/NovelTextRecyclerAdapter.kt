@@ -31,7 +31,7 @@ internal class NovelTextRecyclerAdapter(private val reader: SimpleReader) : Recy
     private val mLeftSpacing get() = reader.config.contentMargins.left
     private val mRightSpacing get() = reader.config.contentMargins.right
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(ctx).inflate(R.layout.simple_text_item, parent, false)
         return ViewHolder(view)
     }
