@@ -144,6 +144,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     }
 
     override fun lazyRequest(index: Int, refresh: Boolean): Single<Text> {
+        debug { "$this lazyRequest $index, refresh = $refresh" }
         return super.lazyRequest(index, refresh).async()
     }
 }
