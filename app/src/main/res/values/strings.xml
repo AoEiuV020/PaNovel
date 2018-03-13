@@ -155,5 +155,11 @@
     <string name="date_format">时间格式</string>
     <string name="button_decrease">-</string>
     <string name="button_increase">+</string>
+    <string name="book_list_share_expiration">书单分享期限</string>
+    <string name="expiration">期限</string>
+    <string name="day">一天</string>
+    <string name="month">一月</string>
+    <string name="year">一年</string>
+
 
 </resources>

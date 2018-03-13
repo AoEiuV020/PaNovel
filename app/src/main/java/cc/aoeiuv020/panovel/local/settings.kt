@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.local
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.net.Uri
+import cc.aoeiuv020.panovel.share.Expiration
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfig
 import org.jetbrains.anko.AnkoLogger
@@ -99,6 +100,11 @@ object Settings : BaseLocalSource(), AnkoLogger {
     var fullScreenClickNextPage: Boolean by PrimitiveDelegate(false)
     var volumeKeyScroll: Boolean by PrimitiveDelegate(false)
     var centerPercent: Float by PrimitiveDelegate(0.5f)
+
+    /**
+     * 书单分享后网上保存的时限，
+     */
+    var shareExpiration: Expiration by GsonDelegate.new(Expiration.NONE)
 
     fun makeReaderConfig() = ReaderConfig(
             textSize,

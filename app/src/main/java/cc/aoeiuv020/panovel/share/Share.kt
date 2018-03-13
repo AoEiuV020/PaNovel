@@ -23,8 +23,8 @@ object Share {
         return paste.check(url)
     }
 
-    fun shareBookList(bookList: BookListData): String {
-        return paste.upload(PasteUbuntu.PasteUbuntuData(bookList.toJson()))
+    fun shareBookList(bookList: BookListData, shareExpiration: Expiration): String {
+        return paste.upload(PasteUbuntu.PasteUbuntuData(bookList.toJson(), expiration = shareExpiration))
     }
 
     fun receiveBookList(url: String): BookListData {
