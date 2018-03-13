@@ -34,10 +34,10 @@ class BookListFragment : Fragment(), IView {
                               savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.novel_item_list, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         progressDialog = ProgressDialog(context)
         recyclerView.setLayoutManager(LinearLayoutManager(context))
-        mAdapter = BookListFragmentAdapter(context, presenter)
+        mAdapter = BookListFragmentAdapter(context!!, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             refresh()
@@ -69,16 +69,16 @@ class BookListFragment : Fragment(), IView {
     }
 
     fun showUploading() {
-        context.loading(progressDialog, getString(R.string.uploading))
+        context?.loading(progressDialog, getString(R.string.uploading))
     }
 
     fun showSharedUrl(url: String, qrCode: String) {
         progressDialog.dismiss()
-        Share.alert(context, url, qrCode)
+        Share.alert(context!!, url, qrCode)
     }
 
     fun newBookList() {
-        context.alert {
+        context?.alert {
             titleResource = R.string.add_book_list
             val layout = View.inflate(context, R.layout.dialog_editor, null)
             customView = layout
@@ -91,7 +91,7 @@ class BookListFragment : Fragment(), IView {
                 }
             }
             etName.post { etName.showKeyboard() }
-        }.show()
+        }?.show()
     }
 
     fun showError(message: String, e: Throwable) {

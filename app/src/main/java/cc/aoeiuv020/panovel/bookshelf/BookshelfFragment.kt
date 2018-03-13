@@ -31,11 +31,11 @@ class BookshelfFragment : Fragment(), BaseItemListView {
                               savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.novel_item_list, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView.setLayoutManager(LinearLayoutManager(context))
-        mAdapter = BookshelfItemListAdapter(context, presenter)
+        mAdapter = BookshelfItemListAdapter(context!!, presenter)
         recyclerView.setAdapter(mAdapter)
         recyclerView.setRefreshAction {
             forceRefresh()

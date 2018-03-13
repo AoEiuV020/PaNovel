@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
             override fun getCount(): Int = fragmentList.size
 
-            override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+            override fun instantiateItem(container: ViewGroup, position: Int): Any {
                 val fragment = super.instantiateItem(container, position)
                 when (fragment) {
                     is BookshelfFragment -> bookshelfFragment = fragment

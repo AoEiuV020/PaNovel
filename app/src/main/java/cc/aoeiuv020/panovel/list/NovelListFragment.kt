@@ -30,9 +30,9 @@ class NovelListFragment : Fragment(), IView {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.content_bookstore, container, false)
 
-        alertDialog = AlertDialog.Builder(context).create()
+        alertDialog = AlertDialog.Builder(requireContext()).create()
 
-        mAdapter = NovelListRecyclerAdapter(context)
+        mAdapter = NovelListRecyclerAdapter(requireContext())
 
         presenter.attach(this)
         return root
@@ -44,7 +44,7 @@ class NovelListFragment : Fragment(), IView {
         super.onDestroyView()
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView.apply {
             setAdapter(mAdapter)
             setLayoutManager(LinearLayoutManager(context))
@@ -70,7 +70,7 @@ class NovelListFragment : Fragment(), IView {
 
     fun showError(message: String, e: Throwable) {
         recyclerView.dismissSwipeRefresh()
-        activity.alertError(alertDialog, message, e)
+        activity?.alertError(alertDialog, message, e)
     }
 
     fun showNovelList(novelList: List<NovelListItem>) {
