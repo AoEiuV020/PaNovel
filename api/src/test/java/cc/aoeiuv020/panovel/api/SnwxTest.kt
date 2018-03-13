@@ -95,6 +95,14 @@ class SnwxTest {
             assertEquals("https://www.snwx8.com/files/article/image/66/66076/66076s.jpg", it.bigImg)
             println(it.update)
         }
+        // TODO: 获取不到封面，麻烦，是图片有地址但下载不到，要加上onError,
+        context.getNovelDetail(DetailRequester("https://www.snwx8.com/book/257/257710/")).let {
+            assertEquals("都市超级神尊", it.novel.name)
+            assertEquals("小萌靓", it.novel.author)
+            assertEquals("https://www.snwx8.com/modules/article/images/nocover.jpg", it.bigImg)
+            println(it.introduction)
+            println(it.update)
+        }
     }
 
     @Test
