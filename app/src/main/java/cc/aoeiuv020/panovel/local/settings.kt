@@ -30,9 +30,9 @@ object Settings : BaseLocalSource(), AnkoLogger {
      */
     var fullScreenDelay: Int by PrimitiveDelegate(300)
     var backPressOutOfFullScreen: Boolean by PrimitiveDelegate(false)
-    var textSize: Int by PrimitiveDelegate(18)
-    var lineSpacing: Int by PrimitiveDelegate(2)
-    var paragraphSpacing: Int by PrimitiveDelegate(4)
+    var textSize: Int by PrimitiveDelegate(26)
+    var lineSpacing: Int by PrimitiveDelegate(13)
+    var paragraphSpacing: Int by PrimitiveDelegate(0)
 
     /**
      * 小说内容的留白，
@@ -40,9 +40,9 @@ object Settings : BaseLocalSource(), AnkoLogger {
     val contentMargins: Margins = Margins("ContentMargins", true, 1, 3, 1, 3)
 
     val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 1, 1)
-    val bookNameMargins: Margins = Margins("BookNameMargins", true, 1, 1, -1, -1)
-    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, -1, 1, 1, -1)
-    val timeMargins: Margins = Margins("TimeMargins", true, 50, -1, -1, 1)
+    val bookNameMargins: Margins = Margins("BookNameMargins", true, 50, -1, -1, 1)
+    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, 1, 1, -1, -1)
+    val timeMargins: Margins = Margins("TimeMargins", true, -1, 1, 1, -1)
     val batteryMargins: Margins = Margins("BatteryMargins", true, 1, -1, -1, 1)
     /**
      * 对应上面几个，也就是页眉页脚那些信息的字体大小，
@@ -63,7 +63,7 @@ object Settings : BaseLocalSource(), AnkoLogger {
                 null
             }
         }
-    var backgroundColor: Int by PrimitiveDelegate(0xffffffff.toInt())
+    var backgroundColor: Int by PrimitiveDelegate(0xffffe3aa.toInt())
     var backgroundImage: Uri? by UriDelegate()
 
 
