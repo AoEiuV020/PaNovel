@@ -9,8 +9,8 @@ android {
         applicationId "cc.aoeiuv020.panovel"
         minSdkVersion min_version
         targetSdkVersion target_version
-        versionCode 34
-        versionName "2.0.2"
+        versionCode 35
+        versionName "2.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "$rootProject.name-$versionName")
         vectorDrawables.useSupportLibrary = true

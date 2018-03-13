@@ -277,6 +277,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return
         }
         requestingList.add(requestIndex)
+        debug { "$this lazyRequest $requestIndex, refresh = $refresh" }
         requester.lazyRequest(requestIndex, refresh)
                 .subscribe({ text ->
                     val pages = typesetting(reader.chapterList[requestIndex].name, text)
@@ -380,7 +381,6 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     fun refreshCurrentChapter() {
         pagesCache.remove(chapterIndex)
-        pager?.refresh()
         request(chapterIndex, true)
     }
 }
