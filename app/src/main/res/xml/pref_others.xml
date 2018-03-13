@@ -9,6 +9,10 @@
         android:title="@string/book_list_share_expiration" />
 
     <cc.aoeiuv020.panovel.settings.SwitchPreference
+        android:key="report_crash"
+        android:title="@string/report_crash" />
+
+    <cc.aoeiuv020.panovel.settings.SwitchPreference
         android:key="auto_save"
         android:title="@string/book_list_auto_save" />
 

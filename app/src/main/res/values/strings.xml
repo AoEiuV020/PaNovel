@@ -160,6 +160,7 @@
     <string name="day">一天</string>
     <string name="month">一月</string>
     <string name="year">一年</string>
+    <string name="report_crash">上报崩溃</string>
 
 
 </resources>

@@ -106,6 +106,8 @@ object Settings : BaseLocalSource(), AnkoLogger {
      */
     var shareExpiration: Expiration by GsonDelegate.new(Expiration.NONE)
 
+    var reportCrash: Boolean by PrimitiveDelegate(true)
+
     fun makeReaderConfig() = ReaderConfig(
             textSize,
             lineSpacing,

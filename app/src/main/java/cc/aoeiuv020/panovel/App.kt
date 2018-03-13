@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.panovel.api.paNovel
+import cc.aoeiuv020.panovel.local.Settings
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
@@ -14,7 +15,6 @@ import io.reactivex.internal.functions.Functions
 import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.info
 
 
 /**
@@ -62,11 +62,10 @@ class App : Application(), AnkoLogger {
                     }
                 }.build()
 
-        val debug = adRequest.isTestDevice(ctx)
-        if (debug) {
-            info { "is debug mode," }
-        }
-        CrashReport.initCrashReport(ctx, "be0d684a75", debug)
-        CrashReport.setIsDevelopmentDevice(ctx, debug)
+        // 第三个参数为SDK调试模式开关，
+        // 模拟器打开，
+        CrashReport.initCrashReport(ctx, "be0d684a75", adRequest.isTestDevice(ctx))
+        // 貌似设置了开发设备就不上报了，
+        CrashReport.setIsDevelopmentDevice(ctx, !Settings.reportCrash)
     }
 }
