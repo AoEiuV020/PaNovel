@@ -25,6 +25,7 @@ kotlin + mvp + rxandroid
 [colorpicker](https://github.com/QuadFlask/colorpicker)
 [RefreshRecyclerView](https://github.com/llxdaxia/RecyclerView)
 [MagicIndicator](https://github.com/hackware1993/MagicIndicator)
+[Bugly](https://github.com/BuglyDevTeam/Bugly-Android)
 
 ![img](screenshots/bookshelf.jpg)
 ![img](screenshots/genre.jpg)
