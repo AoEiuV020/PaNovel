@@ -23,15 +23,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-/*
     applicationVariants.all { variant ->
         if (variant.buildType.name == 'release') {
             variant.mergeAssets.doLast {
                 delete(fileTree(dir: variant.mergeAssets.outputDir, includes: ['admob_test_device_list']))
             }
+            variant.assemble.doLast {
+                copy {
+                    from variant.mappingFile
+                    into "${rootDir}/proguard"
+                    rename { String fileName ->
+                        "$rootProject.name-mapping-$versionName-${variant.name}.txt"
+                    }
+                }
+            }
         }
     }
-*/
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
