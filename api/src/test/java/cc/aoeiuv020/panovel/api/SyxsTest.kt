@@ -33,10 +33,6 @@ class SyxsTest {
     }
 
     @Test
-    fun getNextPage() {
-    }
-
-    @Test
     fun getNovelList() {
         context.getNovelList(GenreListRequester("http://www.31xs.org/list/1/")).let {
             it.forEach { novelItem ->

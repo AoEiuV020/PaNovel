@@ -14,6 +14,8 @@ class Syxs : NovelContext() {
         private val SEARCH_PAGE_URL = "http://zhannei.baidu.com/cse/search"
     }
 
+    override val charset: String? = "GBK"
+
     private val site = NovelSite(
             name = "31小说",
             baseUrl = "http://www.31xs.org/",
@@ -42,7 +44,8 @@ class Syxs : NovelContext() {
 
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        val root = request(requester)
+        // 搜索是百度的，编码utf-8, 直接null就可以，
+        val root = response(requester).charset(if (requester is SearchListRequester) null else charset).parse()
         return if (requester is SearchListRequester) root.select("#results > div.result-list > div > div.result-game-item-detail").map {
             val a = it.select("h3 > a").first()
             val name = a.title()

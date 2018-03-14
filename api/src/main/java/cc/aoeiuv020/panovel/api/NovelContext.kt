@@ -21,7 +21,8 @@ abstract class NovelContext {
         fun getNovelContexts(): List<NovelContext> = contexts
         fun getNovelContextByUrl(url: String): NovelContext {
             val host = URL(url).host
-            return hostMap[host] ?: contexts.firstOrNull { it.check(url) } ?: throw IllegalArgumentException("网址不支持: $url")
+            return hostMap[host] ?: contexts.firstOrNull { it.check(url) }
+            ?: throw IllegalArgumentException("网址不支持: $url")
         }
 
         fun getNovelContextBySite(site: NovelSite): NovelContext = getNovelContextByUrl(site.baseUrl)
@@ -35,6 +36,12 @@ abstract class NovelContext {
     @Suppress("MemberVisibilityCanPrivate")
     protected val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
     protected var cookies: Map<String, String>? = null
+
+    /**
+     * 有的网站没有指定编码，只能在这里强行指定，
+     * null表示用默认的，一版可以，
+     */
+    protected open val charset: String? = null
 
     abstract fun getNovelSite(): NovelSite
     /**
@@ -103,13 +110,14 @@ abstract class NovelContext {
         return requester.connect()
     }
 
-    protected fun connect(url: String)
-            = connect(Requester(url))
+    protected fun connect(url: String) = connect(Requester(url))
 
     protected fun response(conn: Connection): Connection.Response {
         // 设置cookies,
         cookies?.let { conn.cookies(it) }
         val response = conn.execute()
+        // 指定编码，如果存在，
+        charset?.let { response.charset(it) }
         // 保存cookies,
         cookies = response.cookies()
         logger.debug { "status code: ${response.statusCode()}" }
@@ -121,17 +129,13 @@ abstract class NovelContext {
         return response
     }
 
-    protected fun response(requester: Requester): Connection.Response
-            = response(connect(requester))
+    protected fun response(requester: Requester): Connection.Response = response(connect(requester))
 
     protected fun response(url: String) = response(Requester(url))
 
-    protected fun request(response: Connection.Response): Document
-            = response.parse()
+    protected fun request(response: Connection.Response): Document = response.parse()
 
-    protected fun request(requester: Requester): Document
-            = request(response(requester))
+    protected fun request(requester: Requester): Document = request(response(requester))
 
-    protected fun request(url: String)
-            = request(Requester(url))
+    protected fun request(url: String) = request(Requester(url))
 }
