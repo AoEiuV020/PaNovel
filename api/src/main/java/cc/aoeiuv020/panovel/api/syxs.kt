@@ -3,7 +3,7 @@ package cc.aoeiuv020.panovel.api
 import org.jsoup.nodes.TextNode
 import java.net.URL
 import java.net.URLEncoder
-import java.util.*
+import java.text.SimpleDateFormat
 
 /**
  *
@@ -101,7 +101,10 @@ class Syxs : NovelContext() {
         val (author) = div.select("> p:nth-child(2)").first().text()
                 .pick("作    者：(\\S*)")
         val introduction = root.select("#intro").first().childNode(0).let { (it as TextNode).wholeText }.trim()
-        val update = Date(0)
+
+        val updateString = root.select("head > meta[property=og:novel:update_time]").first().attr("content")
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val update = sdf.parse(updateString)
 
         val chapterPageUrl = requester.url
         return NovelDetail(NovelItem(this, name, author, requester), img, update, introduction, chapterPageUrl)
