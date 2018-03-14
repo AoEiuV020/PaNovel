@@ -106,7 +106,7 @@ class Syxs : NovelContext() {
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
         val root = request(requester)
-        return root.select("#list > dl > dd > a").dropWhile { it.text() == "加入书架" }.drop(1).map { a ->
+        return root.select("#list > dl > dd > a").dropWhile { it.text() != "加入书架" }.drop(1).map { a ->
             NovelChapter(a.text(), a.absHref())
         }
     }

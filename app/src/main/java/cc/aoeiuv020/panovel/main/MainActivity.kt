@@ -189,6 +189,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             startActivityForResult(intent, 0)
         } catch (_: ActivityNotFoundException) {
             toast("没安装zxing二维码扫描器，")
+        } catch (_: SecurityException) {
+            toast("没权限？这里是调用zxing扫码，")
         }
     }
 

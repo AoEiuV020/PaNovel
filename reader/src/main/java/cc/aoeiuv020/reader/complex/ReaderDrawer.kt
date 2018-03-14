@@ -113,8 +113,12 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             return
         }
 
+        val pages = pagesCache[chapterIndex]
+
+        val page = initPages(content, pages)
+
         if (reader.config.paginationMargins.enabled) {
-            drawPagination(background)
+            drawPagination(background, pages)
         }
         if (reader.config.chapterNameMargins.enabled) {
             drawMessage(background, reader.chapterList[chapterIndex].name, reader.config.chapterNameMargins)
@@ -129,7 +133,52 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             drawBattery(background)
         }
 
-        drawContent(content)
+        page?.let {
+            drawContent(content, page)
+        }
+    }
+
+    private fun initPages(content: Canvas, pages: List<Page>?): Page? {
+        // 重置自动刷新线程，
+        reader.autoRefreshThread.reset()
+        // 只用本地变量，防止pageIndex被多线程修改，
+        var index = pageIndex
+        val textHeight = textPaint.textSize.toInt()
+        if (pages == null) {
+            debug { "chapter $chapterIndex pages null" }
+            content.drawText("正在获取章节...", 0f, textHeight.toFloat(), textPaint)
+            request(chapterIndex)
+            return null
+        }
+        if (pages.isEmpty()) {
+            debug { "chapter $chapterIndex pages empty" }
+            var y = textHeight
+            content.drawText("本章空内容，", 0f, y.toFloat(), textPaint)
+            y += textHeight
+            content.drawText("网络问题？", 0f, y.toFloat(), textPaint)
+            y += textHeight
+            content.drawText("试试刷新？", 0f, y.toFloat(), textPaint)
+            return null
+        }
+
+        // 下面两个判断和上面重复，主要是没加锁，重复判断避免万一，
+        // 调小字体有可能出现页数变少，
+        if (index > pages.lastIndex) {
+            index = pages.lastIndex
+        }
+        // 往上翻章节时pageIndex会是负数，表示倒数，
+        // 虽然没必要，但是尽量让pageIndex无论什么数都加上pages.size的整数倍到pages范围内，
+/*
+        while (pageIndex < 0) {
+            pageIndex += pages.size
+        }
+*/
+        if (index < 0) {
+            index = index - index / pages.size * pages.size + pages.size
+        }
+
+        pageIndex = index
+        return pages[index]
     }
 
 
@@ -147,19 +196,12 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         drawMessage(canvas, text, margins, true)
     }
 
-    private fun drawPagination(canvas: Canvas) {
-        val pages = pagesCache[chapterIndex] ?: return
-
-        // 调小字体有可能出现页数变少，
-        if (pageIndex > pages.lastIndex) {
-            pageIndex = pages.lastIndex
-        }
-        // 往上翻章节时pageIndex会是负数，表示倒数，
-        while (pageIndex < 0) {
-            pageIndex += pages.size
-        }
+    private fun drawPagination(canvas: Canvas, pages: List<Page>?) {
+        val max = pages?.size ?: 0
+        // 负数表示倒数，保留，不+1,
+        val index = if (pageIndex >= 0) pageIndex + 1 else pageIndex
         val margins = reader.config.paginationMargins
-        val text = "${pageIndex + 1}/${pages.size}"
+        val text = "$index/$max"
         drawMessage(canvas, text, margins)
     }
 
@@ -209,41 +251,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         canvas.drawText(text, x, y, messagePaint)
     }
 
-    private fun drawContent(content: Canvas) {
-        // 重置自动刷新线程，
-        reader.autoRefreshThread.reset()
+    private fun drawContent(content: Canvas, page: Page) {
         val textHeight = textPaint.textSize.toInt()
 
-        val pages = pagesCache[chapterIndex]
-        if (pages == null) {
-            debug { "chapter $chapterIndex pages null" }
-            content.drawText("正在获取章节...", 0f, textHeight.toFloat(), textPaint)
-            request(chapterIndex)
-            return
-        }
-
-        if (pages.isEmpty()) {
-            debug { "chapter $chapterIndex pages empty" }
-            var y = textHeight
-            content.drawText("本章空内容，", 0f, y.toFloat(), textPaint)
-            y += textHeight
-            content.drawText("网络问题？", 0f, y.toFloat(), textPaint)
-            y += textHeight
-            content.drawText("试试刷新？", 0f, y.toFloat(), textPaint)
-            return
-        }
-
-        // 下面两个判断和上面重复，主要是没加锁，重复判断避免万一，
-        // 调小字体有可能出现页数变少，
-        if (pageIndex > pages.lastIndex) {
-            pageIndex = pages.lastIndex
-        }
-        // 往上翻章节时pageIndex会是负数，表示倒数，
-        while (pageIndex < 0) {
-            pageIndex += pages.size
-        }
-
-        val page = pages[pageIndex]
         var y = 0
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         page.lines.forEach { line ->
