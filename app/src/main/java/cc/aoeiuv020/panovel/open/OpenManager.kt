@@ -55,6 +55,7 @@ object OpenManager : AnkoLogger {
         } else {
             // 如果可以从地址得到小说对象，打开详情页，
             Observable.fromCallable {
+                // 地址格式正确但爬取出错也一样跳到下面的不支持，
                 NovelContext.getNovelContextByUrl(url).getNovelItem(url)
             }.async().subscribe({ novelItem ->
                 NovelDetailActivity.start(context, novelItem)
