@@ -22,7 +22,9 @@ import java.lang.reflect.Type
 private fun LocalSource.external(fileType: FileType) = File(App.ctx.getExternalFilesDir(null), this.path)
         .apply { mkdirs() }
 
-private fun LocalSource.folder(file: File, folder: String? = null) = (folder?.let { File(file, folder) } ?: file).apply { mkdirs() }
+private fun LocalSource.folder(file: File, folder: String? = null) = (folder?.let { File(file, it) }
+        ?: file).apply { mkdirs() }
+
 private fun LocalSource.file(file: File, name: String, folder: String? = null) = File(folder(file, folder), name)
 
 enum class FileType {
@@ -92,9 +94,10 @@ fun <T> LocalSource.gsonLoad(file: File, type: Type, refreshTime: Long = 0): T? 
 }
 
 // 这个mapNotNull要求T : Any，不能删掉: Any,
-fun <T : Any> LocalSource.gsonList(type: Type, folder: String? = null) = externalGson(folder).listFiles().mapNotNull { file ->
+// 这个listFiles可能返回null，因为路径不合法，具体原因不明，可能是没权限mkdirs失败
+fun <T : Any> LocalSource.gsonList(type: Type, folder: String? = null) = externalGson(folder).listFiles()?.mapNotNull { file ->
     gsonLoad<T>(file, type)
-}
+} ?: listOf()
 
 inline fun <reified T : Any> LocalSource.gsonList(folder: String? = null): List<T> = gsonList(type<T>(), folder)
 
