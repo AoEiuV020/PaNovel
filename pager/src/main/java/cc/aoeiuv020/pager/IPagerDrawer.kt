@@ -15,4 +15,6 @@ interface IPagerDrawer {
     fun scrollToPrev(): Boolean
 
     fun scrollToNext(): Boolean
+
+    fun detach()
 }

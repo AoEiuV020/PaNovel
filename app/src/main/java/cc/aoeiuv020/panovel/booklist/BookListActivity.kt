@@ -15,6 +15,7 @@ import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
 import cc.aoeiuv020.panovel.base.item.OnItemLongClickListener
 import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_book_list.*
@@ -22,6 +23,7 @@ import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 /**
  *
@@ -34,8 +36,14 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
         }
     }
 
+    private lateinit var bookListName: String
     private lateinit var presenter: BookListActivityPresenter
     private lateinit var mAdapter: DefaultItemListAdapter
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("bookListName", bookListName)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +51,13 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val bookListName = intent.getStringExtra("bookListName")
+        // 没有这个参数就直接结束，
+        bookListName = getStringExtra("bookListName", savedInstanceState) ?: run {
+            // 不应该会到这里，
+            toast("奇怪，重新打开试试，")
+            finish()
+            return
+        }
 
         title = bookListName
 
@@ -135,8 +149,8 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
                     presenter.addOk()
                 }
                 .create().apply {
-            listView.isFastScrollEnabled = true
-        }.show()
+                    listView.isFastScrollEnabled = true
+                }.show()
     }
 
 

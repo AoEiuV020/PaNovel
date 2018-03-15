@@ -74,6 +74,7 @@ class ComplexReader(override var ctx: Context, novel: Novel, private val parent:
 
     override fun onDestroy() {
         autoRefreshThread.cancel()
+        pageView.drawer.detach()
         parent.removeView(pageView)
     }
 

@@ -23,18 +23,13 @@ import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.*
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
-import cc.aoeiuv020.panovel.util.alert
-import cc.aoeiuv020.panovel.util.alertError
-import cc.aoeiuv020.panovel.util.loading
-import cc.aoeiuv020.panovel.util.notify
+import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
-import org.jetbrains.anko.browse
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.error
-import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.*
+import java.io.FileNotFoundException
 
 
 /**
@@ -56,7 +51,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelTextPresenter
     private lateinit var novelName: String
-    private lateinit var chaptersAsc: List<NovelChapter>
+    private var chaptersAsc: List<NovelChapter> = listOf()
     private var novelDetail: NovelDetail? = null
     private lateinit var novelItem: NovelItem
     private lateinit var progress: NovelProgress
@@ -65,7 +60,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("progress", progress.toJson())
+        outState.apply {
+            putString("novelItem", novelItem.toJson())
+            putString("progress", progress.toJson())
+        }
     }
 
 
@@ -75,7 +73,13 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         alertDialog = AlertDialog.Builder(this).create()
         progressDialog = ProgressDialog(this)
 
-        novelItem = intent.getStringExtra("novelItem").toBean()
+        novelItem = getStringExtra("novelItem", savedInstanceState)?.toBean() ?: run {
+            // 不应该会到这里，
+            // TODO: 这种不应该到的地方都加上bugly上报，
+            toast("奇怪，重新打开试试，")
+            finish()
+            return
+        }
         // 进度，读取顺序， savedInstanceState > intent > ReadProgress
         progress = savedInstanceState?.run { getString("progress").toBean<NovelProgress>() }
                 ?: (intent.getSerializableExtra("index") as? Int)?.let { NovelProgress(it) } ?: Progress.load(novelItem)
@@ -225,6 +229,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     error("读取背景图失败", e)
                     cacheUri = uri
                     ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), requestCode)
+                } catch (e: FileNotFoundException) {
+                    // 不明原因，
+                    // https://bugly.qq.com/v2/crash-reporting/crashes/be0d684a75/1705?pid=1
+                    error("神奇，图片找不到，", e)
                 }
             }
             1 -> data?.data?.let { uri ->
@@ -235,6 +243,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     error("读取字体失败", e)
                     cacheUri = uri
                     ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), requestCode)
+                } catch (e: FileNotFoundException) {
+                    // 不明原因，
+                    // https://bugly.qq.com/v2/crash-reporting/crashes/be0d684a75/1705?pid=1
+                    error("神奇，图片找不到，", e)
                 }
             }
         }
@@ -387,11 +399,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 .setAdapter(NovelContentsAdapter(this, novelItem, chaptersAsc, progress.chapter)) { _, index ->
                     selectChapter(index)
                 }.create().apply {
-            listView.isFastScrollEnabled = true
-            listView.post {
-                listView.setSelection(progress.chapter)
-            }
-        }.show()
+                    listView.isFastScrollEnabled = true
+                    listView.post {
+                        listView.setSelection(progress.chapter)
+                    }
+                }.show()
     }
 
     private val handler: Handler = Handler()

@@ -14,6 +14,7 @@ import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
 import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import com.miguelcatalan.materialsearchview.MaterialSearchView
@@ -72,8 +73,8 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
             forceRefresh()
         }
 
-        name = savedInstanceState?.getString("name") ?: intent.getStringExtra("name")
-        author = savedInstanceState?.getString("author") ?: intent.getStringExtra("author")
+        name = getStringExtra("name", savedInstanceState)
+        author = getStringExtra("author", savedInstanceState)
         name?.let { nameNonnull ->
             search(nameNonnull, author)
         } ?: searchView.post { showSearch() }
