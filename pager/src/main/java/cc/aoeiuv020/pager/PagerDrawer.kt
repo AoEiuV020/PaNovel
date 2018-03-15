@@ -14,4 +14,8 @@ abstract class PagerDrawer : IPagerDrawer {
         this.backgroundSize = backgroundSize
         this.contentSize = contentSize
     }
+
+    override fun detach() {
+        this.pager = null
+    }
 }
