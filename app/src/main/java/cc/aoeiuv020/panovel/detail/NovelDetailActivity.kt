@@ -23,16 +23,14 @@ import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
 import kotlinx.android.synthetic.main.content_novel_detail.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.browse
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.*
 
 /**
  *
@@ -52,6 +50,11 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     private lateinit var novelItem: NovelItem
     private var isRefreshEnable = false
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("novelItem", novelItem.toJson())
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,7 +64,12 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        novelItem = intent.getStringExtra("novelItem").toBean()
+        novelItem = getStringExtra("novelItem", savedInstanceState)?.toBean() ?: run {
+            // 不应该会到这里，
+            toast("奇怪，重新打开试试，")
+            finish()
+            return
+        }
         val requester = novelItem.requester
         debug { "receive $requester" }
 

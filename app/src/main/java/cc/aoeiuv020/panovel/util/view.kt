@@ -2,6 +2,7 @@
 
 package cc.aoeiuv020.panovel.util
 
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.ProgressDialog
@@ -128,6 +129,9 @@ fun EditText.showKeyboard() {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun Bundle.toMap(): Map<String, Any?>
-        = BaseBundle::class.java.getDeclaredField("mMap").apply { isAccessible = true }
+fun Bundle.toMap(): Map<String, Any?> = BaseBundle::class.java.getDeclaredField("mMap").apply { isAccessible = true }
         .get(this) as Map<String, *>
+
+// 从保存的状态或者传入的intent中拿String,
+fun Activity.getStringExtra(key: String, savedInstanceState: Bundle?): String? = savedInstanceState?.run { getString(key) }
+        ?: intent.getStringExtra(key)
