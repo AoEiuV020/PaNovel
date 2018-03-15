@@ -51,7 +51,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private lateinit var progressDialog: ProgressDialog
     private lateinit var presenter: NovelTextPresenter
     private lateinit var novelName: String
-    private lateinit var chaptersAsc: List<NovelChapter>
+    private var chaptersAsc: List<NovelChapter> = listOf()
     private var novelDetail: NovelDetail? = null
     private lateinit var novelItem: NovelItem
     private lateinit var progress: NovelProgress
@@ -390,10 +390,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun showContents() {
-        if (!this::chaptersAsc.isInitialized) {
-            // 有用户会在章节没加载出来时点击目录，然后崩溃，
-            return
-        }
         AlertDialog.Builder(this)
                 .setTitle(R.string.contents)
                 .setAdapter(NovelContentsAdapter(this, novelItem, chaptersAsc, progress.chapter)) { _, index ->
