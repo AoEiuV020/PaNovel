@@ -174,7 +174,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
 */
         if (index < 0) {
-            index = index - index / pages.size * pages.size + pages.size
+            index -= index / pages.size * pages.size
+        }
+        if (index < 0) {
+            index += pages.size
         }
 
         pageIndex = index
