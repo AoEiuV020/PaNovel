@@ -35,6 +35,7 @@ import org.jetbrains.anko.browse
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
 import org.jetbrains.anko.startActivity
+import java.io.FileNotFoundException
 
 
 /**
@@ -225,6 +226,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     error("读取背景图失败", e)
                     cacheUri = uri
                     ActivityCompat.requestPermissions(this, arrayOf(READ_EXTERNAL_STORAGE), requestCode)
+                } catch (e: FileNotFoundException) {
+                    // 不明原因，
+                    // https://bugly.qq.com/v2/crash-reporting/crashes/be0d684a75/1705?pid=1
+                    error("神奇，图片找不到，", e)
                 }
             }
             1 -> data?.data?.let { uri ->
