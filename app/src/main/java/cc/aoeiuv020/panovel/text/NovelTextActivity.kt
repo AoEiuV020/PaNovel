@@ -382,6 +382,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun showContents() {
+        if (!this::chaptersAsc.isInitialized) {
+            // 有用户会在章节没加载出来时点击目录，然后崩溃，
+            return
+        }
         AlertDialog.Builder(this)
                 .setTitle(R.string.contents)
                 .setAdapter(NovelContentsAdapter(this, novelItem, chaptersAsc, progress.chapter)) { _, index ->
