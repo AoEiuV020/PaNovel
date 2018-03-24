@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.atomic.AtomicInteger
@@ -20,23 +21,27 @@ import java.util.concurrent.atomic.AtomicInteger
 private val asyncExecutor = object : Executor {
     private val threadNumber = AtomicInteger()
     val tasks = LinkedBlockingDeque<Runnable>()
-    val threads = List(Settings.asyncThreadCount) {
-        newThread()
-    }
-
-    init {
-        threads.forEach {
-            it.start()
-        }
-    }
-
-    fun newThread() = Thread({
+    val max: Int get() = Settings.asyncThreadCount
+    val threads = LinkedList<Thread>()
+    val threadsIdle = mutableSetOf<Int>()
+    val runnable: Runnable = Runnable {
+        val id = threadNumber.getAndIncrement()
         while (true) {
-            tasks.take().run()
+            Thread.currentThread().name = "async-$id"
+            threadsIdle.add(id)
+            val r = tasks.take()
+            threadsIdle.remove(id)
+            r.run()
         }
-    }, "async-${threadNumber.getAndIncrement()}")
+    }
 
+    fun newThread() = Thread(runnable)
+
+    @Synchronized
     override fun execute(command: Runnable) {
+        if (threadsIdle.isEmpty() && threads.size < max) {
+            threads.push(newThread().apply { start() })
+        }
         tasks.push(command)
     }
 }
