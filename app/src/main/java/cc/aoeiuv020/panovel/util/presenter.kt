@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * 自定义Executor主要是为了避免线程复用时interrupt中断旧线程导致数据异常，
  */
-private val asyncExecutor = object : Executor {
+val asyncExecutor = object : Executor {
     private val threadNumber = AtomicInteger()
     val tasks = LinkedBlockingDeque<Runnable>()
     val max: Int get() = Settings.asyncThreadCount

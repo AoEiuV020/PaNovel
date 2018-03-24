@@ -3,12 +3,15 @@ package cc.aoeiuv020.panovel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.provider.Settings.Secure
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.util.asyncExecutor
 import cc.aoeiuv020.panovel.util.ignoreException
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.tencent.bugly.crashreport.CrashReport
@@ -16,6 +19,7 @@ import io.reactivex.internal.functions.Functions
 import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.info
 import java.io.File
 
 
@@ -37,6 +41,7 @@ class App : Application(), AnkoLogger {
         lateinit var adRequest: AdRequest
     }
 
+    @SuppressLint("HardwareIds")
     override fun onCreate() {
         super.onCreate()
         ctx = applicationContext
@@ -72,6 +77,17 @@ class App : Application(), AnkoLogger {
         CrashReport.initCrashReport(ctx, "be0d684a75", adRequest.isTestDevice(ctx))
         // 貌似设置了开发设备就不上报了，
         CrashReport.setIsDevelopmentDevice(ctx, !Settings.reportCrash)
+
+        val androidId = Secure.getString(ctx.contentResolver, Secure.ANDROID_ID)
+        CrashReport.setUserId(androidId)
+        // 异步设置bugly的用户ID，获取的是google的广告ID,不能在主线程，
+        asyncExecutor.execute {
+            val adId = AdvertisingIdClient.getAdvertisingIdInfo(ctx).id
+            CrashReport.setUserId(adId)
+            info {
+                "Bugly user id -> ${CrashReport.getUserId()}"
+            }
+        }
     }
 
     private fun checkBaseFile(file: File) {
