@@ -6,6 +6,7 @@ import android.content.Context
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.util.ignoreException
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
@@ -15,6 +16,7 @@ import io.reactivex.internal.functions.Functions
 import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import java.io.File
 
 
 /**
@@ -38,6 +40,9 @@ class App : Application(), AnkoLogger {
     override fun onCreate() {
         super.onCreate()
         ctx = applicationContext
+
+        // 有相关问题不明原因，以防万一，加个判断sd上的私有目录是否可写，
+        checkBaseFile(ctx.getExternalFilesDir(null))
 
         // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
         // 还有ContextCompat.getDrawable也不行，
@@ -67,5 +72,13 @@ class App : Application(), AnkoLogger {
         CrashReport.initCrashReport(ctx, "be0d684a75", adRequest.isTestDevice(ctx))
         // 貌似设置了开发设备就不上报了，
         CrashReport.setIsDevelopmentDevice(ctx, !Settings.reportCrash)
+    }
+
+    private fun checkBaseFile(file: File) {
+        file.resolve("check").let {
+            it.exists() || ignoreException { it.writeText("true") }
+        }.takeIf { it }?.let {
+            Settings.baseFile = file
+        }
     }
 }

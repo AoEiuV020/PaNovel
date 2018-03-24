@@ -10,6 +10,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.io.IOException
 import java.io.Serializable
 import java.lang.reflect.Type
 
@@ -19,11 +20,11 @@ import java.lang.reflect.Type
  */
 
 @Suppress("UNUSED_PARAMETER")
-private fun LocalSource.external(fileType: FileType) = File(App.ctx.getExternalFilesDir(null), this.path)
-        .apply { mkdirs() }
+private fun LocalSource.external(fileType: FileType) = File(Settings.baseFile, this.path)
+        .apply { exists() || mkdirs() || throw IOException("create directory $this failed,") }
 
 private fun LocalSource.folder(file: File, folder: String? = null) = (folder?.let { File(file, it) }
-        ?: file).apply { mkdirs() }
+        ?: file).apply { exists() || mkdirs() || throw IOException("create directory $this failed,") }
 
 private fun LocalSource.file(file: File, name: String, folder: String? = null) = File(folder(file, folder), name)
 

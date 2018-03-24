@@ -3,17 +3,25 @@ package cc.aoeiuv020.panovel.local
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.net.Uri
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.share.Expiration
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfig
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
+import java.io.File
 
 /**
  * 设置，
  * Created by AoEiuV020 on 2017.10.04-14:04:44.
  */
 object Settings : BaseLocalSource(), AnkoLogger {
+    /**
+     * 这个要特别注意，在ext.kt中被所有本地持久化使用到，
+     * 在app一开始就初始化，
+     */
+    var baseFile: File = App.ctx.filesDir
+
     /**
      * 这名字好长，小红点提示未读或新章节，
      * false则提示未读，也就是阅读进度不在最新章节，

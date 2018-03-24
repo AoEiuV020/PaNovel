@@ -54,9 +54,9 @@ fun <T : Any?> Single<T>.async(): Single<T> = this
         .subscribeOn(Schedulers.from(asyncExecutor))
         .observeOn(AndroidSchedulers.mainThread())
 
-fun <T> ignoreException(block: () -> T?) {
-    try {
-        block()
-    } catch (_: Exception) {
-    }
+fun <T> ignoreException(block: () -> T?): Boolean = try {
+    block()
+    true
+} catch (_: Exception) {
+    false
 }
