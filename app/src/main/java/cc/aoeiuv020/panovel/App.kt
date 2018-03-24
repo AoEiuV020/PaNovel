@@ -91,7 +91,7 @@ class App : Application(), AnkoLogger {
     }
 
     private fun checkBaseFile(file: File) {
-        file.resolve("check").let {
+        file.resolve("test").let {
             it.exists() || ignoreException { it.writeText("true") }
         }.takeIf { it }?.let {
             Settings.baseFile = file
