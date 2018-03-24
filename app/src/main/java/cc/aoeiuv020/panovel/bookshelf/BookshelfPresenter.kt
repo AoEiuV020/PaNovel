@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.error
 import java.util.*
@@ -22,6 +23,7 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment, BookshelfIte
 
     private fun requestBookshelf() {
         Observable.fromCallable {
+            suffixThreadName("requestBookshelf")
             val history = History.list().map { Pair(it.novel, it.date) }.toMap()
             Bookshelf.list().map { NovelHistory(it, history[it] ?: Date(0)) }.sortedByDescending { it.date }
         }.async().subscribe({ list ->

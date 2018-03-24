@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Selected
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -23,6 +24,7 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
         saveGenre(genre)
         this.genre = genre
         Observable.fromCallable {
+            suffixThreadName("requestNovelList")
             NovelContext.getNovelContextByUrl(genre.requester.url).also { context = it }
                     .getNovelList(genre.requester).also { it.forEach { Cache.item.put(it.novel, it.novel) } }
         }.async().subscribe({ comicList ->
@@ -41,6 +43,7 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
     fun loadNextPage() {
         debug { "加载下一页，${context.getNovelSite().name}: ${genre.name}" }
         Observable.create<NovelGenre> { em ->
+            suffixThreadName("loadNextPage")
             context.getNextPage(genre)?.let { em.onNext(it) }
             em.onComplete()
         }.async().toList().subscribe({ genres ->
@@ -53,6 +56,7 @@ class NovelListPresenter : Presenter<NovelListFragment>(), AnkoLogger {
             saveGenre(genre)
             view?.showUrl(genre.requester.url)
             Observable.fromCallable {
+                suffixThreadName("loadNextPage")
                 context.getNovelList(genre.requester)
             }.async().subscribe({ comicList ->
                 debug { "展示小说列表，数量：${comicList.size}" }

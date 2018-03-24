@@ -60,3 +60,7 @@ fun <T> ignoreException(block: () -> T?): Boolean = try {
 } catch (_: Exception) {
     false
 }
+
+fun suffixThreadName(suffix: String) {
+    Thread.currentThread().apply { name += "-$suffix" }
+}

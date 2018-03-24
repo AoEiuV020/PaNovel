@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.notify
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
@@ -46,6 +47,8 @@ object Text : BaseLocalSource(), AnkoLogger {
             }
         }
         Observable.create<List<Int>> { em ->
+            // exportExistsChapterToTextFile,
+            suffixThreadName("exportText")
             val context = NovelContext.getNovelContextByUrl(novelItem.requester.url)
             val detail = Cache.detail.get(novelItem)
                     ?: context.getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
