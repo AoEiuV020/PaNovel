@@ -67,6 +67,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             Check.asyncCheckSignature(this)
         }
 
+        Check.asyncCheckVersion(this)
+
         setSupportActionBar(toolbar)
 
         progressDialog = ProgressDialog(this)

@@ -12,9 +12,9 @@ import java.security.MessageDigest;
  * https://gist.github.com/scottyab/b849701972d57cf9562e
  */
 @SuppressWarnings("All")
-public class SignatureChecker {
+public class SignatureUtil {
 
-    public static String validateAppSignature(Context context) {
+    public static String getAppSignature(Context context) {
 
         try {
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(
