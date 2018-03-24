@@ -22,7 +22,7 @@ data class NovelHistory(val novel: NovelItem, val date: Date = Date(0))
 
 data class NovelId(val site: String, val author: String, val name: String)
     : LocalData() {
-    override fun toString(): String = "$name.$author.$site"
+    override fun toString(): String = "$name.$author.$site".replace('/', ' ')
 }
 
 data class BookListData(val name: String, val list: MutableSet<NovelItem> = mutableSetOf())
