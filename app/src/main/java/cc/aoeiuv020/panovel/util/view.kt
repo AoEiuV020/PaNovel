@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import cc.aoeiuv020.panovel.R
@@ -94,7 +95,9 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
         .setPositiveButton(android.R.string.yes) { _, color, _ -> callback(color) }
         // 因为取消前可能已经选了颜色，所以要设置一次初始的颜色，
         .setNegativeButton(android.R.string.cancel) { _, _ -> callback(initial) }
-        .build().show()
+        .build().apply {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        }.show()
 
 fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground) {
     val channelId = "channel_default"
