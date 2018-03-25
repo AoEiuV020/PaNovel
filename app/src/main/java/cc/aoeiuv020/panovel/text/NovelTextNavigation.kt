@@ -10,7 +10,7 @@ import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Margins
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.text.NovelTextNavigation.Direction.*
-import cc.aoeiuv020.panovel.util.alertColorPicker
+import cc.aoeiuv020.panovel.util.changeColor
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import cc.aoeiuv020.reader.AnimationMode
@@ -165,7 +165,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             view.setBackgroundColor(backgroundColor)
             backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, backgroundColor)
             lBackgroundColor.setOnClickListener {
-                view.alertColorPicker(Settings.backgroundColor) { color ->
+                view.changeColor(Settings.backgroundColor) { color ->
                     Settings.backgroundColor = color
                     Settings.backgroundImage = null
                     backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, color)
@@ -176,7 +176,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             // 设置文字颜色，
             textColorTextView.text = view.getString(R.string.text_color_placeholder, Settings.textColor)
             lTextColor.setOnClickListener {
-                view.alertColorPicker(Settings.textColor) { color ->
+                view.changeColor(Settings.textColor) { color ->
                     Settings.textColor = color
                     textColorTextView.text = view.getString(R.string.text_color_placeholder, color)
                     view.setTextColor(color)
