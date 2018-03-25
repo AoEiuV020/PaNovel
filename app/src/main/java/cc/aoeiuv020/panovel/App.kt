@@ -82,8 +82,11 @@ class App : Application(), AnkoLogger {
         CrashReport.setUserId(androidId)
         // 异步设置bugly的用户ID，获取的是google的广告ID,不能在主线程，
         asyncExecutor.execute {
-            val adId = AdvertisingIdClient.getAdvertisingIdInfo(ctx).id
-            CrashReport.setUserId(adId)
+            try {
+                val adId = AdvertisingIdClient.getAdvertisingIdInfo(ctx).id
+                CrashReport.setUserId(adId)
+            } catch (_: Exception) {
+            }
             info {
                 "Bugly user id -> ${CrashReport.getUserId()}"
             }
