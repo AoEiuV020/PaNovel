@@ -18,12 +18,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.App
+import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
+import cc.aoeiuv020.panovel.local.Check
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.search.RefineSearchActivity
@@ -60,6 +62,12 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (!BuildConfig.DEBUG) {
+            Check.asyncCheckSignature(this)
+        }
+
+        Check.asyncCheckVersion(this)
 
         setSupportActionBar(toolbar)
 

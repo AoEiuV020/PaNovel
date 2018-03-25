@@ -17,11 +17,16 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import cc.aoeiuv020.panovel.R
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
+import kotlinx.android.synthetic.main.dialog_editor.view.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.cancelButton
+import org.jetbrains.anko.yesButton
 
 
 /**
@@ -62,13 +67,37 @@ fun View.setHeight(height: Int) {
     layoutParams = layoutParams.also { it.height = height }
 }
 
+fun Context.changeColor(initial: Int, callback: (color: Int) -> Unit) = alert {
+    titleResource = R.string.colorARGB
+    val layout = View.inflate(this@changeColor, R.layout.dialog_editor, null)
+    customView = layout
+    val etColor = layout.editText.apply {
+        setText(java.lang.Integer.toHexString(initial).toUpperCase())
+    }
+    neutralPressed(R.string.picker) {
+        alertColorPicker(initial, callback)
+    }
+    yesButton {
+        try {
+            val iColor = etColor.text.toString().toLong(16).toInt()
+            callback(iColor)
+        } catch (e: NumberFormatException) {
+        }
+    }
+    cancelButton { }
+}.show()
+
+
 fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = ColorPickerDialogBuilder.with(this)
         .initialColor(initial)
         .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
         .setOnColorChangedListener(callback)
-        .setPositiveButton(R.string.select) { _, color, _ -> callback(color) }
-        .setNegativeButton(R.string.cancel) { _, _ -> callback(initial) }
-        .build().show()
+        .setPositiveButton(android.R.string.yes) { _, color, _ -> callback(color) }
+        // 因为取消前可能已经选了颜色，所以要设置一次初始的颜色，
+        .setNegativeButton(android.R.string.cancel) { _, _ -> callback(initial) }
+        .build().apply {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        }.show()
 
 fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground) {
     val channelId = "channel_default"

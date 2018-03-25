@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.local.Selected
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -72,6 +73,7 @@ class BookstorePresenter : Presenter<BookstoreActivity>(), AnkoLogger {
     fun requestGenres(site: NovelSite) {
         saveSite(site)
         Observable.fromCallable {
+            suffixThreadName("requestGenres")
             NovelContext.getNovelContextBySite(site).getGenres()
         }.async().subscribe({ genres ->
             debug { "加载网站分类列表成功，数量：${genres.size}" }

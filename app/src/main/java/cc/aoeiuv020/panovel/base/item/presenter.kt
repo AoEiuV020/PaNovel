@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Progress
 import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
@@ -45,9 +46,10 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
     fun requestDetail(novelItem: NovelItem) {
         debug { "request detail $novelItem" }
         Observable.fromCallable {
+            suffixThreadName("requestDetail")
             Cache.detail.get(novelItem)
                     ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
-                    .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
+                            .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
         }.async().subscribe({ novelDetail ->
             view?.showDetail(novelDetail)
         }, { e ->
@@ -59,10 +61,12 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
 
     fun requestChapters(detail: NovelDetail) {
         Observable.fromCallable {
+            // 还有其他地方有requestChapters，所以多加个后缀，
+            suffixThreadName("requestChaptersItem")
             val novelItem = detail.novel
             val chapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
                     ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
-                    .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
+                            .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
             val progress = Progress.load(novelItem).chapter
             Pair(chapters, progress)
         }.async().subscribe({ (chapters, progress) ->
@@ -86,9 +90,10 @@ abstract class BigItemPresenter<T : BigItemView>(itemListPresenter: BaseItemList
      */
     fun requestUpdate(novelItem: NovelItem) {
         Observable.fromCallable {
+            suffixThreadName("requestUpdate")
             val detail = Cache.detail.get(novelItem, refreshTime = refreshTime)
                     ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
-                    .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
+                            .getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
             detail.update
         }.async().subscribe({ updateTime ->
             view?.showUpdateTime(updateTime)

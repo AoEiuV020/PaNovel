@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.history
 import cc.aoeiuv020.panovel.base.item.DefaultItemListPresenter
 import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.error
 
@@ -14,6 +15,7 @@ class HistoryPresenter : DefaultItemListPresenter<HistoryFragment>() {
 
     private fun requestHistory() {
         Observable.fromCallable {
+            suffixThreadName("requestHistory")
             History.list()
         }.async().subscribe({ list ->
             view?.showNovelList(list)

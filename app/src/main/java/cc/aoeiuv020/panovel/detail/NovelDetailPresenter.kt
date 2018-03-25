@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.qrcode.QrCodeManager
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -34,6 +35,7 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
 
     fun share() {
         Observable.fromCallable {
+            suffixThreadName("shareBook")
             val url = novelItem.requester.url
             val qrCode = QrCodeManager.generate(novelItem.requester.url)
             url to qrCode
@@ -50,6 +52,7 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
     private fun requestNovelDetail() {
         val requester = novelItem.requester
         Observable.fromCallable {
+            suffixThreadName("requestNovelDetail")
             if (refresh) {
                 context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
             } else {
@@ -67,6 +70,8 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
 
     fun requestChapters(requester: ChaptersRequester) {
         Observable.fromCallable {
+            // 还有其他地方有requestChapters，所以多加个后缀，
+            suffixThreadName("requestChaptersDetail")
             if (refresh) {
                 refresh = false
                 context.getNovelChaptersAsc(requester)
@@ -76,8 +81,8 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
                 try {
                     Cache.chapters.get(novelItem)?.also { debug { "读取缓存章节，${it.size}" } }
                             ?: context.getNovelChaptersAsc(requester)
-                            .also { Cache.chapters.put(novelItem, it) }
-                            .also { debug { "重新获取章节，${it.size}" } }
+                                    .also { Cache.chapters.put(novelItem, it) }
+                                    .also { debug { "重新获取章节，${it.size}" } }
                 } catch (e: IOException) {
                     Cache.chapters.get(novelItem, refreshTime = 0)?.also { debug { "网络有问题，读取缓存不判断超时，${it.size}" } }
                             ?: throw e

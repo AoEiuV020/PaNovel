@@ -131,7 +131,7 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
     }
 
     private fun save() {
-        presenter.save()
+        presenter.saveBookList()
     }
 
     private fun selectToAdd(list: List<NovelItem>) {

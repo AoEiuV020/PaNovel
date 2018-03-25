@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.local.BookList
 import cc.aoeiuv020.panovel.local.BookListData
 import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.error
 import java.util.*
@@ -23,6 +24,7 @@ class BookListActivityPresenter(private val bookListName: String) : DefaultItemL
 
     private fun requestHistory() {
         Observable.fromCallable {
+            suffixThreadName("requestHistory")
             list = ArrayList(bookListData.list.map { NovelHistory(it, Date(0)) })
             list
         }.async().subscribe({ list ->
@@ -57,8 +59,9 @@ class BookListActivityPresenter(private val bookListName: String) : DefaultItemL
         list.removeAt(position)
     }
 
-    fun save() {
+    fun saveBookList() {
         Observable.fromCallable {
+            suffixThreadName("saveBookList")
             bookListData.list.clear()
             bookListData.list.addAll(list.map { it.novel })
             BookList.put(bookListData)

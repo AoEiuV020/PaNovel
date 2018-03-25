@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.NovelId
 import cc.aoeiuv020.panovel.local.bookId
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
@@ -29,6 +30,7 @@ class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
     private fun searchActual(name: String, author: String?) {
         debug { "search <$name, $author>" }
         Observable.create<NovelItem> { em ->
+            suffixThreadName("refineSearch")
             fun next(novelItem: NovelItem) {
                 debug { "search result <${novelItem.bookId}>" }
                 em.onNext(novelItem)
@@ -40,8 +42,8 @@ class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
                         // 如果传入了作者，就可以尝试读缓存，
                         (Cache.item.get(NovelId(context.getNovelSite().name, author, name))
                                 ?: context.getNovelList(context.searchNovelName(name).requester)
-                                .firstOrNull { it.novel.name == name && it.novel.author == author }
-                                ?.novel)
+                                        .firstOrNull { it.novel.name == name && it.novel.author == author }
+                                        ?.novel)
                                 ?.let { next(it) }
                     } else {
                         context.getNovelList(context.searchNovelName(name).requester).filter {

@@ -18,7 +18,7 @@ class Syxs : NovelContext() {
 
     private val site = NovelSite(
             name = "31小说",
-            baseUrl = "http://www.31xs.org/",
+            baseUrl = "http://www.31xs.net/",
             logo = "https://imgsa.baidu.com/forum/w%3D580/sign=e8432cdf06d162d985ee621421dfa950/47e082d8bc3eb135d9b1d5a0aa1ea8d3fc1f44a6.jpg"
     )
 
@@ -26,7 +26,7 @@ class Syxs : NovelContext() {
 
     override fun check(url: String): Boolean {
         return super.check(url)
-                || URL(url).host == "www.31xs.com"
+                || URL(url).host.startsWith("www.31xs.")
                 || (isSearchResult(url) && url.contains("7845455592055299828"))
     }
 

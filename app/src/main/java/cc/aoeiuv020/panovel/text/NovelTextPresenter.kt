@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.id
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import cc.aoeiuv020.reader.Text
 import cc.aoeiuv020.reader.TextRequester
 import io.reactivex.Observable
@@ -42,6 +43,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
 
     fun download(fromIndex: Int) {
         Observable.create<List<Int>> { em ->
+            suffixThreadName("download")
             val detail = Cache.detail.get(novelItem)
                     ?: context.getNovelDetail(novelItem.requester).also { Cache.detail.put(it.novel, it) }
             val chapters = Cache.chapters.get(novelItem)
@@ -94,6 +96,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     private fun requestNovelDetail() {
         val requester = novelItem.requester
         Observable.fromCallable {
+            suffixThreadName("requestNovelDetailFromText")
             Cache.detail.get(novelItem)
                     ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
         }.async().subscribe({ detail ->
@@ -107,6 +110,8 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
 
     fun requestChapters(requester: ChaptersRequester) {
         Observable.fromCallable {
+            // 还有其他地方有requestChapters，所以多加个后缀，
+            suffixThreadName("requestChaptersText")
             if (refresh) {
                 context.getNovelChaptersAsc(requester).also { Cache.chapters.put(novelItem, it) }
             } else {

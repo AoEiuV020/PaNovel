@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.search.RefineSearchActivity
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.loading
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
@@ -39,6 +40,7 @@ object OpenManager : AnkoLogger {
             context.apply {
                 loading(progressDialog, getString(R.string.book_list_downloading))
                 Observable.fromCallable {
+                    suffixThreadName("openBookList")
                     val bookList = Share.receiveBookList(url)
                     BookList.put(bookList)
                     bookList.list.size
@@ -55,6 +57,7 @@ object OpenManager : AnkoLogger {
         } else {
             // 如果可以从地址得到小说对象，打开详情页，
             Observable.fromCallable {
+                suffixThreadName("openNovelDetail")
                 // 地址格式正确但爬取出错也一样跳到下面的不支持，
                 NovelContext.getNovelContextByUrl(url).getNovelItem(url)
             }.async().subscribe({ novelItem ->

@@ -4,6 +4,7 @@ import android.net.Uri
 import cc.aoeiuv020.panovel.App
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.error
 import java.io.Serializable
 import kotlin.reflect.KProperty
 
@@ -95,6 +96,7 @@ class UriDelegate : AnkoLogger {
     private var backingField: Uri? = null
     operator fun getValue(thisRef: LocalSource, property: KProperty<*>): Uri? {
         return backingField ?: thisRef.openFile(property.name).takeIf { it.exists() }?.let { Uri.fromFile(it) }.also {
+            backingField = it
             debug { "${property.name} > $it" }
         }
     }
@@ -105,7 +107,11 @@ class UriDelegate : AnkoLogger {
             backingField = null
             val file = thisRef.openFile(property.name)
             if (value == null) {
-                file.delete()
+                if (!file.delete()) {
+                    error {
+                        "$file delete failed,"
+                    }
+                }
             } else {
                 App.ctx.contentResolver.openInputStream(value).copyTo(file.outputStream())
                 backingField = getValue(thisRef, property)

@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.qrcode.QrCodeManager
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.async
+import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.error
 
@@ -21,6 +22,7 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
 
     private fun requestBookListList() {
         Observable.fromCallable {
+            suffixThreadName("requestBookListList")
             BookList.list()
         }.async().subscribe({ list ->
             view?.showBookListList(list)
@@ -35,6 +37,7 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
     fun shareBookList(bookList: BookListData) {
         view?.showUploading()
         Observable.fromCallable {
+            suffixThreadName("shareBookList")
             val url = Share.shareBookList(bookList, Settings.shareExpiration)
             val qrCode = QrCodeManager.generate(url)
             url to qrCode
@@ -47,8 +50,9 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
         }).let { addDisposable(it, 1) }
     }
 
-    fun rename(bookList: BookListData, name: String) {
+    fun renameBookList(bookList: BookListData, name: String) {
         Observable.fromCallable {
+            suffixThreadName("renameBookList")
             BookList.remove(bookList)
             BookList.put(BookListData(name, bookList.list))
         }.async().subscribe({

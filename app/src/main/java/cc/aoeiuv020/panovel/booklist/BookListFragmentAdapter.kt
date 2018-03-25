@@ -38,7 +38,7 @@ class BookListFragmentAdapter(context: Context, val presenter: BookListFragmentP
             yesButton {
                 val name = etName.text.toString()
                 if (name.isNotEmpty()) {
-                    presenter.rename(bookList, name)
+                    presenter.renameBookList(bookList, name)
                 } else {
                     // 改名为空的话直接无视，懒得报错了，
                 }
