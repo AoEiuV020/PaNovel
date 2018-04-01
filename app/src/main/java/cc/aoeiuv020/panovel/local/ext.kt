@@ -15,7 +15,7 @@ import java.io.Serializable
 import java.lang.reflect.Type
 
 /**
- *
+ * 越来越恶心了，有时间要全部推倒不要了，
  * Created by AoEiuV020 on 2017.10.04-15:33:13.
  */
 
@@ -34,9 +34,12 @@ enum class FileType {
 
 private fun LocalSource.externalPrimitive(folder: String? = null) = folder(external(FileType.PRIMITIVE), folder)
 private fun LocalSource.externalPrimitive(name: String, folder: String? = null) = file(externalPrimitive(folder), name)
-fun LocalSource.primitiveSave(name: String, obj: Serializable?, folder: String? = null) {
+fun LocalSource.primitiveSave(name: String, obj: Serializable?, folder: String? = null) = try {
     obj?.let { externalPrimitive(name, folder).writeText(App.gson.toJson(it)) }
             ?: primitiveRemove(name, folder)
+} catch (e: Exception) {
+    // 这里写失败不知道该做点什么，
+    e.printStackTrace()
 }
 
 
@@ -77,9 +80,12 @@ private fun LocalSource.externalGson(folder: String? = null) = folder(external(F
 private fun LocalSource.externalGson(name: String, folder: String? = null) = file(externalGson(folder), name)
 fun LocalSource.gsonExists(name: String, folder: String? = null): Boolean = externalGson(name, folder).exists()
 fun LocalSource.gsonRemove(name: String, folder: String? = null): Boolean = externalGson(name, folder).delete()
-fun LocalSource.gsonSave(name: String, obj: Any?, folder: String? = null) {
+fun LocalSource.gsonSave(name: String, obj: Any?, folder: String? = null) = try {
     obj?.let { externalGson(name, folder).writeText(it.toJson()) }
             ?: gsonRemove(name, folder)
+} catch (e: Exception) {
+    // 这里写失败不知道该做点什么，
+    e.printStackTrace()
 }
 
 fun <T> LocalSource.gsonLoad(name: String, type: Type, refreshTime: Long = 0, folder: String? = null): T? = gsonLoad(externalGson(name, folder), type, refreshTime)
