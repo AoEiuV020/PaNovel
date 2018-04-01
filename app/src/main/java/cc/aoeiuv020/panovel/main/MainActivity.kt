@@ -117,6 +117,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             ad_view.loadAd(App.adRequest)
         }
 
+        if (!isTaskRoot) {
+            // 避免多开，
+            // 初始化完了再退出，否则可能崩溃，
+            finish()
+        }
     }
 
     private fun initTab(vararg pair: Pair<Int, Fragment>) {
