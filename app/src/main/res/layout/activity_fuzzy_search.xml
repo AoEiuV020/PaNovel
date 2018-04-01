@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="cc.aoeiuv020.panovel.search.RefineSearchActivity">
+    tools:context="cc.aoeiuv020.panovel.search.FuzzySearchActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/refine_search" />
+                android:hint="@string/fuzzy_search" />
         </FrameLayout>
 
     </android.support.design.widget.AppBarLayout>

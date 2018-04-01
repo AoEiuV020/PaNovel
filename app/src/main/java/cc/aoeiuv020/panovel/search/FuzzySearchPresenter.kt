@@ -17,7 +17,7 @@ import org.jetbrains.anko.verbose
  *
  * Created by AoEiuV020 on 2017.10.22-18:18:58.
  */
-class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
+class FuzzySearchPresenter : DefaultItemListPresenter<FuzzySearchActivity>() {
     var name: String? = null
     private var author: String? = null
 
@@ -39,6 +39,7 @@ class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
                 debug { "search ${context.getNovelSite().name}" }
                 try {
                     if (author != null) {
+                        // 精确搜索，refine search,
                         // 如果传入了作者，就可以尝试读缓存，
                         (Cache.item.get(NovelId(context.getNovelSite().name, author, name))
                                 ?: context.getNovelList(context.searchNovelName(name).requester)
@@ -46,9 +47,10 @@ class RefineSearchPresenter : DefaultItemListPresenter<RefineSearchActivity>() {
                                         ?.novel)
                                 ?.let { next(it) }
                     } else {
+                        // 模糊搜索，fuzzy search,
                         context.getNovelList(context.searchNovelName(name).requester).filter {
                             verbose { it.novel }
-                            it.novel.name == name
+                            name in it.novel.name
                         }.forEach { next(it.novel) }
                     }
                 } catch (e: Exception) {

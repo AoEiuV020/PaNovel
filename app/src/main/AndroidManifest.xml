@@ -45,8 +45,8 @@
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".search.RefineSearchActivity"
-            android:label="@string/title_activity_refine_search"
+            android:name=".search.FuzzySearchActivity"
+            android:label="@string/title_activity_fuzzy_search"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".booklist.BookListActivity" />
         <activity

@@ -67,8 +67,9 @@
     <string name="download_thread_count">下载线程数</string>
     <string name="contents">目录</string>
     <string name="search">搜索</string>
-    <string name="title_activity_refine_search">精确搜索</string>
+    <string name="title_activity_fuzzy_search">@string/fuzzy_search</string>
     <string name="refine_search">精确搜索</string>
+    <string name="fuzzy_search">模糊搜索</string>
     <string name="action">操作</string>
     <string name="read_continue">继续阅读</string>
     <string name="read_last_chapter">阅读最新章</string>
