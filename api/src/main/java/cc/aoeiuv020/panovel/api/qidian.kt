@@ -163,9 +163,9 @@ class Qidian : NovelContext() {
             val author = mid.select("> p.author > a.name").first().text()
             val genre = mid.select("> p.author > a.go-sub-type").first().text()
             val status = mid.select("> p.author > span").first().text()
-            val length = mid.select("> p.update > span").first().text()
+            // 长度拿不下了，上了字体反爬，
             val introduction = mid.select("> p.intro").first().text().trim()
-            val info = "类型: $genre 状态: $status 长度: $length 简介: $introduction"
+            val info = "类型: $genre 状态: $status 简介: $introduction"
             NovelListItem(NovelItem(this, name, author, url), info)
         }
     }
