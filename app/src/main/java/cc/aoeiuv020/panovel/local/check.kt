@@ -78,17 +78,7 @@ object Check : BaseLocalSource(), AnkoLogger {
                     Check.knownVersionName = newestVersionName as String
                 }
                 positiveButton("酷安") {
-                    // 先检测酷安市场app是否存在，
-                    val uri = Uri.parse("market://details?id=${ctx.packageName}")
-                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                    intent.`package` = COOLAPK_MARKET_PACKAGE_NAME
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    try {
-                        ctx.startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
-                        info { "没安装酷安app," }
-                        ctx.browse(Check.RELEASE_COOLAPK)
-                    }
+                    startCoolapk(ctx)
                 }
                 negativeButton("Github") {
                     ctx.browse(Check.RELEASE_GITHUB)
@@ -102,6 +92,21 @@ object Check : BaseLocalSource(), AnkoLogger {
                 yesButton { }
             }.show()
         })
+    }
+
+    private fun startCoolapk(ctx: Context) {
+        // 直接打开酷安市场app，
+        // 如果不存在，改打开浏览器，
+        val uri = Uri.parse("market://details?id=${ctx.packageName}")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.`package` = COOLAPK_MARKET_PACKAGE_NAME
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            ctx.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            info { "没安装酷安app," }
+            ctx.browse(RELEASE_COOLAPK)
+        }
     }
 
     private const val AOEIUV020_SIGNATURE = "F473239FE5E994CC7FF64F505D0F0BB6F8E3CB8C"
@@ -137,7 +142,7 @@ object Check : BaseLocalSource(), AnkoLogger {
                     Check.ignoreSignatureCheck = true
                 }
                 positiveButton("酷安") {
-                    ctx.browse(Check.RELEASE_COOLAPK)
+                    startCoolapk(ctx)
                 }
                 negativeButton("Github") {
                     ctx.browse(Check.RELEASE_GITHUB)
