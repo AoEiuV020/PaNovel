@@ -20,7 +20,7 @@ import java.lang.reflect.Type
  */
 
 @Suppress("UNUSED_PARAMETER")
-private fun LocalSource.external(fileType: FileType) = File(Settings.baseFile, this.path)
+private fun LocalSource.external(fileType: FileType) = File(PrimarySettings.baseFilePath, this.path)
         .apply { exists() || mkdirs() || throw IOException("create directory $this failed,") }
 
 private fun LocalSource.folder(file: File, folder: String? = null) = (folder?.let { File(file, it) }
