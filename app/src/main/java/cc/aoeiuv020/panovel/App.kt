@@ -7,11 +7,9 @@ import android.provider.Settings.Secure
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.local.Settings
-import cc.aoeiuv020.panovel.util.asyncExecutor
 import cc.aoeiuv020.panovel.util.ignoreException
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.tencent.bugly.crashreport.CrashReport
@@ -19,7 +17,6 @@ import io.reactivex.internal.functions.Functions
 import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.info
 import java.io.File
 
 
@@ -80,17 +77,6 @@ class App : Application(), AnkoLogger {
 
         val androidId = Secure.getString(ctx.contentResolver, Secure.ANDROID_ID)
         CrashReport.setUserId(androidId)
-        // 异步设置bugly的用户ID，获取的是google的广告ID,不能在主线程，
-        asyncExecutor.execute {
-            try {
-                val adId = AdvertisingIdClient.getAdvertisingIdInfo(ctx).id
-                CrashReport.setUserId(adId)
-            } catch (_: Exception) {
-            }
-            info {
-                "Bugly user id -> ${CrashReport.getUserId()}"
-            }
-        }
     }
 
     private fun checkBaseFile(file: File) {
