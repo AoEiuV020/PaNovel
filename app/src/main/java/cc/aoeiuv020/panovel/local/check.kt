@@ -1,16 +1,16 @@
 package cc.aoeiuv020.panovel.local
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import cc.aoeiuv020.panovel.api.pick
 import cc.aoeiuv020.panovel.check.SignatureUtil
 import cc.aoeiuv020.panovel.check.VersionUtil
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.browse
-import org.jetbrains.anko.yesButton
+import org.jetbrains.anko.*
 import org.jsoup.Jsoup
 import java.net.URL
 import java.util.regex.Pattern
@@ -21,6 +21,7 @@ import java.util.regex.Pattern
  */
 object Check : BaseLocalSource(), AnkoLogger {
     private const val CHANGE_LOG_URL = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/master/app/src/main/assets/ChangeLog.txt"
+    private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
     private var knownVersionName: String by PrimitiveDelegate("0")
     private fun getNewestVersionName(): String {
         return Jsoup.connect(RELEASE_GITHUB).get().select("#js-repo-pjax-container " +
@@ -77,7 +78,17 @@ object Check : BaseLocalSource(), AnkoLogger {
                     Check.knownVersionName = newestVersionName as String
                 }
                 positiveButton("酷安") {
-                    ctx.browse(Check.RELEASE_COOLAPK)
+                    // 先检测酷安市场app是否存在，
+                    val uri = Uri.parse("market://details?id=${ctx.packageName}")
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    intent.`package` = COOLAPK_MARKET_PACKAGE_NAME
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    try {
+                        ctx.startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        info { "没安装酷安app," }
+                        ctx.browse(Check.RELEASE_COOLAPK)
+                    }
                 }
                 negativeButton("Github") {
                     ctx.browse(Check.RELEASE_GITHUB)
