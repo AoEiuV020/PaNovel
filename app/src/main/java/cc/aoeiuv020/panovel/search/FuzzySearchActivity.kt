@@ -18,39 +18,42 @@ import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import com.miguelcatalan.materialsearchview.MaterialSearchView
-import kotlinx.android.synthetic.main.activity_refine_search.*
+import kotlinx.android.synthetic.main.activity_fuzzy_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 
 
-class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
+class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     companion object {
         fun start(context: Context) {
-            context.startActivity<RefineSearchActivity>()
+            context.startActivity<FuzzySearchActivity>()
         }
 
         fun start(context: Context, novelItem: NovelItem) {
+            // 精确搜索，refine search,
             start(context, novelItem.name, novelItem.author)
         }
 
         fun start(context: Context, name: String) {
-            context.startActivity<RefineSearchActivity>("name" to name)
+            // 模糊搜索，fuzzy search,
+            context.startActivity<FuzzySearchActivity>("name" to name)
         }
 
         fun start(context: Context, name: String, author: String) {
-            context.startActivity<RefineSearchActivity>("name" to name, "author" to author)
+            // 精确搜索，refine search,
+            context.startActivity<FuzzySearchActivity>("name" to name, "author" to author)
         }
     }
 
-    private lateinit var presenter: RefineSearchPresenter
+    private lateinit var presenter: FuzzySearchPresenter
     private lateinit var mAdapter: DefaultItemListAdapter
     private var name: String? = null
     private var author: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_refine_search)
+        setContentView(R.layout.activity_fuzzy_search)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -65,7 +68,7 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         })
 
         recyclerView.setLayoutManager(LinearLayoutManager(this))
-        presenter = RefineSearchPresenter()
+        presenter = FuzzySearchPresenter()
         presenter.attach(this)
         mAdapter = DefaultItemListAdapter(this, presenter)
         recyclerView.setAdapter(mAdapter)
@@ -165,7 +168,7 @@ class RefineSearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_refine_search, menu)
+        menuInflater.inflate(R.menu.menu_fuzzy_search, menu)
         return true
     }
 

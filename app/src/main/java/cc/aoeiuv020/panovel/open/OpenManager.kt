@@ -5,7 +5,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.BookList
 import cc.aoeiuv020.panovel.main.MainActivity
-import cc.aoeiuv020.panovel.search.RefineSearchActivity
+import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.loading
@@ -27,7 +27,7 @@ object OpenManager : AnkoLogger {
             switch(context, url)
         } catch (e: MalformedURLException) {
             // 打开的不是网址，就直接精确搜索，
-            RefineSearchActivity.start(context, str)
+            FuzzySearchActivity.start(context, str)
         }
     }
 

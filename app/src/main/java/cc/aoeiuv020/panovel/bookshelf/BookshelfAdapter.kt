@@ -11,7 +11,7 @@ import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.Text
-import cc.aoeiuv020.panovel.search.RefineSearchActivity
+import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.setHeight
@@ -130,7 +130,7 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
     }
 
     private fun refineSearch() {
-        RefineSearchActivity.start(ctx, novelItem.name, novelItem.author)
+        FuzzySearchActivity.start(ctx, novelItem.name, novelItem.author)
     }
 
     private fun readLastChapter() {

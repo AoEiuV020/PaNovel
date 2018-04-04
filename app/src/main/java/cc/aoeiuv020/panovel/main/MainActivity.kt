@@ -28,7 +28,7 @@ import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.local.Check
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.open.OpenManager
-import cc.aoeiuv020.panovel.search.RefineSearchActivity
+import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
@@ -117,6 +117,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             ad_view.loadAd(App.adRequest)
         }
 
+        if (!isTaskRoot) {
+            // 避免多开，
+            // 初始化完了再退出，否则可能崩溃，
+            finish()
+        }
     }
 
     private fun initTab(vararg pair: Pair<Int, Fragment>) {
@@ -231,7 +236,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> SettingsActivity.start(this)
-            R.id.search -> RefineSearchActivity.start(this)
+            R.id.search -> FuzzySearchActivity.start(this)
             R.id.scan -> scan()
             R.id.open -> open()
             R.id.donate -> DonateActivity.start(this)

@@ -4,6 +4,8 @@
 本app所有数据都保存在sd卡中应用的私有目录下，卸载时自动删除，
 /sdcard/Android/data/cc.aoeiuv020.panovel/files
 有点深，但想必用户也不喜欢什么app都往sd根目录建文件夹，
+没有sd卡则放在内部私有目录，
+/data/data/cc.aoeiuv020.panovel/files
 其中Cache可以删除，包含缓存和不在书架中的书的阅读进度，
 导出的书在Text下，
 书单在BookList下，

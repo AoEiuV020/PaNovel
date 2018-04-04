@@ -34,13 +34,11 @@ class AboutFragment : Fragment() {
                     .mapNotNull {
                         try {
                             val (name, link) = it.pick(pattern)
-                            println("$name, $link")
                             Pair(name, link)
                         } catch (_: Exception) {
                             null
                         }
                     }.unzip()
-            println("$nameList, $linkList")
             activity.alert {
                 title = activity.getString(R.string.library)
                 items(nameList) { _, i ->

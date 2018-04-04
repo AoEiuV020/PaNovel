@@ -6,12 +6,11 @@ import android.content.Context
 import android.provider.Settings.Secure
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.panovel.api.paNovel
+import cc.aoeiuv020.panovel.local.PrimarySettings
 import cc.aoeiuv020.panovel.local.Settings
-import cc.aoeiuv020.panovel.util.asyncExecutor
 import cc.aoeiuv020.panovel.util.ignoreException
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.tencent.bugly.crashreport.CrashReport
@@ -19,8 +18,6 @@ import io.reactivex.internal.functions.Functions
 import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.info
-import java.io.File
 
 
 /**
@@ -41,13 +38,11 @@ class App : Application(), AnkoLogger {
         lateinit var adRequest: AdRequest
     }
 
-    @SuppressLint("HardwareIds")
     override fun onCreate() {
         super.onCreate()
         ctx = applicationContext
 
-        // 有相关问题不明原因，以防万一，加个判断sd上的私有目录是否可写，
-        checkBaseFile(ctx.getExternalFilesDir(null))
+        checkBaseFile()
 
         // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
         // 还有ContextCompat.getDrawable也不行，
@@ -58,6 +53,20 @@ class App : Application(), AnkoLogger {
         // 无视RxJava抛的异常，也就是不被捕获调用onError的异常，
         RxJavaPlugins.setErrorHandler(Functions.emptyConsumer())
 
+        initAdmob()
+
+        initBugly()
+    }
+
+    private fun checkBaseFile() {
+        PrimarySettings.baseFilePath = ctx.getExternalFilesDir(null)?.takeIf { base ->
+            val test = base.resolve("test")
+            test.exists() || ignoreException { test.writeText("true") }
+        }?.path
+                ?: ctx.filesDir.path
+    }
+
+    private fun initAdmob() {
         MobileAds.initialize(this, "ca-app-pub-3036112914192534~4631187497")
         adRequest = AdRequest.Builder()
                 .also { builder ->
@@ -71,33 +80,18 @@ class App : Application(), AnkoLogger {
                         // 什么都不做，
                     }
                 }.build()
+    }
 
+    @SuppressLint("HardwareIds")
+    private fun initBugly() {
         // 第三个参数为SDK调试模式开关，
-        // 模拟器打开，
-        CrashReport.initCrashReport(ctx, "be0d684a75", adRequest.isTestDevice(ctx))
+        // 打开会导致开发机上报异常，
+        CrashReport.initCrashReport(ctx, "be0d684a75", false)
         // 貌似设置了开发设备就不上报了，
         CrashReport.setIsDevelopmentDevice(ctx, !Settings.reportCrash)
 
         val androidId = Secure.getString(ctx.contentResolver, Secure.ANDROID_ID)
         CrashReport.setUserId(androidId)
-        // 异步设置bugly的用户ID，获取的是google的广告ID,不能在主线程，
-        asyncExecutor.execute {
-            try {
-                val adId = AdvertisingIdClient.getAdvertisingIdInfo(ctx).id
-                CrashReport.setUserId(adId)
-            } catch (_: Exception) {
-            }
-            info {
-                "Bugly user id -> ${CrashReport.getUserId()}"
-            }
-        }
     }
 
-    private fun checkBaseFile(file: File) {
-        file.resolve("test").let {
-            it.exists() || ignoreException { it.writeText("true") }
-        }.takeIf { it }?.let {
-            Settings.baseFile = file
-        }
-    }
 }

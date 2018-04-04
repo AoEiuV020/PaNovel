@@ -12,7 +12,7 @@ import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.Settings
-import cc.aoeiuv020.panovel.search.RefineSearchActivity
+import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.text.CheckableImageView
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cn.lemon.view.adapter.BaseViewHolder
@@ -56,7 +56,7 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
         }
 
         name.setOnLongClickListener {
-            RefineSearchActivity.start(ctx, novelItem.name, novelItem.author)
+            FuzzySearchActivity.start(ctx, novelItem.name, novelItem.author)
             true
         }
 
