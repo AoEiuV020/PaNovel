@@ -15,6 +15,7 @@ sed -i "s/versionCode\\s*[0-9]*/versionCode $versionCode/" $buildGradleFile
 versionName=$1
 sed -i "s/versionName\\s*\".*\"/versionName \"$versionName\"/" $buildGradleFile
 changeLogFile=app/src/main/assets/ChangeLog.txt
+sed -i "1G" $changeLogFile
 sed -i "2i$versionName:" $changeLogFile
 
 git add $buildGradleFile
