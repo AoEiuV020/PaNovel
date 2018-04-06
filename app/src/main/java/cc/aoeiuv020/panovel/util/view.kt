@@ -100,7 +100,6 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
 
 fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
     val channelId = "channel_default"
-    val name = "default"
     val nb = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(text)
