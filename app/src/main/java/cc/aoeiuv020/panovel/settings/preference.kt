@@ -134,6 +134,7 @@ class SwitchPreference : android.preference.SwitchPreference, AnkoLogger {
     companion object {
         private val map = mapOf<String, Pair<() -> Boolean, (Boolean) -> Unit>>(
                 "auto_save" to ({ Settings.bookListAutoSave } to { v -> Settings.bookListAutoSave = v }),
+                "subscribe_novel_update" to ({ Settings.subscribeNovelUpdate } to { v -> Settings.subscribeNovelUpdate = v }),
                 "report_crash" to ({ Settings.reportCrash } to { v -> Settings.reportCrash = v }),
                 "volume_key_scroll" to ({ Settings.volumeKeyScroll } to { v -> Settings.volumeKeyScroll = v }),
                 "full_screen_click_next_page" to ({ Settings.fullScreenClickNextPage } to { v -> Settings.fullScreenClickNextPage = v }),
