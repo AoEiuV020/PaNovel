@@ -3,7 +3,6 @@
 package cc.aoeiuv020.panovel.util
 
 import android.app.Activity
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
@@ -118,18 +117,6 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
         }
     }
     val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        if (manager.getNotificationChannel(channelId) == null) {
-            val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT)
-            } else {
-                // support升级27时上面的NotificationChannel报错，只能再包一层看起来多余的if,
-                throw Exception("不可能到这里吧，")
-            }
-            channel.setSound(null, null)
-            manager.createNotificationChannel(channel)
-        }
-    }
     manager.notify(id, nb.build())
 }
 
