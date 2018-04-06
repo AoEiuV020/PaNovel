@@ -1,5 +1,5 @@
 {
-    "minVersion": "2.1.1",
+    "minVersion": "2.1.0",
     "baseSite": "192.168.1.10:8080",
     "updateWebSocketAddress": "ws://192.168.1.10:8080/ws/update",
     "queryIdsAddress": "http://192.168.1.10:8080/bookshelf/queryIds"
