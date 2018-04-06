@@ -17,6 +17,7 @@ interface SmallItemView : IView {
     fun showDetail(novelDetail: NovelDetail)
     fun showNewChapterDot()
     fun showChapter(chapters: List<NovelChapter>, progress: Int)
+    fun hideProgressBar()
 }
 
 interface BigItemView : SmallItemView {

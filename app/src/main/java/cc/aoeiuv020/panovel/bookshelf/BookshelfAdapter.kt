@@ -85,19 +85,23 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
         if (s) {
             if (updateTime?.time ?: 0 > novelHistory.date.time) {
                 newChapterDot.show()
-                ivMoreAction.hide()
             } else {
                 newChapterDot.hide()
-                if (Settings.bookshelfShowMoreActionDot) {
-                    ivMoreAction.show()
-                }
+            }
+        }
+    }
+
+    override fun hideProgressBar() {
+        progressBar.hide()
+        if (!newChapterDot.isShown) {
+            if (Settings.bookshelfShowMoreActionDot) {
+                ivMoreAction.show()
             }
         }
     }
 
     override fun showChapter(chapters: List<NovelChapter>, progress: Int) {
         super.showChapter(chapters, progress)
-        progressBar.hide()
         debug {
             "update <${novelHistory.novel.name}, ${Settings.bookshelfRedDotNotifyNotReadOrNewChapter}, $updateTime, ${novelHistory.date}>"
         }
@@ -105,12 +109,8 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
         if (!s) {
             if (chapters.lastIndex > progress) {
                 newChapterDot.show()
-                ivMoreAction.hide()
             } else {
                 newChapterDot.hide()
-                if (Settings.bookshelfShowMoreActionDot) {
-                    ivMoreAction.show()
-                }
             }
         }
     }

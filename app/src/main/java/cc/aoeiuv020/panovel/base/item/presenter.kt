@@ -94,6 +94,8 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
             val message = "读取《${detail.novel.bookId}》章节失败，"
             error(message, e)
             itemListPresenter.view?.showError(message, e)
+        }, {
+            view?.hideProgressBar()
         }).let { addDisposable(it, 1) }
     }
 
