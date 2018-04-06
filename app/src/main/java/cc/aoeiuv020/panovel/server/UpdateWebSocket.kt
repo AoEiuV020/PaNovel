@@ -36,11 +36,9 @@ class UpdateWebSocket(
     private var serverInfo = ServerInfo()
     private var giveUp: Boolean = false
     private var retryCount: Int = 0
-    private var isRunning = false
 
     /**
      * 外部后台调用，开始连接，
-     * TODO: 一次连接两个了好像，???
      */
     fun start() {
         debug { "start" }
@@ -81,7 +79,7 @@ class UpdateWebSocket(
      * 开始连接前，准备建立连接，
      * 连接断开后回到这里，
      */
-    fun beforeConnect() {
+    private fun beforeConnect() {
         debug { "beforeConnect" }
         retryCount++
         // 这个5,上下浮动1也无所谓了，
@@ -107,7 +105,7 @@ class UpdateWebSocket(
         }
     }
 
-    fun connecting() {
+    private fun connecting() {
         val wsUrl = serverInfo.updateWebSocketAddress
         debug { "connecting $wsUrl" }
         val client = OkHttpClient()
@@ -123,7 +121,7 @@ class UpdateWebSocket(
     }
 
     private var webSocket: WebSocket? = null
-    fun connected() {
+    private fun connected() {
         debug { "connected" }
         map.clear()
         val novelItems = Bookshelf.list()
@@ -176,6 +174,9 @@ class UpdateWebSocket(
         }
     }
 
+    /**
+     * 外部调用，一层层传进来，
+     */
     fun uploadUpdate(novelItem: NovelItem, chaptersCount: Int, updateTime: Date?) {
         val id = map.entries.firstOrNull {
             it.value.requester == novelItem.requester
@@ -191,7 +192,7 @@ class UpdateWebSocket(
         webSocket?.send(RequestMessage(Action.UPDATE, novel.toJson()).toJson())
     }
 
-    fun message(text: String) {
+    private fun message(text: String) {
         try {
             val message: ResponseMessage = text.toBean()
             when (message.action) {
@@ -205,14 +206,14 @@ class UpdateWebSocket(
         }
     }
 
-    fun closed() {
+    private fun closed() {
         debug { "closed" }
         webSocket = null
         Bookshelf.removeListener(this)
         beforeConnect()
     }
 
-    fun failure(message: String = "failure", t: Throwable?) {
+    private fun failure(message: String = "failure", t: Throwable?) {
         error(message, t)
         closed()
     }
