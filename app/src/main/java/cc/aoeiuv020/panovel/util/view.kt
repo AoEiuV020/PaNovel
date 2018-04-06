@@ -3,7 +3,6 @@
 package cc.aoeiuv020.panovel.util
 
 import android.app.Activity
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
@@ -99,13 +98,14 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.show()
 
-fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground) {
-    val channelId = "channel_default"
-    val name = "default"
-    val nb = NotificationCompat.Builder(this, channelId)
+fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
+    val nb = NotificationCompat.Builder(this)
             .setContentTitle(title)
             .setContentText(text)
             .setAutoCancel(true)
+    time?.let {
+        nb.setWhen(it)
+    }
     nb.apply {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             setLargeIcon(getBitmapFromVectorDrawable(icon))
@@ -115,18 +115,6 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
         }
     }
     val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        if (manager.getNotificationChannel(channelId) == null) {
-            val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT)
-            } else {
-                // support升级27时上面的NotificationChannel报错，只能再包一层看起来多余的if,
-                throw Exception("不可能到这里吧，")
-            }
-            channel.setSound(null, null)
-            manager.createNotificationChannel(channel)
-        }
-    }
     manager.notify(id, nb.build())
 }
 

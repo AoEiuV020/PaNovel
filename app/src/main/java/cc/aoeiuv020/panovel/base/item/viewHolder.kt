@@ -87,6 +87,12 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
         }
     }
 
+    override fun showNewChapterDot() {
+    }
+
+    override fun hideProgressBar() {
+    }
+
     override fun setData(data: NovelHistory) {
         this.novelHistory = data
         debug {

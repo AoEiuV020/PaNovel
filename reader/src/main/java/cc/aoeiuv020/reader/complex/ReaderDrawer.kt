@@ -356,6 +356,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
 
     override fun scrollToPrev(): Boolean {
         val pages = pagesCache[chapterIndex]
+        if (pages != null && pageIndex < 0) {
+            // 负数转正，如果pages.size为0也无所谓了，
+            pageIndex = pages.lastIndex
+        }
         val prevPageIndex = pageIndex - 1
         if (pages != null && prevPageIndex in pages.indices) {
             pageIndex--

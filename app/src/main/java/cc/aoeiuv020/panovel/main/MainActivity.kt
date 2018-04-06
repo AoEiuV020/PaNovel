@@ -26,6 +26,7 @@ import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.local.Check
+import cc.aoeiuv020.panovel.local.DevMessage
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         Check.asyncCheckVersion(this)
+        DevMessage.asyncShowMessage(this)
 
         setSupportActionBar(toolbar)
 

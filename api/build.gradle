@@ -7,7 +7,7 @@ dependencies {
     implementation "org.slf4j:slf4j-api:$slf4j_version"
     testImplementation "org.slf4j:slf4j-simple:$slf4j_version"
     api "org.jsoup:jsoup:$jsoup_version"
-    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation "com.google.code.gson:gson:$gson_version"
 }
 
 sourceCompatibility = "1.7"
