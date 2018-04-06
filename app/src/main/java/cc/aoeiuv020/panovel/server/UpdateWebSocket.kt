@@ -26,7 +26,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
- *
+ * 相当混乱，有生之年重构，
  * Created by AoEiuV020 on 2018.04.06-10:08:52.
  */
 class UpdateWebSocket(
