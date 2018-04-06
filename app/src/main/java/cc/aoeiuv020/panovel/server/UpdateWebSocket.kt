@@ -21,6 +21,7 @@ import org.jetbrains.anko.error
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -32,7 +33,7 @@ class UpdateWebSocket(
     private val queryIdsService = QueryIdsService()
     private val map: MutableMap<Int, NovelItem> = mutableMapOf()
     private val listener = Listener()
-    private val serverInfo = ServerInfo()
+    private var serverInfo = ServerInfo()
     private var giveUp: Boolean = false
     private var retryCount: Int = 0
     private var isRunning = false
@@ -91,9 +92,19 @@ class UpdateWebSocket(
             service.stopSelf()
             return
         }
-        // TODO: 先从github拿自己服务器地址，
-        serverInfo.baseSite = "192.168.1.10:8080"
-        connecting()
+        asyncExecutor.execute {
+            try {
+                this@UpdateWebSocket.serverInfo = Jsoup.connect(ServerInfo.SERVER_INFO_ON_GITHUB)
+                        .timeout(TimeUnit.SECONDS.toMillis(10).toInt())
+                        .execute()
+                        .body()
+                        .toBean()
+            } catch (e: Exception) {
+                error("query server info,", e)
+                // 从github拿配置失败就试试默认，
+            }
+            connecting()
+        }
     }
 
     fun connecting() {
