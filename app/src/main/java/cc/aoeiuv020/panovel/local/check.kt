@@ -114,11 +114,8 @@ object Check : BaseLocalSource(), AnkoLogger {
             }.show()
 
         }, { e ->
-            ctx.alert {
-                title = "检测更新失败"
-                message = e.message.toString()
-                yesButton { }
-            }.show()
+            val errorMessage = "检测更新失败"
+            error(errorMessage, e)
         })
     }
 
