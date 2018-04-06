@@ -12,6 +12,7 @@ import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.*
 import org.jsoup.Jsoup
+import java.io.BufferedReader
 import java.net.URL
 import java.util.regex.Pattern
 
@@ -20,6 +21,7 @@ import java.util.regex.Pattern
  * Created by AoEiuV020 on 2018.03.25-04:00:29.
  */
 object Check : BaseLocalSource(), AnkoLogger {
+    private var cachedVersionName: String by PrimitiveDelegate("0")
     private const val CHANGE_LOG_URL = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/master/app/src/main/assets/ChangeLog.txt"
     private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
     private var knownVersionName: String by PrimitiveDelegate("0")
@@ -35,22 +37,35 @@ object Check : BaseLocalSource(), AnkoLogger {
         ).first().text()
     }
 
-    private fun getChangeLog(currentVersionName: String): String {
-        val pattern = Pattern.compile("([0-9.]*):")
+    private fun getChangeLogFromAssert(ctx: Context, fromVersion: String): String {
         return try {
-            URL(CHANGE_LOG_URL).openStream().bufferedReader().useLines {
-                it.takeWhile {
-                    try {
-                        val (versionName) = it.pick(pattern)
-                        VersionUtil.compare(versionName, currentVersionName) > 0
-                    } catch (_: Exception) {
-                        true
-                    }
-                }.joinToString("\n")
-            }
+            ctx.assets.open("ChangeLog.txt").bufferedReader().cutChangeLog(fromVersion)
+        } catch (e: Exception) {
+            val message = "剪取更新日志失败，\n"
+            message + e.message
+        }
+    }
+
+    private fun getChangeLog(currentVersionName: String): String {
+        return try {
+            URL(CHANGE_LOG_URL).openStream().bufferedReader().cutChangeLog(currentVersionName)
         } catch (e: Exception) {
             val message = "获取更新日志失败，\n"
             message + e.message
+        }
+    }
+
+    private fun BufferedReader.cutChangeLog(fromVersion: String): String {
+        val pattern = Pattern.compile("([0-9.]*):")
+        return useLines {
+            it.takeWhile {
+                try {
+                    val (versionName) = it.pick(pattern)
+                    VersionUtil.compare(versionName, fromVersion) > 0
+                } catch (_: Exception) {
+                    true
+                }
+            }.joinToString("\n")
         }
     }
 
@@ -61,14 +76,27 @@ object Check : BaseLocalSource(), AnkoLogger {
             val newestVersionName = getNewestVersionName()
             val hasUpdate = VersionUtil.compare(newestVersionName, currentVersionName) > 0
                     && VersionUtil.compare(newestVersionName, knownVersionName) > 0
-            if (hasUpdate) {
-                val changeLog = getChangeLog(currentVersionName)
-                listOf(hasUpdate, changeLog, newestVersionName)
-            } else {
-                listOf(hasUpdate, "", "0")
+            when {
+                hasUpdate -> {
+                    val changeLog = getChangeLog(currentVersionName)
+                    listOf(hasUpdate, changeLog, newestVersionName)
+                }
+                VersionUtil.compare(currentVersionName, cachedVersionName) > 0 -> {
+                    val changeLog = getChangeLogFromAssert(ctx, cachedVersionName)
+                    cachedVersionName = currentVersionName
+                    listOf(hasUpdate, changeLog, newestVersionName)
+                }
+                else -> listOf(hasUpdate, "", "0")
             }
         }.async().subscribe({ (hasUpdate, changeLog, newestVersionName) ->
             if (!(hasUpdate as Boolean)) {
+                if ((changeLog as String).isNotEmpty()) {
+                    ctx.alert {
+                        title = "已更新"
+                        message = changeLog
+                        yesButton { }
+                    }.show()
+                }
                 return@subscribe
             }
             ctx.alert {
