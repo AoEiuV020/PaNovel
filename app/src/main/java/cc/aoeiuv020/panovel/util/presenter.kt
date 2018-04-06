@@ -47,6 +47,7 @@ val asyncExecutor = object : Executor {
 }
 
 fun <T : Any?> Observable<T>.async(): Observable<T> = this
+        // TODO: 这个schedule可以重用，
         .subscribeOn(Schedulers.from(asyncExecutor))
         .observeOn(AndroidSchedulers.mainThread())
 

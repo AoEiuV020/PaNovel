@@ -1,3 +1,11 @@
+# 和服务器端交互用的pojo需要gson序列化，不混淆，
+-keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.MobRequest { <fields>; }
+-keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.MobResponse { <fields>; }
+-keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.autogen.Novel { <fields>; }
+-keepclassmembers class cc.aoeiuv020.panovel.server.Action { <fields>; }
+-keepclassmembers class cc.aoeiuv020.panovel.server.RequestMessage { <fields>; }
+-keepclassmembers class cc.aoeiuv020.panovel.server.ResponseMessage { <fields>; }
+-keepclassmembers class * extends cc.aoeiuv020.panovel.server.ServerData { <fields>; }
 
 
 # 需要用gson序列化的类成员不混淆，

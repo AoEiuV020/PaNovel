@@ -50,6 +50,7 @@ open class Requester(val extra: String) {
         }
     }
 
+    val type: String get() = this.javaClass.name
     open val url get() = extra
     open fun connect(): Connection = Jsoup.connect(url).maxBodySize(0)
     override fun toString() = "${this.javaClass.simpleName}(url=$url)"
