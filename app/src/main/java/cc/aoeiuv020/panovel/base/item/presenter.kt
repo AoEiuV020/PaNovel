@@ -1,12 +1,15 @@
 package cc.aoeiuv020.panovel.base.item
 
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.Presenter
+import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Progress
 import cc.aoeiuv020.panovel.local.bookId
+import cc.aoeiuv020.panovel.server.UpdateManager
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
@@ -32,8 +35,7 @@ abstract class BaseItemListPresenter<V : BaseItemListView, out T : SmallItemPres
 
 abstract class DefaultItemListPresenter<V : BaseItemListView>
     : BaseItemListPresenter<V, DefaultItemPresenter>() {
-    override fun subPresenter(): DefaultItemPresenter
-            = DefaultItemPresenter(this)
+    override fun subPresenter(): DefaultItemPresenter = DefaultItemPresenter(this)
 }
 
 class DefaultItemPresenter(itemListPresenter: BaseItemListPresenter<*, *>)
@@ -60,15 +62,32 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
     }
 
     fun requestChapters(detail: NovelDetail) {
-        Observable.fromCallable {
+        Observable.create<Pair<List<NovelChapter>, Int>> { em ->
             // 还有其他地方有requestChapters，所以多加个后缀，
             suffixThreadName("requestChaptersItem")
             val novelItem = detail.novel
+            val progress = Progress.load(novelItem).chapter
+            val cachedChapters = Cache.chapters.get(novelItem)?.let {
+                em.onNext(Pair(it, progress))
+                it
+            }
             val chapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
                     ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
                             .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
-            val progress = Progress.load(novelItem).chapter
-            Pair(chapters, progress)
+            em.onNext(Pair(chapters, progress))
+            // 如果存在update时间字段就对比这个，否则对比长度，
+            fun List<NovelChapter>.newerThan(other: List<NovelChapter>): Boolean {
+                return last().update?.let { thisUpdate ->
+                    other.last().update?.let { otherUpdate ->
+                        thisUpdate > otherUpdate
+                    } ?: false
+                } ?: (size > other.size)
+            }
+            if (cachedChapters != null
+                    && chapters.newerThan(cachedChapters)) {
+                UpdateManager.uploadUpdate(App.ctx, novelItem, chapters.size, chapters.last().update)
+            }
+            em.onComplete()
         }.async().subscribe({ (chapters, progress) ->
             view?.showChapter(chapters, progress)
         }, { e ->

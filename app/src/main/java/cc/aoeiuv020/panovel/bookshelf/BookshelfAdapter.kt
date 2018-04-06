@@ -77,6 +77,10 @@ class BookshelfItemViewHolder(itemListPresenter: BookshelfPresenter, ctx: Contex
 
     override fun showUpdateTime(updateTime: Date?) {
         super.showUpdateTime(updateTime)
+        showNewChapterDot()
+    }
+
+    override fun showNewChapterDot() {
         val s = Settings.bookshelfRedDotNotifyNotReadOrNewChapter
         if (s) {
             if (updateTime?.time ?: 0 > novelHistory.date.time) {

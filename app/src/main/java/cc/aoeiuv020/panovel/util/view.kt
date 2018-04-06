@@ -99,13 +99,16 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.show()
 
-fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground) {
+fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
     val channelId = "channel_default"
     val name = "default"
     val nb = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(text)
             .setAutoCancel(true)
+    time?.let {
+        nb.setWhen(it)
+    }
     nb.apply {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             setLargeIcon(getBitmapFromVectorDrawable(icon))
