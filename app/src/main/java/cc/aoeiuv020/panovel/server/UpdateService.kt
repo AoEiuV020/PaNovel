@@ -21,6 +21,10 @@ class UpdateService : Service(), AnkoLogger {
         fun start(context: Context) {
             context.startService<UpdateService>()
         }
+
+        fun stop(context: Context) {
+            context.stopService(Intent(context, UpdateService::class.java))
+        }
     }
 
     private val webSocket = UpdateWebSocket(this)

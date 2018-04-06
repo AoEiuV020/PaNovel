@@ -9,6 +9,7 @@ class ServerInfo {
         const val SERVER_INFO_ON_GITHUB = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/static/static/serverInfo.json"
     }
 
+    var minVersion: String = "0"
     var baseSite: String = "panovel.aoeiuv020.cc"
     var updateWebSocketAddress: String = "ws://$baseSite/ws/update"
     var queryIdsAddress: String = "http://$baseSite/bookshelf/queryIds"

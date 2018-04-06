@@ -4,6 +4,7 @@ import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.check.VersionUtil
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.BookshelfModifyListener
 import cc.aoeiuv020.panovel.local.Cache
@@ -18,6 +19,7 @@ import okhttp3.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
+import org.jetbrains.anko.info
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import java.util.*
@@ -34,7 +36,7 @@ class UpdateWebSocket(
     private val map: MutableMap<Int, NovelItem> = mutableMapOf()
     private val listener = Listener()
     private var serverInfo = ServerInfo()
-    private var giveUp: Boolean = false
+    private var isGiveUp: Boolean = false
     private var retryCount: Int = 0
 
     /**
@@ -75,6 +77,17 @@ class UpdateWebSocket(
         }
     }
 
+    private fun giveUp(message: String, t: Throwable?) {
+        error(message, t)
+        giveUp()
+    }
+
+    private fun giveUp() {
+        info { "giveUp" }
+        isGiveUp = true
+        service.stopSelf()
+    }
+
     /**
      * 开始连接前，准备建立连接，
      * 连接断开后回到这里，
@@ -84,9 +97,9 @@ class UpdateWebSocket(
         retryCount++
         // 这个5,上下浮动1也无所谓了，
         if (retryCount > 5) {
-            giveUp = true
+            isGiveUp = true
         }
-        if (giveUp) {
+        if (isGiveUp) {
             service.stopSelf()
             return
         }
@@ -101,6 +114,12 @@ class UpdateWebSocket(
                 error("query server info,", e)
                 // 从github拿配置失败就试试默认，
             }
+            val currentVersionName = VersionUtil.getAppVersionName(service)
+            if (VersionUtil.compare(currentVersionName, serverInfo.minVersion) < 0) {
+                info { "版本太低，不提供服务器支持，" }
+                giveUp()
+                return@execute
+            }
             connecting()
         }
     }
@@ -108,15 +127,14 @@ class UpdateWebSocket(
     private fun connecting() {
         val wsUrl = serverInfo.updateWebSocketAddress
         debug { "connecting $wsUrl" }
-        val client = OkHttpClient()
         val request = try {
             Request.Builder().url(wsUrl).build()
         } catch (e: IllegalArgumentException) {
             error(e)
-            giveUp = true
-            beforeConnect()
+            giveUp()
             return
         }
+        val client = OkHttpClient()
         webSocket = client.newWebSocket(request, listener)
     }
 
@@ -129,8 +147,7 @@ class UpdateWebSocket(
         val ids = try {
             queryIdsService.queryIds(novelItems.map { it.requester })
         } catch (e: Exception) {
-            failure("query ids failed", e)
-            giveUp = true
+            giveUp("query ids failed", e)
             return
         }
         ids.zip(novelItems).toMap(map)
