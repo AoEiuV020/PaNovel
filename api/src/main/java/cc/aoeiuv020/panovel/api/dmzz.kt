@@ -118,9 +118,13 @@ class Dmzz : NovelContext() {
             } else {
                 "http://q.dmzj.com" + it
             }
-            request(url).select("p").dropLastWhile { it.className() == "zlist" }.map {
-                it.text().trim()
-            }.filter(String::isNotBlank)
+            request(url).select("p")
+                    .dropLastWhile { it.className() == "zlist" }
+                    .flatMap {
+                        // 有的只有一个p，
+                        // http://q.dmzj.com/2013/7335/54663.shtml
+                        it.textList()
+                    }
         }.reduce { acc, list ->
             acc + list
         }
