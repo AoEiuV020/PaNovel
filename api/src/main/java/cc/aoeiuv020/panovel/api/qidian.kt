@@ -143,7 +143,7 @@ class Qidian : NovelContext() {
                 val name = a.text()
                 val url = a.absHref()
                 val mid = it.select("> div.book-mid-info").first()
-                val author = mid.select("> p.author > a.name").first().text()
+                val author = mid.select("> p.author").first().child(1).text()
                 val genre = mid.select("> p.author > a:nth-child(4)").first().text()
                 val status = mid.select("> p.author > span").first().text()
                 val introduction = mid.select("> p.intro").first().text().trim()
@@ -153,6 +153,7 @@ class Qidian : NovelContext() {
                 val recommend = right.select("> div > p:nth-child(2) > span").first().text()
                 val click = right.select("> div > p:nth-child(3) > span").first().text()
                 val info = "类型: $genre 更新: $update 状态: $status 长度: $length 推荐: $recommend 点击: $click 简介: $introduction"
+                logger.debug { "result $name.$author" }
                 NovelListItem(NovelItem(this, name, author, url), info)
             }
         } else root.select("body > div.wrap > div.all-pro-wrap.box-center.cf > div.main-content-wrap.fl > div.all-book-list > div > ul > li").map {

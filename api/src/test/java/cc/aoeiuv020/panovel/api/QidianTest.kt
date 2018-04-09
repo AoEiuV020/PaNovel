@@ -69,12 +69,12 @@ class QidianTest {
 
     @Test
     fun searchNovelName() {
-        context.getNovelList(context.searchNovelName("我是女皇的随身铠甲").requester).let {
+        context.getNovelList(context.searchNovelName("恐怖广播").requester).let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "我是女皇的随身铠甲"
+                novelItem.novel.name == "恐怖广播"
             })
         }
     }
