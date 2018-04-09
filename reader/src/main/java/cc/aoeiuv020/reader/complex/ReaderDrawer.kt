@@ -11,6 +11,9 @@ import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.ReaderConfigName.*
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -291,25 +294,26 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
         requestingList.add(requestIndex)
         debug { "$this lazyRequest $requestIndex, refresh = $refresh" }
-        requester.lazyRequest(requestIndex, refresh)
-                .subscribe({ text ->
-                    val pages = typesetting(reader.chapterList[requestIndex].name, text)
-                    pagesCache.put(requestIndex, pages)
-                    requestingList.remove(requestIndex)
-                    debug { "request result $requestIndex == $chapterIndex" }
-                    if (requestIndex == chapterIndex) {
-                        pager?.refresh()
-                    }
-                }, {
-                    val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex].name}"
-                    error { message }
-                    // 缓存空的页面，到时候显示本章空内容，
-                    pagesCache.put(requestIndex, listOf())
-                    requestingList.remove(requestIndex)
-                    if (requestIndex == chapterIndex) {
-                        pager?.refresh()
-                    }
-                })
+        Single.fromCallable {
+            val text = requester.request(requestIndex, refresh)
+            val pages = typesetting(reader.chapterList[requestIndex].name, text)
+            pagesCache.put(requestIndex, pages)
+            requestingList.remove(requestIndex)
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            debug { "request result $requestIndex == $chapterIndex" }
+            if (requestIndex == chapterIndex) {
+                pager?.refresh()
+            }
+        }, {
+            val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex].name}"
+            error { message }
+            // 缓存空的页面，到时候显示本章空内容，
+            pagesCache.put(requestIndex, listOf())
+            requestingList.remove(requestIndex)
+            if (requestIndex == chapterIndex) {
+                pager?.refresh()
+            }
+        })
     }
 
     private fun typesetting(chapter: String, text: Text): List<Page> {
