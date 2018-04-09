@@ -55,7 +55,6 @@ class BookshelfFragment : Fragment(), BaseItemListView {
 
     override fun onStart() {
         super.onStart()
-        UpdateService.start(requireContext())
         if (shouldForceRefresh && Settings.bookshelfAutoRefresh) {
             forceRefresh()
         } else {
