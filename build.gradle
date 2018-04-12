@@ -5,7 +5,7 @@ buildscript {
         compile_version = 27
         min_version = 16
         target_version = 25
-        support_version = '27.1.0'
+        support_version = '27.1.1'
         kotlin_version = '1.2.30'
         anko_version = '0.10.1'
         junit_version = '4.12'
