@@ -1,5 +1,6 @@
 # 和服务器端交互用的pojo需要gson序列化，不混淆，
 -keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.** { <fields>; }
+-keepclassmembers class cc.aoeiuv020.panovel.server.ServerAddress { <fields>; }
 
 
 # 需要用gson序列化的类成员不混淆，
