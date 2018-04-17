@@ -63,6 +63,7 @@ object UpdateManager : AnkoLogger {
             if (cachedChapters != null
                     && novel.run { updateTime to chaptersCount }.newerThan(cachedChapters)) {
                 val novelContext = NovelContext.getNovelContextByUrl(novelItem.requester.url)
+                // TODO: 这里考虑加入失败重试，毕竟只有一次机会，服务器知道了更新就不会推第二次，
                 val detail = novelContext.getNovelDetail(novelItem.requester)
                 val chapters = novelContext.getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
                 if (chapters.run { last().update to size }.newerThan(cachedChapters)) {
