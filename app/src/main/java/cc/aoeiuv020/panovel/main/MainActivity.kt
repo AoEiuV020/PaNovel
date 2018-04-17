@@ -25,12 +25,20 @@ import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
+import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Check
 import cc.aoeiuv020.panovel.local.DevMessage
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
+import cc.aoeiuv020.panovel.server.UpdateManager
+import cc.aoeiuv020.panovel.server.common.md5
+import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
+import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
+import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
+import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
 import cc.aoeiuv020.panovel.settings.SettingsActivity
+import cc.aoeiuv020.panovel.util.asyncExecutor
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_main.*
@@ -42,10 +50,8 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.yesButton
+import org.jetbrains.anko.*
+import java.util.concurrent.atomic.AtomicInteger
 
 
 /**
@@ -72,6 +78,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         DevMessage.asyncShowMessage(this)
 
         setSupportActionBar(toolbar)
+
+        JPushTagReceiver.register(this, tagReceiver)
 
         progressDialog = ProgressDialog(this)
 
@@ -119,7 +127,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             ad_view.loadAd(App.adRequest)
         }
 
-        if (!isTaskRoot) {
+        if (isTaskRoot) {
+            // 只在第一个activity初始化这个负责上传更新的，
+            UpdateManager.create(this)
+        } else {
             // 避免多开，
             // 初始化完了再退出，否则可能崩溃，
             finish()
@@ -187,7 +198,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onDestroy() {
+        JPushTagReceiver.unregister(this, tagReceiver)
         ad_view.destroy()
+        if (isTaskRoot) {
+            UpdateManager.destroy(this)
+        }
         super.onDestroy()
     }
 
@@ -224,6 +239,31 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }.show()
     }
 
+    private val sequence: AtomicInteger = AtomicInteger()
+    private val tagReceiver: JPushTagReceiver = JPushTagReceiver.create { jPushMessage, tagAliasBean ->
+        val message = "成功订阅当前书架<${jPushMessage.tags.size}>本，"
+        info { message }
+        toast(message)
+    }
+
+    private fun subscript() {
+        // 初始化，其中有用到Handler，要在主线程初始化，
+        TagAliasOperatorHelper.getInstance()
+        asyncExecutor.execute {
+            val bean = TagAliasBean()
+            bean.action = TagAliasOperatorHelper.ACTION_SET
+            bean.tags = Bookshelf.list().map {
+                it.requester.run {
+                    Novel().apply {
+                        requesterType = type
+                        requesterExtra = extra
+                    }.md5()
+                }
+            }.toSet()
+            TagAliasOperatorHelper.getInstance().handleAction(this, sequence.getAndIncrement(), bean)
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         data?.extras?.getString("SCAN_RESULT")?.let {
             OpenManager.open(this, it)
@@ -241,6 +281,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             R.id.search -> FuzzySearchActivity.start(this)
             R.id.scan -> scan()
             R.id.open -> open()
+            R.id.subscript -> subscript()
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)

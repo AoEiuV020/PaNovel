@@ -163,6 +163,8 @@
     <string name="picker">选择器</string>
     <string name="colorARGB">颜色ARGB</string>
     <string name="subscribe_novel_update">小说更新提醒</string>
+    <string name="push">推送</string>
+    <string name="subscript">订阅</string>
 
 
 </resources>

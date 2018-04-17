@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.local.PrimarySettings
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.ignoreException
+import cn.jpush.android.api.JPushInterface
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
@@ -56,6 +57,15 @@ class App : Application(), AnkoLogger {
         initAdmob()
 
         initBugly()
+
+        if (Settings.subscribeNovelUpdate) {
+            initJpush()
+        }
+    }
+
+    private fun initJpush() {
+        JPushInterface.setDebugMode(BuildConfig.DEBUG)
+        JPushInterface.init(ctx)
     }
 
     private fun checkBaseFile() {

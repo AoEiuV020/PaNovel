@@ -1,11 +1,5 @@
 # 和服务器端交互用的pojo需要gson序列化，不混淆，
--keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.MobRequest { <fields>; }
--keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.MobResponse { <fields>; }
--keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.autogen.Novel { <fields>; }
--keepclassmembers class cc.aoeiuv020.panovel.server.Action { <fields>; }
--keepclassmembers class cc.aoeiuv020.panovel.server.RequestMessage { <fields>; }
--keepclassmembers class cc.aoeiuv020.panovel.server.ResponseMessage { <fields>; }
--keepclassmembers class * extends cc.aoeiuv020.panovel.server.ServerData { <fields>; }
+-keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.** { <fields>; }
 
 
 # 需要用gson序列化的类成员不混淆，
@@ -74,6 +68,15 @@
 -keepnames class * implements android.os.Parcelable {
    public static final ** CREATOR;
 }
+
+# jpush, https://docs.jiguang.cn/jpush/client/Android/android_guide/
+-dontoptimize
+-dontpreverify
+-dontwarn cn.jpush.**
+-keep class cn.jpush.** { *; }
+-keep class * extends cn.jpush.android.helpers.JPushMessageReceiver { *; }
+-dontwarn cn.jiguang.**
+-keep class cn.jiguang.** { *; }
 
 
 #apk 包内所有 class 的内部结构

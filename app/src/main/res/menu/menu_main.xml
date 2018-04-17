@@ -22,6 +22,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/subscript"
+        android:title="@string/subscript"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/settings"
         android:title="@string/settings"
         app:showAsAction="never" />
