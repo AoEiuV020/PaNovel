@@ -1,6 +1,6 @@
 {
-    "minVersion": "12.1.1",
-    "baseSite": "panovel.aoeiuv020.cc",
-    "updateWebSocketAddress": "ws://panovel.aoeiuv020.cc/ws/update",
-    "queryIdsAddress": "http://panovel.aoeiuv020.cc/bookshelf/queryIds"
+  "minVersion": "2.1.2",
+  "data": {
+    "updateUploadUrl": "http://panovel.aoeiuv020.cc/update/upload"
+  }
 }
