@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.local.PrimarySettings
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.ignoreException
+import cc.aoeiuv020.panovel.util.ssl.TLSSocketFactory
 import cn.jpush.android.api.JPushInterface
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
@@ -44,6 +45,10 @@ class App : Application(), AnkoLogger {
         ctx = applicationContext
 
         checkBaseFile()
+
+        // android4连接https可能抛SSLHandshakeException，
+        // 是tls1.2没有启用，
+        TLSSocketFactory.makeDefault()
 
         // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
         // 还有ContextCompat.getDrawable也不行，
