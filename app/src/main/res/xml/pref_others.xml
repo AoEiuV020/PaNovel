@@ -8,9 +8,11 @@
         android:key="book_list_share_expiration"
         android:title="@string/book_list_share_expiration" />
 
-    <cc.aoeiuv020.panovel.settings.SwitchPreference
-        android:key="subscribe_novel_update"
-        android:title="@string/subscribe_novel_update" />
+    <!--
+        <cc.aoeiuv020.panovel.settings.SwitchPreference
+            android:key="subscribe_novel_update"
+            android:title="@string/subscribe_novel_update" />
+    -->
 
     <cc.aoeiuv020.panovel.settings.SwitchPreference
         android:key="report_crash"

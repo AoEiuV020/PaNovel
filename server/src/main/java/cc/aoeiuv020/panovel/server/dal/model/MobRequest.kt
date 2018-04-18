@@ -1,7 +1,5 @@
 package cc.aoeiuv020.panovel.server.dal.model
 
-import cc.aoeiuv020.panovel.local.toBean
-
 
 /**
  *
@@ -9,9 +7,4 @@ import cc.aoeiuv020.panovel.local.toBean
  */
 class MobRequest(
         val data: String = "{}"
-) {
-    inline fun <reified T> getRealData(): T {
-        return data.toBean()
-    }
-
-}
+)

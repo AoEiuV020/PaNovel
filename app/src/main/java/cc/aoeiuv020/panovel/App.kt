@@ -5,10 +5,12 @@ import android.app.Application
 import android.content.Context
 import android.provider.Settings.Secure
 import android.support.v7.app.AppCompatDelegate
+import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.local.PrimarySettings
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.util.ignoreException
+import cn.jpush.android.api.JPushInterface
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
@@ -44,6 +46,10 @@ class App : Application(), AnkoLogger {
 
         checkBaseFile()
 
+        // android4连接https可能抛SSLHandshakeException，
+        // 是tls1.2没有启用，
+        TLSSocketFactory.makeDefault()
+
         // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
         // 还有ContextCompat.getDrawable也不行，
         // it's not a BUG, it's a FEATURE,
@@ -56,6 +62,15 @@ class App : Application(), AnkoLogger {
         initAdmob()
 
         initBugly()
+
+        if (Settings.subscribeNovelUpdate) {
+            initJpush()
+        }
+    }
+
+    private fun initJpush() {
+        JPushInterface.setDebugMode(BuildConfig.DEBUG)
+        JPushInterface.init(ctx)
     }
 
     private fun checkBaseFile() {

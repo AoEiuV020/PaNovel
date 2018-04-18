@@ -11,7 +11,6 @@ import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.main.MainActivity
-import cc.aoeiuv020.panovel.server.UpdateService
 import kotlinx.android.synthetic.main.novel_item_list.*
 
 /**
@@ -29,8 +28,7 @@ class BookshelfFragment : Fragment(), BaseItemListView {
     private var shouldForceRefresh = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.novel_item_list, container, false)
+                              savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.novel_item_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

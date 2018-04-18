@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.base.item
 
-import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
@@ -76,6 +75,7 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
                             .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
             em.onNext(Pair(chapters, progress))
             // 如果存在update时间字段就对比这个，否则对比长度，
+            // 有可能更新后长度不变，甚至变少，这种无视，
             fun List<NovelChapter>.newerThan(other: List<NovelChapter>): Boolean {
                 return last().update?.let { thisUpdate ->
                     other.last().update?.let { otherUpdate ->
@@ -85,7 +85,7 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
             }
             if (cachedChapters != null
                     && chapters.newerThan(cachedChapters)) {
-                UpdateManager.uploadUpdate(App.ctx, novelItem, chapters.size, chapters.last().update)
+                UpdateManager.uploadUpdate(novelItem.requester, chapters.size, chapters.last().update)
             }
             em.onComplete()
         }.async().subscribe({ (chapters, progress) ->

@@ -253,8 +253,18 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             // 画电池头部那个小点，
             messagePaint.style = Paint.Style.FILL
             canvas.drawRect(RectF(x + textWidth, y - textHeight / 4 * 3, x + textWidth + textWidth / 15, y - textHeight / 4 * 1), messagePaint)
+
+            val a = 0.1f
+            val bX = x + textWidth * a
+            val bY = y - textHeight * a
+            val mSize = messagePaint.textSize
+            val bSize = mSize * (1 - 2 * a)
+            messagePaint.textSize = bSize
+            canvas.drawText(text, bX, bY, messagePaint)
+            messagePaint.textSize = mSize
+        } else {
+            canvas.drawText(text, x, y, messagePaint)
         }
-        canvas.drawText(text, x, y, messagePaint)
     }
 
     private fun drawContent(content: Canvas, page: Page) {

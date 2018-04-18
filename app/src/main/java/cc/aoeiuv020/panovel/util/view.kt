@@ -4,6 +4,7 @@ package cc.aoeiuv020.panovel.util
 
 import android.app.Activity
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Bitmap
@@ -20,11 +21,13 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.main.MainActivity
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.cancelButton
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.yesButton
 
 
@@ -99,10 +102,13 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
         }.show()
 
 fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
+    val intent = intentFor<MainActivity>()
+    val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
     val nb = NotificationCompat.Builder(this)
             .setContentTitle(title)
             .setContentText(text)
             .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
     time?.let {
         nb.setWhen(it)
     }

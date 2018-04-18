@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api
 
+import cc.aoeiuv020.base.jar.pick
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken

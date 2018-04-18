@@ -142,7 +142,7 @@
     <string name="full_screen_click_next_page">全屏点击翻下页</string>
     <string name="volume_key_scroll">音量键翻页</string>
     <string name="unknown">unknown</string>
-    <string name="center_percent">中心百分比</string>
+    <string name="center_percent">中心比例</string>
     <string name="time">时间</string>
     <string name="battery">电池</string>
     <string name="pagination">页码</string>
@@ -163,6 +163,8 @@
     <string name="picker">选择器</string>
     <string name="colorARGB">颜色ARGB</string>
     <string name="subscribe_novel_update">小说更新提醒</string>
+    <string name="push">推送</string>
+    <string name="subscript">订阅</string>
 
 
 </resources>
