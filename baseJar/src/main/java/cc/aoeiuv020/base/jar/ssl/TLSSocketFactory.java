@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.util.ssl;
+package cc.aoeiuv020.base.jar.ssl;
 
 
 import java.io.IOException;

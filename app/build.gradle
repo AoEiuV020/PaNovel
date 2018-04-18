@@ -86,6 +86,7 @@ dependencies {
     implementation project(':server')
     implementation 'cn.jiguang.sdk:jpush:3.1.2'
     implementation 'cn.jiguang.sdk:jcore:1.2.0'
+    implementation project(':baseJar')
 }
 
 

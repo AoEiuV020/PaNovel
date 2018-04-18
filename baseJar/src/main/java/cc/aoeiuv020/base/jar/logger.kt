@@ -1,9 +1,8 @@
 @file:Suppress("unused")
 
-package cc.aoeiuv020.panovel.server.common
+package cc.aoeiuv020.base.jar
 
 import org.slf4j.Logger
-import java.util.regex.Pattern
 
 /**
  * 定义一系列拓展，
@@ -44,16 +43,5 @@ inline fun Logger.error(message: () -> Any?) {
 inline fun Logger.error(e: Throwable, message: () -> Any?) {
     if (isErrorEnabled) {
         error(message().toString(), e)
-    }
-}
-
-fun String.pick(pattern: Pattern): List<String> {
-    val matcher = pattern.matcher(this)
-    return if (matcher.find()) {
-        List(matcher.groupCount()) {
-            matcher.group(it + 1)
-        }
-    } else {
-        throw IllegalStateException("not match <$this, $pattern>")
     }
 }

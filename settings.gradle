@@ -1,1 +1,1 @@
-include ':app', ':RefreshRecyclerView', ':api', ':pager', ':pagertest', ':server', 'reader', ':JPushExample'
+include ':app', ':RefreshRecyclerView', ':api', ':pager', ':pagertest', ':server', ':baseJar', 'reader'

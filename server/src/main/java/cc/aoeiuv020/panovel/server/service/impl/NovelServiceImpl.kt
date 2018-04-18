@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.server.service.impl
 
+import cc.aoeiuv020.base.jar.info
 import cc.aoeiuv020.panovel.server.ServerAddress
-import cc.aoeiuv020.panovel.server.common.info
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.common.toJson
 import cc.aoeiuv020.panovel.server.dal.model.MobRequest

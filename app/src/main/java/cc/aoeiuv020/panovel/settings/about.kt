@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.pick
 import kotlinx.android.synthetic.main.content_about.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.browse
