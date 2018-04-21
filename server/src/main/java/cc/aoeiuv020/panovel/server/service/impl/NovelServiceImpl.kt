@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.server.service.impl
 
-import cc.aoeiuv020.base.jar.info
+import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.common.toJson
@@ -12,6 +12,7 @@ import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.lang.IllegalStateException
 import java.util.concurrent.TimeUnit
 
 /**
@@ -20,10 +21,10 @@ import java.util.concurrent.TimeUnit
  */
 class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService {
     private val logger: Logger = LoggerFactory.getLogger(NovelServiceImpl::class.java.simpleName)
-    override fun uploadUpdate(novel: Novel): Boolean {
-        logger.info { "uploadUpdate ${novel.requesterExtra}: ${novel.updateTime}" }
-        val mobRequest = MobRequest(novel.toJson())
-        val response: MobResponse = Jsoup.connect(serverAddress.updateUploadUrl)
+
+    private inline fun <reified T> post(url: String, any: Any): T {
+        val mobRequest = MobRequest(any.toJson())
+        val response: MobResponse = Jsoup.connect(url)
                 .timeout(TimeUnit.SECONDS.toMillis(10).toInt())
                 .header("Content-type", "application/json")
                 .ignoreContentType(true)
@@ -32,10 +33,30 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
                 .execute()
                 .body()
                 .toBean()
-        return response.isSuccess() && response.getRealData()
+        if (!response.isSuccess()) {
+            // 只能说可能是上传的参数不对，
+            throw IllegalStateException("请求失败，")
+        }
+        return response.getRealData()
     }
 
-    override fun toString(): String {
-        return serverAddress.updateUploadUrl
+    override fun uploadUpdate(novel: Novel): Boolean {
+        logger.debug { "uploadUpdate ${novel.requesterExtra}: ${novel.updateTime}" }
+        return post(serverAddress.updateUploadUrl, novel)
+    }
+
+    override fun needRefreshNovelList(count: Int): List<Novel> {
+        logger.debug { "needRefreshNovelList count = $count" }
+        return post(serverAddress.needRefreshNovelListUrl, count)
+    }
+
+    override fun query(novel: Novel): Novel {
+        logger.debug { "query $novel" }
+        return post(serverAddress.queryUrl, novel)
+    }
+
+    override fun touch(novel: Novel): Boolean {
+        logger.debug { "touch $novel" }
+        return post(serverAddress.touchUrl, novel)
     }
 }

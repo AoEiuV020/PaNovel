@@ -66,6 +66,8 @@ public abstract class PageAnimation implements PagerAnimation {
 
         mViewWidth = mBackgroundWidth - (margins.getLeft() + margins.getRight()) * w / 100;
         if (mViewWidth < 1) mViewWidth = 1;
+
+
         mViewHeight = mBackgroundHeight - (margins.getTop() + margins.getBottom()) * h / 100;
         if (mViewHeight < 1) mViewHeight = 1;
 

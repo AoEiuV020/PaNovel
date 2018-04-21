@@ -83,6 +83,26 @@ object UpdateManager : AnkoLogger {
         })
     }
 
+    fun touch(requester: DetailRequester, chaptersCount: Int, updateTime: Date? = null) {
+        debug { "uploadUpdate ：${requester.extra}" }
+        novelService ?: return
+        Observable.fromCallable {
+            val novel = Novel().also {
+                it.requesterType = requester.type
+                it.requesterExtra = requester.extra
+                it.chaptersCount = chaptersCount
+                it.updateTime = updateTime
+                it.modifyTime = Date()
+            }
+            novelService?.touch(novel) ?: false
+        }.async().subscribe({
+            debug { "上传无更新返回 $it: ${requester.extra}" }
+        }, { e ->
+            error("上传无更新失败，", e)
+        })
+
+    }
+
     fun uploadUpdate(requester: DetailRequester, chaptersCount: Int, updateTime: Date? = null) {
         debug { "uploadUpdate ：${requester.extra}" }
         novelService ?: return
@@ -107,9 +127,7 @@ object UpdateManager : AnkoLogger {
         Observable.fromCallable {
             if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
                 debug { "debug mode," }
-                ServerAddress(
-                        data = mapOf("updateUploadUrl" to "http://192.168.1.10:8080/update/upload")
-                )
+                ServerAddress.getAndroidTest()
             } else {
                 ServerAddress.getOnline()
             }

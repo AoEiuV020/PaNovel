@@ -70,8 +70,9 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
                 em.onNext(Pair(it, progress))
                 it
             }
+            var fromCache = true
             val chapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
-                    ?: NovelContext.getNovelContextByUrl(novelItem.requester.url)
+                    ?: NovelContext.getNovelContextByUrl(novelItem.requester.url).also { fromCache = false }
                             .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
             em.onNext(Pair(chapters, progress))
             // 如果存在update时间字段就对比这个，否则对比长度，
@@ -86,6 +87,9 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
             if (cachedChapters != null
                     && chapters.newerThan(cachedChapters)) {
                 UpdateManager.uploadUpdate(novelItem.requester, chapters.size, chapters.last().update)
+            } else if (!fromCache) {
+                // 只是从缓存中拿出来的就不要上传了，
+                UpdateManager.touch(novelItem.requester, chapters.size, chapters.last().update)
             }
             em.onComplete()
         }.async().subscribe({ (chapters, progress) ->
