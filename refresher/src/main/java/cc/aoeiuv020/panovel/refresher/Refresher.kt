@@ -123,9 +123,9 @@ class Refresher {
                 } else {
                     detail.update
                 }
-            } ?: detail.update
+            } ?: detail.update.takeIf { it.time != 0L }
             val hasUpdate = chapters.size > novel.chaptersCount
-                    || updateTime > novel.updateTime
+                    || (updateTime != null && updateTime > novel.updateTime)
             novel.updateTime = updateTime
             novel.chaptersCount = chapters.size
             novel.modifyTime = Date()
