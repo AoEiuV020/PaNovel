@@ -8,12 +8,15 @@ import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Progress
 import cc.aoeiuv020.panovel.local.bookId
+import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.server.UpdateManager
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
+import org.jetbrains.anko.verbose
+import java.util.*
 
 /**
  *
@@ -62,6 +65,7 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
 
     fun requestChapters(detail: NovelDetail) {
         Observable.create<Pair<List<NovelChapter>, Int>> { em ->
+            // TODO: 这里真的非常糟糕了，
             // 还有其他地方有requestChapters，所以多加个后缀，
             suffixThreadName("requestChaptersItem")
             val novelItem = detail.novel
@@ -71,10 +75,36 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
                 it
             }
             var fromCache = true
-            val chapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
-                    ?: NovelContext.getNovelContextByUrl(novelItem.requester.url).also { fromCache = false }
-                            .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
-            em.onNext(Pair(chapters, progress))
+            val novel = UpdateManager.query(novelItem.requester)
+            verbose {
+                "向服务器查询结果 ${novel?.toJson()}"
+            }
+            // 如果存在update时间字段就对比这个，否则对比长度，
+            fun Pair<Date?, Int?>.newerThan(other: List<NovelChapter>): Boolean {
+                return first?.let { thisUpdate ->
+                    other.last().update?.let { otherUpdate ->
+                        thisUpdate > otherUpdate
+                    } ?: false
+                } ?: (second ?: 0 > other.size)
+            }
+
+            val refreshChapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
+            // 如果服务器告知有更新，就刷新，否则这个留空，
+            val chapters = if (refreshChapters == null ||
+                    (novel != null
+                            && cachedChapters != null
+                            && novel.run { updateTime to chaptersCount }.newerThan(cachedChapters))) {
+                debug {
+                    "${novelItem.name} 要更新，${cachedChapters?.size} -> ${novel?.chaptersCount}"
+                }
+                NovelContext.getNovelContextByUrl(novelItem.requester.url).also { fromCache = false }
+                        .getNovelChaptersAsc(detail.requester).also { Cache.chapters.put(novelItem, it) }
+            } else {
+                null
+            }
+            chapters?.let {
+                em.onNext(Pair(it, progress))
+            }
             // 如果存在update时间字段就对比这个，否则对比长度，
             // 有可能更新后长度不变，甚至变少，这种无视，
             fun List<NovelChapter>.newerThan(other: List<NovelChapter>): Boolean {
@@ -84,10 +114,12 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
                     } ?: false
                 } ?: (size > other.size)
             }
-            if (cachedChapters != null
+            if (chapters != null
+                    && cachedChapters != null
                     && chapters.newerThan(cachedChapters)) {
                 UpdateManager.uploadUpdate(novelItem.requester, chapters.size, chapters.last().update)
-            } else if (!fromCache) {
+            } else if (chapters != null
+                    && !fromCache) {
                 // 只是从缓存中拿出来的就不要上传了，
                 UpdateManager.touch(novelItem.requester, chapters.size, chapters.last().update)
             }

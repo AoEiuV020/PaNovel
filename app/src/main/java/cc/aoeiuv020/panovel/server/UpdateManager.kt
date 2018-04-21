@@ -83,8 +83,24 @@ object UpdateManager : AnkoLogger {
         })
     }
 
+    fun query(requester: DetailRequester): Novel? {
+        debug { "query ：${requester.extra}" }
+        val service = novelService ?: return null
+        return try {
+            val novel = Novel().also {
+                it.requesterType = requester.type
+                it.requesterExtra = requester.extra
+            }
+            service.query(novel)
+        } catch (e: Exception) {
+            error("查询失败，", e)
+            null
+        }
+
+    }
+
     fun touch(requester: DetailRequester, chaptersCount: Int, updateTime: Date? = null) {
-        debug { "uploadUpdate ：${requester.extra}" }
+        debug { "touch ：${requester.extra}" }
         novelService ?: return
         Observable.fromCallable {
             val novel = Novel().also {

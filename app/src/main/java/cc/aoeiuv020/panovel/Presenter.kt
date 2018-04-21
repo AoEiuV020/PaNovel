@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel
 
 import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
+import org.jetbrains.anko.verbose
 
 /**
  * mvp的presenter,
@@ -19,27 +19,26 @@ abstract class Presenter<T : IView> : AnkoLogger {
         private set
 
     fun attach(view: IView) {
-        debug { "$this attach $view" }
+        verbose { "$this attach $view" }
         @Suppress("UNCHECKED_CAST")
         this.view = view as? T
     }
 
     fun detach() {
-        debug { "$this detach $view" }
+        verbose { "$this detach $view" }
         disposableList.forEach { it?.dispose() }
         view = null
     }
 
     protected fun addDisposable(disposable: Disposable, index: Int = 0) {
-        debug { "$this add disposable ${disposable.hashCode()} at $index" }
+        verbose { "$this add disposable ${disposable.hashCode()} at $index" }
         while (index >= disposableList.size) {
             disposableList.add(null)
         }
         val old = disposableList[index]
         disposableList[index] = disposable
-        old?.dispose()
         old?.let {
-            debug { "old ${old.hashCode()} dispose" }
+            verbose { "old ${old.hashCode()} dispose" }
             it.dispose()
         }
     }
