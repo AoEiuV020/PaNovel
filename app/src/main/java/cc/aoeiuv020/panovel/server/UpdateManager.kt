@@ -52,13 +52,9 @@ object UpdateManager : AnkoLogger {
                 return@create
             }
             val cachedChapters = Cache.chapters.get(novelItem)
-            // 如果存在update时间字段就对比这个，否则对比长度，
+            // 只对比长度，时间可空真的很麻烦，
             fun Pair<Date?, Int?>.newerThan(other: List<NovelChapter>): Boolean {
-                return first?.let { thisUpdate ->
-                    other.last().update?.let { otherUpdate ->
-                        thisUpdate > otherUpdate
-                    } ?: false
-                } ?: (second ?: 0 > other.size)
+                return (second ?: 0 > other.size)
             }
             if (cachedChapters != null
                     && novel.run { updateTime to chaptersCount }.newerThan(cachedChapters)) {

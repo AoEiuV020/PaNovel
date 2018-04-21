@@ -70,22 +70,17 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
             suffixThreadName("requestChaptersItem")
             val novelItem = detail.novel
             val progress = Progress.load(novelItem).chapter
-            val cachedChapters = Cache.chapters.get(novelItem)?.let {
+            val cachedChapters = Cache.chapters.get(novelItem)?.also {
                 em.onNext(Pair(it, progress))
-                it
             }
             var fromCache = true
             val novel = UpdateManager.query(novelItem.requester)
             verbose {
                 "向服务器查询结果 ${novel?.toJson()}"
             }
-            // 如果存在update时间字段就对比这个，否则对比长度，
+            // 只对比长度，时间可空真的很麻烦，
             fun Pair<Date?, Int?>.newerThan(other: List<NovelChapter>): Boolean {
-                return first?.let { thisUpdate ->
-                    other.last().update?.let { otherUpdate ->
-                        thisUpdate > otherUpdate
-                    } ?: false
-                } ?: (second ?: 0 > other.size)
+                return (second ?: 0 > other.size)
             }
 
             val refreshChapters = Cache.chapters.get(novelItem, refreshTime = refreshTime)
@@ -105,14 +100,9 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
             chapters?.let {
                 em.onNext(Pair(it, progress))
             }
-            // 如果存在update时间字段就对比这个，否则对比长度，
-            // 有可能更新后长度不变，甚至变少，这种无视，
+            // 只对比长度，时间可空真的很麻烦，
             fun List<NovelChapter>.newerThan(other: List<NovelChapter>): Boolean {
-                return last().update?.let { thisUpdate ->
-                    other.last().update?.let { otherUpdate ->
-                        thisUpdate > otherUpdate
-                    } ?: false
-                } ?: (size > other.size)
+                return (size > other.size)
             }
             if (chapters != null
                     && cachedChapters != null
@@ -125,6 +115,7 @@ abstract class SmallItemPresenter<T : SmallItemView>(protected val itemListPrese
             }
             em.onComplete()
         }.async().subscribe({ (chapters, progress) ->
+            debug { "展示章节 ${chapters.last().name}, $progress" }
             view?.showChapter(chapters, progress)
         }, { e ->
             val message = "读取《${detail.novel.bookId}》章节失败，"
