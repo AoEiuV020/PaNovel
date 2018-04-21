@@ -52,13 +52,9 @@ object UpdateManager : AnkoLogger {
                 return@create
             }
             val cachedChapters = Cache.chapters.get(novelItem)
-            // 如果存在update时间字段就对比这个，否则对比长度，
+            // 只对比长度，时间可空真的很麻烦，
             fun Pair<Date?, Int?>.newerThan(other: List<NovelChapter>): Boolean {
-                return first?.let { thisUpdate ->
-                    other.last().update?.let { otherUpdate ->
-                        thisUpdate > otherUpdate
-                    } ?: false
-                } ?: (second ?: 0 > other.size)
+                return (second ?: 0 > other.size)
             }
             if (cachedChapters != null
                     && novel.run { updateTime to chaptersCount }.newerThan(cachedChapters)) {
@@ -81,6 +77,42 @@ object UpdateManager : AnkoLogger {
         }, { e ->
             error("更新通知解析失败,", e)
         })
+    }
+
+    fun query(requester: DetailRequester): Novel? {
+        debug { "query ：${requester.extra}" }
+        val service = novelService ?: return null
+        return try {
+            val novel = Novel().also {
+                it.requesterType = requester.type
+                it.requesterExtra = requester.extra
+            }
+            service.query(novel)
+        } catch (e: Exception) {
+            error("查询失败，", e)
+            null
+        }
+
+    }
+
+    fun touch(requester: DetailRequester, chaptersCount: Int, updateTime: Date? = null) {
+        debug { "touch ：${requester.extra}" }
+        novelService ?: return
+        Observable.fromCallable {
+            val novel = Novel().also {
+                it.requesterType = requester.type
+                it.requesterExtra = requester.extra
+                it.chaptersCount = chaptersCount
+                it.updateTime = updateTime
+                it.modifyTime = Date()
+            }
+            novelService?.touch(novel) ?: false
+        }.async().subscribe({
+            debug { "上传无更新返回 $it: ${requester.extra}" }
+        }, { e ->
+            error("上传无更新失败，", e)
+        })
+
     }
 
     fun uploadUpdate(requester: DetailRequester, chaptersCount: Int, updateTime: Date? = null) {
@@ -107,9 +139,7 @@ object UpdateManager : AnkoLogger {
         Observable.fromCallable {
             if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
                 debug { "debug mode," }
-                ServerAddress(
-                        data = mapOf("updateUploadUrl" to "http://192.168.1.10:8080/update/upload")
-                )
+                ServerAddress.getAndroidTest()
             } else {
                 ServerAddress.getOnline()
             }

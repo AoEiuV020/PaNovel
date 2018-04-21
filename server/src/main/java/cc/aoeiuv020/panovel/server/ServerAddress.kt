@@ -14,7 +14,26 @@ class ServerAddress(
 ) {
     companion object {
         private const val SERVER_INFO_ON_GITHUB = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/static/static/serverInfo.json"
+        private const val CONFIG_TEMPLATE = """
+{
+    "data": {
+        "updateUploadUrl": "http://#host#/update/upload",
+        "needRefreshNovelListUrl": "http://#host#/novel/needRefreshNovelList",
+        "queryUrl": "http://#host#/novel/query",
+        "touchUrl": "http://#host#/novel/touch"
+    }
+}
+            """
         const val PANOVEL_HOST = "panovel.aoeiuv020.cc"
+
+        fun getAndroidTest(): ServerAddress = new("192.168.1.10:8080")
+
+        fun new(host: String): ServerAddress {
+            return CONFIG_TEMPLATE
+                    .replace("#host#", host)
+                    .toBean()
+        }
+
         fun getOnline(): ServerAddress = Jsoup.connect(ServerAddress.SERVER_INFO_ON_GITHUB)
                 .timeout(TimeUnit.SECONDS.toMillis(10).toInt())
                 .execute()
@@ -24,5 +43,17 @@ class ServerAddress(
 
     val updateUploadUrl: String
         get() = data["updateUploadUrl"]
-                ?: "http://$PANOVEL_HOST/update/upload"
+                ?: "http://$PANOVEL_HOST/novel/update"
+
+    val needRefreshNovelListUrl: String
+        get() = data["needRefreshNovelListUrl"]
+                ?: "http://$PANOVEL_HOST/novel/needRefreshNovelList"
+
+    val queryUrl: String
+        get() = data["queryUrl"]
+                ?: "http://$PANOVEL_HOST/novel/query"
+
+    val touchUrl: String
+        get() = data["touchUrl"]
+                ?: "http://$PANOVEL_HOST/novel/touch"
 }

@@ -24,6 +24,18 @@ import org.jsoup.Jsoup
  */
 open class Requester(val extra: String) {
     companion object {
+        fun deserialization(type: String, extra: String): Requester {
+            val clazz = Class.forName(type)
+            return try {
+                val mNew = clazz.getMethod("new", String::class.java)
+                mNew.invoke(null, extra) as Requester
+            } catch (_: Exception) {
+                // 可能没有new方法，也可能不是静态方法，
+                // 静态new方法和构造方法总要有一个，
+                clazz.getConstructor(String::class.java)
+                        .newInstance(extra) as Requester
+            }
+        }
         fun attach(builder: GsonBuilder): GsonBuilder = builder.apply {
             registerTypeHierarchyAdapter(Requester::class.java, JsonSerializer { src: Requester, _, _ ->
                 JsonObject().apply {
@@ -35,16 +47,7 @@ open class Requester(val extra: String) {
                 json.asJsonObject.let {
                     val type = it.getAsJsonPrimitive("type").asString
                     val extra = it.getAsJsonPrimitive("extra").asString
-                    val clazz = Class.forName(type)
-                    try {
-                        val mNew = clazz.getMethod("new", String::class.java)
-                        mNew.invoke(null, extra) as Requester
-                    } catch (_: Exception) {
-                        // 可能没有new方法，也可能不是静态方法，
-                        // 静态new方法和构造方法总要有一个，
-                        clazz.getConstructor(String::class.java)
-                                .newInstance(extra) as Requester
-                    }
+                    deserialization(type, extra)
                 }
             })
         }
