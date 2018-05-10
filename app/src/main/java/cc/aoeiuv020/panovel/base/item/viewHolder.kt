@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.base.item
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
@@ -17,6 +18,10 @@ import cc.aoeiuv020.panovel.text.CheckableImageView
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cn.lemon.view.adapter.BaseViewHolder
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.novel_item_big.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -117,7 +122,20 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
         // 详情页的时间选择性无视，因为详情页是缓存的，
         // 目前没有获取到updateTime，比如章节还没获取，或者章节里没有更新时间，
         updateTime = novelDetail.update
-        Glide.with(ctx).load(novelDetail.bigImg).into(image)
+        Glide.with(ctx)
+                .load(novelDetail.bigImg)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
+                        Glide.with(ctx).load("https://www.snwx8.com/modules/article/images/nocover.jpg")
+                                .into(target)
+                        return true
+                    }
+
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
+                })
+                .into(image)
         presenter.requestChapters(novelDetail)
     }
 

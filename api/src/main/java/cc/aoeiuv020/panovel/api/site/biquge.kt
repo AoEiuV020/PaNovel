@@ -1,8 +1,9 @@
 @file:Suppress("UnnecessaryVariable")
 
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.api.*
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -108,7 +109,7 @@ class Biquge : NovelContext() {
      */
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
-        val url = "$SEARCH_PAGE_URL?s=11522483553330821378&q=$key"
+        val url = "${SEARCH_PAGE_URL}?s=11522483553330821378&q=$key"
         return NovelSearch(name, url)
     }
 

@@ -15,4 +15,6 @@ val gson: Gson = GsonBuilder()
 
 inline fun <reified T> type(): Type = object : TypeToken<T>() {}.type
 inline fun <reified T> String.toBean(): T = gson.fromJson(this, type<T>())
+        ?: throw IllegalStateException("empty json")
+
 fun Any.toJson(): String = gson.toJson(this)

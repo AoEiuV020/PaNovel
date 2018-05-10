@@ -1,6 +1,7 @@
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.api.*
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
@@ -50,7 +51,7 @@ class Dmzz : NovelContext() {
         }
         return arr.map { dmzz ->
             val info = dmzz.mIntro ?: dmzz.description ?: null.toString()
-            NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author, "http://q.dmzj.com" + dmzz.lnovelUrl.removePrefix("..")), info)
+            NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author, "http://q.dmzj.com" + dmzz.lnovelUrl.removePrefix("src/main")), info)
         }
     }
 

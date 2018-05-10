@@ -1,6 +1,7 @@
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Jsoup
 import org.junit.Assert.*
 import org.junit.Before

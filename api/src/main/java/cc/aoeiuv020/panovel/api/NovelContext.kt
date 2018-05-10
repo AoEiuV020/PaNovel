@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.trace
+import cc.aoeiuv020.panovel.api.site.*
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import org.slf4j.Logger
@@ -17,7 +18,10 @@ import java.net.URL
 abstract class NovelContext {
     companion object {
         @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf(Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx(), Syxs())
+        private val contexts: List<NovelContext> = listOf(
+                Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx(), Syxs(),
+                Yssm(), Qlyx()
+        )
         private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         private val nameMap = contexts.associateBy { it.getNovelSite().name }
         fun getNovelContexts(): List<NovelContext> = contexts

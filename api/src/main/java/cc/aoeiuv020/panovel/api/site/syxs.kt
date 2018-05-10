@@ -1,6 +1,7 @@
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.api.*
 import org.jsoup.nodes.TextNode
 import java.net.URL
 import java.net.URLEncoder
@@ -72,7 +73,7 @@ class Syxs : NovelContext() {
 
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
-        val url = "$SEARCH_PAGE_URL?s=7845455592055299828&q=$key"
+        val url = "${SEARCH_PAGE_URL}?s=7845455592055299828&q=$key"
         return NovelSearch(name, url)
     }
 
