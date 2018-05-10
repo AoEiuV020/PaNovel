@@ -17,6 +17,7 @@ class Qlyx : JsoupNovelContext() {
 
     private fun search(str: String, type: String): NovelGenre {
         val key = URLEncoder.encode(str, "GBK")
+        // 突然发现，加上&page=1就没有搜索时间间隔的限制了，无所谓，删除cookie也一样，
         val url = "http://www.76wx.com/modules/article/search.php?searchtype=$type&searchkey=$key"
         return NovelSearch(str, url)
     }
@@ -24,6 +25,13 @@ class Qlyx : JsoupNovelContext() {
     override fun searchNovelName(name: String) = search(name, "articlename")
 
     override fun searchNovelAuthor(author: String) = search(author, "author")
+
+    override fun getNextPage(genre: NovelGenre): NovelGenre? {
+        val root = request(genre.requester)
+        return root.getElement("#pagelink > a.next") {
+            NovelSearch(genre.name, it.absHref())
+        }
+    }
 
     private fun isDetail(url: String) = url.startsWith("http://www.76wx.com/book")
 
