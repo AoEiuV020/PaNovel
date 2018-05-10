@@ -85,6 +85,7 @@ class Yssm : NovelContext() {
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
         val root = request(requester)
+        // 章节数太少的话，前几章会被抛弃，
         return root.select("#main > div > dl > dd > a").drop(12).map { a ->
             NovelChapter(a.text(), a.absHref())
         }
