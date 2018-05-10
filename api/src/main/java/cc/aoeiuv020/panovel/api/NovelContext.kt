@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.trace
+import cc.aoeiuv020.panovel.api.site.*
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import org.slf4j.Logger

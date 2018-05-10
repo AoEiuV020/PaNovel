@@ -1,7 +1,8 @@
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.api.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Connection
@@ -321,7 +322,7 @@ class Qidian : NovelContext() {
         companion object {
             @JvmStatic
             fun new(extra: String): FreeRequester {
-                val (bookId, chapterId, cU) = MobileRequester.splitExtra(extra)
+                val (bookId, chapterId, cU) = splitExtra(extra)
                 return FreeRequester(bookId, chapterId, cU)
             }
         }
@@ -343,7 +344,7 @@ class Qidian : NovelContext() {
                     val (bookId, chapterId) = extra.pick(pattern)
                     VipRequester(bookId, chapterId)
                 } else {
-                    val (bookId, chapterId) = MobileRequester.splitExtra(extra)
+                    val (bookId, chapterId) = splitExtra(extra)
                     VipRequester(bookId, chapterId)
                 }
             }

@@ -1,8 +1,9 @@
 @file:Suppress("UnnecessaryVariable")
 
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.api.*
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
@@ -78,7 +79,7 @@ class Piaotian : NovelContext() {
 
     private fun search(str: String, type: String): NovelGenre {
         val key = URLEncoder.encode(str, "GBK")
-        val url = "$SEARCH_PAGE_URL?searchtype=$type&searchkey=$key"
+        val url = "${SEARCH_PAGE_URL}?searchtype=$type&searchkey=$key"
         return NovelSearch(str, url)
     }
 

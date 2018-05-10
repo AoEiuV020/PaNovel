@@ -1,5 +1,9 @@
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.panovel.api.ChaptersRequester
+import cc.aoeiuv020.panovel.api.DetailRequester
+import cc.aoeiuv020.panovel.api.GenreListRequester
+import cc.aoeiuv020.panovel.api.TextRequester
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before

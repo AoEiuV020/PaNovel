@@ -1,6 +1,7 @@
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.api.*
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import java.net.URLEncoder
@@ -48,7 +49,7 @@ class Sfacg : NovelContext() {
 
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
-        val url = "$SEARCH_PAGE_URL?Key=$key&S=1&SS=0"
+        val url = "${SEARCH_PAGE_URL}?Key=$key&S=1&SS=0"
         return NovelSearch(name, url)
     }
 

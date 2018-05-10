@@ -1,5 +1,6 @@
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.panovel.api.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Jsoup
