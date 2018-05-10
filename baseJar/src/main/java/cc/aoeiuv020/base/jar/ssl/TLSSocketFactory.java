@@ -14,6 +14,8 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
+ * 启用所有支持的协议，
+ *
  * https://gist.github.com/fkrauthan/ac8624466a4dee4fd02f#file-tlssocketfactory-java
  *
  * @author fkrauthan
@@ -81,7 +83,9 @@ public class TLSSocketFactory extends SSLSocketFactory {
 
     private Socket enableTLSOnSocket(Socket socket) {
         if (socket != null && (socket instanceof SSLSocket)) {
-            ((SSLSocket) socket).setEnabledProtocols(new String[]{"TLSv1.1", "TLSv1.2"});
+            SSLSocket ssl = (SSLSocket) socket;
+            // 启用所有支持的协议，
+            ssl.setEnabledProtocols(ssl.getSupportedProtocols());
         }
         return socket;
     }
