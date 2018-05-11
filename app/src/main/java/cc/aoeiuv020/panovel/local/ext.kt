@@ -8,6 +8,7 @@ import android.util.Base64
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.IOException
@@ -116,9 +117,12 @@ fun LocalSource.gsonNameList(folder: String? = null) = externalGson(folder).list
 
 fun LocalSource.gsonClear() = externalGson().deleteRecursively()
 
-fun Any.toJson(): String = App.gson.toJson(this)
+fun Any.toJson(): String = toJson(App.gson)
+fun Any.toJson(gson: Gson): String = gson.toJson(this)
 // reified T 可以直接给gson用，没有reified的T用TypeToken包装也没用，只能传入type,
-inline fun <reified T> String.toBean(): T = App.gson.fromJson(this, type<T>())
+inline fun <reified T> String.toBean(): T = toBean(App.gson)
+
+inline fun <reified T> String.toBean(gson: Gson): T = gson.fromJson(this, type<T>())
 
 fun <T> String.toBean(type: Type): T = App.gson.fromJson<T>(this, type)
 

@@ -11,6 +11,11 @@ import java.util.*
  */
 abstract class LocalData
 
+data class NovelItemWithProgress(
+        val item: NovelItem,
+        val progress: NovelProgress
+) : LocalData()
+
 data class NovelProgress(var chapter: Int = 0, var text: Int = 0)
     : LocalData()
 

@@ -1,0 +1,150 @@
+@file:Suppress("DEPRECATION")
+
+package cc.aoeiuv020.panovel.export
+
+import android.Manifest
+import android.app.ProgressDialog
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v7.app.AppCompatActivity
+import cc.aoeiuv020.panovel.IView
+import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.util.loading
+import kotlinx.android.synthetic.main.activity_export.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.ctx
+import org.jetbrains.anko.startActivity
+
+class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
+    companion object {
+        fun start(ctx: Context) {
+            ctx.startActivity<ExportActivity>()
+        }
+    }
+
+    lateinit var progressDialog: ProgressDialog
+    private lateinit var presenter: ExportPresenter
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_export)
+
+        initWidget()
+
+        presenter = ExportPresenter(ctx)
+        presenter.attach(this)
+        presenter.start()
+    }
+
+    fun getCheckedOption(): Set<ExportOption> {
+        val options = mutableSetOf<ExportOption>()
+        cbBookshelf.isChecked && options.add(ExportOption.Bookshelf)
+        cbBookList.isChecked && options.add(ExportOption.BookList)
+        cbSettings.isChecked && options.add(ExportOption.Settings)
+        return options
+    }
+
+    fun getSelectPath(): Uri = when (rgPath.checkedRadioButtonId) {
+        R.id.rbDefaultOldUri -> rbDefaultOldUri.text.toString()
+        R.id.rbDefaultNewUri -> rbDefaultNewUri.text.toString()
+        R.id.rbOtherPath -> etOtherPath.text.toString()
+        else -> throw IllegalStateException("未知错误，")
+    }.let {
+        Uri.parse(it)
+    }
+
+    private fun initWidget() {
+        progressDialog = ProgressDialog(this)
+        btnImport.setOnClickListener {
+            loading(progressDialog, getString(R.string.sImport))
+            presenter.import()
+        }
+        btnExport.setOnClickListener {
+            loading(progressDialog, getString(R.string.export))
+            presenter.export()
+        }
+        btnChoose.setOnClickListener {
+            requestFile()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            1 -> data?.data?.let { uri ->
+                showOtherPath(uri.toString())
+            }
+            else -> super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            1 -> {
+                showMessage("赋予权限后请重试，")
+            }
+        }
+    }
+
+    private fun requestFile() {
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent(Intent.ACTION_OPEN_DOCUMENT)
+        } else {
+            // TODO: 有必要测试一下api19以下的情况，
+            Intent(Intent.ACTION_GET_CONTENT)
+        }
+        intent.type = "*/*"
+        startActivityForResult(intent, 1)
+    }
+
+    fun requestPermissions() {
+        ActivityCompat.requestPermissions(this, arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ), 1)
+    }
+
+    fun showImportSuccess(result: String) {
+        progressDialog.dismiss()
+        alert(
+                message = result,
+                title = "导入完成"
+        ).show()
+    }
+
+    fun showExportSuccess(result: String) {
+        progressDialog.dismiss()
+        alert(
+                message = result,
+                title = "导出完成"
+        ).show()
+    }
+
+    fun showDefaultPath(defaultOldUri: String, defaultNewUri: String) {
+        rbDefaultOldUri.text = defaultOldUri
+        rbDefaultNewUri.text = defaultNewUri
+    }
+
+    fun showOtherPath(defaultOtherUri: String) {
+        etOtherPath.setText(defaultOtherUri)
+    }
+
+    private val snack: Snackbar by lazy {
+        // TODO: 有时候不会弹出，只在收起时闪一下，可能是设置了跟着软键盘弹起的原因，
+        Snackbar.make(clRoot, "", Snackbar.LENGTH_SHORT)
+    }
+
+    fun showMessage(message: String) {
+        snack.setText(message)
+        snack.show()
+    }
+
+    fun showError(message: String, e: Throwable) {
+        progressDialog.dismiss()
+        showMessage(message + e.message)
+    }
+}
