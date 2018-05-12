@@ -1,3 +1,7 @@
+# 导入导出的选项枚举不混淆，要作为文件名，
+-keepclassmembers class cc.aoeiuv020.panovel.export.ExportOption { <fields>; }
+
+
 # 和服务器端交互用的pojo需要gson序列化，不混淆，
 -keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.** { <fields>; }
 -keepclassmembers class cc.aoeiuv020.panovel.server.ServerAddress { <fields>; }

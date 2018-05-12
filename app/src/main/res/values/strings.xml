@@ -165,6 +165,8 @@
     <string name="subscribe_novel_update">小说更新提醒</string>
     <string name="push">推送</string>
     <string name="subscript">订阅</string>
+    <string name="export">导出</string>
+    <string name="sImport">导入</string>
 
 
 </resources>

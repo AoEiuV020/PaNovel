@@ -24,6 +24,7 @@ import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
+import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Check
@@ -264,6 +265,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
     }
 
+    private fun export() {
+        ExportActivity.start(this)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         data?.extras?.getString("SCAN_RESULT")?.let {
             OpenManager.open(this, it)
@@ -282,6 +287,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             R.id.scan -> scan()
             R.id.open -> open()
             R.id.subscript -> subscript()
+            R.id.export -> export()
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)
