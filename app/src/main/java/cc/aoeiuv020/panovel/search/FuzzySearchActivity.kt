@@ -163,7 +163,10 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     }
 
     fun addNovel(item: NovelItem) {
+        // 插入有时会导致下滑，原因不明，保存状态解决，
+        val state = recyclerView.recyclerView.layoutManager.onSaveInstanceState()
         mAdapter.add(NovelHistory(item))
+        recyclerView.recyclerView.layoutManager.onRestoreInstanceState(state)
     }
 
     fun showOnComplete() {
