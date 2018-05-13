@@ -16,6 +16,9 @@ import java.lang.reflect.Type
  * Created by AoEiuV020 on 2018.05.11-18:52:50.
  */
 class ExporterV1(ctx: Context) : DefaultExporter(ctx), AnkoLogger {
+    /**
+     * TODO: 这个gson忘了处理requester特殊的序列化，但目前只有DetailRequester, 就这样也行，
+     */
     private val gson = GsonBuilder()
             .create()
 
