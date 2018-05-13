@@ -334,6 +334,10 @@ class Qidian : NovelContext() {
         }
     }
 
+    /**
+     * Vip获取方式失效了已经，
+     * 2018.5.3 19:00左右，
+     */
     class VipRequester(bookId: String, chapterId: String) : MobileRequester(bookId, chapterId, "") {
         companion object {
             @JvmStatic

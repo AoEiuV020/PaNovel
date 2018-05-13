@@ -4,6 +4,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
+import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
@@ -14,13 +15,13 @@ import java.util.*
  */
 class Piaotian : NovelContext() {
     companion object {
-        private val SEARCH_PAGE_URL = "http://www.piaotian.com/modules/article/search.php"
+        private val SEARCH_PAGE_URL = "https://www.piaotian.com/modules/article/search.php"
     }
 
     private val site = NovelSite(
             name = "飘天文学",
-            baseUrl = "http://www.piaotian.com/",
-            logo = "http://www.piaotian.com/css/logo.gif"
+            baseUrl = "https://www.piaotian.com/",
+            logo = "https://www.piaotian.com/css/logo.gif"
     )
 
     override fun getNovelSite(): NovelSite = site
@@ -45,7 +46,7 @@ class Piaotian : NovelContext() {
         }
     }
 
-    private fun isDetail(url: String) = url.startsWith("http://www.piaotian.com/bookinfo")
+    private fun isDetail(url: URL) = url.path.startsWith("/bookinfo")
 
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
@@ -55,7 +56,7 @@ class Piaotian : NovelContext() {
         } else {
             response(requester)
         }
-        if (isDetail(response.url().toString())) {
+        if (isDetail(response.url())) {
             val detail = getNovelDetail(DetailRequester(response.url().toString()))
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
             val info = detail.run { "更新: ${sdf.format(update)} 简介: $introduction" }

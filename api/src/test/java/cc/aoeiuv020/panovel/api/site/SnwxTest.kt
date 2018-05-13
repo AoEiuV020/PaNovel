@@ -100,7 +100,7 @@ class SnwxTest {
         context.getNovelDetail(DetailRequester("https://www.snwx8.com/book/257/257710/")).let {
             assertEquals("都市超级神尊", it.novel.name)
             assertEquals("小萌靓", it.novel.author)
-            assertEquals("https://www.snwx8.com/modules/article/images/nocover.jpg", it.bigImg)
+            assertEquals("https://www.snwx8.com/files/article/image/257/257710/257710s.jpg", it.bigImg)
             println(it.introduction)
             println(it.update)
         }

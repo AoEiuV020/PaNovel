@@ -26,28 +26,28 @@ class SyxsTest {
         val genres = context.getGenres()
         genres[0].let {
             assertEquals("玄幻", it.name)
-            assertEquals("http://www.31xs.org/list/1/", it.requester.url)
+            assertEquals("http://www.31xs.net/list/1/", it.requester.url)
         }
         genres[genres.size - 1].let {
             assertEquals("同人", it.name)
-            assertEquals("http://www.31xs.org/list/13/", it.requester.url)
+            assertEquals("http://www.31xs.net/list/13/", it.requester.url)
         }
     }
 
     @Test
     fun getNovelDetail() {
-        context.getNovelDetail(DetailRequester("http://www.31xs.org/5/5821/")).let {
+        context.getNovelDetail(DetailRequester("http://www.31xs.net/5/5821/")).let {
             assertEquals("天刑纪", it.novel.name)
             assertEquals("曳光", it.novel.author)
             assertEquals("今朝修仙不为仙，只为春色花满园：来日九星冲牛斗，且看天刑开纪元。", it.introduction)
-            assertEquals("http://www.31xs.org/img/5/5821/5821s.jpg", it.bigImg)
+            assertEquals("http://www.31xs.net/img/5/5821/5821s.jpg", it.bigImg)
             println(it.update)
         }
     }
 
     @Test
     fun getNovelList() {
-        context.getNovelList(GenreListRequester("http://www.31xs.org/list/1/")).let {
+        context.getNovelList(GenreListRequester("http://www.31xs.net/list/1/")).let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
