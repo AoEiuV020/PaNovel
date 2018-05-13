@@ -6,6 +6,7 @@ import android.content.Context
 import android.provider.Settings.Secure
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
+import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.local.PrimarySettings
 import cc.aoeiuv020.panovel.local.Settings
@@ -65,6 +66,14 @@ class App : Application(), AnkoLogger {
 
         if (Settings.subscribeNovelUpdate) {
             initJpush()
+        }
+
+        initPaNovel()
+    }
+
+    private fun initPaNovel() {
+        NovelContext.apply {
+            cache(cacheDir.resolve("api"))
         }
     }
 

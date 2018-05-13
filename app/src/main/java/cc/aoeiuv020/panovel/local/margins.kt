@@ -1,5 +1,7 @@
 package cc.aoeiuv020.panovel.local
 
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.pager.IMargins
 import com.google.gson.Gson
 import com.google.gson.JsonObject

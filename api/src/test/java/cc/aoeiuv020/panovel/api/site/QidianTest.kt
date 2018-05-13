@@ -5,7 +5,10 @@ import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.io.File
 
 /**
  *
@@ -16,9 +19,14 @@ class QidianTest {
         System.setProperty("org.slf4j.simpleLogger.log.Qidian", "trace")
     }
 
+    @Rule
+    @JvmField
+    val folder = TemporaryFolder()
+
     private lateinit var context: Qidian
     @Before
     fun setUp() {
+        NovelContext.cache(File("/tmp/panovel/api"))
         context = Qidian()
     }
 
@@ -132,22 +140,13 @@ class QidianTest {
     @Test
     fun getNovelChaptersAsc() {
         context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3602691")).let { list ->
-            list.forEach {
-                println(it)
-            }
             assertEquals("有趣的书评同人小故事", list.first().name)
         }
         context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/1010436534")).let { list ->
-            list.forEach {
-                println(it)
-            }
             assertEquals("读者重磅回馈：感恩节福利~", list.first().name)
         }
         // 这个章节列表体积大于默认1M，
         context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3357187")).let { list ->
-            list.forEach {
-                println(it)
-            }
             assertEquals("第1章 撕心裂肺的背叛", list.first().name)
         }
     }
