@@ -22,7 +22,6 @@ import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
-import cc.aoeiuv020.panovel.bookstore.BookstoreActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
@@ -31,7 +30,7 @@ import cc.aoeiuv020.panovel.local.Check
 import cc.aoeiuv020.panovel.local.DevMessage
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.open.OpenManager
-import cc.aoeiuv020.panovel.search.FuzzySearchActivity
+import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.server.UpdateManager
 import cc.aoeiuv020.panovel.server.common.md5
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
@@ -64,7 +63,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     private lateinit var bookshelfFragment: BookshelfFragment
     private lateinit var historyFragment: HistoryFragment
     lateinit var bookListFragment: BookListFragment
-    private var position: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,21 +99,22 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             }
 
             override fun onPageSelected(position: Int) {
-                this@MainActivity.position = position
                 // 切回书架时刷新一下，
                 if (position == 0) {
                     bookshelfFragment.refresh()
+                }
+                if (position == 1) {
+                    fab.show()
+                } else {
+                    fab.hide()
                 }
             }
 
         })
 
+        fab.hide()
         fab.setOnClickListener { _ ->
-            when (position) {
-                1 -> bookListFragment.newBookList()
-                else -> BookstoreActivity.start(this)
-            }
-
+            bookListFragment.newBookList()
         }
 
         ad_view.adListener = object : AdListener() {
@@ -283,7 +282,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> SettingsActivity.start(this)
-            R.id.search -> FuzzySearchActivity.start(this)
+            R.id.search -> SiteChooseActivity.start(this)
             R.id.scan -> scan()
             R.id.open -> open()
             R.id.subscript -> subscript()
