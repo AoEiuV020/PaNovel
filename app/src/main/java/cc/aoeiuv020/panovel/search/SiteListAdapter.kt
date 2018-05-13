@@ -49,6 +49,10 @@ class SiteListAdapter(
             itemView.setOnClickListener {
                 itemListener.onSiteSelect(data)
             }
+            itemView.setOnLongClickListener {
+                cbEnabled.isChecked = !cbEnabled.isChecked
+                true
+            }
         }
 
         fun bind(data: NovelSite) {
