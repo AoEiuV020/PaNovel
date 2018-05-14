@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
 import org.jsoup.nodes.TextNode
+import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 
@@ -22,6 +23,12 @@ class Snwx : NovelContext() {
     )
 
     override fun getNovelSite(): NovelSite = site
+
+    override fun getNovelItem(url: String): NovelItem {
+        val path = URL(url).path
+        val detailUrl = "https://www.snwx8.com$path"
+        return super.getNovelItem(detailUrl)
+    }
 
     override fun getGenres(): List<NovelGenre> {
         val root = request(site.baseUrl)
