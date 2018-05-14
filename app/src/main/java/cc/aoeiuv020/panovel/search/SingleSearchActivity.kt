@@ -60,6 +60,8 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
         presenter = SingleSearchPresenter(site)
         presenter.attach(this)
+
+        // TODO: 缺好多loading对话框，
         presenter.start()
     }
 

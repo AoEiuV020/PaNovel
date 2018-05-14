@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
+import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 
@@ -21,8 +22,10 @@ class Yssm : NovelContext() {
 
     override fun getNovelSite(): NovelSite = site
 
-    private fun isSearchResult(url: String): Boolean {
-        return url.startsWith(SEARCH_PAGE_URL)
+    override fun getNovelItem(url: String): NovelItem {
+        val path = URL(url).path.removePrefix("/")
+        val detailUrl = "${site.baseUrl}$path"
+        return super.getNovelItem(detailUrl)
     }
 
     override fun getGenres(): List<NovelGenre> {
