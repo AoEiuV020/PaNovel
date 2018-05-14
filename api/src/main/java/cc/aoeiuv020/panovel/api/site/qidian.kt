@@ -7,7 +7,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Connection
 import org.jsoup.Jsoup
-import java.net.URL
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
@@ -306,14 +305,7 @@ class Qidian : NovelContext() {
     }
 
     override fun getNovelItem(url: String): NovelItem {
-        val bookId = URL(url).path.split("/").first {
-            try {
-                it.toInt()
-                true
-            } catch (e: NumberFormatException) {
-                false
-            }
-        }
+        val bookId = findBookId(url)
         val detailUrl = "https://book.qidian.com/info/$bookId"
         return super.getNovelItem(detailUrl)
     }

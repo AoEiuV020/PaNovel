@@ -75,14 +75,7 @@ class Biquge : JsoupNovelContext() {
     }
 
     override fun getNovelItem(url: String): NovelItem {
-        val bookId = URL(url).path.split("/").first {
-            try {
-                it.toInt()
-                true
-            } catch (e: NumberFormatException) {
-                false
-            }
-        }
+        val bookId = findBookId(url)
         val detailUrl = "${site.baseUrl}book/$bookId/"
         return super.getNovelItem(detailUrl)
     }
