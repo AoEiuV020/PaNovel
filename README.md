@@ -1,7 +1,7 @@
 # 爬小说
 我们不生产小说，我们只做网站的搬运工，
 
-[releases](https://github.com/AoEiuV020/PaNovel/releases)
+[![img](https://img.shields.io/github/release/AoEiuV020/PaNovel.svg)](https://github.com/AoEiuV020/PaNovel/releases)
 
 ## 应用简介
 这是有理想的小说神器，目前支持下列网站，  
