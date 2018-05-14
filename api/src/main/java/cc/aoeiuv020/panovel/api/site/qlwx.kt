@@ -15,6 +15,12 @@ class Qlyx : JsoupNovelContext() {
             logo = "http://www.76wx.com/images/book_logo.png"
     )
 
+    override fun getNovelItem(url: String): NovelItem {
+        val bookId = findBookId(url)
+        val detailUrl = "${site.baseUrl}book/$bookId"
+        return super.getNovelItem(detailUrl)
+    }
+
     private fun search(str: String, type: String): NovelGenre {
         val key = URLEncoder.encode(str, "GBK")
         // 突然发现，加上&page=1就没有搜索时间间隔的限制了，无所谓，删除cookie也一样，
@@ -50,7 +56,7 @@ class Qlyx : JsoupNovelContext() {
             return listOf(NovelListItem(detail.novel, info))
         }
         val root = request(response)
-        val elements = root.requireElements(name = "搜索结果列表", query = "#main > table > tbody > tr:not(:nth-child(1))")
+        val elements = root.requireElements(name = TAG_SEARCH_RESULT_LIST, query = "#main > table > tbody > tr:not(:nth-child(1))")
         return elements.map {
             val (name, url) = it.requireElement(query = "td:nth-child(1) > a") {
                 it.text() to it.absHref()

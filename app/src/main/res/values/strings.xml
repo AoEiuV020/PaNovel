@@ -167,6 +167,11 @@
     <string name="subscript">订阅</string>
     <string name="export">导出</string>
     <string name="sImport">导入</string>
+    <string name="error">错误</string>
+    <string name="close">关闭</string>
+    <string name="removeCookies">删除Cookies</string>
+    <string name="message_cookies_removed">已删除cookies，</string>
+    <string name="success">成功</string>
 
 
 </resources>

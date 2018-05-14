@@ -89,7 +89,8 @@ class SfacgTest {
         context.getNovelDetail(DetailRequester("http://book.sfacg.com/Novel/123589")).let {
             assertEquals("黑猫变成少女才不奇怪呢", it.novel.name)
             assertEquals("青衣流苏", it.novel.author)
-            assertEquals("本可以更强吧，但是变成猫就足够了，就这样，远远地看着你", it.introduction)
+            assertEquals("好久好久，都没有这么快乐过了。黑发的少女如彼端如此叹息。\n" +
+                    "“你的世界，真美。”", it.introduction)
             assertEquals("http://rs.sfacg.com/web/novel/images/NovelCover/Big/2018/02/556aa0b6-25b5-43de-bd60-9a7bc9234ba5.jpg", it.bigImg)
             println(it.update)
         }

@@ -10,10 +10,13 @@ import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
 import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
 import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.local.toBean
+import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
@@ -44,12 +47,21 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
             // 精确搜索，refine search,
             context.startActivity<FuzzySearchActivity>("name" to name, "author" to author)
         }
+
+        fun start(ctx: Context, site: NovelSite) {
+            ctx.startActivity<FuzzySearchActivity>("site" to site.toJson())
+        }
+
+        fun start(ctx: Context, site: NovelSite, name: String) {
+            ctx.startActivity<FuzzySearchActivity>("site" to site.toJson(), "name" to name)
+        }
     }
 
     private lateinit var presenter: FuzzySearchPresenter
     private lateinit var mAdapter: DefaultItemListAdapter
     private var name: String? = null
     private var author: String? = null
+    private var site: NovelSite? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +90,12 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
 
         name = getStringExtra("name", savedInstanceState)
         author = getStringExtra("author", savedInstanceState)
+        site = getStringExtra("site", savedInstanceState)?.toBean()
+
+        site?.let {
+            presenter.singleSite(it)
+        }
+
         name?.let { nameNonnull ->
             search(nameNonnull, author)
         } ?: searchView.post { showSearch() }
@@ -149,7 +167,10 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     }
 
     fun addNovel(item: NovelItem) {
+        // 插入有时会导致下滑，原因不明，保存状态解决，
+        val state = recyclerView.recyclerView.layoutManager.onSaveInstanceState()
         mAdapter.add(NovelHistory(item))
+        recyclerView.recyclerView.layoutManager.onRestoreInstanceState(state)
     }
 
     fun showOnComplete() {
@@ -174,7 +195,7 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> showSearch()
+            R.id.search -> searchView.showSearch()
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)
         }

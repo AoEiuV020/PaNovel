@@ -22,6 +22,12 @@ class Liudatxt : NovelContext() {
 
     override fun getNovelSite(): NovelSite = site
 
+    override fun getNovelItem(url: String): NovelItem {
+        val bookId = findBookId(url)
+        val detailUrl = "${site.baseUrl}so/$bookId/"
+        return super.getNovelItem(detailUrl)
+    }
+
     override fun getGenres(): List<NovelGenre> {
         val root = request(site.baseUrl)
         val elements = root.select("#header > div.nav > ul > li > a").drop(1).dropLast(1)

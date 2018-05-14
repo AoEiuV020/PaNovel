@@ -88,6 +88,12 @@ class Sfacg : NovelContext() {
                 || (isSearchResult(url) && url.contains("S=1"))
     }
 
+    override fun getNovelItem(url: String): NovelItem {
+        val bookId = findBookId(url)
+        val detailUrl = "${site.baseUrl}Novel/$bookId/"
+        return super.getNovelItem(detailUrl)
+    }
+
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
         val root = request(requester)

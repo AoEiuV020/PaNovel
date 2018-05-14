@@ -5,10 +5,12 @@ package cc.aoeiuv020.panovel.local
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Base64
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.base.jar.type
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelItem
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.IOException
@@ -76,7 +78,6 @@ fun LocalSource.prefSave(key: String, value: String) = pref().edit().putString(k
 fun LocalSource.prefLoad(key: String): String? = pref().getString(key, null)
 fun LocalSource.prefRemove(key: String) = pref().edit().putString(key, null).apply()
 
-inline fun <reified T> type(): Type = object : TypeToken<T>() {}.type
 private fun LocalSource.externalGson(folder: String? = null) = folder(external(FileType.GSON), folder)
 private fun LocalSource.externalGson(name: String, folder: String? = null) = file(externalGson(folder), name)
 fun LocalSource.gsonExists(name: String, folder: String? = null): Boolean = externalGson(name, folder).exists()
@@ -118,13 +119,10 @@ fun LocalSource.gsonNameList(folder: String? = null) = externalGson(folder).list
 fun LocalSource.gsonClear() = externalGson().deleteRecursively()
 
 fun Any.toJson(): String = toJson(App.gson)
-fun Any.toJson(gson: Gson): String = gson.toJson(this)
 // reified T 可以直接给gson用，没有reified的T用TypeToken包装也没用，只能传入type,
 inline fun <reified T> String.toBean(): T = toBean(App.gson)
 
-inline fun <reified T> String.toBean(gson: Gson): T = gson.fromJson(this, type<T>())
-
-fun <T> String.toBean(type: Type): T = App.gson.fromJson<T>(this, type)
+fun <T> String.toBean(type: Type): T = toBean(App.gson, type)
 
 private fun LocalSource.externalFile(folder: String? = null) = folder(external(FileType.FILE), folder)
 private fun LocalSource.externalFile(name: String, folder: String? = null) = file(externalFile(folder), name)

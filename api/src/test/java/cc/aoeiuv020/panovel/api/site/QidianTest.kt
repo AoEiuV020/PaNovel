@@ -1,13 +1,14 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.*
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.io.File
 
 /**
  *
@@ -18,10 +19,22 @@ class QidianTest {
         System.setProperty("org.slf4j.simpleLogger.log.Qidian", "trace")
     }
 
+    @Rule
+    @JvmField
+    val folder = TemporaryFolder()
+
     private lateinit var context: Qidian
     @Before
     fun setUp() {
+        NovelContext.cache(File("/tmp/panovel/api"))
         context = Qidian()
+    }
+
+    @Test
+    fun cookieDomain() {
+        context.cookieDomainList().forEach {
+
+        }
     }
 
     //    @Test
@@ -44,7 +57,6 @@ class QidianTest {
     }
 
     @Test
-
     fun getGenres() {
         context.getGenres().forEach {
             println(it)
@@ -103,6 +115,7 @@ class QidianTest {
                     "啊啊啊啊，世界观在一夜间彻底崩碎啦！\n" +
                     "书友群：九洲1号群:207572656\n" +
                     "九洲２号群:168114177\n" +
+                    "九洲３号群:165210665（新）\n" +
                     "九洲一号群（VIP书友群，需验证）63769632", it.introduction)
             println(it.update)
         }
@@ -133,23 +146,23 @@ class QidianTest {
     @Test
     fun getNovelChaptersAsc() {
         context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3602691")).let { list ->
-            list.forEach {
-                println(it)
-            }
             assertEquals("有趣的书评同人小故事", list.first().name)
         }
         context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/1010436534")).let { list ->
-            list.forEach {
-                println(it)
-            }
             assertEquals("读者重磅回馈：感恩节福利~", list.first().name)
         }
         // 这个章节列表体积大于默认1M，
         context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3357187")).let { list ->
-            list.forEach {
+            assertEquals("第1章 撕心裂肺的背叛", list.first().name)
+        }
+    }
+
+    @Test
+    fun cookiesTest() {
+        context.getNovelText(Qidian.VipRequester.new("https://vipreader.qidian.com/chapter/1009999768/392293648")).textList.let {
+            it.forEach {
                 println(it)
             }
-            assertEquals("第1章 撕心裂肺的背叛", list.first().name)
         }
     }
 
@@ -165,6 +178,8 @@ class QidianTest {
             assertEquals("回到教室，陈乔山心里很是激动，就在回来的路上，突然想到上辈子他也是参加过高考的，只不过时间是三年后的2006年。", it.first())
             assertEquals("话刚说完，却见严小沁回头小心翼翼的看了他一眼，娇憨脸庞上的剪水双瞳分明蕴含一丝探究的意味。", it.last())
         }
+/*
+// Vip获取方式失效了已经，
         context.getNovelText(Qidian.VipRequester.new("https://vipreader.qidian.com/chapter/3602691/388384897")).textList.let {
             assertEquals(93, it.size)
             assertEquals("“楚前辈手下留情！”宋书航道。", it.first())
@@ -180,10 +195,13 @@ class QidianTest {
             assertEquals("“红楼执念果真攀附在了四号房租户身上，现在他们记忆苏醒，对我来说可不是个好消息。”我躲在草席之下，现在自己处于绝对的劣势，翻盘无望，只求能安稳逃离此界。", it.first())
             assertEquals("“那道巨影是被墨玉貔貅吸引而来，只要我呆在隆昌之中，它应该就不会离开。”", it.last())
         }
+*/
     }
 
+/*
     @Test
     fun vipTest() {
+// Vip获取方式失效了已经，
         val url = "https://vipreader.qidian.com/chapter/3602691/388384897"
         val requester = Qidian.VipRequester.new(url)
         val conn = requester.connect()
@@ -201,5 +219,6 @@ class QidianTest {
             assertEquals("核心世界中，除了楚阁主ｏｎｅ的脑袋外，还有其它脑袋吗？", it.last())
         }
     }
+*/
 
 }

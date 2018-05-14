@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
 import org.jsoup.nodes.TextNode
+import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 
@@ -10,18 +11,24 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2018.03.07-02:42:57.
  */
-class Snwx : NovelContext() {
+class Snwx : JsoupNovelContext() {
     companion object {
         private val SEARCH_PAGE_URL = "https://www.snwx8.com/modules/article/search.php"
     }
 
-    private val site = NovelSite(
+    override val site = NovelSite(
             name = "少年文学",
             baseUrl = "https://www.snwx8.com/",
             logo = "https://www.snwx8.com/xiaoyi/images/logo.gif"
     )
 
     override fun getNovelSite(): NovelSite = site
+
+    override fun getNovelItem(url: String): NovelItem {
+        val path = URL(url).path.removePrefix("/")
+        val detailUrl = "${site.baseUrl}$path"
+        return super.getNovelItem(detailUrl)
+    }
 
     override fun getGenres(): List<NovelGenre> {
         val root = request(site.baseUrl)
@@ -127,11 +134,15 @@ class Snwx : NovelContext() {
         val name = title.select("> h1").first().text()
         val (author) = title.select("> i:nth-child(2)").first().text()
                 .pick("作者：(\\S*)")
-        val info = div.select("> div.intro").first().childNode(3).let { (it as TextNode).wholeText }.trim()
+        val intro = div.getElement(query = "> div.intro") {
+            it.childNodes().first {
+                it is TextNode && !it.isBlank
+            }.let { (it as TextNode).wholeText }.trim()
+        }.toString()
         val update = Date(0)
 
         val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {

@@ -100,8 +100,16 @@ class SnwxTest {
         context.getNovelDetail(DetailRequester("https://www.snwx8.com/book/257/257710/")).let {
             assertEquals("都市超级神尊", it.novel.name)
             assertEquals("小萌靓", it.novel.author)
-            assertEquals("https://www.snwx8.com/modules/article/images/nocover.jpg", it.bigImg)
+            assertEquals("https://www.snwx8.com/files/article/image/257/257710/257710s.jpg", it.bigImg)
             println(it.introduction)
+            println(it.update)
+        }
+        // 之前的有可能获取不到简介，
+        context.getNovelDetail(DetailRequester("https://www.snwx8.com/book/28/28152/")).let {
+            assertEquals("大道独行", it.novel.name)
+            assertEquals("雾外江山", it.novel.author)
+            assertEquals("https://www.snwx8.com/files/article/image/28/28152/28152s.jpg", it.bigImg)
+            assertEquals("各位书友要是觉得《大道独行》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！", it.introduction)
             println(it.update)
         }
     }

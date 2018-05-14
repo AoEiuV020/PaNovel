@@ -24,9 +24,6 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".bookstore.BookstoreActivity"
-            android:theme="@style/AppTheme.NoActionBar.TranslateStatusBar" />
-        <activity
             android:name=".detail.NovelDetailActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslateStatusBar" />
         <activity
@@ -81,7 +78,14 @@
 
         <activity
             android:name=".export.ExportActivity"
+            android:label="@string/export"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".search.SiteChooseActivity"
+            android:label="@string/site" />
+        <activity
+            android:name=".search.SingleSearchActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

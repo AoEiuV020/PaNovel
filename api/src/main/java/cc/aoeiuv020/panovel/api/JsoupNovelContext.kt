@@ -13,6 +13,7 @@ abstract class JsoupNovelContext : NovelContext() {
         const val TAG_NOVEL_NAME = "小说名"
         const val TAG_NOVEL_LINK = "小说链接"
         const val TAG_AUTHOR_NAME = "作者名"
+        const val TAG_SEARCH_RESULT_LIST = "搜索结果列表"
         const val TAG_INTRODUCTION = "简介"
         const val TAG_CHAPTER_LINK = "章节链接"
         const val TAG_CONTENT = "正文"
@@ -29,14 +30,6 @@ abstract class JsoupNovelContext : NovelContext() {
     protected abstract val site: NovelSite
 
     override fun getNovelSite(): NovelSite = site
-
-    override fun getGenres(): List<NovelGenre> {
-        return listOf()
-    }
-
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        return null
-    }
 
     protected fun Element.src(): String = attr("src")
     protected fun Element.absSrc(): String = absUrl("src")

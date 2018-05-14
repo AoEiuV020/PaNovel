@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
+import cc.aoeiuv020.base.jar.type
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem

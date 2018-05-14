@@ -1,26 +1,28 @@
 package cc.aoeiuv020.panovel.export
 
 import android.content.Context
+import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.base.jar.type
 import cc.aoeiuv020.panovel.local.*
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
 import java.io.InputStream
 import java.io.OutputStream
-import java.lang.reflect.Type
 
 /**
  * Created by AoEiuV020 on 2018.05.11-18:52:50.
  */
 class ExporterV1(ctx: Context) : DefaultExporter(ctx), AnkoLogger {
+    /**
+     * TODO: 这个gson忘了处理requester特殊的序列化，但目前只有DetailRequester, 就这样也行，
+     */
     private val gson = GsonBuilder()
             .create()
 
-    private inline fun <reified T> type(): Type = object : TypeToken<T>() {}.type
-    private fun Any.toJson(): String = gson.toJson(this)
+    private fun Any.toJson(): String = toJson(gson)
     private inline fun <reified T> T.toJson(output: OutputStream): T = this.apply {
         output.writer().also {
             gson.toJson(this, it)

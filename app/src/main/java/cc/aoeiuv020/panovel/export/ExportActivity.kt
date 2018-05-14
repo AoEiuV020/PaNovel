@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.util.loading
@@ -33,6 +34,7 @@ class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_export)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         initWidget()
 
@@ -147,4 +149,14 @@ class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
         progressDialog.dismiss()
         showMessage(message + e.message)
     }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
 }

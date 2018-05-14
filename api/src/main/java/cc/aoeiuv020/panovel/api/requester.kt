@@ -4,7 +4,7 @@ package cc.aoeiuv020.panovel.api
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
-import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -25,7 +25,11 @@ import org.jsoup.Jsoup
 open class Requester(val extra: String) {
     companion object {
         fun deserialization(type: String, extra: String): Requester {
-            val clazz = Class.forName(type)
+            val clazz = try {
+                Class.forName(type)
+            } catch (e: ClassNotFoundException) {
+                throw IllegalStateException("Requester类型不存在<$type>")
+            }
             return try {
                 val mNew = clazz.getMethod("new", String::class.java)
                 mNew.invoke(null, extra) as Requester
@@ -36,18 +40,55 @@ open class Requester(val extra: String) {
                         .newInstance(extra) as Requester
             }
         }
+
+        /**
+         * 用来分开Requester的类名和参数，
+         * 所以不能是可能存在类名里的字符，
+         */
+        private const val dividerCharacter = '|'
+
         fun attach(builder: GsonBuilder): GsonBuilder = builder.apply {
             registerTypeHierarchyAdapter(Requester::class.java, JsonSerializer { src: Requester, _, _ ->
-                JsonObject().apply {
-                    addProperty("type", src.javaClass.name)
-                    addProperty("extra", src.extra)
+                // typeOfT就是src和类型，就算src在包装类里也一样，也就是没用，
+                val packageName = Requester::class.java.`package`.name
+                val className = src.javaClass.name
+                // 设置默认包名，小数点.开头表示用默认包名，省空间，
+                val type = if (className.startsWith(packageName)) {
+                    className.removePrefix(packageName)
+                } else {
+                    className
                 }
+                JsonPrimitive("$type$dividerCharacter${src.extra}")
             })
             registerTypeHierarchyAdapter(Requester::class.java, JsonDeserializer { json, _, _ ->
-                json.asJsonObject.let {
-                    val type = it.getAsJsonPrimitive("type").asString
-                    val extra = it.getAsJsonPrimitive("extra").asString
-                    deserialization(type, extra)
+                // typeOfT是目标对象的类型，
+                when {
+                    json.isJsonObject -> // 兼容旧版，
+                        json.asJsonObject.let {
+                            val type = it.getAsJsonPrimitive("type").asString
+                            val extra = it.getAsJsonPrimitive("extra").asString
+                            deserialization(type, extra)
+                        }
+                    json.isJsonPrimitive -> {
+                        val typeWithExtra = json.asString
+                        val dividerIndex = typeWithExtra.indexOf(dividerCharacter).also {
+                            if (it == -1) {
+                                throw IllegalStateException("Requester不合法，没有分隔符'|'，")
+                            }
+                        }
+                        val type = typeWithExtra.substring(0, dividerIndex)
+                        // 如果extra为空，这里的substring可以正常返回空字符串，
+                        val extra = typeWithExtra.substring(dividerIndex + 1)
+                        // 恢复默认包名，小数点.开头表示用默认包名，
+                        val className = if (type.startsWith('.')) {
+                            val packageName = Requester::class.java.`package`.name
+                            "$packageName$type"
+                        } else {
+                            type
+                        }
+                        deserialization(className, extra)
+                    }
+                    else -> throw IllegalStateException("Requester格式不正确，")
                 }
             })
         }
@@ -56,6 +97,7 @@ open class Requester(val extra: String) {
     val type: String get() = this.javaClass.name
     open val url get() = extra
     open fun connect(): Connection = Jsoup.connect(url).maxBodySize(0)
+    open fun doBeforeExecute(conn: Connection): Connection = conn
     override fun toString() = "${this.javaClass.simpleName}(url=$url)"
     override fun equals(other: kotlin.Any?): Boolean {
         return if (other == null || other !is Requester) false

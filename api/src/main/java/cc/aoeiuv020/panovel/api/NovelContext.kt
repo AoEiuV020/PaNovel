@@ -1,12 +1,17 @@
 package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.base.jar.trace
 import cc.aoeiuv020.panovel.api.site.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.io.IOException
 import java.net.URL
 
@@ -17,6 +22,15 @@ import java.net.URL
 @Suppress("MemberVisibilityCanPrivate")
 abstract class NovelContext {
     companion object {
+        private val gson: Gson = GsonBuilder()
+                .disableHtmlEscaping()
+                .setPrettyPrinting()
+                .create()
+        private var sCacheDir: File? = null
+        fun cache(cacheDir: File?) {
+            this.sCacheDir = cacheDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
+        }
+
         @Suppress("RemoveExplicitTypeArguments")
         private val contexts: List<NovelContext> = listOf(
                 Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx(), Syxs(),
@@ -41,7 +55,64 @@ abstract class NovelContext {
 
     @Suppress("MemberVisibilityCanPrivate")
     protected val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
-    protected var cookies: Map<String, String>? = null
+    /**
+     * 用类名simpleName当缓存目录名，所以类名不能重复，
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    protected val mCacheDir: File?
+        get() = sCacheDir?.resolve(this.javaClass.simpleName)?.apply { exists() || mkdirs() }
+    private val mCookieFile: File? get() = mCacheDir?.resolve("cookies")
+    private var _cookies: Map<String, String>? = null
+    var cookies: Map<String, String>
+        @Synchronized
+        get() = _cookies ?: (mCookieFile?.let { file ->
+            try {
+                file.readText().toBean<MutableMap<String, String>>(gson)
+            } catch (e: Exception) {
+                file.delete()
+                null
+            }
+        } ?: mutableMapOf()).also {
+            _cookies = it
+        }
+        @Synchronized
+        private set(value) {
+            logger.debug {
+                "setCookies $value"
+            }
+            if (value == _cookies) {
+                return
+            }
+            _cookies = value
+            mCookieFile?.writeText(value.toJson(gson))
+        }
+
+    fun putCookies(cookies: Map<String, String>) {
+        if (cookies.isEmpty()) {
+            return
+        }
+        // 要确保setCookies被调用才会本地保存cookie,
+        this.cookies = this.cookies + cookies
+    }
+
+    fun removeCookies() {
+        this.cookies = mapOf()
+    }
+
+    /**
+     *
+     */
+    open fun cookieDomainList(): List<String> {
+        val host = URL(getNovelSite().baseUrl).host
+        val domain = secondLevelDomain(host)
+        return listOf(domain)
+    }
+
+    private fun secondLevelDomain(host: String): String {
+        val index1 = host.lastIndexOf('.')
+        val index2 = host.lastIndexOf('.', index1 - 1)
+        return host.substring(index2)
+    }
 
     /**
      * 有的网站没有指定编码，只能在这里强行指定，
@@ -53,12 +124,12 @@ abstract class NovelContext {
     /**
      * 获取网站分类信息，
      */
-    abstract fun getGenres(): List<NovelGenre>
+    open fun getGenres(): List<NovelGenre> = listOf()
 
     /**
      * 获取分类页面的下一页，
      */
-    abstract fun getNextPage(genre: NovelGenre): NovelGenre?
+    open fun getNextPage(genre: NovelGenre): NovelGenre? = null
 
     /**
      * 获取分类页面里的小说列表信息，
@@ -96,7 +167,7 @@ abstract class NovelContext {
      * 判断这个地址是不是属于这个网站，
      */
     open fun check(url: String): Boolean = try {
-        URL(getNovelSite().baseUrl).host == URL(url).host
+        secondLevelDomain(URL(getNovelSite().baseUrl).host) == secondLevelDomain(URL(url).host)
     } catch (_: Exception) {
         false
     }
@@ -118,14 +189,14 @@ abstract class NovelContext {
 
     protected fun connect(url: String) = connect(Requester(url))
 
-    protected fun response(conn: Connection): Connection.Response {
+    protected fun response(conn: Connection, doBeforeExecute: Connection.() -> Connection = { this }): Connection.Response {
         // 设置cookies,
-        cookies?.let { conn.cookies(it) }
-        val response = conn.execute()
+        cookies.takeIf { it.isNotEmpty() }?.let { conn.cookies(it) }
+        val response = conn.doBeforeExecute().execute()
         // 指定编码，如果存在，
         charset?.let { response.charset(it) }
-        // 保存cookies,
-        cookies = response.cookies()
+        // 保存cookies, 按条目覆盖，
+        putCookies(response.cookies())
         logger.debug { "status code: ${response.statusCode()}" }
         logger.debug { "response url: ${response.url()}" }
         logger.trace { "body length: ${response.body().length}" }
@@ -135,7 +206,7 @@ abstract class NovelContext {
         return response
     }
 
-    protected fun response(requester: Requester): Connection.Response = response(connect(requester))
+    protected fun response(requester: Requester): Connection.Response = response(connect(requester), requester::doBeforeExecute)
 
     protected fun response(url: String) = response(Requester(url))
 

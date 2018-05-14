@@ -18,7 +18,11 @@ abstract class Data
 data class NovelSite(
         val name: String,
         val baseUrl: String,
-        val logo: String
+        val logo: String,
+        /**
+         * 这个网站是否启用，
+         */
+        var enabled: Boolean = true
 ) : Data()
 
 /**
