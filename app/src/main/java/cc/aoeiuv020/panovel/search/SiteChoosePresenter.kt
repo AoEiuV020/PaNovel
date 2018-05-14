@@ -22,7 +22,7 @@ class SiteChoosePresenter : Presenter<SiteChooseActivity>() {
                 it.getNovelSite()
             }.onEach { site ->
                 // 关于是否启用，存在并和现有设置不同则反个enabled,
-                if (siteEnabledMap.getOrDefault(site.name, site.enabled) != site.enabled) {
+                if ((siteEnabledMap[site.name] ?: site.enabled) != site.enabled) {
                     site.enabled = !site.enabled
                 }
             }.let { novelSiteList ->
