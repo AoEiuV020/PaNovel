@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Connection
 import org.jsoup.Jsoup
+import java.net.URL
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
@@ -182,7 +183,12 @@ class Qidian : NovelContext() {
 
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: DetailRequester): NovelDetail {
-        val root = request(requester)
+        val root = if (requester.url.startsWith("https://m.qidian.com/book/")) {
+            val pcUrl = "https://book.qidian.com/info/" + requester.url.removePrefix("https://m.qidian.com/book/")
+            request(DetailRequester(pcUrl))
+        } else {
+            request(requester)
+        }
         val detail = root.select("body > div.wrap > div.book-detail-wrap.center990").first()
         val information = detail.select("> div.book-information.cf > div.book-info").first()
         val img = detail.select("#bookImg > img").first().absSrc()
@@ -229,7 +235,7 @@ class Qidian : NovelContext() {
 
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val token = cookies?.get("_csrfToken") ?: run {
+        val token = cookies["_csrfToken"] ?: run {
             response(requester).cookie("_csrfToken")
         }
         val bookId = requester.url.removePrefix("https://book.qidian.com/info/")
@@ -275,7 +281,10 @@ class Qidian : NovelContext() {
 
     override fun getNovelText(requester: TextRequester): NovelText {
         if (requester is MobileRequester) {
-            val json = Gson().fromJson(connect(requester).execute().body(), JsonObject::class.java)
+            val json = Gson().fromJson(
+                    response(requester)
+                            .body(),
+                    JsonObject::class.java)
             val content = json.getAsJsonObject("data")
                     .getAsJsonObject("chapterInfo")
                     .getAsJsonPrimitive("content")
@@ -296,12 +305,17 @@ class Qidian : NovelContext() {
         return NovelText(textList)
     }
 
-    override fun check(url: String): Boolean {
-        return super.check(url)
-                || url.startsWith("https://read.qidian.com/")
-                || url.startsWith("https://book.qidian.com/")
-                || url.startsWith("https://vipreader.qidian.com/")
-                || url.startsWith("https://m.qidian.com/majax/")
+    override fun getNovelItem(url: String): NovelItem {
+        val bookId = URL(url).path.split("/").first {
+            try {
+                it.toInt()
+                true
+            } catch (e: NumberFormatException) {
+                false
+            }
+        }
+        val detailUrl = "https://book.qidian.com/info/$bookId"
+        return super.getNovelItem(detailUrl)
     }
 
     abstract class MobileRequester(bookId: String, chapterId: String, cU: String) : TextRequester("$bookId:$chapterId:$cU") {
@@ -312,6 +326,9 @@ class Qidian : NovelContext() {
         private val apiUrl = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
 
         override fun connect(): Connection = Jsoup.connect(apiUrl)
+        override fun doBeforeExecute(conn: Connection): Connection = conn.apply {
+            request().removeCookie("_csrfToken")
+        }
     }
 
     /**

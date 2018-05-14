@@ -51,6 +51,10 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         fun start(ctx: Context, site: NovelSite) {
             ctx.startActivity<FuzzySearchActivity>("site" to site.toJson())
         }
+
+        fun start(ctx: Context, site: NovelSite, name: String) {
+            ctx.startActivity<FuzzySearchActivity>("site" to site.toJson(), "name" to name)
+        }
     }
 
     private lateinit var presenter: FuzzySearchPresenter
@@ -191,7 +195,7 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> showSearch()
+            R.id.search -> searchView.showSearch()
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)
         }

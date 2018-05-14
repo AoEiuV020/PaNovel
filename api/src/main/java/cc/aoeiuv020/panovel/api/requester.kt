@@ -97,6 +97,7 @@ open class Requester(val extra: String) {
     val type: String get() = this.javaClass.name
     open val url get() = extra
     open fun connect(): Connection = Jsoup.connect(url).maxBodySize(0)
+    open fun doBeforeExecute(conn: Connection): Connection = conn
     override fun toString() = "${this.javaClass.simpleName}(url=$url)"
     override fun equals(other: kotlin.Any?): Boolean {
         return if (other == null || other !is Requester) false

@@ -28,7 +28,7 @@ class SiteChooseActivity : AppCompatActivity(), IView {
         }
 
         override fun onSiteSelect(data: NovelSite) {
-            FuzzySearchActivity.start(ctx, data)
+            SingleSearchActivity.start(ctx, data)
         }
     }
 

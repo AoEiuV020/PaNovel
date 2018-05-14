@@ -62,8 +62,8 @@ abstract class NovelContext {
     protected val mCacheDir: File?
         get() = sCacheDir?.resolve(this.javaClass.simpleName)?.apply { exists() || mkdirs() }
     private val mCookieFile: File? get() = mCacheDir?.resolve("cookies")
-    private var _cookies: MutableMap<String, String>? = null
-    protected var cookies: MutableMap<String, String>
+    private var _cookies: Map<String, String>? = null
+    var cookies: Map<String, String>
         @Synchronized
         get() = _cookies ?: (mCookieFile?.let { file ->
             try {
@@ -76,7 +76,7 @@ abstract class NovelContext {
             _cookies = it
         }
         @Synchronized
-        set(value) {
+        private set(value) {
             logger.debug {
                 "setCookies $value"
             }
@@ -87,7 +87,32 @@ abstract class NovelContext {
             mCookieFile?.writeText(value.toJson(gson))
         }
 
-    open fun cookieDomainList(): List<String> = listOf(URL(getNovelSite().baseUrl).host)
+    fun putCookies(cookies: Map<String, String>) {
+        if (cookies.isEmpty()) {
+            return
+        }
+        // 要确保setCookies被调用才会本地保存cookie,
+        this.cookies = this.cookies + cookies
+    }
+
+    fun removeCookies() {
+        this.cookies = mapOf()
+    }
+
+    /**
+     *
+     */
+    open fun cookieDomainList(): List<String> {
+        val host = URL(getNovelSite().baseUrl).host
+        val domain = secondLevelDomain(host)
+        return listOf(domain)
+    }
+
+    private fun secondLevelDomain(host: String): String {
+        val index1 = host.lastIndexOf('.')
+        val index2 = host.lastIndexOf('.', index1 - 1)
+        return host.substring(index2)
+    }
 
     /**
      * 有的网站没有指定编码，只能在这里强行指定，
@@ -142,7 +167,7 @@ abstract class NovelContext {
      * 判断这个地址是不是属于这个网站，
      */
     open fun check(url: String): Boolean = try {
-        URL(getNovelSite().baseUrl).host == URL(url).host
+        secondLevelDomain(URL(getNovelSite().baseUrl).host) == secondLevelDomain(URL(url).host)
     } catch (_: Exception) {
         false
     }
@@ -164,14 +189,14 @@ abstract class NovelContext {
 
     protected fun connect(url: String) = connect(Requester(url))
 
-    protected fun response(conn: Connection): Connection.Response {
+    protected fun response(conn: Connection, doBeforeExecute: Connection.() -> Connection = { this }): Connection.Response {
         // 设置cookies,
         cookies.takeIf { it.isNotEmpty() }?.let { conn.cookies(it) }
-        val response = conn.execute()
+        val response = conn.doBeforeExecute().execute()
         // 指定编码，如果存在，
         charset?.let { response.charset(it) }
         // 保存cookies, 按条目覆盖，
-        cookies.putAll(response.cookies())
+        putCookies(response.cookies())
         logger.debug { "status code: ${response.statusCode()}" }
         logger.debug { "response url: ${response.url()}" }
         logger.trace { "body length: ${response.body().length}" }
@@ -181,7 +206,7 @@ abstract class NovelContext {
         return response
     }
 
-    protected fun response(requester: Requester): Connection.Response = response(connect(requester))
+    protected fun response(requester: Requester): Connection.Response = response(connect(requester), requester::doBeforeExecute)
 
     protected fun response(url: String) = response(Requester(url))
 

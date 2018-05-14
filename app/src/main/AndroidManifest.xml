@@ -83,6 +83,9 @@
         <activity
             android:name=".search.SiteChooseActivity"
             android:label="@string/site" />
+        <activity
+            android:name=".search.SingleSearchActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

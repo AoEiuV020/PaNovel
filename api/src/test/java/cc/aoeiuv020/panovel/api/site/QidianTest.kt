@@ -30,6 +30,13 @@ class QidianTest {
         context = Qidian()
     }
 
+    @Test
+    fun cookieDomain() {
+        context.cookieDomainList().forEach {
+
+        }
+    }
+
     //    @Test
     @Suppress("unused")
     fun makeGenres() {
@@ -50,7 +57,6 @@ class QidianTest {
     }
 
     @Test
-
     fun getGenres() {
         context.getGenres().forEach {
             println(it)
@@ -148,6 +154,15 @@ class QidianTest {
         // 这个章节列表体积大于默认1M，
         context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3357187")).let { list ->
             assertEquals("第1章 撕心裂肺的背叛", list.first().name)
+        }
+    }
+
+    @Test
+    fun cookiesTest() {
+        context.getNovelText(Qidian.VipRequester.new("https://vipreader.qidian.com/chapter/1009999768/392293648")).textList.let {
+            it.forEach {
+                println(it)
+            }
         }
     }
 
