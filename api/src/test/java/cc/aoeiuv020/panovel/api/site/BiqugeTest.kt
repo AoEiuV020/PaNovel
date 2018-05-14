@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.ChaptersRequester
 import cc.aoeiuv020.panovel.api.DetailRequester
-import cc.aoeiuv020.panovel.api.GenreListRequester
+import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.TextRequester
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -22,42 +22,6 @@ class BiqugeTest {
     @Before
     fun setUp() {
         context = Biquge()
-    }
-
-    @Test
-    fun getGenres() {
-        val genres = context.getGenres()
-        genres[0].let {
-            assertEquals("玄幻小说", it.name)
-            assertEquals("https://www.biqubao.com/xuanhuan/", it.requester.url)
-        }
-        genres[genres.size - 1].let {
-            assertEquals("全本小说", it.name)
-            assertEquals("https://www.biqubao.com/quanben/", it.requester.url)
-        }
-    }
-
-    @Test
-    fun getNextPage() {
-        context.getNextPage(context.searchNovelName("最大权限")).let {
-            assertTrue(it!!.requester.url.contains("p=1"))
-        }
-    }
-
-    @Test
-    fun getNovelList() {
-        context.getNovelList(GenreListRequester("http://www.biqubao.com/xuanhuan/")).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertEquals(66, it.size)
-        }
-        context.getNovelList(GenreListRequester("http://www.biqubao.com/quanben/")).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertEquals(100, it.size)
-        }
     }
 
     @Test
@@ -86,7 +50,7 @@ class BiqugeTest {
 
     @Test
     fun getNovelDetail() {
-        context.getNovelDetail(DetailRequester("http://www.biquge.cn/book/18156/")).let {
+        val assertBlock: (NovelDetail) -> Unit = {
             assertEquals("最大权限", it.novel.name)
             assertEquals("肥鱼马甲", it.novel.author)
             assertEquals("制作游戏成功的林陨意外猝死，穿越到自己制作的游戏世界，结果拥有了这个世界的最大权限！\n" +
@@ -94,6 +58,17 @@ class BiqugeTest {
                     "各位书友要是觉得《最大权限》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！", it.introduction)
             println(it.bigImg)
             println(it.update)
+        }
+        context.getNovelDetail(DetailRequester("http://www.biquge.cn/book/18156/")).let(assertBlock)
+        context.getNovelDetail(DetailRequester("https://www.biqubao.com/book/18156/")).let(assertBlock)
+    }
+
+    @Test
+    fun getNovelItem() {
+        context.getNovelItem("https://m.biqubao.com/book/18156/").let {
+            assertEquals("https://www.biqubao.com/book/18156/", it.requester.url)
+            assertEquals("最大权限", it.name)
+            assertEquals("肥鱼马甲", it.author)
         }
     }
 

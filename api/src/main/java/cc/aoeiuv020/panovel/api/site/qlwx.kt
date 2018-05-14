@@ -50,7 +50,7 @@ class Qlyx : JsoupNovelContext() {
             return listOf(NovelListItem(detail.novel, info))
         }
         val root = request(response)
-        val elements = root.requireElements(name = "搜索结果列表", query = "#main > table > tbody > tr:not(:nth-child(1))")
+        val elements = root.requireElements(name = TAG_SEARCH_RESULT_LIST, query = "#main > table > tbody > tr:not(:nth-child(1))")
         return elements.map {
             val (name, url) = it.requireElement(query = "td:nth-child(1) > a") {
                 it.text() to it.absHref()

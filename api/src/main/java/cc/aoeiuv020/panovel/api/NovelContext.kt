@@ -124,12 +124,12 @@ abstract class NovelContext {
     /**
      * 获取网站分类信息，
      */
-    abstract fun getGenres(): List<NovelGenre>
+    open fun getGenres(): List<NovelGenre> = listOf()
 
     /**
      * 获取分类页面的下一页，
      */
-    abstract fun getNextPage(genre: NovelGenre): NovelGenre?
+    open fun getNextPage(genre: NovelGenre): NovelGenre? = null
 
     /**
      * 获取分类页面里的小说列表信息，
