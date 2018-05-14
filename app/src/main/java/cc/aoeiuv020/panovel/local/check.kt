@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.check.SignatureUtil
 import cc.aoeiuv020.panovel.check.VersionUtil
@@ -37,7 +38,8 @@ object Check : BaseLocalSource(), AnkoLogger {
         ).first().text()
     }
 
-    private fun getChangeLogFromAssert(ctx: Context, fromVersion: String): String {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getChangeLogFromAssert(ctx: Context, fromVersion: String): String {
         return try {
             ctx.assets.open("ChangeLog.txt").bufferedReader().cutChangeLog(fromVersion)
         } catch (e: Exception) {
@@ -79,6 +81,7 @@ object Check : BaseLocalSource(), AnkoLogger {
             when {
                 hasUpdate -> {
                     val changeLog = getChangeLog(currentVersionName)
+                    cachedVersionName = currentVersionName
                     listOf(hasUpdate, changeLog, newestVersionName)
                 }
                 VersionUtil.compare(currentVersionName, cachedVersionName) > 0 -> {
