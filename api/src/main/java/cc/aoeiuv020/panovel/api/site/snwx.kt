@@ -25,8 +25,8 @@ class Snwx : NovelContext() {
     override fun getNovelSite(): NovelSite = site
 
     override fun getNovelItem(url: String): NovelItem {
-        val path = URL(url).path
-        val detailUrl = "https://www.snwx8.com$path"
+        val path = URL(url).path.removePrefix("/")
+        val detailUrl = "${site.baseUrl}$path"
         return super.getNovelItem(detailUrl)
     }
 

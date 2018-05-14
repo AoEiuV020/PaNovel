@@ -32,6 +32,12 @@ class Syxs : NovelContext() {
                 || (isSearchResult(url) && url.contains("7845455592055299828"))
     }
 
+    override fun getNovelItem(url: String): NovelItem {
+        val path = URL(url).path.removePrefix("/")
+        val detailUrl = "${site.baseUrl}$path"
+        return super.getNovelItem(detailUrl)
+    }
+
     private fun isSearchResult(url: String): Boolean {
         return url.startsWith(SEARCH_PAGE_URL)
     }
