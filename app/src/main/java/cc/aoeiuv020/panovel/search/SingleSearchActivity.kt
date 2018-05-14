@@ -56,12 +56,17 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
             override fun onQueryTextChange(newText: String?): Boolean = false
         })
 
+        srlRefresh.isRefreshing = true
+        srlRefresh.setOnRefreshListener {
+            wvSite.reload()
+            srlRefresh.isRefreshing = false
+        }
+
         initWebView()
 
         presenter = SingleSearchPresenter(site)
         presenter.attach(this)
 
-        // TODO: 缺好多loading对话框，
         presenter.start()
     }
 
@@ -97,10 +102,12 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     fun getCurrentUrl(): String? = wvSite.url
 
     fun openPage(url: String) {
+        srlRefresh.isRefreshing = false
         wvSite.loadUrl(url)
     }
 
     private fun open() {
+        // TODO: 这里需要个loading dialog,
         getCurrentUrl()?.let { url ->
             presenter.open(url)
         }
