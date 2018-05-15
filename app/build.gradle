@@ -10,8 +10,8 @@ android {
         minSdkVersion min_version
         targetSdkVersion target_version
         multiDexEnabled true
-        versionCode 48
-        versionName "2.2.0"
+        versionCode 49
+        versionName "2.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "$rootProject.name-$versionName")
         vectorDrawables.useSupportLibrary = true
