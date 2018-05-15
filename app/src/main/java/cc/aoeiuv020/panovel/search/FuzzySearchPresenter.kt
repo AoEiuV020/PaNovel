@@ -83,7 +83,7 @@ class FuzzySearchPresenter : DefaultItemListPresenter<FuzzySearchActivity>() {
             } ?: run {
                 NovelContext.getNovelContexts().filter {
                     val site = it.getNovelSite()
-                    siteEnabledMap.getOrDefault(site.name, site.enabled)
+                    siteEnabledMap[site.name] ?: site.enabled
                 }.forEach { context ->
                     searchActual(em, context, name, author, false)
                 }
