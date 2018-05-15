@@ -1,3 +1,7 @@
+@file:Suppress("DEPRECATION")
+
+// 用到Cookies相关的不少过时方法，兼容低版本需要，
+
 package cc.aoeiuv020.panovel.search
 
 import android.os.Build

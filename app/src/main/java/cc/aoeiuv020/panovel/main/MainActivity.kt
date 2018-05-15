@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     private val sequence: AtomicInteger = AtomicInteger()
-    private val tagReceiver: JPushTagReceiver = JPushTagReceiver.create { jPushMessage, tagAliasBean ->
+    private val tagReceiver: JPushTagReceiver = JPushTagReceiver.create { jPushMessage, _ ->
         val message = "成功订阅当前书架<${jPushMessage.tags.size}>本，"
         info { message }
         toast(message)

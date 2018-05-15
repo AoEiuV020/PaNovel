@@ -2,8 +2,9 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.ChaptersRequester
 import cc.aoeiuv020.panovel.api.DetailRequester
-import cc.aoeiuv020.panovel.api.GenreListRequester
 import cc.aoeiuv020.panovel.api.TextRequester
+import cc.aoeiuv020.panovel.api.absHref
+import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -25,37 +26,24 @@ class DmzzTest {
     }
 
     @Test
-    fun getGenres() {
-        val genres = context.getGenres()
-        genres[0].let {
-            assertEquals("恐怖", it.name)
-            assertEquals("http://q.dmzj.com/tags/kongbu.shtml", it.requester.url)
-        }
-        genres[genres.lastIndex].let {
-            assertEquals("奇幻", it.name)
-            assertEquals("http://q.dmzj.com/tags/qihuan.shtml", it.requester.url)
-        }
-    }
-
-    @Test
-    fun getNovelList() {
-        context.getNovelList(GenreListRequester("http://q.dmzj.com/tags/qihuan.shtml")).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-        }
-    }
-
-    @Test
     fun searchNovelName() {
         context.getNovelList(context.searchNovelName("打工吧").requester).let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
-            assertTrue(it.any { novelItem ->
+            val item = it.first { novelItem ->
                 novelItem.novel.name == "打工吧魔王大人"
-            })
+            }
+            assertEquals("http://q.dmzj.com/1081/index.shtml", item.novel.requester.url)
         }
+    }
+
+    @Test
+    fun jsoupAbsHref() {
+        val root = Jsoup.parse("""<a href="../4/index.shtml" />""", "http://q.dmzj.com/search.shtml")
+        val a = root.select("a").first()
+        // 简直蠢，没处理相对路径的上级”../“，
+        assertEquals("http://q.dmzj.com/../4/index.shtml", a.absHref())
     }
 
     @Test

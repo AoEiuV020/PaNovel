@@ -14,22 +14,14 @@ import java.text.SimpleDateFormat
  *
  * Created by AoEiuV020 on 2017.11.30-17:49:36.
  */
-class Dmzz : NovelContext() {
-    private val site = NovelSite(
+class Dmzz : JsoupNovelContext() {
+    override val site = NovelSite(
             name = "动漫之家",
-            baseUrl = "http://q.dmzj.com",
+            baseUrl = "http://q.dmzj.com/",
             logo = "http://m.dmzj.com/images/head_logo.gif"
     )
 
     override fun getNovelSite(): NovelSite = site
-
-    override fun getGenres(): List<NovelGenre> {
-        val root = request("http://q.dmzj.com/search.shtml")
-        val elements = root.select("#search_tags > div.se2 > p > a")
-        return elements.map { a ->
-            NovelGenre(a.text(), GenreListRequester(a.absHref()))
-        }
-    }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
         return null
@@ -37,33 +29,31 @@ class Dmzz : NovelContext() {
 
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        val arr: List<DmzzNovelItem> = if (requester is SearchListRequester) {
-            response(connect(requester).ignoreContentType(true)).body()
-        } else {
-            val (genreName) = requester.url.pick(".*tags/(\\S*)\\.shtml")
-            val jsUrl = "http://q.dmzj.com/tags/js/$genreName.js"
-            val conn = connect(jsUrl).ignoreContentType(true)
-            response(conn).body()
-        }.let { js ->
+        if (requester !is SearchListRequester) {
+            return listOf()
+        }
+        val arr: List<DmzzNovelItem> = response(connect(requester).ignoreContentType(true)).body().let { js ->
             val json = js.dropWhile { it != '[' }
                     .dropLastWhile { it != ']' }
             Gson().fromJson(json, object : TypeToken<List<DmzzNovelItem>>() {}.type)
         }
         return arr.map { dmzz ->
             val info = dmzz.mIntro ?: dmzz.description ?: null.toString()
-            NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author, "http://q.dmzj.com" + dmzz.lnovelUrl.removePrefix("src/main")), info)
+            NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author,
+                    // 相对路径，"../"开头，没找到自动处理的，
+                    site.baseUrl + dmzz.lnovelUrl.removePrefix("../")), info)
         }
     }
 
     data class DmzzNovelItem(
             @SerializedName("author") val author: String, //仁木英之
-            @SerializedName("image_url") val imageUrl: String, //../img/webpic/4/pupuxianrenqiansuishaonv.jpg
+            @SerializedName("image_url") val imageUrl: String, //http://xs.dmzj.com/img/webpic/11/0005O.jpg
             @SerializedName("full_name") val fullName: String, //仆仆仙人千岁少女
             @SerializedName("lnovel_name") val lnovelName: String, //仆仆仙人千岁少女
             @SerializedName("fullc_name") val fullcName: String, //第一卷
             @SerializedName("last_chapter_name") val lastChapterName: String, //第一卷
-            @SerializedName("lnovel_url") val lnovelUrl: String, ///1473/index.shtml
-            @SerializedName("last_chapter_url") val lastChapterUrl: String, ///1473/5402/36527.shtml
+            @SerializedName("lnovel_url") val lnovelUrl: String, //../4/index.shtml
+            @SerializedName("last_chapter_url") val lastChapterUrl: String, ///../4/28/141.shtml
             @SerializedName("m_image_url") val mImageUrl: String, //http://xs.dmzj.com/img/webpic/4/pupuxianrenqiansuishaonv.jpg
             @SerializedName("m_intro") val mIntro: String?, //　　一日，神仙降临在我眼前。却是个辛辣又大胆的千岁……美少女？！　...
             @SerializedName("description") val description: String?,
