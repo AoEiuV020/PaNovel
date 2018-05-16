@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.provider.Settings.Secure
+import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.api.NovelContext
@@ -29,7 +29,7 @@ import org.jetbrains.anko.debug
  * Created by AoEiuV020 on 2017.10.03-17:04:22.
  */
 @Suppress("MemberVisibilityCanPrivate")
-class App : Application(), AnkoLogger {
+class App : MultiDexApplication(), AnkoLogger {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var ctx: Context
