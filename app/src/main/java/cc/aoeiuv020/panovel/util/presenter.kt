@@ -28,9 +28,13 @@ val asyncExecutor = object : Executor {
         val id = threadNumber.getAndIncrement()
         while (true) {
             Thread.currentThread().name = "async-$id"
-            threadsIdle.add(id)
+            synchronized(threadsIdle) {
+                threadsIdle.add(id)
+            }
             val r = tasks.take()
-            threadsIdle.remove(id)
+            synchronized(threadsIdle) {
+                threadsIdle.remove(id)
+            }
             r.run()
         }
     }
