@@ -33,31 +33,23 @@ class SingleSearchPresenter(
         val context = NovelContext.getNovelContextBySite(site)
         val cookies = context.cookies
         // 高版本的设置cookie的回调乱七八糟的，用不上，
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.removeAllCookies {
-                cookies.forEach { (key, value) ->
-                    val cookie = "$key=$value"
-                    debug {
-                        "push cookie: <$cookie>"
-                    }
-                    context.cookieDomainList().forEach { domain ->
-                        cookieManager.setCookie(domain, cookie) {
-                            debug {
-                                "cookie has been set $it, <$$cookie>"
-                            }
+        cookies.forEach { (key, value) ->
+            val cookie = "$key=$value"
+            debug {
+                "push cookie: <$cookie>"
+            }
+            context.cookieDomainList().forEach { domain ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    cookieManager.setCookie(domain, cookie) {
+                        debug {
+                            "cookie has been set $it, <$$cookie>"
                         }
                     }
-                }
-            }
-        } else {
-            cookieManager.removeAllCookie()
-            cookies.forEach { (key, value) ->
-                val cookie = "$key=$value"
-                debug {
-                    "push cookie: <$cookie>"
-                }
-                context.cookieDomainList().forEach { domain ->
+                } else {
                     cookieManager.setCookie(domain, cookie)
+                    debug {
+                        "cookie has been set, <$$cookie>"
+                    }
                 }
             }
         }
