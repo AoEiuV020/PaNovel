@@ -2,11 +2,14 @@ package cc.aoeiuv020.panovel.search
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.CookieManager
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
@@ -72,10 +75,27 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
-        wvSite.webViewClient = WebViewClient()
-        wvSite.settings.javaScriptEnabled = true
-        val cookieManager = CookieManager.getInstance()
-        cookieManager.setAcceptCookie(true)
+        wvSite.apply {
+            webViewClient = WebViewClient()
+            webChromeClient = WebChromeClient()
+            settings.apply {
+                javaScriptEnabled = true
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    @Suppress("DEPRECATION")
+                    databasePath = ctx.cacheDir.resolve("webView").path
+                }
+                databaseEnabled = true
+                domStorageEnabled = true
+                cacheMode = WebSettings.LOAD_DEFAULT
+                setAppCacheEnabled(true)
+            }
+        }
+        CookieManager.getInstance().apply {
+            setAcceptCookie(true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setAcceptThirdPartyCookies(wvSite, true)
+            }
+        }
     }
 
     override fun onResume() {
