@@ -9,8 +9,9 @@ import java.lang.reflect.Type
  */
 inline fun <reified T> type(): Type = object : TypeToken<T>() {}.type
 
-fun Any.toJson(gson: Gson): String = gson.toJson(this)
+fun Any?.toJson(gson: Gson): String = gson.toJson(this)
 // reified T 可以直接给gson用，没有reified的T用TypeToken包装也没用，只能传入type,
 inline fun <reified T> String.toBean(gson: Gson): T = toBean(gson, type<T>())
 
 fun <T> String.toBean(gson: Gson, type: Type): T = gson.fromJson<T>(this, type)
+fun <T> String.toNullableBean(gson: Gson, type: Type): T? = gson.fromJson<T>(this, type)

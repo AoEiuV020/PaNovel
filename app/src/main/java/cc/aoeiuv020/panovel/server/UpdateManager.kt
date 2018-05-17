@@ -6,7 +6,6 @@ import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.check.VersionUtil
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.server.common.gson
@@ -14,6 +13,7 @@ import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
+import cc.aoeiuv020.panovel.util.VersionUtil
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.notify
 import com.google.gson.JsonObject

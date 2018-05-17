@@ -6,8 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.check.SignatureUtil
-import cc.aoeiuv020.panovel.check.VersionUtil
+import cc.aoeiuv020.panovel.util.SignatureUtil
+import cc.aoeiuv020.panovel.util.VersionUtil
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable

@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.check;
+package cc.aoeiuv020.panovel.util;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
