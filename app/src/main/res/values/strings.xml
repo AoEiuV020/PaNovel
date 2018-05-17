@@ -172,6 +172,13 @@
     <string name="removeCookies">删除Cookies</string>
     <string name="message_cookies_removed">已删除cookies，</string>
     <string name="success">成功</string>
+    <string name="warning">警告</string>
+    <string name="downgrade_warning_placeholder">已降级，从"%s"到"%s",</string>
+    <string name="migrating_title">正在迁移旧版数据</string>
+    <string name="migrate_error_title">迁移旧版数据失败</string>
+    <string name="migrating_message_placeholder">从"%s"到"%s",\n迁移内容：%s</string>
+    <string name="migrate_error_message_placeholder">@string/migrating_message_placeholder</string>
+    <string name="ignore">忽略</string>
 
 
 </resources>

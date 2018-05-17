@@ -29,6 +29,9 @@ import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Check
 import cc.aoeiuv020.panovel.local.DevMessage
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.migration.Migration
+import cc.aoeiuv020.panovel.migration.MigrationPresenter
+import cc.aoeiuv020.panovel.migration.MigrationView
 import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.server.UpdateManager
@@ -38,6 +41,7 @@ import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
 import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
 import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
 import cc.aoeiuv020.panovel.settings.SettingsActivity
+import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.asyncExecutor
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
@@ -58,12 +62,65 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * Created by AoEiuV020 on 2017.10.15-15:53:19.
  */
-class MainActivity : AppCompatActivity(), AnkoLogger {
+class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
+
     lateinit var progressDialog: ProgressDialog
+    private var migratingDialog: ProgressDialog? = null
     private lateinit var bookshelfFragment: BookshelfFragment
     private lateinit var historyFragment: HistoryFragment
     lateinit var bookListFragment: BookListFragment
 
+    private lateinit var migrationPresenter: MigrationPresenter
+
+    override fun showDowngrade(from: VersionName, to: VersionName) {
+        debug {
+            "showDowngrade <${from.name} to ${to.name}>"
+        }
+        ctx.alert {
+            title = getString(R.string.warning)
+            message = getString(R.string.downgrade_warning_placeholder, from.name, to.name)
+            okButton { }
+        }.show()
+    }
+
+    override fun showUpgrading(from: VersionName, migration: Migration) {
+        val to = migration.to
+        debug {
+            "showUpgrading <${from.name} to ${to.name}>"
+        }
+        ProgressDialog(ctx).apply {
+            setTitle(getString(R.string.migrating_title))
+            setMessage(getString(R.string.migrating_message_placeholder, from.name, to.name, migration.message))
+            show()
+        }.also {
+            migratingDialog = it
+        }
+    }
+
+    override fun showMigrateComplete(from: VersionName, to: VersionName) {
+        debug {
+            "showMigrateComplete,"
+        }
+        migratingDialog?.dismiss()
+        migratingDialog = null
+    }
+
+    override fun showMigrateError(from: VersionName, migration: Migration) {
+        val to = migration.to
+        debug {
+            "showMigrateError <${from.name} to ${to.name}>"
+        }
+        migratingDialog?.dismiss()
+        migratingDialog = null
+        ctx.alert {
+            title = getString(R.string.migrate_error_title)
+            message = getString(R.string.migrate_error_message_placeholder, from.name, to.name, migration.message)
+            okButton { }
+            neutralPressed(getString(R.string.ignore)) {
+                migrationPresenter.ignoreMigration(migration)
+            }
+        }.show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +138,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         JPushTagReceiver.register(this, tagReceiver)
 
         progressDialog = ProgressDialog(this)
+
+        migrationPresenter = MigrationPresenter(this).apply {
+            attach(this@MainActivity)
+            start()
+        }
 
         bookshelfFragment = BookshelfFragment()
         historyFragment = HistoryFragment()

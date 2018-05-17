@@ -5,5 +5,6 @@ package cc.aoeiuv020.panovel.migration
  */
 class MigrateException(
         val migration: Migration,
+        message: String? = null,
         cause: Throwable?
-) : Exception("迁移数据到版本<${migration.to.name}>失败，", cause)
+) : Exception("迁移数据到版本<${migration.to.name}>失败: $message", cause)

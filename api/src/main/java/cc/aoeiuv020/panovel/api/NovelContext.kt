@@ -26,9 +26,22 @@ abstract class NovelContext {
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
                 .create()
+        /**
+         * 缓存文件夹，可以随时被删除的，
+         */
         private var sCacheDir: File? = null
+
         fun cache(cacheDir: File?) {
             this.sCacheDir = cacheDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
+        }
+
+        /**
+         * 非缓存，不会随时被删除，不要放太大的东西，
+         */
+        private var sFilesDir: File? = null
+
+        fun files(cacheDir: File?) {
+            this.sFilesDir = cacheDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
         }
 
         @Suppress("RemoveExplicitTypeArguments")
@@ -55,17 +68,29 @@ abstract class NovelContext {
 
     @Suppress("MemberVisibilityCanPrivate")
     protected val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
+
     /**
-     * 用类名simpleName当缓存目录名，所以类名不能重复，
+     * 用网站名当数据保存目录名，网站名不能重复，
+     */
+    private val fileName get() = getNovelSite().name
+    /**
+     * 缓存文件夹，可以随时被删除的，
      */
     @Suppress("MemberVisibilityCanBePrivate")
     protected val mCacheDir: File?
-        get() = sCacheDir?.resolve(this.javaClass.simpleName)?.apply { exists() || mkdirs() }
-    private val mCookieFile: File? get() = mCacheDir?.resolve("cookies")
+        get() = sCacheDir?.resolve(fileName)?.apply { exists() || mkdirs() }
+    /**
+     * 非缓存，不会随时被删除，不要放太大的东西，
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    protected val mFilesDir: File?
+        get() = sFilesDir?.resolve(fileName)?.apply { exists() || mkdirs() }
+
+    private val cookiesFile: File? get() = mFilesDir?.resolve("cookies")
     private var _cookies: Map<String, String>? = null
     var cookies: Map<String, String>
         @Synchronized
-        get() = _cookies ?: (mCookieFile?.let { file ->
+        get() = _cookies ?: (cookiesFile?.let { file ->
             try {
                 file.readText().toBean<MutableMap<String, String>>(gson)
             } catch (e: Exception) {
@@ -84,7 +109,7 @@ abstract class NovelContext {
                 return
             }
             _cookies = value
-            mCookieFile?.writeText(value.toJson(gson))
+            cookiesFile?.writeText(value.toJson(gson))
         }
 
     fun putCookies(cookies: Map<String, String>) {

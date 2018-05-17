@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.util.VersionName
  */
 interface MigrationView : IView {
     fun showDowngrade(from: VersionName, to: VersionName)
-    fun showUpgrading(from: VersionName, to: VersionName)
-    fun showMigrateError(message: String?)
+    fun showMigrateComplete(from: VersionName, to: VersionName)
+    fun showUpgrading(from: VersionName, migration: Migration)
+    fun showMigrateError(from: VersionName, migration: Migration)
 }

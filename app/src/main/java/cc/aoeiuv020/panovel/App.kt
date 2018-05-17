@@ -2,7 +2,6 @@ package cc.aoeiuv020.panovel
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.provider.Settings.Secure
 import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
@@ -11,13 +10,13 @@ import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.local.PrimarySettings
 import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.ignoreException
 import cn.jpush.android.api.JPushInterface
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.tencent.bugly.crashreport.CrashReport
 import io.reactivex.internal.functions.Functions
 import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
@@ -65,7 +64,7 @@ class App : MultiDexApplication(), AnkoLogger {
 
         initAdmob()
 
-        initBugly()
+        initReporter()
 
         if (Settings.subscribeNovelUpdate) {
             initJpush()
@@ -80,6 +79,7 @@ class App : MultiDexApplication(), AnkoLogger {
 
     private fun initPaNovel() {
         NovelContext.apply {
+            files(filesDir.resolve("api"))
             cache(cacheDir.resolve("api"))
         }
     }
@@ -113,16 +113,11 @@ class App : MultiDexApplication(), AnkoLogger {
                 }.build()
     }
 
-    @SuppressLint("HardwareIds")
-    private fun initBugly() {
-        // 第三个参数为SDK调试模式开关，
-        // 打开会导致开发机上报异常，
-        CrashReport.initCrashReport(ctx, "be0d684a75", false)
-        // 貌似设置了开发设备就不上报了，
-        CrashReport.setIsDevelopmentDevice(ctx, !Settings.reportCrash)
-
-        val androidId = Secure.getString(ctx.contentResolver, Secure.ANDROID_ID)
-        CrashReport.setUserId(androidId)
+    /**
+     * 初始化异常上报封装类，
+     */
+    private fun initReporter() {
+        Reporter.init(ctx)
     }
 
 }

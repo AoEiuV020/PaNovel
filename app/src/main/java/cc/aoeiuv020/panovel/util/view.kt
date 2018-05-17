@@ -42,6 +42,7 @@ import org.jetbrains.anko.yesButton
 fun Context.loading(dialog: ProgressDialog, id: Int) = loading(dialog, getString(R.string.loading, getString(id)))
 
 fun Context.loading(dialog: ProgressDialog, str: String) = dialog.apply {
+    setTitle(null)
     setMessage(str)
     show()
 }
