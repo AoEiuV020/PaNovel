@@ -40,8 +40,8 @@ abstract class NovelContext {
          */
         private var sFilesDir: File? = null
 
-        fun files(cacheDir: File?) {
-            this.sFilesDir = cacheDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
+        fun files(filesDir: File?) {
+            this.sFilesDir = filesDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
         }
 
         @Suppress("RemoveExplicitTypeArguments")

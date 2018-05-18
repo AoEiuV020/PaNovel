@@ -11,22 +11,16 @@ import java.text.SimpleDateFormat
  *
  * Created by AoEiuV020 on 2018.03.06-18:10:46.
  */
-class Sfacg : NovelContext() {
+class Sfacg : JsoupNovelContext() {
     companion object {
         private val SEARCH_PAGE_URL = "http://s.sfacg.com/"
     }
 
-    private val site = NovelSite(
+    override val site = NovelSite(
             name = "SF轻小说",
             baseUrl = "http://book.sfacg.com/",
             logo = "http://rs.sfacg.com/images/sflogo.gif"
     )
-
-    override fun getNovelSite(): NovelSite = site
-
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        return null
-    }
 
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")

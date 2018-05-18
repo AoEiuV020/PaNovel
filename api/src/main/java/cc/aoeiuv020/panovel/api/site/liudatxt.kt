@@ -9,31 +9,21 @@ import java.text.SimpleDateFormat
  *
  * Created by AoEiuV020 on 2017.10.11-19:39:27.
  */
-class Liudatxt : NovelContext() {
+class Liudatxt : JsoupNovelContext() {
     companion object {
         private val SEARCH_PAGE_URL = "http://www.liudatxt.com/search.php"
     }
 
-    private val site = NovelSite(
+    override val site = NovelSite(
             name = "溜达小说",
             baseUrl = "http://www.liudatxt.com/",
             logo = "https://imgsa.baidu.com/forum/w%3D580/sign=1b4c19b5f0edab6474724dc8c737af81/4afa9ae93901213f074d29a25fe736d12e2e95b9.jpg"
     )
 
-    override fun getNovelSite(): NovelSite = site
-
     override fun getNovelItem(url: String): NovelItem {
         val bookId = findBookId(url)
         val detailUrl = "${site.baseUrl}so/$bookId/"
         return super.getNovelItem(detailUrl)
-    }
-
-    override fun getGenres(): List<NovelGenre> {
-        val root = request(site.baseUrl)
-        val elements = root.select("#header > div.nav > ul > li > a").drop(1).dropLast(1)
-        return elements.map { a ->
-            NovelGenre(a.text(), a.absHref())
-        }
     }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {

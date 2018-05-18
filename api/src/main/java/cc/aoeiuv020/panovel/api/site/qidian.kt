@@ -21,14 +21,12 @@ import javax.crypto.spec.IvParameterSpec
  *
  * Created by AoEiuV020 on 2017.10.16-17:40:38.
  */
-class Qidian : NovelContext() {
-    private val site = NovelSite(
+class Qidian : JsoupNovelContext() {
+    override val site = NovelSite(
             name = "起点中文",
             baseUrl = "https://www.qidian.com/",
             logo = "https://qidian.gtimg.com/qd/images/logo.dbed5.png"
     )
-
-    override fun getNovelSite(): NovelSite = site
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
         val root = request(genre.requester)

@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.Requester
-import cc.aoeiuv020.panovel.api.absHref
 import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -41,7 +40,7 @@ class DmzzTest {
         val root = Jsoup.parse("""<a href="../4/index.shtml" />""", "http://q.dmzj.com/search.shtml")
         val a = root.select("a").first()
         // 简直蠢，没处理相对路径的上级”../“，
-        assertEquals("http://q.dmzj.com/../4/index.shtml", a.absHref())
+        assertEquals("http://q.dmzj.com/../4/index.shtml", a.absUrl("href"))
     }
 
     @Test

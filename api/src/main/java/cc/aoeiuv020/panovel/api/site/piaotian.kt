@@ -13,27 +13,16 @@ import java.util.*
  *
  * Created by AoEiuV020 on 2017.10.02-16:03:02.
  */
-class Piaotian : NovelContext() {
+class Piaotian : JsoupNovelContext() {
     companion object {
         private val SEARCH_PAGE_URL = "https://www.piaotian.com/modules/article/search.php"
     }
 
-    private val site = NovelSite(
+    override val site = NovelSite(
             name = "飘天文学",
             baseUrl = "https://www.piaotian.com/",
             logo = "https://www.piaotian.com/css/logo.gif"
     )
-
-    override fun getNovelSite(): NovelSite = site
-
-    override fun getGenres(): List<NovelGenre> {
-        val root = request(site.baseUrl)
-        val elements = root.select("div.navinner > ul > li:not(:nth-last-child(1)):not(:nth-child(1)) > a")
-        return elements.map {
-            val a = it
-            NovelGenre(a.text(), a.absHref())
-        }
-    }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
         val root = request(genre.requester)

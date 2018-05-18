@@ -23,8 +23,6 @@ class Biquge : JsoupNovelContext() {
             logo = "https://imgsa.baidu.com/forum/w%3D580/sign=1d712d8332dbb6fd255be52e3925aba6/d7d2c843fbf2b211dfb81c36c18065380dd78e1b.jpg"
     )
 
-    override fun getNovelSite(): NovelSite = site
-
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: Requester): List<NovelListItem> {
         val root = request(requester)

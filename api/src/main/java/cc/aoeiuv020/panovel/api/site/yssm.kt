@@ -54,10 +54,6 @@ class Yssm : JsoupNovelContext() {
         return NovelGenre(name, url)
     }
 
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        return null
-    }
-
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)

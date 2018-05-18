@@ -3,8 +3,6 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.NovelGenre
 import cc.aoeiuv020.panovel.api.Requester
-import cc.aoeiuv020.panovel.api.textList
-import org.jsoup.Jsoup
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -22,19 +20,6 @@ class PiaotianTest {
     @Before
     fun setUp() {
         context = Piaotian()
-    }
-
-    @Test
-    fun getGenres() {
-        val genres = context.getGenres()
-        genres[0].let {
-            assertEquals("玄幻魔法", it.name)
-            assertEquals("https://www.piaotian.com/booksort1/0/1.html", it.requester.url)
-        }
-        genres[genres.size - 1].let {
-            assertEquals("全本小说", it.name)
-            assertEquals("https://www.piaotian.com/quanben/index.html", it.requester.url)
-        }
     }
 
     @Test
@@ -156,24 +141,5 @@ class PiaotianTest {
                 ""
         val list = novelDetail.pick(pattern)
         println(list)
-    }
-
-    @Test
-    fun pickInfo() {
-        val html = """<div style="float:left;width:390px;">
-          <span class="hottext">最新章节：</span><a href="http://www.piaotian.com/html/8/8605/5903637.html">第51章 真不愧是轻茗的亲姨</a><br>
-
-		  <br>
-          <span class="hottext">内容简介：</span><br>&nbsp;&nbsp;&nbsp;&nbsp;“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”<br>
-&nbsp;&nbsp;&nbsp;&nbsp;一个无敌的随身剑灵与天才美少女（们）的同居故事。<br>
-<br><br>
-
-      </div>"""
-        val d = Jsoup.parse(html)
-        val div = d.select("div").first()
-        div.text()
-        val textList = div.textList()
-        assertEquals("“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”", textList[0])
-        assertEquals("一个无敌的随身剑灵与天才美少女（们）的同居故事。", textList[1])
     }
 }

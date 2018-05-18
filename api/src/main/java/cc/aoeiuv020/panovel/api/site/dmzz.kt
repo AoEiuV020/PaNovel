@@ -21,12 +21,6 @@ class Dmzz : JsoupNovelContext() {
             logo = "http://m.dmzj.com/images/head_logo.gif"
     )
 
-    override fun getNovelSite(): NovelSite = site
-
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        return null
-    }
-
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: Requester): List<NovelListItem> {
         val arr: List<DmzzNovelItem> = response(connect(requester).ignoreContentType(true)).body().let { js ->

@@ -11,20 +11,18 @@ import java.text.SimpleDateFormat
  *
  * Created by AoEiuV020 on 2018.03.14-01:35:36.
  */
-class Syxs : NovelContext() {
+class Syxs : JsoupNovelContext() {
     companion object {
         private val SEARCH_PAGE_URL = "http://zhannei.baidu.com/cse/search"
     }
 
     override val charset: String? = "GBK"
 
-    private val site = NovelSite(
+    override val site = NovelSite(
             name = "31小说",
             baseUrl = "http://www.31xs.net/",
             logo = "https://imgsa.baidu.com/forum/w%3D580/sign=e8432cdf06d162d985ee621421dfa950/47e082d8bc3eb135d9b1d5a0aa1ea8d3fc1f44a6.jpg"
     )
-
-    override fun getNovelSite(): NovelSite = site
 
     override fun check(url: String): Boolean {
         return super.check(url)

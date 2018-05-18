@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.Requester
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -8,7 +7,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.io.File
 
 /**
  *
@@ -26,7 +24,6 @@ class QidianTest {
     private lateinit var context: Qidian
     @Before
     fun setUp() {
-        NovelContext.files(File("/tmp/panovel/api"))
         context = Qidian()
     }
 
