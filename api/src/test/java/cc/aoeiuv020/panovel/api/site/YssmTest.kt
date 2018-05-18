@@ -1,5 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.panovel.api.Requester
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -22,6 +24,15 @@ class YssmTest {
     fun getNovelList() {
         context.getNovelList(context.searchNovelName("都市").requester).forEach {
             println(it.novel)
+        }
+    }
+
+    @Test
+    fun getNovelChaptersAsc() {
+        context.getNovelChaptersAsc(Requester("https://www.yssm.org/uctxt/294/294596/")).let {
+            assertTrue(it.isNotEmpty())
+            println(it.size)
+            println(it.first())
         }
     }
 }

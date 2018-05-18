@@ -82,10 +82,15 @@ class Yssm : JsoupNovelContext() {
 
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
-        // 章节数太少的话，前几章会被抛弃，
-        return root.requireElements("#main > div > dl > dd > a", TAG_CHAPTER_LINK).drop(12).map { a ->
-            NovelChapter(a.text(), a.absHref())
-        }
+        // 章节数太少的话，没有开头的叫最新章节的12章，
+        // 这里判断是大于12认为有那12章，扔掉，
+        // 并不知道有没有例外，
+        return root.requireElements("#main > div > dl > dd > a", TAG_CHAPTER_LINK)
+                .let {
+                    if (it.size > 12) it.drop(12) else it
+                }.map { a ->
+                    NovelChapter(a.text(), a.absHref())
+                }
     }
 
     override fun getNovelText(requester: Requester): NovelText {
