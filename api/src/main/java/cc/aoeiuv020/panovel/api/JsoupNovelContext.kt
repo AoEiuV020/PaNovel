@@ -49,7 +49,7 @@ abstract class JsoupNovelContext : NovelContext() {
     /**
      * 忽略单个元素处理异常，
      */
-    protected fun <R : Any> Elements.mapIgnoreException(transform: (Element) -> R) =
+    protected inline fun <R : Any> Elements.mapIgnoreException(transform: (Element) -> R) =
             mapHandleException({ element, t ->
                 logger.debug("解析元素[${element.tag()}]失败，", t)
             }, transform)
@@ -57,7 +57,7 @@ abstract class JsoupNovelContext : NovelContext() {
     /**
      * 捕获单个元素处理异常，处理后继续，
      */
-    protected fun <R : Any> Elements.mapHandleException(
+    protected inline fun <R : Any> Elements.mapHandleException(
             exceptionHandler: (Element, Throwable) -> Unit,
             transform: (Element) -> R
     ) = mapNotNull {
@@ -80,7 +80,7 @@ abstract class JsoupNovelContext : NovelContext() {
         throw IllegalStateException("解析[$name]($query)失败，", e)
     }
 
-    protected fun <T> Element.requireElements(query: String, name: String = TAG_LIST, block: (Elements) -> T): T = try {
+    protected inline fun <T> Element.requireElements(query: String, name: String = TAG_LIST, block: (Elements) -> T): T = try {
         select(query).let(block)
     } catch (e: Exception) {
         throw IllegalStateException("解析[$name]($query)失败，", e)
@@ -92,7 +92,7 @@ abstract class JsoupNovelContext : NovelContext() {
         throw IllegalStateException("解析[$name]($query)失败，", e)
     }
 
-    protected fun <T> Element.requireElement(query: String, name: String = TAG_ELEMENT, block: (Element) -> T): T = try {
+    protected inline fun <T> Element.requireElement(query: String, name: String = TAG_ELEMENT, block: (Element) -> T): T = try {
         select(query).first().let(block)
     } catch (e: Exception) {
         throw IllegalStateException("解析[$name]($query)失败，", e)
@@ -104,7 +104,7 @@ abstract class JsoupNovelContext : NovelContext() {
         null
     }
 
-    protected fun <T> Element.getElements(query: String, block: (Elements) -> T?): T? = try {
+    protected inline fun <T> Element.getElements(query: String, block: (Elements) -> T?): T? = try {
         select(query).let(block)
     } catch (e: Exception) {
         null
@@ -116,7 +116,7 @@ abstract class JsoupNovelContext : NovelContext() {
         null
     }
 
-    protected fun <T> Element.getElement(query: String, block: (Element) -> T?): T? = try {
+    protected inline fun <T> Element.getElement(query: String, block: (Element) -> T?): T? = try {
         select(query).firstOrNull()?.let(block)
     } catch (e: Exception) {
         null
