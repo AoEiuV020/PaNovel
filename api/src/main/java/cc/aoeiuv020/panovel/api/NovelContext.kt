@@ -189,15 +189,6 @@ abstract class NovelContext {
     abstract fun getNovelText(requester: Requester): NovelText
 
     /**
-     * 从requester获取真实地址，
-     */
-    open fun getAbsoluteUrl(requester: Requester): String = if (requester.url.startsWith('/')) {
-        getNovelSite().baseUrl + requester.extra
-    } else {
-        requester.extra
-    }
-
-    /**
      * 判断这个地址是不是属于这个网站，
      */
     open fun check(url: String): Boolean = try {

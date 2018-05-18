@@ -30,8 +30,7 @@ class Biquge : JsoupNovelContext() {
         return root.requireElements(name = TAG_SEARCH_RESULT_LIST, query = "div.result-list > div").map {
             val a = it.requireElement(name = TAG_NOVEL_LINK, query = "> div.result-game-item-detail > h3 > a")
             val name = a.title()
-            // TODO: 详情页地址要尽量不变，考虑到网站域名可能变，不用绝对地址，
-            val url = a.absHref()
+            val url = a.hrefPath()
             val author = it.requireElement(name = TAG_AUTHOR_NAME, query = "> div.result-game-item-detail > div > p:nth-child(1) > span:nth-child(2)") {
                 it.text().trim()
             }

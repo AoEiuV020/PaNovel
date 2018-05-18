@@ -2,6 +2,7 @@
 
 package cc.aoeiuv020.panovel.api
 
+import cc.aoeiuv020.base.jar.divide
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonPrimitive
@@ -83,14 +84,7 @@ open class Requester(val extra: String) {
                         }
                     json.isJsonPrimitive -> {
                         val typeWithExtra = json.asString
-                        val dividerIndex = typeWithExtra.indexOf(dividerCharacter).also {
-                            if (it == -1) {
-                                throw IllegalStateException("Requester不合法，没有分隔符'|'，")
-                            }
-                        }
-                        val type = typeWithExtra.substring(0, dividerIndex)
-                        // 如果extra为空，这里的substring可以正常返回空字符串，
-                        val extra = typeWithExtra.substring(dividerIndex + 1)
+                        val (type, extra) = typeWithExtra.divide(dividerCharacter)
                         // 恢复默认包名，小数点.开头表示用默认包名，
                         val className = if (type.startsWith('.')) {
                             val packageName = Requester::class.java.`package`.name
@@ -107,12 +101,8 @@ open class Requester(val extra: String) {
     }
 
     val type: String get() = this.javaClass.name
-    /**
-     * 外部调用网站上下文的方法来得到requester的真实地址，
-     * [NovelContext.getAbsoluteUrl]
-     * TODO: 改成internal，
-     */
     open val url get() = extra
+
     open fun connect(): Connection = Jsoup.connect(url).maxBodySize(0)
     open fun doBeforeExecute(conn: Connection): Connection = conn
     override fun toString() = "${this.javaClass.simpleName}(url=$url)"
@@ -126,6 +116,3 @@ open class Requester(val extra: String) {
     }
 }
 
-class PathOnlyRequester(path: String) : Requester(path) {
-
-}
