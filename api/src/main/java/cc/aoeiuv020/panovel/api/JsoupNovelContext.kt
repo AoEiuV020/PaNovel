@@ -47,6 +47,29 @@ abstract class JsoupNovelContext : NovelContext() {
             replace(replaceWhiteWithNewLineRegex, "\n")
 
     /**
+     * 忽略单个元素处理异常，
+     */
+    protected fun <R : Any> Elements.mapIgnoreException(transform: (Element) -> R) =
+            mapHandleException({ element, t ->
+                logger.debug("解析元素[${element.tag()}]失败，", t)
+            }, transform)
+
+    /**
+     * 捕获单个元素处理异常，处理后继续，
+     */
+    protected fun <R : Any> Elements.mapHandleException(
+            exceptionHandler: (Element, Throwable) -> Unit,
+            transform: (Element) -> R
+    ) = mapNotNull {
+        try {
+            transform(it)
+        } catch (e: Exception) {
+            // 错误忽略，只打个debug级别的日志，
+            exceptionHandler(it, e)
+            null
+        }
+    }
+    /**
      * 下面的封装关键在于分开必要和不必要的，是否捕获Exception,
      * 必要的解析失败时统一抛异常，
      */

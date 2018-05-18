@@ -16,6 +16,12 @@ inline fun Logger.trace(message: () -> Any?) {
     }
 }
 
+inline fun Logger.debug(e: Throwable, message: () -> Any?) {
+    if (isDebugEnabled) {
+        debug(message().toString(), e)
+    }
+}
+
 inline fun Logger.debug(message: () -> Any?) {
     if (isDebugEnabled) {
         debug("{}", message().toString())

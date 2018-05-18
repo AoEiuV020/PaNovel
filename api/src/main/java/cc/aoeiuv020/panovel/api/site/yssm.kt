@@ -9,18 +9,16 @@ import java.text.SimpleDateFormat
 /**
  * Created by AoEiuV020 on 2018.05.10-16:48:32.
  */
-class Yssm : NovelContext() {
+class Yssm : JsoupNovelContext() {
     companion object {
         private val SEARCH_PAGE_URL = "https://www.yssm.org/SearchBook.php"
     }
 
-    private val site = NovelSite(
+    override val site = NovelSite(
             name = "幼狮书盟",
             baseUrl = "https://www.yssm.org/",
             logo = "https://www.yssm.org/images/logo.png"
     )
-
-    override fun getNovelSite(): NovelSite = site
 
     override fun getNovelItem(url: String): NovelItem {
         val path = URL(url).path.removePrefix("/")
@@ -28,26 +26,23 @@ class Yssm : NovelContext() {
         return super.getNovelItem(detailUrl)
     }
 
-    override fun getGenres(): List<NovelGenre> {
-        val root = request(site.baseUrl)
-        val elements = root.select("#subnav > div > p > a").drop(2).dropLast(1)
-        return elements.map { a ->
-            NovelGenre(a.text(), Requester(a.absHref()))
-        }
-    }
-
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: Requester): List<NovelListItem> {
-        val root = request(requester)
-        return root.select("#container > div.details.list-type > ul > li").map {
-            val a = it.select("> span.s2 > a").first()
+        // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
+        // 这里限制一下，20K大概小几十个结果，
+        val root = response(connect(requester).maxBodySize(1000 * 20)).parse()
+        // 由于被截断，可能处理最后一个元素会出异常，无视，
+        return root.requireElements("#container > div.details.list-type > ul > li").mapIgnoreException {
+            val a = it.requireElement(query = "> span.s2 > a", name = TAG_NOVEL_LINK)
             val name = a.text()
             val url = a.absHref()
-            val author = it.select("> span.s3").first().text()
-            val last = it.select("> span.s2 > i > a").first().text()
-            val genre = it.select("> span.s1").first().text()
-            val updateTime = it.select("> span.s4").first().text()
-            val status = it.select("> span.s5").first().text()
+            val author = it.requireElement(query = "> span.s3", name = TAG_AUTHOR_NAME) { it.text() }
+            val last = it.getElement(query = "> span.s2 > i > a") {
+                it.text()
+            }
+            val genre = it.getElement(query = "> span.s1") { it.text() }
+            val updateTime = it.getElement(query = "> span.s4") { it.text() }
+            val status = it.getElement(query = "> span.s5") { it.text() }
             val info = "最新章节: $last 类别: $genre 更新时间: $updateTime 状态: $status"
             NovelListItem(NovelItem(this, name, author, url), info)
         }
