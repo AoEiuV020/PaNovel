@@ -49,7 +49,7 @@ class Refresher {
                 }
                 // 更新记录的时间，
                 lastTime = currentTime
-                val targetCount = (lastCount * (config.targetTime.toFloat() / roundTime)).toInt().let {
+                var targetCount = (lastCount * (config.targetTime.toFloat() / roundTime)).toInt().let {
                     if (it <= 0 || it >= config.maxSize) {
                         config.maxSize
                     } else {
@@ -61,11 +61,13 @@ class Refresher {
                 }
                 lastCount = 0
                 if (roundTime > config.minTime) {
+                    targetCount -= vipNovelList.size
                     // vip每轮都刷新，以防万一太频繁，
-                    vipNovelList.also { lastCount += it.size }
-                            .forEach { novel ->
-                                refresh(novel)
-                            }
+                    vipNovelList.also {
+                        lastCount += it.size
+                    }.forEach { novel ->
+                        refresh(novel)
+                    }
                 }
                 service.needRefreshNovelList(targetCount)
                         .also {

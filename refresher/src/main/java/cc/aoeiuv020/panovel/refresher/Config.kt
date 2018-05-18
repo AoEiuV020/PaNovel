@@ -14,5 +14,5 @@ data class Config(
         /**
          * 一轮最多拿这么多个，
          */
-        val maxSize: Int = 300
+        val maxSize: Int = 100
 )
