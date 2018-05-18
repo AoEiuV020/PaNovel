@@ -4,6 +4,7 @@ import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by AoEiuV020 on 2018.05.10-18:11:57.
@@ -81,28 +82,28 @@ class Qlyx : JsoupNovelContext() {
         val root = request(requester)
         val eMaininfo = root.requireElement(query = "#maininfo")
         val eInfo = eMaininfo.requireElement(query = "#info")
-        val img = root.requireElement(query = "#fmimg > img") {
+        val img = root.requireElement(query = "#fmimg > img", name = TAG_IMAGE) {
             it.absSrc()
         }
-        val name = eInfo.requireElement(query = "> h1") {
+        val name = eInfo.requireElement(query = "> h1", name = TAG_NOVEL_NAME) {
             it.text()
         }
         val (author) = eInfo.requireElement(query = "> p:nth-child(2)", name = TAG_AUTHOR_NAME) {
             it.text().pick("作    者：(\\S*)")
         }
-        val info = root.requireElement(query = "#intro > p", name = TAG_INTRODUCTION) {
+        val intro = root.getElement(query = "#intro > p") {
             it.text().replaceWhiteWithNewLine()
-        }
+        }.toString()
 
-        val update = eInfo.requireElement(query = "> p:nth-child(4)", name = TAG_UPDATE_TIME) {
+        val update = eInfo.getElement(query = "> p:nth-child(4)") {
             val (updateString) = it.text().pick("更新时间：(.*)")
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             sdf.parse(updateString)
-        }
+        } ?: Date(0)
 
         val chapterPageUrl = requester.url
 
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {

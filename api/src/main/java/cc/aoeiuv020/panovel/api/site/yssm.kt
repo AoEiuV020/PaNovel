@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.api.*
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by AoEiuV020 on 2018.05.10-16:48:32.
@@ -59,15 +60,21 @@ class Yssm : JsoupNovelContext() {
         val root = request(requester)
         // 这网站小说没有封面，
         val img = "https://www.snwx8.com/modules/article/images/nocover.jpg"
-        val div = root.select("#container > div.bookinfo").first()
-        val name = div.select("> div > span > h1").first().text()
-        val (author) = div.select("> div > span > em").first().text()
-                .pick("作者：(\\S*)")
-        val introduction = div.select("> p.intro").first().textNodes().joinToString("\n")
+        val div = root.requireElement("#container > div.bookinfo")
+        val name = div.requireElement("> div > span > h1") { it.text() }
+        val author = div.requireElement("> div > span > em") {
+            val (author) = it.text().pick("作者：(\\S*)")
+            author
+        }
+        val introduction = div.getElement("> p.intro") {
+            it.textNodes().joinToString("\n")
+        }.toString()
 
-        val updateString = div.select("> p.stats > span.fr > i:nth-child(2)").first().text()
-        val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-        val update = sdf.parse(updateString)
+        val update = div.getElement("> p.stats > span.fr > i:nth-child(2)") {
+            val updateString = it.text()
+            val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+            sdf.parse(updateString)
+        } ?: Date(0)
 
         val chapterPageUrl = requester.url
         return NovelDetail(NovelItem(this, name, author, requester), img, update, introduction, chapterPageUrl)
@@ -76,14 +83,14 @@ class Yssm : JsoupNovelContext() {
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
         // 章节数太少的话，前几章会被抛弃，
-        return root.select("#main > div > dl > dd > a").drop(12).map { a ->
+        return root.requireElements("#main > div > dl > dd > a", TAG_CHAPTER_LINK).drop(12).map { a ->
             NovelChapter(a.text(), a.absHref())
         }
     }
 
     override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
-        val textList = root.select("#content").first().textList()
+        val textList = root.requireElements("#content", TAG_CONTENT).first().textList()
         return NovelText(textList)
     }
 }

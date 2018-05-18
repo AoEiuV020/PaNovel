@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.api.*
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *
@@ -76,29 +77,33 @@ class Biquge : JsoupNovelContext() {
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
-        val img = root.select("#fmimg > img").first().src()
-        val div = root.select("#info").first()
-        val name = div.select("> h1").first().text()
-        val (author) = div.select("> p:nth-child(2)").first().text()
-                .pick("作    者：(\\S*)")
-        val info = root.select("#intro > p").joinToString("\n") {
-            it.textNodes().joinToString("\n") {
-                it.toString().trim()
-            }
+        val img = root.requireElement(query = "#fmimg > img", name = TAG_IMAGE) { it.src() }
+        val div = root.requireElement(query = "#info")
+        val name = div.requireElement(query = "> h1", name = TAG_NOVEL_NAME) { it.text() }
+        val (author) = div.requireElement(query = "> p:nth-child(2)", name = TAG_AUTHOR_NAME) {
+            it.text().pick("作    者：(\\S*)")
         }
+        val intro = root.getElements("#intro > p") {
+            it.joinToString("\n") {
+                it.textNodes().joinToString("\n") {
+                    it.toString().trim()
+                }
+            }
+        }.toString()
 
-        val (updateString) = div.select("#info > p:nth-child(4)").first().text()
-                .pick("最后更新：(.*)")
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val update = sdf.parse(updateString)
+        val update = div.getElement(query = "#info > p:nth-child(4)") {
+            val (updateString) = it.text().pick("最后更新：(.*)")
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            sdf.parse(updateString)
+        } ?: Date(0)
 
         val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
-        return root.select("#list > dl > dd > a").map {
+        return root.requireElements(query = "#list > dl > dd > a", name = TAG_CHAPTER_LINK).map {
             val a = it
             NovelChapter(a.text(), a.absHref())
         }
@@ -106,7 +111,7 @@ class Biquge : JsoupNovelContext() {
 
     override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
-        val content = root.select("#content").first()
+        val content = root.requireElement(query = "#content", name = TAG_CONTENT)
         return NovelText(content.textList())
     }
 }

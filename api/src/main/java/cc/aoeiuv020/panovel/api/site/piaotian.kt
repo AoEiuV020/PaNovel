@@ -26,9 +26,9 @@ class Piaotian : JsoupNovelContext() {
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
         val root = request(genre.requester)
-        val a = root.select("#pagelink > a.next").first() ?: return null
-        val url = a.absHref()
-        return NovelGenre(genre.name, url)
+        return root.getElement("#pagelink > a.next") { a ->
+            NovelGenre(genre.name, a.absHref())
+        }
     }
 
     private fun isDetail(url: URL) = url.path.startsWith("/bookinfo")
@@ -44,16 +44,16 @@ class Piaotian : JsoupNovelContext() {
             return listOf(NovelListItem(detail.novel, info))
         }
         val root = request(response)
-        val elements = root.select("#content > table.grid > tbody > tr:not(:nth-child(1))")
+        val elements = root.requireElements(query = "#content > table.grid > tbody > tr:not(:nth-child(1))")
         return elements.map {
-            val a = it.select("td:nth-child(1) > a").first()
+            val a = it.requireElement(query = "td:nth-child(1) > a", name = TAG_NOVEL_LINK)
             val name = a.text()
             val url = a.absHref()
-            val author = it.select("td:nth-child(3)").first().text()
-            val length = it.select(("td:nth-child(4)")).first().text()
-            val last = it.select("td:nth-child(2) > a").first().text()
-            val update = it.select("td:nth-child(5)").first().text()
-            val status = it.select("td:nth-child(6)").first().text()
+            val author = it.requireElement(query = "td:nth-child(3)", name = TAG_AUTHOR_NAME) { it.text() }
+            val length = it.getElement(query = "td:nth-child(4)") { it.text() }
+            val last = it.getElement(query = "td:nth-child(2) > a") { it.text() }
+            val update = it.getElement(query = "td:nth-child(5)") { it.text() }
+            val status = it.getElement(query = "td:nth-child(6)") { it.text() }
             val info = "最新章节: $last 字数: $length 更新: $update 状态: $status"
             NovelListItem(NovelItem(this, name, author, url), info)
         }
@@ -71,8 +71,8 @@ class Piaotian : JsoupNovelContext() {
 
     override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
-        val tbody1 = root.select("#content > table > tbody").first()
-        val tbody2 = tbody1.select("tr:nth-child(1) > td > table > tbody").first()
+        val tbody1 = root.requireElement(query = "#content > table > tbody")
+        val tbody2 = tbody1.requireElement(query = "tr:nth-child(1) > td > table > tbody")
         val pattern = "" +
                 "(\\S*)\\s" +
                 "类    别：(\\S*)\\s" +
@@ -90,31 +90,40 @@ class Piaotian : JsoupNovelContext() {
                 ""
         val list = tbody2.text().pick(pattern)
         val (name, _, author) = list
-        val (updateString) = list.drop(5)
 
-        val td = tbody1.select("tr:nth-child(4) > td > table > tbody > tr > td:nth-child(2)").first()
-        val img = td.select("a > img").first().src()
-        val info = td.select("div").first().textList()
-                .joinToString("\n")
+        val td = tbody1.requireElement(query = "tr:nth-child(4) > td > table > tbody > tr > td:nth-child(2)")
+        val img = td.requireElement(query = "a > img", name = TAG_IMAGE) { it.src() }
+        val intro = td.requireElement(query = "div") {
+            it.textList().joinToString("\n")
+        }
 
-        val lastChapterElement = tbody1.select("tr:nth-child(8) > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > li > a").first()
-        val (year) = updateString.pick("(\\d*)-(\\d*)-(\\d*)")
-        val (month, day, hour, minute) = lastChapterElement.title().pick(".*更新时间:(\\d*)-(\\d*) (\\d*):(\\d*)")
-        @Suppress("DEPRECATION")
-        val update = Date(year.toInt() - 1900, month.toInt() - 1, day.toInt(), hour.toInt(), minute.toInt())
-        val chapterPageUrl = tbody1.select("tr:nth-child(8) > td > table > caption > a").first().absHref()
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        val update = try {
+            val (updateString) = list.drop(5)
+            val lastChapterElement = tbody1.requireElement("tr:nth-child(8) > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > li > a")
+            val (year) = updateString.pick("(\\d*)-(\\d*)-(\\d*)")
+            val (month, day, hour, minute) = lastChapterElement.title().pick(".*更新时间:(\\d*)-(\\d*) (\\d*):(\\d*)")
+            @Suppress("DEPRECATION")
+            Date(year.toInt() - 1900, month.toInt() - 1, day.toInt(), hour.toInt(), minute.toInt())
+        } catch (e: Exception) {
+            logger.error("更新时间解析失败", e)
+            Date(0)
+        }
+
+        val chapterPageUrl = tbody1.requireElement("tr:nth-child(8) > td > table > caption > a") { it.absHref() }
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
-        return root.select("div.mainbody > div.centent > ul > li > a").dropWhile {
-            it.absHref().isEmpty() || it.href() == "#"
-        }.dropLastWhile {
-            it.text().isEmpty()
-        }.map {
-            val a = it
-            NovelChapter(a.text(), a.absHref())
+        return root.requireElements("div.mainbody > div.centent > ul > li > a", name = TAG_CHAPTER_LINK) {
+            it.dropWhile {
+                it.absHref().isEmpty() || it.href() == "#"
+            }.dropLastWhile {
+                it.text().isEmpty()
+            }.map {
+                val a = it
+                NovelChapter(a.text(), a.absHref())
+            }
         }
     }
 

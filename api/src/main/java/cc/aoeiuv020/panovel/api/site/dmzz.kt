@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -65,51 +66,55 @@ class Dmzz : JsoupNovelContext() {
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
-        val con = root.select("body > div.main > div > div.pic > div ").first()
+        val con = root.requireElement(query = "body > div.main > div > div.pic > div ")
 
-        val img = root.select("#cover_pic").first().src()
-        val name = con.select("> h3").first().text()
-        val (author) = con.select("> p:nth-child(2)").first().text()
-                .pick("作者：(\\S*)")
-        val (updateString) = con.select("> p:nth-child(5)").first().text()
-                .pick("更新：(.*)")
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val update = sdf.parse(updateString)
-        val info = ""
+        val img = root.requireElement(query = "#cover_pic", name = TAG_IMAGE) { it.src() }
+        val name = con.requireElement(query = "> h3", name = TAG_NOVEL_NAME) { it.text() }
+        val (author) = con.requireElement(query = "> p:nth-child(2)", name = TAG_AUTHOR_NAME) {
+            it.text().pick("作者：(\\S*)")
+        }
+        val update = con.getElement(query = "> p:nth-child(5)") {
+            val (updateString) = it.text().pick("更新：(.*)")
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            sdf.parse(updateString)
+        } ?: Date(0)
+        val intro = ""
         val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
-        val text = root.select("#list_block > script").first().html()
         val regex = Regex(".*chapter_list\\[\\d*\\]\\[\\d*\\] = '<a href=\"([^\"]*)\".*>(.*)</a>'.*;.*")
-        return text.lines().filter { it.matches(regex) }.map {
-            val (url, name) = it.pick(regex.toPattern())
-            NovelChapter(name, "http://q.dmzj.com" + url)
+        return root.requireElement(query = "#list_block > script", name = TAG_CHAPTER_LINK) {
+            it.html().lines().filter { it.matches(regex) }.map {
+                val (url, name) = it.pick(regex.toPattern())
+                NovelChapter(name, "http://q.dmzj.com" + url)
+            }
         }
     }
 
     override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
-        val script = root.select("head > script:nth-child(10)").first().html()
-        val (json) = script.pick("var g_chapter_pages_url = (\\[.*\\]);")
-        val urlList: List<String> = Gson().fromJson(json, object : TypeToken<List<String>>() {}.type)
-        val textList = urlList.map {
-            val url = if (it.isEmpty()) {
-                requester.url
-            } else {
-                "http://q.dmzj.com" + it
+        val textList = root.requireElement(query = "head > script:nth-child(10)", name = TAG_CONTENT) {
+            val (json) = it.html().pick("var g_chapter_pages_url = (\\[.*\\]);")
+            val urlList: List<String> = Gson().fromJson(json, object : TypeToken<List<String>>() {}.type)
+            urlList.map {
+                val url = if (it.isEmpty()) {
+                    requester.url
+                } else {
+                    "http://q.dmzj.com" + it
+                }
+                request(url).requireElements(query = "p")
+                        .dropLastWhile { it.className() == "zlist" }
+                        .flatMap {
+                            // 有的只有一个p，
+                            // http://q.dmzj.com/2013/7335/54663.shtml
+                            it.textList()
+                        }
+            }.reduce { acc, list ->
+                acc + list
             }
-            request(url).select("p")
-                    .dropLastWhile { it.className() == "zlist" }
-                    .flatMap {
-                        // 有的只有一个p，
-                        // http://q.dmzj.com/2013/7335/54663.shtml
-                        it.textList()
-                    }
-        }.reduce { acc, list ->
-            acc + list
         }
         return NovelText(textList)
     }

@@ -4,6 +4,7 @@ import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *
@@ -28,25 +29,26 @@ class Liudatxt : JsoupNovelContext() {
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
         val root = request(genre.requester)
-        val a = root.select("#main > div.list_center > div.pages > a:contains(下一页)").first() ?: return null
-        val url = a.absHref()
-        if (url.isEmpty()) return null
-        return NovelGenre(genre.name, url)
+        return root.getElement(query = "#main > div.list_center > div.pages > a:contains(下一页)") {
+            val url = it.absHref()
+            if (url.isEmpty()) null
+            else NovelGenre(genre.name, url)
+        }
     }
 
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: Requester): List<NovelListItem> {
         val root = request(requester)
-        return root.select("#sitembox > dl").map {
-            val a = it.select("> dd:nth-child(2) > h3 > a").first()
+        return root.requireElements(query = "#sitembox > dl").map {
+            val a = it.requireElement(query = "> dd:nth-child(2) > h3 > a", name = TAG_NOVEL_LINK)
             val name = a.text()
             val url = a.absHref()
-            val dd3 = it.select("> dd:nth-child(3)").first()
-            val author = dd3.select("> span:nth-child(1)").first().text()
-            val status = dd3.select("> span:nth-child(2)").first().text()
-            val genre = dd3.select("> span:nth-child(3)").first().text()
-            val last = it.select("> dd:nth-child(5) > a").first().text().trim()
-            val about = it.select("> dd.book_des").first().text()
+            val dd3 = it.requireElement(query = "> dd:nth-child(3)")
+            val author = dd3.requireElement(query = "> span:nth-child(1)", name = TAG_AUTHOR_NAME) { it.text() }
+            val status = dd3.getElement(query = "> span:nth-child(2)") { it.text() }
+            val genre = dd3.getElement(query = "> span:nth-child(3)") { it.text() }
+            val last = it.getElement(query = "> dd:nth-child(5) > a") { it.text().trim() }
+            val about = it.getElement(query = "> dd.book_des") { it.text() }
             val info = run {
                 val length = dd3.select("> span:nth-child(4)").first().text()
                 val update = it.select("> dd:nth-child(5) > span").first().text()
@@ -70,21 +72,25 @@ class Liudatxt : JsoupNovelContext() {
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: Requester): NovelDetail {
         val chapterRoot = request(requester)
-        val detail = chapterRoot.select("#main > div.coverecom > div.tabstit > table > tbody > tr > td:nth-child(1) > a:nth-child(4)").first()
+        val detail = chapterRoot.requireElement(query = "#main > div.coverecom > div.tabstit > table > tbody > tr > td:nth-child(1) > a:nth-child(4)")
         val root = request(detail.absHref())
-        val img = root.select("#bookimg > img").first().absSrc()
-        val bookright = root.select("#bookinfo > div.bookright").first()
-        val name = bookright.select("> div.booktitle > h1").first().text()
-        val author = bookright.select("#author > a").first().text()
-        val info = bookright.select("#bookintro > p").joinToString("\n") {
-            it.textNodes().joinToString("\n") {
-                it.toString().trim()
+        val img = root.requireElement(query = "#bookimg > img", name = TAG_IMAGE) { it.absSrc() }
+        val bookright = root.requireElement(query = "#bookinfo > div.bookright")
+        val name = bookright.requireElement(query = "> div.booktitle > h1", name = TAG_NOVEL_NAME) { it.text() }
+        val author = bookright.requireElement(query = "#author > a", name = TAG_AUTHOR_NAME) { it.text() }
+        val info = bookright.getElements(query = "#bookintro > p") {
+            it.joinToString("\n") {
+                it.textNodes().joinToString("\n") {
+                    it.toString().trim()
+                }
             }
-        }
+        }.toString()
 
-        val updateString = bookright.select("> div.new > span > span").first().text()
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val update = sdf.parse(updateString)
+        val update = bookright.getElement(query = "> div.new > span > span") {
+            val updateString = it.text()
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            sdf.parse(updateString)
+        } ?: Date(0)
 
         val chapterPageUrl = requester.url
         return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
@@ -92,14 +98,14 @@ class Liudatxt : JsoupNovelContext() {
 
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
-        return root.select("#readerlist > ul > li > a").map { a ->
+        return root.requireElements(query = "#readerlist > ul > li > a", name = TAG_CHAPTER_LINK).map { a ->
             NovelChapter(a.text(), a.absHref())
         }
     }
 
     override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
-        val content = root.select("#content").first()
+        val content = root.requireElement(query = "#content", name = TAG_CONTENT)
         return NovelText(content.textList())
     }
 }

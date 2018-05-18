@@ -31,14 +31,14 @@ class Snwx : JsoupNovelContext() {
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: Requester): List<NovelListItem> {
         val root = response(connect(requester)).parse()
-        return root.select("#newscontent > div.l > ul > li").map {
-            val a = it.select("> span.s2 > a").first()
+        return root.requireElements("#newscontent > div.l > ul > li").map {
+            val a = it.requireElement("> span.s2 > a", TAG_NOVEL_LINK)
             val name = a.text()
             val url = a.absHref()
-            val author = it.select("> span.s4").first().text()
-            val last = it.select("> span.s3 > a").first().text()
-            val update = it.select("> span.s5").first().text()
-            val genre = it.select("> span.s1").first().text()
+            val author = it.requireElement("> span.s4", TAG_AUTHOR_NAME) { it.text() }
+            val last = it.requireElement("> span.s3 > a") { it.text() }
+            val update = it.getElement("> span.s5") { it.text() }
+            val genre = it.getElement("> span.s1") { it.text() }
             val info = "最新章节: $last 类型: $genre 更新: $update"
             NovelListItem(NovelItem(this, name, author, url), info)
         }
@@ -53,12 +53,14 @@ class Snwx : JsoupNovelContext() {
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
-        val img = root.select("#fmimg > img").first().src()
-        val div = root.select("#info").first()
-        val title = div.select("> div.infotitle").first()
-        val name = title.select("> h1").first().text()
-        val (author) = title.select("> i:nth-child(2)").first().text()
-                .pick("作者：(\\S*)")
+        val img = root.requireElement("#fmimg > img", TAG_IMAGE) { it.src() }
+        val div = root.requireElement("#info")
+        val title = div.requireElement("> div.infotitle")
+        val name = title.requireElement("> h1", TAG_NOVEL_NAME) { it.text() }
+        val author = title.requireElement("> i:nth-child(2)", TAG_AUTHOR_NAME) {
+            val (authorString) = it.text().pick("作者：(\\S*)")
+            authorString
+        }
         val intro = div.getElement(query = "> div.intro") {
             it.childNodes().first {
                 it is TextNode && !it.isBlank
@@ -72,14 +74,14 @@ class Snwx : JsoupNovelContext() {
 
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
-        return root.select("#list > dl > dd > a").map { a ->
+        return root.requireElements("#list > dl > dd > a", TAG_CHAPTER_LINK).map { a ->
             NovelChapter(a.text(), a.absHref())
         }
     }
 
     override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
-        val content = root.select("#BookText").first()
+        val content = root.requireElement("#BookText")
         return NovelText(content.textList())
     }
 }

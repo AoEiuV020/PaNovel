@@ -69,6 +69,7 @@ abstract class JsoupNovelContext : NovelContext() {
             null
         }
     }
+
     /**
      * 下面的封装关键在于分开必要和不必要的，是否捕获Exception,
      * 必要的解析失败时统一抛异常，
@@ -76,25 +77,37 @@ abstract class JsoupNovelContext : NovelContext() {
     protected fun Element.requireElements(query: String, name: String = TAG_LIST): Elements = try {
         select(query)
     } catch (e: Exception) {
-        throw IllegalStateException("解析[$name]失败，", e)
+        throw IllegalStateException("解析[$name]($query)失败，", e)
     }
 
     protected fun <T> Element.requireElements(query: String, name: String = TAG_LIST, block: (Elements) -> T): T = try {
         select(query).let(block)
     } catch (e: Exception) {
-        throw IllegalStateException("解析[$name]失败，", e)
+        throw IllegalStateException("解析[$name]($query)失败，", e)
     }
 
     protected fun Element.requireElement(query: String, name: String = TAG_ELEMENT): Element = try {
         select(query).first()
     } catch (e: Exception) {
-        throw IllegalStateException("解析[$name]失败，", e)
+        throw IllegalStateException("解析[$name]($query)失败，", e)
     }
 
     protected fun <T> Element.requireElement(query: String, name: String = TAG_ELEMENT, block: (Element) -> T): T = try {
         select(query).first().let(block)
     } catch (e: Exception) {
-        throw IllegalStateException("解析[$name]失败，", e)
+        throw IllegalStateException("解析[$name]($query)失败，", e)
+    }
+
+    protected fun Element.getElements(query: String): Elements? = try {
+        select(query)
+    } catch (e: Exception) {
+        null
+    }
+
+    protected fun <T> Element.getElements(query: String, block: (Elements) -> T?): T? = try {
+        select(query).let(block)
+    } catch (e: Exception) {
+        null
     }
 
     protected fun Element.getElement(query: String): Element? = try {

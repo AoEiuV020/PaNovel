@@ -30,7 +30,8 @@ class Qidian : JsoupNovelContext() {
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
         val root = request(genre.requester)
-        val a = root.select("#page-container > div > ul > li > a.lbf-pagination-next").first() ?: return null
+        val a = root.getElement("#page-container > div > ul > li > a.lbf-pagination-next")
+                ?: return null
         val url = a.absHref()
         if (url.isEmpty()) return null
         return NovelGenre(genre.name, url)
@@ -39,21 +40,25 @@ class Qidian : JsoupNovelContext() {
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: Requester): List<NovelListItem> {
         val root = request(requester)
-        return root.select("#result-list > div > ul > li").map {
-            val a = it.select("> div.book-mid-info > h4 > a").first()
+        return root.requireElements("#result-list > div > ul > li").map {
+            val a = it.requireElement("> div.book-mid-info > h4 > a", name = TAG_NOVEL_LINK)
             val name = a.text()
             val url = a.absHref()
-            val mid = it.select("> div.book-mid-info").first()
-            val author = mid.select("> p.author").first().child(1).text()
-            val genre = mid.select("> p.author > a:nth-child(4)").first().text()
-            val status = mid.select("> p.author > span").first().text()
-            val introduction = mid.select("> p.intro").first().text().trim()
-            val (update) = mid.select("> p.update").first().text().pick("最新更新 (.*)")
-            val right = it.select("> div.book-right-info").first()
-            val length = right.select("> div > p:nth-child(1) > span").first().text()
-            val recommend = right.select("> div > p:nth-child(2) > span").first().text()
-            val click = right.select("> div > p:nth-child(3) > span").first().text()
-            val info = "类型: $genre 更新: $update 状态: $status 长度: $length 推荐: $recommend 点击: $click 简介: $introduction"
+            val mid = it.requireElement("> div.book-mid-info")
+            val author = mid.requireElement("> p.author", name = TAG_AUTHOR_NAME) { it.child(1).text() }
+            val genre = mid.getElement("> p.author > a:nth-child(4)") { it.text() }
+            val status = mid.getElement("> p.author > span") { it.text() }
+            val introduction = mid.getElement("> p.intro") { it.text().trim() }
+            val update = mid.getElement("> p.update") {
+                val (updateString) = it.text().pick("最新更新 (.*)")
+                updateString
+            }
+            val info = it.getElement("> div.book-right-info") { right ->
+                val length = right.getElement("> div > p:nth-child(1) > span") { it.text() }
+                val recommend = right.getElement("> div > p:nth-child(2) > span") { it.text() }
+                val click = right.getElement("> div > p:nth-child(3) > span") { it.text() }
+                "类型: $genre 更新: $update 状态: $status 长度: $length 推荐: $recommend 点击: $click 简介: $introduction"
+            }.toString()
             logger.debug { "result $name.$author" }
             NovelListItem(NovelItem(this, name, author, url), info)
         }
@@ -73,48 +78,44 @@ class Qidian : JsoupNovelContext() {
         } else {
             request(requester)
         }
-        val detail = root.select("body > div.wrap > div.book-detail-wrap.center990").first()
-        val information = detail.select("> div.book-information.cf > div.book-info").first()
-        val img = detail.select("#bookImg > img").first().absSrc()
-        val name = information.select("> h1 > em").first().text()
-        val author = information.select("h1 > span").first().text().removeSuffix(" 著")
-        val info = detail.select("div.book-intro > p").first().textNodes().joinToString("\n") {
-            it.toString().trim()
-        }
+        val detail = root.requireElement("body > div.wrap > div.book-detail-wrap.center990")
+        val information = detail.requireElement("> div.book-information.cf > div.book-info")
+        val img = detail.requireElement("#bookImg > img", name = TAG_IMAGE) { it.absSrc() }
+        val name = information.requireElement("> h1 > em", name = TAG_NOVEL_NAME) { it.text() }
+        val author = information.requireElement("h1 > span", name = TAG_AUTHOR_NAME) { it.text().removeSuffix(" 著") }
+        val intro = detail.getElement("div.book-intro > p") {
+            it.textNodes().joinToString("\n") {
+                it.toString().trim()
+            }
+        }.toString()
 
-        val cf = detail.select("div.book-state > ul > li.update > div > p.cf").first()
-
-        val lastChapterElement = root.select("#j-catalogWrap > div.volume-wrap > div:nth-last-child(1) > ul > li:nth-last-child(1) > a").first()
-        val update = if (lastChapterElement != null) {
-            val (updateString) = lastChapterElement.title().pick("首发时间：(.*) 章节字数：.*")
+        // 先从章节列表中解析更新时间，不存在就从小说详情解析，
+        val update = root.getElement("#j-catalogWrap > div.volume-wrap > div:nth-last-child(1) > ul > li:nth-last-child(1) > a") {
+            val (updateString) = it.title().pick("首发时间：(.*) 章节字数：.*")
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             sdf.parse(updateString)
-        } else {
-            val updateString = cf.select("> em").first().text()
-            try {
-                when {
-                    updateString.endsWith("小时前") -> {
-                        val (hour) = updateString.pick("(\\d*)小时前")
-                        Calendar.getInstance().run {
-                            add(Calendar.HOUR_OF_DAY, -hour.toInt())
-                            set(Calendar.MINUTE, 0)
-                            set(Calendar.SECOND, 0)
-                            time
-                        }
-                    }
-                    else -> {
-                        val sdf = SimpleDateFormat("yyyy-MM-dd")
-                        sdf.parse(updateString)
+        } ?: detail.getElement("div.book-state > ul > li.update > div > p.cf") { cf ->
+            val updateString = cf.getElement("> em") { it.text() } ?: return@getElement null
+            when {
+            // 这个规则改过，不一定有哪些情况，无所谓，大不了不要这个时间，
+                updateString.endsWith("小时前") -> {
+                    val (hour) = updateString.pick("(\\d*)小时前")
+                    Calendar.getInstance().run {
+                        add(Calendar.HOUR_OF_DAY, -hour.toInt())
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        time
                     }
                 }
-            } catch (_: Exception) {
-                // 这种分段判断不靠谱，以防万一，不要因为更新时间就看不了小说了，
-                Date(0)
+                else -> {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd")
+                    sdf.parse(updateString)
+                }
             }
-        }
+        } ?: Date(0)
 
         val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
     }
 
     @SuppressWarnings("SimpleDateFormat")
@@ -129,32 +130,32 @@ class Qidian : JsoupNovelContext() {
         return Gson().fromJson(categoryJson, JsonObject::class.java)
                 .getAsJsonObject("data")
                 .getAsJsonArray("vs").map {
-            it.asJsonObject.apply { getAsJsonPrimitive("vS").asInt.let { vipVolume = it == 1 } }
-                    .getAsJsonArray("cs").map {
-                it.asJsonObject.let {
-                    val chapterName = it.getAsJsonPrimitive("cN").asString
-                    val cU = try {
-                        // 有用户反应这里出问题，但是没反馈清楚，直接把这字段改成不必要的，
-                        it.getAsJsonPrimitive("cU").asString
-                    } catch (_: Exception) {
-                        ""
-                    }
-                    val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
-                    val uT = it.getAsJsonPrimitive("uT").asString
-                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    val updateTime = sdf.parse(uT)
-                    if (!vipVolume) {
-                        // 免费卷，
-                        NovelChapter(chapterName, FreeRequester(bookId, chapterId, cU), updateTime)
-                    } else {
-                        // VIP卷，
-                        NovelChapter(chapterName, VipRequester(bookId, chapterId), updateTime)
-                    }
+                    it.asJsonObject.apply { getAsJsonPrimitive("vS").asInt.let { vipVolume = it == 1 } }
+                            .getAsJsonArray("cs").map {
+                                it.asJsonObject.let {
+                                    val chapterName = it.getAsJsonPrimitive("cN").asString
+                                    val cU = try {
+                                        // 有用户反应这里出问题，但是没反馈清楚，直接把这字段改成不必要的，
+                                        it.getAsJsonPrimitive("cU").asString
+                                    } catch (_: Exception) {
+                                        ""
+                                    }
+                                    val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
+                                    val uT = it.getAsJsonPrimitive("uT").asString
+                                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                                    val updateTime = sdf.parse(uT)
+                                    if (!vipVolume) {
+                                        // 免费卷，
+                                        NovelChapter(chapterName, FreeRequester(bookId, chapterId, cU), updateTime)
+                                    } else {
+                                        // VIP卷，
+                                        NovelChapter(chapterName, VipRequester(bookId, chapterId), updateTime)
+                                    }
+                                }
+                            }
+                }.reduce { acc, list ->
+                    acc + list
                 }
-            }
-        }.reduce { acc, list ->
-            acc + list
-        }
     }
 
     /**
@@ -183,7 +184,7 @@ class Qidian : JsoupNovelContext() {
         } else {
             "div#j_chapterBox > div > div > div.read-content.j_readContent > p"
         }
-        val textList = root.select(query).map {
+        val textList = root.requireElements(query, name = TAG_CONTENT).map {
             it.text().trim()
         }.dropLastWhile(String::isBlank)
         return NovelText(textList)

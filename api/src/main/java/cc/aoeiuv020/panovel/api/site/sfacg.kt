@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *
@@ -35,11 +36,11 @@ class Sfacg : JsoupNovelContext() {
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: Requester): List<NovelListItem> {
         val root = request(requester)
-        return root.select("#form1 > table.comic_cover.Height_px22.font_gray.space10px > tbody > tr > td > ul").map {
-            val a = it.select("li > strong > a").first()
+        return root.requireElements("#form1 > table.comic_cover.Height_px22.font_gray.space10px > tbody > tr > td > ul").map {
+            val a = it.requireElement("li > strong > a", name = TAG_NOVEL_LINK)
             val name = a.text()
             val url = a.absHref()
-            val li = it.select("> li:nth-child(2)").first()
+            val li = it.requireElement("> li:nth-child(2)")
             val size = li.childNodeSize()
             val all = (li.childNode(size - 3) as TextNode).wholeText.trim()
             val (author, update) = all.pick("综合信息： ([^/]*)/(.*)")
@@ -63,31 +64,34 @@ class Sfacg : JsoupNovelContext() {
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
-        val img = root.select("#hasTicket > div.left-part > div > div.pic > a > img").first().src()
-        val div = root.select("div.wrap > div.d-summary > div.summary-content").first()
-        val name = div.select("> h1 > span.text").first().text()
-        val author = div.select("> div.count-info.clearfix > div.author-info > div.author-name > span").first().text()
-        val info = div.select("> p").first().textList().joinToString("\n")
+        val img = root.requireElement("#hasTicket > div.left-part > div > div.pic > a > img", TAG_IMAGE) { it.src() }
+        val div = root.requireElement("div.wrap > div.d-summary > div.summary-content")
+        val name = div.requireElement("> h1 > span.text", TAG_NOVEL_NAME) { it.text() }
+        val author = div.requireElement("> div.count-info.clearfix > div.author-info > div.author-name > span", TAG_AUTHOR_NAME) { it.text() }
+        val intro = div.getElement("> p") {
+            it.textList().joinToString("\n")
+        }.toString()
 
-        val (updateString) = div.select("> div.count-info.clearfix > div.count-detail span")[3].text()
-                .pick("更新：(.*)")
-        val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-        val update = sdf.parse(updateString)
+        val update = div.getElements("> div.count-info.clearfix > div.count-detail span") {
+            val (updateString) = it[3].text().pick("更新：(.*)")
+            val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+            sdf.parse(updateString)
+        } ?: Date(0)
 
         val chapterPageUrl = requester.url + "/MainIndex/"
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
     }
 
     override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
-        return root.select("div.story-catalog > div.catalog-list > ul > li > a\n").map { a ->
+        return root.requireElements("div.story-catalog > div.catalog-list > ul > li > a", TAG_CHAPTER_LINK).map { a ->
             NovelChapter(a.title(), a.absHref())
         }
     }
 
     override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
-        val list = root.select("#ChapterBody").first().childNodes().mapNotNull {
+        val list = root.requireElement("#ChapterBody", TAG_CONTENT).childNodes().mapNotNull {
             when {
                 it is Element && it.tagName() == "p" -> it.text()
                 it is TextNode && !it.isBlank -> it.text().trim()
