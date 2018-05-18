@@ -16,7 +16,7 @@ class NovelServiceImplTest {
     private lateinit var service: NovelServiceImpl
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress.new("localhost:8080"))
+        service = NovelServiceImpl(ServerAddress())
     }
 
     @Test
@@ -39,7 +39,7 @@ class NovelServiceImplTest {
 
     @Test
     fun needRefreshNovelList() {
-        service.needRefreshNovelList(3).forEach {
+        service.needRefreshNovelList(0).forEach {
             println("<${it.requesterExtra}, ${it.modifyTime}>")
         }
     }

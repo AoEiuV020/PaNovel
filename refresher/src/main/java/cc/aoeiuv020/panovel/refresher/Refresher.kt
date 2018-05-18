@@ -3,16 +3,15 @@ package cc.aoeiuv020.panovel.refresher
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.error
 import cc.aoeiuv020.base.jar.info
-import cc.aoeiuv020.panovel.api.DetailRequester
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.Requester
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.panovel.api.*
 import cc.aoeiuv020.panovel.server.ServerAddress
-import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
 import cc.aoeiuv020.panovel.share.PasteUbuntu
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -32,7 +31,7 @@ class Refresher {
         logger.info {
             "bookshelfList: $bookshelfList"
         }
-        getBookshelf(bookshelfList)
+        getBookshelf(bookshelfList, config.requireBookshelf)
         isRunning = true
         service = NovelServiceImpl(address)
         var lastTime = 0L
@@ -88,7 +87,14 @@ class Refresher {
         }
     }
 
-    private fun getBookshelf(bookshelfList: MutableSet<String>) {
+    /**
+     * 用于解析书架，要支持新版的requester,
+     */
+    private val gson: Gson = GsonBuilder()
+            .paNovel()
+            .create()
+
+    private fun getBookshelf(bookshelfList: MutableSet<String>, requireBookshelf: Boolean) {
         val paste = PasteUbuntu()
         bookshelfList.forEach { url ->
             logger.debug {
@@ -98,7 +104,7 @@ class Refresher {
                 if (!paste.check(url)) {
                     return@forEach
                 }
-                paste.download(url).toBean<BookListData>().list.forEach {
+                paste.download(url).toBean<BookListData>(gson).list.forEach {
                     logger.debug {
                         "获取到书架小说 $it"
                     }
@@ -112,6 +118,9 @@ class Refresher {
             } catch (e: Exception) {
                 logger.error(e) {
                     "获取书架失败 $url"
+                }
+                if (requireBookshelf) {
+                    throw e
                 }
             }
         }
