@@ -15,6 +15,7 @@ import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
 import cc.aoeiuv020.panovel.share.PasteUbuntu
 import org.slf4j.LoggerFactory
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class Refresher {
     private val logger = LoggerFactory.getLogger(Refresher::class.java.simpleName)
@@ -42,6 +43,10 @@ class Refresher {
                 val currentTime = System.currentTimeMillis()
                 // 本轮耗时，
                 val roundTime = currentTime - lastTime
+                if (roundTime < TimeUnit.SECONDS.toMillis(1)) {
+                    // 无论如何，一轮耗时小于一秒的话，就休息一秒，
+                    TimeUnit.SECONDS.sleep(1)
+                }
                 // 更新记录的时间，
                 lastTime = currentTime
                 val targetCount = (lastCount * (config.targetTime.toFloat() / roundTime)).toInt().let {
@@ -63,6 +68,11 @@ class Refresher {
                             }
                 }
                 service.needRefreshNovelList(targetCount)
+                        .also {
+                            if (it.isEmpty()) {
+                                throw IllegalStateException("没有需要刷新的了，")
+                            }
+                        }
                         .also { lastCount += it.size }
                         .forEach { novel ->
                             refresh(novel)

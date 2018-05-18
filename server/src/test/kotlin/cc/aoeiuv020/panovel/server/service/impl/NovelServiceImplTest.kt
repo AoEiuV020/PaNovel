@@ -16,9 +16,7 @@ class NovelServiceImplTest {
     private lateinit var service: NovelServiceImpl
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress(
-                data = mapOf("updateUploadUrl" to "http://localhost:8080/update/upload")
-        ))
+        service = NovelServiceImpl(ServerAddress.new("localhost:8080"))
     }
 
     @Test
@@ -37,6 +35,13 @@ class NovelServiceImplTest {
             it.updateTime = null
         }
         assertTrue(service.uploadUpdate(novel))
+    }
+
+    @Test
+    fun needRefreshNovelList() {
+        service.needRefreshNovelList(3).forEach {
+            println("<${it.requesterExtra}, ${it.modifyTime}>")
+        }
     }
 
 }
