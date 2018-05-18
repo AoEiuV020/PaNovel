@@ -22,8 +22,6 @@ class Snwx : JsoupNovelContext() {
             logo = "https://www.snwx8.com/xiaoyi/images/logo.gif"
     )
 
-    override fun getNovelSite(): NovelSite = site
-
     override fun getNovelItem(url: String): NovelItem {
         val path = URL(url).path.removePrefix("/")
         val detailUrl = "${site.baseUrl}$path"
@@ -32,7 +30,7 @@ class Snwx : JsoupNovelContext() {
 
     @SuppressWarnings("SimpleDateFormat")
     override fun getNovelList(requester: Requester): List<NovelListItem> {
-        val root = request(requester)
+        val root = response(connect(requester)).parse()
         return root.select("#newscontent > div.l > ul > li").map {
             val a = it.select("> span.s2 > a").first()
             val name = a.text()
@@ -50,10 +48,6 @@ class Snwx : JsoupNovelContext() {
         val key = URLEncoder.encode(name, "GBK")
         val url = "${SEARCH_PAGE_URL}?searchkey=$key"
         return NovelGenre(name, url)
-    }
-
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        return null
     }
 
     @SuppressWarnings("SimpleDateFormat")
