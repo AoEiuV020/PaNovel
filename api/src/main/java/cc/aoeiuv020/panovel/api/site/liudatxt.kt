@@ -17,13 +17,13 @@ class Liudatxt : JsoupNovelContext() {
 
     override val site = NovelSite(
             name = "溜达小说",
-            baseUrl = "http://www.liudatxt.com/",
+            baseUrl = "http://www.liudatxt.com",
             logo = "https://imgsa.baidu.com/forum/w%3D580/sign=1b4c19b5f0edab6474724dc8c737af81/4afa9ae93901213f074d29a25fe736d12e2e95b9.jpg"
     )
 
     override fun getNovelItem(url: String): NovelItem {
         val bookId = findBookId(url)
-        val detailUrl = "${site.baseUrl}so/$bookId/"
+        val detailUrl = "${site.baseUrl}/so/$bookId/"
         return super.getNovelItem(detailUrl)
     }
 

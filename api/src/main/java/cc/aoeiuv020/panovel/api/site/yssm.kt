@@ -17,12 +17,12 @@ class Yssm : JsoupNovelContext() {
 
     override val site = NovelSite(
             name = "幼狮书盟",
-            baseUrl = "https://www.yssm.org/",
+            baseUrl = "https://www.yssm.org",
             logo = "https://www.yssm.org/images/logo.png"
     )
 
     override fun getNovelItem(url: String): NovelItem {
-        val path = URL(url).path.removePrefix("/")
+        val path = URL(url).path
         val detailUrl = "${site.baseUrl}$path"
         return super.getNovelItem(detailUrl)
     }

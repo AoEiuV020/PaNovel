@@ -18,12 +18,13 @@ class Snwx : JsoupNovelContext() {
 
     override val site = NovelSite(
             name = "少年文学",
-            baseUrl = "https://www.snwx8.com/",
+            baseUrl = "https://www.snwx8.com",
             logo = "https://www.snwx8.com/xiaoyi/images/logo.gif"
     )
 
     override fun getNovelItem(url: String): NovelItem {
-        val path = URL(url).path.removePrefix("/")
+        // 这个path是斜杆/开头的，
+        val path = URL(url).path
         val detailUrl = "${site.baseUrl}$path"
         return super.getNovelItem(detailUrl)
     }

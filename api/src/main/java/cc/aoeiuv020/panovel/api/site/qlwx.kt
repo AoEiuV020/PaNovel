@@ -12,13 +12,13 @@ import java.util.*
 class Qlyx : JsoupNovelContext() {
     override val site: NovelSite = NovelSite(
             name = "齐鲁文学",
-            baseUrl = "http://www.76wx.com/",
+            baseUrl = "http://www.76wx.com",
             logo = "http://www.76wx.com/images/book_logo.png"
     )
 
     override fun getNovelItem(url: String): NovelItem {
         val bookId = findBookId(url)
-        val detailUrl = "${site.baseUrl}book/$bookId"
+        val detailUrl = "${site.baseUrl}/book/$bookId"
         return super.getNovelItem(detailUrl)
     }
 

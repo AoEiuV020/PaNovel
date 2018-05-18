@@ -18,7 +18,7 @@ import java.util.*
 class Dmzz : JsoupNovelContext() {
     override val site = NovelSite(
             name = "动漫之家",
-            baseUrl = "http://q.dmzj.com/",
+            baseUrl = "http://q.dmzj.com",
             logo = "http://m.dmzj.com/images/head_logo.gif"
     )
 
@@ -33,7 +33,7 @@ class Dmzz : JsoupNovelContext() {
             val info = dmzz.mIntro ?: dmzz.description ?: null.toString()
             NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author,
                     // 相对路径，"../"开头，没找到自动处理的，
-                    site.baseUrl + dmzz.lnovelUrl.removePrefix("../")), info)
+                    site.baseUrl + dmzz.lnovelUrl.removePrefix("..")), info)
         }
     }
 

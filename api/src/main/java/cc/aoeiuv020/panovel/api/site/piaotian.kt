@@ -20,7 +20,7 @@ class Piaotian : JsoupNovelContext() {
 
     override val site = NovelSite(
             name = "飘天文学",
-            baseUrl = "https://www.piaotian.com/",
+            baseUrl = "https://www.piaotian.com",
             logo = "https://www.piaotian.com/css/logo.gif"
     )
 

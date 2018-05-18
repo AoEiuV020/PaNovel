@@ -19,7 +19,7 @@ class Sfacg : JsoupNovelContext() {
 
     override val site = NovelSite(
             name = "SF轻小说",
-            baseUrl = "http://book.sfacg.com/",
+            baseUrl = "http://book.sfacg.com",
             logo = "http://rs.sfacg.com/images/sflogo.gif"
     )
 
@@ -57,7 +57,7 @@ class Sfacg : JsoupNovelContext() {
 
     override fun getNovelItem(url: String): NovelItem {
         val bookId = findBookId(url)
-        val detailUrl = "${site.baseUrl}Novel/$bookId/"
+        val detailUrl = "${site.baseUrl}/Novel/$bookId/"
         return super.getNovelItem(detailUrl)
     }
 

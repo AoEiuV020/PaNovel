@@ -107,6 +107,11 @@ open class Requester(val extra: String) {
     }
 
     val type: String get() = this.javaClass.name
+    /**
+     * 外部调用网站上下文的方法来得到requester的真实地址，
+     * [NovelContext.getAbsoluteUrl]
+     * TODO: 改成internal，
+     */
     open val url get() = extra
     open fun connect(): Connection = Jsoup.connect(url).maxBodySize(0)
     open fun doBeforeExecute(conn: Connection): Connection = conn
@@ -121,3 +126,6 @@ open class Requester(val extra: String) {
     }
 }
 
+class PathOnlyRequester(path: String) : Requester(path) {
+
+}

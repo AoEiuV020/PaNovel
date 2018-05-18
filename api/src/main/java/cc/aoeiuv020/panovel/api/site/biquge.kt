@@ -20,7 +20,7 @@ class Biquge : JsoupNovelContext() {
 
     override val site = NovelSite(
             name = "笔趣阁",
-            baseUrl = "https://www.biqubao.com/",
+            baseUrl = "https://www.biqubao.com",
             logo = "https://imgsa.baidu.com/forum/w%3D580/sign=1d712d8332dbb6fd255be52e3925aba6/d7d2c843fbf2b211dfb81c36c18065380dd78e1b.jpg"
     )
 
@@ -60,13 +60,13 @@ class Biquge : JsoupNovelContext() {
 
     override fun getNovelItem(url: String): NovelItem {
         val bookId = findBookId(url)
-        val detailUrl = "${site.baseUrl}book/$bookId/"
+        val detailUrl = "${site.baseUrl}/book/$bookId/"
         return super.getNovelItem(detailUrl)
     }
 
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
-        val url = "${site.baseUrl}search.php?keyword=$key"
+        val url = "${site.baseUrl}/search.php?keyword=$key"
         return NovelGenre(name, url)
     }
 

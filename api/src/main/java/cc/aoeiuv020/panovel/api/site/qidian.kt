@@ -24,7 +24,7 @@ import javax.crypto.spec.IvParameterSpec
 class Qidian : JsoupNovelContext() {
     override val site = NovelSite(
             name = "起点中文",
-            baseUrl = "https://www.qidian.com/",
+            baseUrl = "https://www.qidian.com",
             logo = "https://qidian.gtimg.com/qd/images/logo.dbed5.png"
     )
 
