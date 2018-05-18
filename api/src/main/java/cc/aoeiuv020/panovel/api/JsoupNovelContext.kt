@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.api
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
+import java.net.URL
 
 /**
  * Created by AoEiuV020 on 2018.05.10-18:08:08.
@@ -35,6 +36,7 @@ abstract class JsoupNovelContext : NovelContext() {
     protected fun Element.absSrc(): String = absUrl("src")
     protected fun Element.href(): String = attr("href")
     protected fun Element.absHref(): String = absUrl("href")
+    protected fun Element.hrefPath(): String = URL(absHref()).path
     protected fun Element.title(): String = attr("title")
     protected fun Element.textList(): List<String> = childNodes().mapNotNull {
         (it as? TextNode)?.wholeText?.takeIf { it.isNotBlank() }?.trim()

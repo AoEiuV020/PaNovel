@@ -4,7 +4,10 @@ import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.error
 import cc.aoeiuv020.base.jar.info
 import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.api.Requester
+import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
@@ -134,7 +137,7 @@ class Refresher {
             val detailRequester = Requester.deserialization(
                     novel.requesterType,
                     novel.requesterExtra
-            ) as DetailRequester
+            )
             val context = NovelContext.getNovelContextByUrl(detailRequester.url)
             val detail = context.getNovelDetail(detailRequester)
             val chapters = context.getNovelChaptersAsc(detail.requester)

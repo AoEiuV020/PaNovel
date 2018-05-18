@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.ChaptersRequester
-import cc.aoeiuv020.panovel.api.TextRequester
+import cc.aoeiuv020.panovel.api.Requester
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +21,7 @@ class QlyxTest {
 
     @Test
     fun getNovelChaptersAsc() {
-        context.getNovelChaptersAsc(ChaptersRequester("http://www.76wx.com/book/454/")).let {
+        context.getNovelChaptersAsc(Requester("http://www.76wx.com/book/454/")).let {
             val firstChapter = it.first()
             assertEquals("http://www.76wx.com/book/454/277839.html", firstChapter.requester.url)
         }
@@ -30,7 +29,7 @@ class QlyxTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(TextRequester("http://www.76wx.com/book/5017/2760870.html")).let {
+        context.getNovelText(Requester("http://www.76wx.com/book/5017/2760870.html")).let {
             it.textList.forEach {
                 println(it)
             }

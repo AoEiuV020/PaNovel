@@ -39,25 +39,17 @@ class Piaotian : NovelContext() {
         val root = request(genre.requester)
         val a = root.select("#pagelink > a.next").first() ?: return null
         val url = a.absHref()
-        return if (genre.requester is GenreListRequester) {
-            NovelGenre(genre.name, url)
-        } else {
-            NovelSearch(genre.name, url)
-        }
+        return NovelGenre(genre.name, url)
     }
 
     private fun isDetail(url: URL) = url.path.startsWith("/bookinfo")
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        val response = if (requester is SearchListRequester) {
-            // 搜索页不装载cookie, 避开搜索时间间隔的限制，
-            connect(requester).execute()
-        } else {
-            response(requester)
-        }
+    override fun getNovelList(requester: Requester): List<NovelListItem> {
+        // 搜索页不装载cookie, 避开搜索时间间隔的限制，
+        val response = connect(requester).execute()
         if (isDetail(response.url())) {
-            val detail = getNovelDetail(DetailRequester(response.url().toString()))
+            val detail = getNovelDetail(Requester(response.url().toString()))
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
             val info = detail.run { "更新: ${sdf.format(update)} 简介: $introduction" }
             return listOf(NovelListItem(detail.novel, info))
@@ -81,14 +73,14 @@ class Piaotian : NovelContext() {
     private fun search(str: String, type: String): NovelGenre {
         val key = URLEncoder.encode(str, "GBK")
         val url = "${SEARCH_PAGE_URL}?searchtype=$type&searchkey=$key"
-        return NovelSearch(str, url)
+        return NovelGenre(str, url)
     }
 
     override fun searchNovelName(name: String) = search(name, "articlename")
 
     override fun searchNovelAuthor(author: String) = search(author, "author")
 
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
+    override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
         val tbody1 = root.select("#content > table > tbody").first()
         val tbody2 = tbody1.select("tr:nth-child(1) > td > table > tbody").first()
@@ -125,7 +117,7 @@ class Piaotian : NovelContext() {
         return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
+    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
         return root.select("div.mainbody > div.centent > ul > li > a").dropWhile {
             it.absHref().isEmpty() || it.href() == "#"
@@ -137,7 +129,7 @@ class Piaotian : NovelContext() {
         }
     }
 
-    override fun getNovelText(requester: TextRequester): NovelText {
+    override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
         return NovelText(root.body().textList())
     }

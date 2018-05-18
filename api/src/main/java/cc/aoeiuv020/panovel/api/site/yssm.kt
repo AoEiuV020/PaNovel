@@ -32,18 +32,14 @@ class Yssm : NovelContext() {
         val root = request(site.baseUrl)
         val elements = root.select("#subnav > div > p > a").drop(2).dropLast(1)
         return elements.map { a ->
-            NovelGenre(a.text(), GenreListRequester(a.absHref()))
+            NovelGenre(a.text(), Requester(a.absHref()))
         }
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
+    override fun getNovelList(requester: Requester): List<NovelListItem> {
         val root = request(requester)
-        val query = if (requester is SearchListRequester)
-            "#container > div.details.list-type > ul > li"
-        else
-            "#content1 > div > div.details.list-type > ul > li"
-        return root.select(query).map {
+        return root.select("#container > div.details.list-type > ul > li").map {
             val a = it.select("> span.s2 > a").first()
             val name = a.text()
             val url = a.absHref()
@@ -60,7 +56,7 @@ class Yssm : NovelContext() {
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
         val url = "${SEARCH_PAGE_URL}?keyword=$key"
-        return NovelSearch(name, url)
+        return NovelGenre(name, url)
     }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
@@ -68,7 +64,7 @@ class Yssm : NovelContext() {
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
+    override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
         // 这网站小说没有封面，
         val img = "https://www.snwx8.com/modules/article/images/nocover.jpg"
@@ -86,7 +82,7 @@ class Yssm : NovelContext() {
         return NovelDetail(NovelItem(this, name, author, requester), img, update, introduction, chapterPageUrl)
     }
 
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
+    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
         // 章节数太少的话，前几章会被抛弃，
         return root.select("#main > div > dl > dd > a").drop(12).map { a ->
@@ -94,7 +90,7 @@ class Yssm : NovelContext() {
         }
     }
 
-    override fun getNovelText(requester: TextRequester): NovelText {
+    override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
         val textList = root.select("#content").first().textList()
         return NovelText(textList)

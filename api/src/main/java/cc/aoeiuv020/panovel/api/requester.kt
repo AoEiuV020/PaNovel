@@ -8,6 +8,8 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
 import org.jsoup.Connection
 import org.jsoup.Jsoup
+import java.net.MalformedURLException
+import java.net.URL
 
 /**
  * 请求类基类，
@@ -20,15 +22,25 @@ import org.jsoup.Jsoup
  * Serializable不咋地，SharedPreferences不支持，
  * 要保证可以直接调用构造方法传入且只传入extra字符串，
  * 这样可以只序列化保存类名和extra,
+ *
  * Created by AoEiuV020 on 2017.10.03-14:59:04.
  */
 open class Requester(val extra: String) {
     companion object {
+        /**
+         * @param type 完整类名，
+         */
         fun deserialization(type: String, extra: String): Requester {
             val clazz = try {
                 Class.forName(type)
             } catch (e: ClassNotFoundException) {
-                throw IllegalStateException("Requester类型不存在<$type>")
+                // 类型不存在可能是已经废弃了的那一系列，对应的extra都是正常url,
+                val url = try {
+                    URL(extra)
+                } catch (e: MalformedURLException) {
+                    throw IllegalStateException("Requester类型不存在<$type, $extra>")
+                }
+                return Requester(url.toString())
             }
             return try {
                 val mNew = clazz.getMethod("new", String::class.java)
@@ -109,32 +121,3 @@ open class Requester(val extra: String) {
     }
 }
 
-/**
- * 用来请求小说列表，
- */
-abstract class ListRequester(url: String) : Requester(url)
-
-/**
- * 用来请求分类页面的小说列表，
- */
-open class GenreListRequester(url: String) : ListRequester(url)
-
-/**
- * 用来请求搜索结果页面的小说列表，
- */
-open class SearchListRequester(url: String) : ListRequester(url)
-
-/**
- * 用来请求小说详情页，
- */
-open class DetailRequester(url: String) : Requester(url)
-
-/**
- * 用来请求小说章节列表，
- */
-open class ChaptersRequester(url: String) : Requester(url)
-
-/**
- * 用来请求小说文本，
- */
-open class TextRequester(url: String) : Requester(url)

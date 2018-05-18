@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.*
-import org.jsoup.Jsoup
+import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.Requester
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -26,58 +26,8 @@ class QidianTest {
     private lateinit var context: Qidian
     @Before
     fun setUp() {
-        NovelContext.cache(File("/tmp/panovel/api"))
+        NovelContext.files(File("/tmp/panovel/api"))
         context = Qidian()
-    }
-
-    @Test
-    fun cookieDomain() {
-        context.cookieDomainList().forEach {
-
-        }
-    }
-
-    //    @Test
-    @Suppress("unused")
-    fun makeGenres() {
-        val all = Jsoup.connect("https://www.qidian.com/all").get()
-        val chanIdList = all.select("div.work-filter.type-filter > ul > li").map {
-            it.attr("data-id").toInt()
-        }
-        val map = chanIdList.joinToString(",\n") { chanId ->
-            val root = Jsoup.connect("https://www.qidian.com/all?chanId=$chanId&orderId=&page=1&style=1&pageSize=20&siteid=1&hiddenField=0").get()
-            val sub = root.select("div.sub-type > dl:not(.hidden) > dd").joinToString(",\n") {
-                val name = it.text()
-                val subCateId = it.attr("data-subtype").toInt()
-                """"$name" to $subCateId"""
-            }
-            """$chanId to linkedMapOf($sub)"""
-        }
-        println("linkedMapOf($map)")
-    }
-
-    @Test
-    fun getGenres() {
-        context.getGenres().forEach {
-            println(it)
-        }
-    }
-
-    @Test
-    fun getNextPage() {
-        context.getNextPage(NovelGenre("东方玄幻", "https://www.qidian.com/all?chanId=21&subCateId=8&orderId=&page=1&style=1&pageSize=20&siteid=1&hiddenField=0")).let {
-            assertTrue(it!!.requester.url.contains("page=2"))
-        }
-    }
-
-    @Test
-    fun getNovelList() {
-        context.getNovelList(GenreListRequester("https://www.qidian.com/all?chanId=21&subCateId=8&orderId=&page=1&style=1&pageSize=20&siteid=1&hiddenField=0")).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertEquals(20, it.size)
-        }
     }
 
     @Test
@@ -106,7 +56,7 @@ class QidianTest {
 
     @Test
     fun getNovelDetail() {
-        context.getNovelDetail(DetailRequester("https://book.qidian.com/info/3602691")).let {
+        context.getNovelDetail(Requester("https://book.qidian.com/info/3602691")).let {
             assertEquals("https://qidian.qpic.cn/qdbimg/349573/3602691/180", it.bigImg)
             assertEquals("修真聊天群", it.novel.name)
             assertEquals("圣骑士的传说", it.novel.author)
@@ -119,7 +69,7 @@ class QidianTest {
                     "九洲一号群（VIP书友群，需验证）63769632", it.introduction)
             println(it.update)
         }
-        context.getNovelDetail(DetailRequester("https://book.qidian.com/info/1010436534")).let {
+        context.getNovelDetail(Requester("https://book.qidian.com/info/1010436534")).let {
             assertEquals("https://qidian.qpic.cn/qdbimg/349573/1010436534/180", it.bigImg)
             assertEquals("我是女皇的随身铠甲", it.novel.name)
             assertEquals("一文倒", it.novel.author)
@@ -134,7 +84,7 @@ class QidianTest {
             println(it.update)
         }
         // 小作者的小说详情页作者名不可点击，之前的规则不行，
-        context.getNovelDetail(DetailRequester("https://book.qidian.com/info/1009711354")).let {
+        context.getNovelDetail(Requester("https://book.qidian.com/info/1009711354")).let {
             assertEquals("https://qidian.qpic.cn/qdbimg/349573/1009711354/180", it.bigImg)
             assertEquals("超级惊悚直播", it.novel.name)
             assertEquals("宇文长弓", it.novel.author)
@@ -145,14 +95,14 @@ class QidianTest {
 
     @Test
     fun getNovelChaptersAsc() {
-        context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3602691")).let { list ->
+        context.getNovelChaptersAsc(Requester("https://book.qidian.com/info/3602691")).let { list ->
             assertEquals("有趣的书评同人小故事", list.first().name)
         }
-        context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/1010436534")).let { list ->
+        context.getNovelChaptersAsc(Requester("https://book.qidian.com/info/1010436534")).let { list ->
             assertEquals("读者重磅回馈：感恩节福利~", list.first().name)
         }
         // 这个章节列表体积大于默认1M，
-        context.getNovelChaptersAsc(ChaptersRequester("https://book.qidian.com/info/3357187")).let { list ->
+        context.getNovelChaptersAsc(Requester("https://book.qidian.com/info/3357187")).let { list ->
             assertEquals("第1章 撕心裂肺的背叛", list.first().name)
         }
     }
@@ -168,7 +118,7 @@ class QidianTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(TextRequester("https://read.qidian.com/chapter/XljeBHNXyTjoTMoHyHZuUA2/LlljjtD5ydO2uJcMpdsVgA2")).textList.let {
+        context.getNovelText(Requester("https://read.qidian.com/chapter/XljeBHNXyTjoTMoHyHZuUA2/LlljjtD5ydO2uJcMpdsVgA2")).textList.let {
             assertEquals(71, it.size)
             assertEquals("矿井区。", it.first())
             assertEquals("那冒泡的灵根潭面上，竟然悠悠浮起了半颗光头...", it.last())

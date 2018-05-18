@@ -1,7 +1,9 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.NovelGenre
+import cc.aoeiuv020.panovel.api.Requester
+import cc.aoeiuv020.panovel.api.textList
 import org.jsoup.Jsoup
 import org.junit.Assert.*
 import org.junit.Before
@@ -53,7 +55,7 @@ class PiaotianTest {
 
     @Test
     fun getNovelList() {
-        context.getNovelList(GenreListRequester("http://www.piaotian.com/booksort1/0/1.html")).let {
+        context.getNovelList(Requester("http://www.piaotian.com/booksort1/0/1.html")).let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
@@ -96,7 +98,7 @@ class PiaotianTest {
 
     @Test
     fun getNovelDetail() {
-        context.getNovelDetail(DetailRequester("https://www.piaotian.com/bookinfo/8/8605.html")).let {
+        context.getNovelDetail(Requester("https://www.piaotian.com/bookinfo/8/8605.html")).let {
             assertEquals("剑灵同居日记", it.novel.name)
             assertEquals("国王陛下", it.novel.author)
             assertEquals("“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”\n一个无敌的随身剑灵与天才美少女（们）的同居故事。", it.introduction)
@@ -107,13 +109,13 @@ class PiaotianTest {
 
     @Test
     fun getNovelChapters() {
-        context.getNovelChaptersAsc(ChaptersRequester("https://www.piaotian.com/html/4/4316/index.html")).let { list ->
+        context.getNovelChaptersAsc(Requester("https://www.piaotian.com/html/4/4316/index.html")).let { list ->
             list.forEach {
                 println(it)
             }
             assertEquals("序幕：天外飞仙+第一章：客栈柴房温暖如春", list.first().name)
         }
-        context.getNovelChaptersAsc(ChaptersRequester("https://www.piaotian.com/html/8/8912/index.html")).let { list ->
+        context.getNovelChaptersAsc(Requester("https://www.piaotian.com/html/8/8912/index.html")).let { list ->
             list.forEach {
                 println(it)
             }
@@ -124,7 +126,7 @@ class PiaotianTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(TextRequester("https://www.piaotian.com/html/8/8605/5582838.html")).textList.let {
+        context.getNovelText(Requester("https://www.piaotian.com/html/8/8605/5582838.html")).textList.let {
             assertEquals(21, it.size)
             assertEquals("6月1日凌晨0点，本书正式上架。", it.first())
             assertEquals("请各位绅士们量力而行，不必强求逆天。", it.last())

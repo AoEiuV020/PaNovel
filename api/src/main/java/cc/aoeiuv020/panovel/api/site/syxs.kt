@@ -42,19 +42,11 @@ class Syxs : NovelContext() {
         return url.startsWith(SEARCH_PAGE_URL)
     }
 
-    override fun getGenres(): List<NovelGenre> {
-        val root = request(site.baseUrl)
-        val elements = root.select("#wrapper > div.nav > ul > li > a").drop(1).dropLast(1)
-        return elements.map { a ->
-            NovelGenre(a.text(), GenreListRequester(a.absHref()))
-        }
-    }
-
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
+    override fun getNovelList(requester: Requester): List<NovelListItem> {
         // 搜索是百度的，编码utf-8, 直接null就可以，
-        val root = response(requester).charset(if (requester is SearchListRequester) null else charset).parse()
-        return if (requester is SearchListRequester) root.select("#results > div.result-list > div > div.result-game-item-detail").map {
+        val root = response(requester).charset(null).parse()
+        return root.select("#results > div.result-list > div > div.result-game-item-detail").map {
             val a = it.select("h3 > a").first()
             val name = a.title()
             val url = a.absHref()
@@ -65,43 +57,26 @@ class Syxs : NovelContext() {
             val info = "类型: $genre 更新: $update 简介: $about"
             NovelListItem(NovelItem(this, name, author, url), info)
         }
-        else root.select("#content > table > tbody > tr").drop(1).map {
-            val a = it.select("> td:nth-child(1) > a").first()
-            val name = a.text()
-            val url = a.absHref()
-            val author = it.select("> td:nth-child(3)").first().text()
-            val last = it.select("> td.even").first().text()
-            val number = it.select("> td.center").first().text()
-            val info = "最新章节: $last 字数: $number"
-            NovelListItem(NovelItem(this, name, author, url), info)
-        }
     }
 
     override fun searchNovelName(name: String): NovelGenre {
+        // TODO: 这网站已经有自己的搜索了，
         val key = URLEncoder.encode(name, "UTF-8")
         val url = "${SEARCH_PAGE_URL}?s=7845455592055299828&q=$key"
-        return NovelSearch(name, url)
+        return NovelGenre(name, url)
     }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        val query = if (genre.requester is SearchListRequester) {
-            "#pageFooter > a.pager-next-foot.n"
-        } else {
-            "#content > div > a:nth-last-child(1)"
-        }
+        val query = "#pageFooter > a.pager-next-foot.n"
         val root = request(genre.requester)
         val a = root.select(query).first() ?: return null
         val url = a.absHref()
         if (url.isEmpty()) return null
-        return if (genre.requester is SearchListRequester) {
-            NovelSearch(genre.name, url)
-        } else {
-            NovelGenre(genre.name, url)
-        }
+        return NovelGenre(genre.name, url)
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
+    override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
         val img = root.select("#fmimg > img").first().absSrc()
         val div = root.select("#info").first()
@@ -118,14 +93,14 @@ class Syxs : NovelContext() {
         return NovelDetail(NovelItem(this, name, author, requester), img, update, introduction, chapterPageUrl)
     }
 
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
+    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
         return root.select("#list > dl > dd > a").dropWhile { it.text() != "加入书架" }.drop(1).map { a ->
             NovelChapter(a.text(), a.absHref())
         }
     }
 
-    override fun getNovelText(requester: TextRequester): NovelText {
+    override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
         val textList = root.select("#content > p").map {
             it.text().trim()

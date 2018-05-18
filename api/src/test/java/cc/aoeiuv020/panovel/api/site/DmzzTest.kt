@@ -1,8 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.ChaptersRequester
-import cc.aoeiuv020.panovel.api.DetailRequester
-import cc.aoeiuv020.panovel.api.TextRequester
+import cc.aoeiuv020.panovel.api.Requester
 import cc.aoeiuv020.panovel.api.absHref
 import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
@@ -60,7 +58,7 @@ class DmzzTest {
 
     @Test
     fun getNovelDetail() {
-        context.getNovelDetail(DetailRequester("http://q.dmzj.com/2137/index.shtml")).let {
+        context.getNovelDetail(Requester("http://q.dmzj.com/2137/index.shtml")).let {
             assertEquals("GAMERS！电玩咖！", it.novel.name)
             assertEquals("葵せきな(葵关南)", it.novel.author)
             assertEquals("", it.introduction)
@@ -71,13 +69,13 @@ class DmzzTest {
 
     @Test
     fun getNovelChaptersAsc() {
-        context.getNovelChaptersAsc(ChaptersRequester("http://q.dmzj.com/2137/index.shtml")).let { list ->
+        context.getNovelChaptersAsc(Requester("http://q.dmzj.com/2137/index.shtml")).let { list ->
             list.forEach {
                 println(it)
             }
             assertEquals("转载信息", list.first().name)
         }
-        context.getNovelChaptersAsc(ChaptersRequester("http://q.dmzj.com/1607/index.shtml")).let { list ->
+        context.getNovelChaptersAsc(Requester("http://q.dmzj.com/1607/index.shtml")).let { list ->
             list.forEach {
                 println(it)
             }
@@ -93,7 +91,7 @@ class DmzzTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(TextRequester("http://q.dmzj.com/2137/8856/78730.shtml")).textList.let {
+        context.getNovelText(Requester("http://q.dmzj.com/2137/8856/78730.shtml")).textList.let {
             assertEquals("「等、等很久了吗？」", it.first())
             assertEquals("——我们头顶上那片照耀着北方大陆的璀璨星空，今天异常闪耀。", it.last())
             assertEquals(629, it.size)

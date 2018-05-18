@@ -159,7 +159,7 @@ abstract class NovelContext {
     /**
      * 获取分类页面里的小说列表信息，
      */
-    abstract fun getNovelList(requester: ListRequester): List<NovelListItem>
+    abstract fun getNovelList(requester: Requester): List<NovelListItem>
 
     /**
      * 搜索小说名，
@@ -174,19 +174,19 @@ abstract class NovelContext {
     /**
      * 获取小说详情页信息，
      */
-    abstract fun getNovelDetail(requester: DetailRequester): NovelDetail
+    abstract fun getNovelDetail(requester: Requester): NovelDetail
 
-    open fun getNovelItem(url: String): NovelItem = getNovelDetail(DetailRequester(url)).novel
+    open fun getNovelItem(url: String): NovelItem = getNovelDetail(Requester(url)).novel
 
     /**
      * 获取小说章节列表，
      */
-    abstract fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter>
+    abstract fun getNovelChaptersAsc(requester: Requester): List<NovelChapter>
 
     /**
      * 获取小说章节文本内容，
      */
-    abstract fun getNovelText(requester: TextRequester): NovelText
+    abstract fun getNovelText(requester: Requester): NovelText
 
     /**
      * 判断这个地址是不是属于这个网站，

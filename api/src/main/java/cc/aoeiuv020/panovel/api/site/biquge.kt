@@ -26,45 +26,30 @@ class Biquge : JsoupNovelContext() {
     override fun getNovelSite(): NovelSite = site
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
+    override fun getNovelList(requester: Requester): List<NovelListItem> {
         val root = request(requester)
-        return when {
-            requester !is SearchListRequester -> listOf()
-        // 兼容旧版，百度的搜索结果页，
-            requester.url.startsWith(SEARCH_PAGE_URL) -> root.select("#results > div.result-list > div > div.result-game-item-detail").map {
-                val a = it.select("h3 > a").first()
-                val name = a.title()
-                val url = a.absHref()
-                val author = it.select("> div > p:nth-child(1) > span:nth-child(2)").first().text().trim()
-                val genre = it.select("> div > p:nth-child(2) > span:nth-child(2)").first().text()
-                val last = it.select("> div > p:nth-child(4) > a").first().text().trim()
-                val update = it.select("> div > p:nth-child(3) > span:nth-child(2)").first().text()
-                val about = it.select(" > p").first().text()
-                val info = "最新章节: $last 类型: $genre 更新: $update 简介: $about"
-                NovelListItem(NovelItem(this, name, author, url), info)
+        return root.requireElements(name = TAG_SEARCH_RESULT_LIST, query = "div.result-list > div").map {
+            val a = it.requireElement(name = TAG_NOVEL_LINK, query = "> div.result-game-item-detail > h3 > a")
+            val name = a.title()
+            // TODO: 详情页地址要尽量不变，考虑到网站域名可能变，不用绝对地址，
+            val url = a.absHref()
+            val author = it.requireElement(name = TAG_AUTHOR_NAME, query = "> div.result-game-item-detail > div > p:nth-child(1) > span:nth-child(2)") {
+                it.text().trim()
             }
-            else -> root.requireElements(name = TAG_SEARCH_RESULT_LIST, query = "div.result-list > div").map {
-                val a = it.requireElement(name = TAG_NOVEL_LINK, query = "> div.result-game-item-detail > h3 > a")
-                val name = a.title()
-                val url = a.absHref()
-                val author = it.requireElement(name = TAG_AUTHOR_NAME, query = "> div.result-game-item-detail > div > p:nth-child(1) > span:nth-child(2)") {
-                    it.text().trim()
-                }
-                val genre = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(2) > span:nth-child(2)") {
-                    it.text().trim()
-                }
-                val last = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(4) > a") {
-                    it.text().trim()
-                }
-                val update = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(3) > span:nth-child(2)") {
-                    it.text().trim()
-                }
-                val intro = it.getElement(query = "> div.result-game-item-detail > p") {
-                    it.text().trim()
-                }
-                val info = "最新章节: $last 类型: $genre 更新: $update 简介: $intro"
-                NovelListItem(NovelItem(this, name, author, url), info)
+            val genre = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(2) > span:nth-child(2)") {
+                it.text().trim()
             }
+            val last = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(4) > a") {
+                it.text().trim()
+            }
+            val update = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(3) > span:nth-child(2)") {
+                it.text().trim()
+            }
+            val intro = it.getElement(query = "> div.result-game-item-detail > p") {
+                it.text().trim()
+            }
+            val info = "最新章节: $last 类型: $genre 更新: $update 简介: $intro"
+            NovelListItem(NovelItem(this, name, author, url), info)
         }
     }
 
@@ -83,7 +68,7 @@ class Biquge : JsoupNovelContext() {
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
         val url = "${site.baseUrl}search.php?keyword=$key"
-        return NovelSearch(name, url)
+        return NovelGenre(name, url)
     }
 
     private fun isSearchResult(url: String): Boolean {
@@ -91,7 +76,7 @@ class Biquge : JsoupNovelContext() {
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
+    override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
         val img = root.select("#fmimg > img").first().src()
         val div = root.select("#info").first()
@@ -113,7 +98,7 @@ class Biquge : JsoupNovelContext() {
         return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
+    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
         return root.select("#list > dl > dd > a").map {
             val a = it
@@ -121,7 +106,7 @@ class Biquge : JsoupNovelContext() {
         }
     }
 
-    override fun getNovelText(requester: TextRequester): NovelText {
+    override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
         val content = root.select("#content").first()
         return NovelText(content.textList())

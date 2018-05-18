@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.detail
 
 import cc.aoeiuv020.panovel.Presenter
-import cc.aoeiuv020.panovel.api.ChaptersRequester
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.api.Requester
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.qrcode.QrCodeManager
 import cc.aoeiuv020.panovel.util.async
@@ -68,7 +68,7 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
         }).let { addDisposable(it, 0) }
     }
 
-    fun requestChapters(requester: ChaptersRequester) {
+    fun requestChapters(requester: Requester) {
         Observable.fromCallable {
             // 还有其他地方有requestChapters，所以多加个后缀，
             suffixThreadName("requestChaptersDetail")

@@ -37,9 +37,6 @@ class Liudatxt : NovelContext() {
     }
 
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        if (genre.requester is SearchListRequester) {
-            return null
-        }
         val root = request(genre.requester)
         val a = root.select("#main > div.list_center > div.pages > a:contains(下一页)").first() ?: return null
         val url = a.absHref()
@@ -48,10 +45,9 @@ class Liudatxt : NovelContext() {
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
+    override fun getNovelList(requester: Requester): List<NovelListItem> {
         val root = request(requester)
-        val isSearch = requester is SearchListRequester
-        return root.select("#${if (isSearch) "sitembox" else "sitebox"} > dl").map {
+        return root.select("#sitembox > dl").map {
             val a = it.select("> dd:nth-child(2) > h3 > a").first()
             val name = a.text()
             val url = a.absHref()
@@ -61,13 +57,10 @@ class Liudatxt : NovelContext() {
             val genre = dd3.select("> span:nth-child(3)").first().text()
             val last = it.select("> dd:nth-child(5) > a").first().text().trim()
             val about = it.select("> dd.book_des").first().text()
-            val info = if (isSearch) {
+            val info = run {
                 val length = dd3.select("> span:nth-child(4)").first().text()
                 val update = it.select("> dd:nth-child(5) > span").first().text()
                 "最新章节: $last 类型: $genre 更新: $update 状态: $status 长度: $length 简介: $about"
-            } else {
-                val update = it.select("> dd:nth-child(2) > h3 > span").first().text()
-                "最新章节: $last 类型: $genre 更新: $update 状态: $status 简介: $about"
             }
             NovelListItem(NovelItem(this, name, author, url), info)
         }
@@ -77,7 +70,7 @@ class Liudatxt : NovelContext() {
         return NovelGenre(name, SearchRequester(name))
     }
 
-    class SearchRequester(private val name: String) : SearchListRequester(name) {
+    class SearchRequester(private val name: String) : Requester(name) {
         override val url = SEARCH_PAGE_URL
         override fun connect(): Connection {
             return Jsoup.connect(SEARCH_PAGE_URL).data("searchkey", name).method(Connection.Method.POST)
@@ -85,7 +78,7 @@ class Liudatxt : NovelContext() {
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
+    override fun getNovelDetail(requester: Requester): NovelDetail {
         val chapterRoot = request(requester)
         val detail = chapterRoot.select("#main > div.coverecom > div.tabstit > table > tbody > tr > td:nth-child(1) > a:nth-child(4)").first()
         val root = request(detail.absHref())
@@ -107,14 +100,14 @@ class Liudatxt : NovelContext() {
         return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
+    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
         return root.select("#readerlist > ul > li > a").map { a ->
             NovelChapter(a.text(), a.absHref())
         }
     }
 
-    override fun getNovelText(requester: TextRequester): NovelText {
+    override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
         val content = root.select("#content").first()
         return NovelText(content.textList())

@@ -31,10 +31,10 @@ data class NovelSite(
  */
 data class NovelGenre(
         val name: String,
-        val requester: ListRequester
+        val requester: Requester
 ) : Data() {
     constructor(name: String, url: String)
-            : this(name, GenreListRequester(url))
+            : this(name, Requester(url))
 }
 
 /**
@@ -45,16 +45,16 @@ data class NovelItem(
         val site: String,
         val name: String,
         val author: String,
-        val requester: DetailRequester
+        val requester: Requester
 ) : Data() {
-    constructor(context: NovelContext, name: String, author: String, requester: DetailRequester)
+    constructor(context: NovelContext, name: String, author: String, requester: Requester)
             : this(context.getNovelSite().name, name, author, requester)
 
     constructor(context: NovelContext, name: String, author: String, url: String)
-            : this(context.getNovelSite().name, name, author, DetailRequester(url))
+            : this(context.getNovelSite().name, name, author, Requester(url))
 
     constructor(site: String, name: String, author: String, url: String)
-            : this(site, name, author, DetailRequester(url))
+            : this(site, name, author, Requester(url))
 }
 
 /**
@@ -76,10 +76,10 @@ data class NovelDetail(
         val update: Date,
         // 简介，
         val introduction: String,
-        val requester: ChaptersRequester
+        val requester: Requester
 ) : Data() {
     constructor(novel: NovelItem, bigImg: String, update: Date, info: String, url: String)
-            : this(novel, bigImg, update, info, ChaptersRequester(url))
+            : this(novel, bigImg, update, info, Requester(url))
 }
 
 /**
@@ -90,17 +90,17 @@ data class NovelChapter(
          * 章节名不包括小说名，
          */
         val name: String,
-        val requester: TextRequester,
+        val requester: Requester,
         /**
          * 本章节更新时间，没有就没有，
          */
         val update: Date? = null
 ) : Data() {
     constructor(name: String, url: String)
-            : this(name, TextRequester(url))
+            : this(name, Requester(url))
 
     constructor(name: String, url: String, update: Date)
-            : this(name, TextRequester(url), update)
+            : this(name, Requester(url), update)
 }
 
 /**

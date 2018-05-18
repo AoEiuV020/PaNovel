@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.Requester
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -19,36 +19,6 @@ class LiudatxtTest {
     @Before
     fun setUp() {
         context = Liudatxt()
-    }
-
-    @Test
-    fun getGenres() {
-        val genres = context.getGenres()
-        genres[0].let {
-            assertEquals("玄幻奇幻", it.name)
-            assertEquals("http://www.liudatxt.com/mulu/1.html", it.requester.url)
-        }
-        genres[genres.size - 1].let {
-            assertEquals("女频频道", it.name)
-            assertEquals("http://www.liudatxt.com/mulu/7.html", it.requester.url)
-        }
-    }
-
-    @Test
-    fun getNextPage() {
-        context.getNextPage(NovelGenre("", "http://www.liudatxt.com/mulu/1-2.html")).let {
-            assertEquals("http://www.liudatxt.com/mulu/1-3.html", it!!.requester.url)
-        }
-    }
-
-    @Test
-    fun getNovelList() {
-        context.getNovelList(GenreListRequester("http://www.liudatxt.com/mulu/1.html")).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertEquals(20, it.size)
-        }
     }
 
     @Test
@@ -77,7 +47,7 @@ class LiudatxtTest {
 
     @Test
     fun getNovelDetail() {
-        context.getNovelDetail(DetailRequester("http://www.liudatxt.com/so/22921/")).let {
+        context.getNovelDetail(Requester("http://www.liudatxt.com/so/22921/")).let {
             assertEquals("http://www.liudatxt.com/headimgs/22/22921/s22921.jpg", it.bigImg)
             assertEquals("诸天万界反派聊天群", it.novel.name)
             assertEquals("不要尬舞", it.novel.author)
@@ -92,7 +62,7 @@ class LiudatxtTest {
 
     @Test
     fun getNovelChaptersAsc() {
-        context.getNovelChaptersAsc(ChaptersRequester("http://www.liudatxt.com/so/22921/")).let { list ->
+        context.getNovelChaptersAsc(Requester("http://www.liudatxt.com/so/22921/")).let { list ->
             list.forEach {
                 println(it)
             }
@@ -102,7 +72,7 @@ class LiudatxtTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(TextRequester("http://www.liudatxt.com/so/22921/8710426.html")).textList.let {
+        context.getNovelText(Requester("http://www.liudatxt.com/so/22921/8710426.html")).textList.let {
             assertEquals(37, it.size)
             assertEquals("“你是怪物吗？！”这会儿刘锋是真的被面前这个身上血迹斑斑的哥们给惊着了，卧槽，二十多刀刀刀避开要害，简直是人才！", it.first())
             assertEquals("顺带一提，为了避免实力一样引起的怀疑，刘锋稍稍的将刘淼这个账号的实力水平降低了一点设定在二级。", it.last())

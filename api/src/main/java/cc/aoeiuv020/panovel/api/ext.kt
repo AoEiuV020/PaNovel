@@ -13,9 +13,6 @@ fun GsonBuilder.paNovel(): GsonBuilder = apply {
     Requester.attach(this)
 }
 
-@Suppress("FunctionName")
-fun NovelContext.NovelSearch(name: String, url: String) = NovelGenre(name, SearchListRequester(url))
-
 fun findBookId(url: String): String {
     return URL(url).path.split("/").first {
         try {

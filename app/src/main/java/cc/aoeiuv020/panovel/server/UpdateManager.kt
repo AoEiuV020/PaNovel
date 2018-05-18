@@ -3,9 +3,9 @@ package cc.aoeiuv020.panovel.server
 import android.content.Context
 import android.util.Log
 import cc.aoeiuv020.panovel.BuildConfig
-import cc.aoeiuv020.panovel.api.DetailRequester
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.Requester
 import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.server.common.gson
@@ -79,7 +79,7 @@ object UpdateManager : AnkoLogger {
         })
     }
 
-    fun query(requester: DetailRequester): Novel? {
+    fun query(requester: Requester): Novel? {
         debug { "query ：${requester.extra}" }
         val service = novelService ?: return null
         return try {
@@ -95,7 +95,7 @@ object UpdateManager : AnkoLogger {
 
     }
 
-    fun touch(requester: DetailRequester, chaptersCount: Int, updateTime: Date? = null) {
+    fun touch(requester: Requester, chaptersCount: Int, updateTime: Date? = null) {
         debug { "touch ：${requester.extra}" }
         novelService ?: return
         Observable.fromCallable {
@@ -115,7 +115,7 @@ object UpdateManager : AnkoLogger {
 
     }
 
-    fun uploadUpdate(requester: DetailRequester, chaptersCount: Int, updateTime: Date? = null) {
+    fun uploadUpdate(requester: Requester, chaptersCount: Int, updateTime: Date? = null) {
         debug { "uploadUpdate ：${requester.extra}" }
         novelService ?: return
         Observable.fromCallable {

@@ -25,7 +25,7 @@ class Qlyx : JsoupNovelContext() {
         val key = URLEncoder.encode(str, "GBK")
         // 突然发现，加上&page=1就没有搜索时间间隔的限制了，无所谓，删除cookie也一样，
         val url = "http://www.76wx.com/modules/article/search.php?searchtype=$type&searchkey=$key"
-        return NovelSearch(str, url)
+        return NovelGenre(str, url)
     }
 
     override fun searchNovelName(name: String) = search(name, "articlename")
@@ -35,22 +35,17 @@ class Qlyx : JsoupNovelContext() {
     override fun getNextPage(genre: NovelGenre): NovelGenre? {
         val root = request(genre.requester)
         return root.getElement("#pagelink > a.next") {
-            NovelSearch(genre.name, it.absHref())
+            NovelGenre(genre.name, it.absHref())
         }
     }
 
     private fun isDetail(url: String) = url.startsWith("http://www.76wx.com/book")
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        val response = if (requester is SearchListRequester) {
-            // 搜索页不装载cookie, 避开搜索时间间隔的限制，
-            connect(requester).execute()
-        } else {
-            response(requester)
-        }
+    override fun getNovelList(requester: Requester): List<NovelListItem> {
+        val response = connect(requester).execute()
         if (isDetail(response.url().toString())) {
-            val detail = getNovelDetail(DetailRequester(response.url().toString()))
+            val detail = getNovelDetail(Requester(response.url().toString()))
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
             val info = detail.run { "更新: ${sdf.format(update)} 简介: $introduction" }
             return listOf(NovelListItem(detail.novel, info))
@@ -82,7 +77,7 @@ class Qlyx : JsoupNovelContext() {
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
+    override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
         val eMaininfo = root.requireElement(query = "#maininfo")
         val eInfo = eMaininfo.requireElement(query = "#info")
@@ -110,7 +105,7 @@ class Qlyx : JsoupNovelContext() {
         return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
+    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
         return root.requireElement(query = "#list > dl") {
             it.children()
@@ -128,7 +123,7 @@ class Qlyx : JsoupNovelContext() {
         }
     }
 
-    override fun getNovelText(requester: TextRequester): NovelText {
+    override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
         val content = root.requireElement(query = "#content", name = TAG_CONTENT)
         return NovelText(content.textList())

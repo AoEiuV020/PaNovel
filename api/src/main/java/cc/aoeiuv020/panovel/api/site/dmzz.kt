@@ -28,10 +28,7 @@ class Dmzz : JsoupNovelContext() {
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        if (requester !is SearchListRequester) {
-            return listOf()
-        }
+    override fun getNovelList(requester: Requester): List<NovelListItem> {
         val arr: List<DmzzNovelItem> = response(connect(requester).ignoreContentType(true)).body().let { js ->
             val json = js.dropWhile { it != '[' }
                     .dropLastWhile { it != ']' }
@@ -63,7 +60,7 @@ class Dmzz : JsoupNovelContext() {
     override fun searchNovelName(name: String): NovelGenre {
         val key = URLEncoder.encode(name, "UTF-8")
         val url = "http://s.acg.dmzj.com/lnovelsum/search.php?s=$key"
-        return NovelSearch(name, url)
+        return NovelGenre(name, url)
     }
 
     override fun check(url: String): Boolean {
@@ -72,7 +69,7 @@ class Dmzz : JsoupNovelContext() {
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
+    override fun getNovelDetail(requester: Requester): NovelDetail {
         val root = request(requester)
         val con = root.select("body > div.main > div > div.pic > div ").first()
 
@@ -89,7 +86,7 @@ class Dmzz : JsoupNovelContext() {
         return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
     }
 
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
+    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
         val root = request(requester)
         val text = root.select("#list_block > script").first().html()
         val regex = Regex(".*chapter_list\\[\\d*\\]\\[\\d*\\] = '<a href=\"([^\"]*)\".*>(.*)</a>'.*;.*")
@@ -99,7 +96,7 @@ class Dmzz : JsoupNovelContext() {
         }
     }
 
-    override fun getNovelText(requester: TextRequester): NovelText {
+    override fun getNovelText(requester: Requester): NovelText {
         val root = request(requester)
         val script = root.select("head > script:nth-child(10)").first().html()
         val (json) = script.pick("var g_chapter_pages_url = (\\[.*\\]);")
