@@ -30,8 +30,7 @@ class Qidian : JsoupNovelContext() {
         return connect(realUrl("/search?kw=$key"))
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         return root.requireElements("#result-list > div > ul > li").map {
             /*
             <a href="//book.qidian.com/info/3548786" target="_blank" data-eid="qd_S05" data-bid="3548786" data-algrid="0.0.0">重生之<cite class="red-kw">都市</cite>修仙</a>
@@ -41,21 +40,8 @@ class Qidian : JsoupNovelContext() {
             val bookId = findBookId(a.href())
             val mid = it.requireElement("> div.book-mid-info")
             val author = mid.requireElement("> p.author", name = TAG_AUTHOR_NAME) { it.child(1).text() }
-            val genre = mid.getElement("> p.author > a:nth-child(4)") { it.text() }
-            val status = mid.getElement("> p.author > span") { it.text() }
-            val introduction = mid.getElement("> p.intro") { it.text().trim() }
-            val update = mid.getElement("> p.update") {
-                val (updateString) = it.text().pick("最新更新 (.*)")
-                updateString
-            }
-            val info = it.getElement("> div.book-right-info") { right ->
-                val length = right.getElement("> div > p:nth-child(1) > span") { it.text() }
-                val recommend = right.getElement("> div > p:nth-child(2) > span") { it.text() }
-                val click = right.getElement("> div > p:nth-child(3) > span") { it.text() }
-                "类型: $genre 更新: $update 状态: $status 长度: $length 推荐: $recommend 点击: $click 简介: $introduction"
-            }.toString()
             logger.debug { "result $name.$author" }
-            NovelListItem(NovelItem(this, name, author, bookId), info)
+            NovelItem(this, name, author, bookId)
         }
     }
 

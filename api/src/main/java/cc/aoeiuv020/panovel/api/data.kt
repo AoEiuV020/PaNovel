@@ -56,16 +56,6 @@ data class NovelItem(
 }
 
 /**
- * 小说列表中的一本小说，
- */
-data class NovelListItem(
-        val novel: NovelItem,
-        // 简介，最新章，或者其他任何有用的信息，
-        // TODO: 这个已经作废了，删除了吧，
-        val info: String = ""
-) : Data()
-
-/**
  * 小说详情页，
  * @param extra 用于请求章节列表，
  */

@@ -27,22 +27,18 @@ class Qlyx : JsoupNovelContext() {
         return connect(realUrl("/modules/article/search.php?searchtype=articlename&searchkey=$key&page=1"))
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun searchNovelName(name: String): List<NovelListItem> {
+    override fun searchNovelName(name: String): List<NovelItem> {
         val root = parse(connectByNovelName(name))
         // 搜索结果可能直接跳到详情页，
         return if (isDetail(root.location())) {
             val detail = getNovelDetail(root)
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
-            val info = detail.run { "更新: ${sdf.format(update)} 简介: $introduction" }
-            listOf(NovelListItem(detail.novel, info))
+            listOf(detail.novel)
         } else {
             getSearchResultList(root)
         }
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         val elements = root.requireElements(name = TAG_SEARCH_RESULT_LIST, query = "#main > table > tbody > tr:not(:nth-child(1))")
         return elements.map {
             val (name, bookId) = it.requireElement(query = "td:nth-child(1) > a") { a ->
@@ -51,20 +47,7 @@ class Qlyx : JsoupNovelContext() {
             val author = it.requireElement(query = "td:nth-child(3)", name = TAG_AUTHOR_NAME) {
                 it.text()
             }
-            val length = it.getElement(query = "td:nth-child(4)") {
-                it.text()
-            }
-            val last = it.getElement(query = "td:nth-child(2) > a") {
-                it.text()
-            }
-            val update = it.getElement(query = "td:nth-child(5)") {
-                it.text()
-            }
-            val status = it.getElement(query = "td:nth-child(6)") {
-                it.text()
-            }
-            val intro = "最新章节: $last 字数: $length 更新: $update 状态: $status"
-            NovelListItem(NovelItem(this, name, author, bookId), intro)
+            NovelItem(this, name, author, bookId)
         }
     }
 

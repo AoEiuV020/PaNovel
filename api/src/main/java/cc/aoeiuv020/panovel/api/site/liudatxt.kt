@@ -28,24 +28,14 @@ class Liudatxt : JsoupNovelContext() {
         return connect(realUrl("/search.php")).data("searchkey", name).method(Connection.Method.POST)
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         return root.requireElements(query = "#sitembox > dl").map {
             val a = it.requireElement(query = "> dd:nth-child(2) > h3 > a", name = TAG_NOVEL_LINK)
             val name = a.text()
             val bookId = findBookId(a.href())
             val dd3 = it.requireElement(query = "> dd:nth-child(3)")
             val author = dd3.requireElement(query = "> span:nth-child(1)", name = TAG_AUTHOR_NAME) { it.text() }
-            val status = dd3.getElement(query = "> span:nth-child(2)") { it.text() }
-            val genre = dd3.getElement(query = "> span:nth-child(3)") { it.text() }
-            val last = it.getElement(query = "> dd:nth-child(5) > a") { it.text().trim() }
-            val about = it.getElement(query = "> dd.book_des") { it.text() }
-            val info = run {
-                val length = dd3.select("> span:nth-child(4)").first().text()
-                val update = it.select("> dd:nth-child(5) > span").first().text()
-                "最新章节: $last 类型: $genre 更新: $update 状态: $status 长度: $length 简介: $about"
-            }
-            NovelListItem(NovelItem(this, name, author, bookId), info)
+            NovelItem(this, name, author, bookId)
         }
     }
 

@@ -27,7 +27,7 @@ class SnwxTest {
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "祖魔"
+                novelItem.name == "祖魔"
             })
         }
     }

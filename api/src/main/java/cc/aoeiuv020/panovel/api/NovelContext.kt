@@ -153,7 +153,7 @@ abstract class NovelContext {
      *
      * @return [NovelGenre.extra]
      */
-    abstract fun searchNovelName(name: String): List<NovelListItem>
+    abstract fun searchNovelName(name: String): List<NovelItem>
 
     /**
      * 获取小说详情页信息，

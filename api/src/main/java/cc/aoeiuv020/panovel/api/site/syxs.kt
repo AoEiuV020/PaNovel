@@ -47,23 +47,18 @@ class Syxs : JsoupNovelContext() {
         return connect("$SEARCH_PAGE_URL?s=7845455592055299828&q=$key")
     }
 
-    override fun searchNovelName(name: String): List<NovelListItem> {
+    override fun searchNovelName(name: String): List<NovelItem> {
         // 搜索是百度的，搜索结果页面是UTF-8,
         return getSearchResultList(parse(connectByNovelName(name), charset = "UTF-8"))
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         return root.requireElements("#results > div.result-list > div > div.result-game-item-detail").map {
             val a = it.requireElement("h3 > a", TAG_NOVEL_LINK)
             val name = a.title()
             val bookId = findBookId(a.href())
             val author = it.requireElement("> div > p:nth-child(1) > span:nth-child(2)") { it.text().trim() }
-            val genre = it.getElement("> div > p:nth-child(2) > span:nth-child(2)") { it.text() }
-            val update = it.getElement("> div > p:nth-child(3) > span:nth-child(2)") { it.text() }
-            val about = it.getElement(" > p") { it.text() }
-            val info = "类型: $genre 更新: $update 简介: $about"
-            NovelListItem(NovelItem(this, name, author, bookId), info)
+            NovelItem(this, name, author, bookId)
         }
     }
 

@@ -28,8 +28,7 @@ class Biquge : JsoupNovelContext() {
         return connect(realUrl("/search.php?keyword=$key"))
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         return root.requireElements(name = TAG_SEARCH_RESULT_LIST, query = "div.result-list > div").map {
             val a = it.requireElement(name = TAG_NOVEL_LINK, query = "> div.result-game-item-detail > h3 > a")
             val name = a.title()
@@ -37,20 +36,7 @@ class Biquge : JsoupNovelContext() {
             val author = it.requireElement(name = TAG_AUTHOR_NAME, query = "> div.result-game-item-detail > div > p:nth-child(1) > span:nth-child(2)") {
                 it.text().trim()
             }
-            val genre = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(2) > span:nth-child(2)") {
-                it.text().trim()
-            }
-            val last = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(4) > a") {
-                it.text().trim()
-            }
-            val update = it.getElement(query = "> div.result-game-item-detail > div > p:nth-child(3) > span:nth-child(2)") {
-                it.text().trim()
-            }
-            val intro = it.getElement(query = "> div.result-game-item-detail > p") {
-                it.text().trim()
-            }
-            val info = "最新章节: $last 类型: $genre 更新: $update 简介: $intro"
-            NovelListItem(NovelItem(this, name, author, bookId), info)
+            NovelItem(this, name, author, bookId)
         }
     }
 

@@ -28,18 +28,13 @@ class Snwx : JsoupNovelContext() {
         }
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         return root.requireElements("#newscontent > div.l > ul > li").map {
             val a = it.requireElement("> span.s2 > a", TAG_NOVEL_LINK)
             val name = a.text()
             val bookId = findBookId(a.href())
             val author = it.requireElement("> span.s4", TAG_AUTHOR_NAME) { it.text() }
-            val last = it.requireElement("> span.s3 > a") { it.text() }
-            val update = it.getElement("> span.s5") { it.text() }
-            val genre = it.getElement("> span.s1") { it.text() }
-            val info = "最新章节: $last 类型: $genre 更新: $update"
-            NovelListItem(NovelItem(this, name, author, bookId), info)
+            NovelItem(this, name, author, bookId)
         }
     }
 

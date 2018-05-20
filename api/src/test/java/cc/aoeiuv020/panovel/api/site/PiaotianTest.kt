@@ -28,7 +28,7 @@ class PiaotianTest {
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "斗破苍穹"
+                novelItem.name == "斗破苍穹"
             })
         }
         // 有小说搜索后直接跳到详情页，
@@ -37,7 +37,7 @@ class PiaotianTest {
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "从前有座灵剑山"
+                novelItem.name == "从前有座灵剑山"
             })
         }
     }

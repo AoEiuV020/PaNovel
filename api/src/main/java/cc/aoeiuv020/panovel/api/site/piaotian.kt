@@ -8,7 +8,6 @@ import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import java.net.URL
 import java.net.URLEncoder
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
@@ -32,21 +31,18 @@ class Piaotian : JsoupNovelContext() {
         return connect(realUrl("/modules/article/search.php?searchtype=articlename&searchkey=$key&page=1"))
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun searchNovelName(name: String): List<NovelListItem> {
+    override fun searchNovelName(name: String): List<NovelItem> {
         val root = parse(connectByNovelName(name))
         // 搜索结果可能直接跳到详情页，
         return if (isDetail(root.location())) {
             val detail = getNovelDetail(root)
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
-            val info = detail.run { "更新: ${sdf.format(update)} 简介: $introduction" }
-            listOf(NovelListItem(detail.novel, info))
+            listOf(detail.novel)
         } else {
             getSearchResultList(root)
         }
     }
 
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         val elements = root.requireElements(query = "#content > table.grid > tbody > tr:not(:nth-child(1))")
         return elements.map {
             /*
@@ -56,12 +52,7 @@ class Piaotian : JsoupNovelContext() {
             val name = a.text()
             val bookId = findBookId(a.href())
             val author = it.requireElement(query = "td:nth-child(3)", name = TAG_AUTHOR_NAME) { it.text() }
-            val length = it.getElement(query = "td:nth-child(4)") { it.text() }
-            val last = it.getElement(query = "td:nth-child(2) > a") { it.text() }
-            val update = it.getElement(query = "td:nth-child(5)") { it.text() }
-            val status = it.getElement(query = "td:nth-child(6)") { it.text() }
-            val info = "最新章节: $last 字数: $length 更新: $update 状态: $status"
-            NovelListItem(NovelItem(this, name, author, bookId), info)
+            NovelItem(this, name, author, bookId)
         }
     }
 

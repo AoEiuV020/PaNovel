@@ -27,7 +27,7 @@ class LiudatxtTest {
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "诸天万界反派聊天群"
+                novelItem.name == "诸天万界反派聊天群"
             })
         }
     }

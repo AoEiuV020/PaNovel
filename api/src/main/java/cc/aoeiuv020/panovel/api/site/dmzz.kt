@@ -29,19 +29,17 @@ class Dmzz : JsoupNovelContext() {
         return connect("http://s.acg.dmzj.com/lnovelsum/search.php?s=$key")
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun searchNovelName(name: String): List<NovelListItem> {
+    override fun searchNovelName(name: String): List<NovelItem> {
         val arr: List<DmzzNovelItem> = response(connect(realUrl(name)).ignoreContentType(true)).body().let { js ->
             val json = js.dropWhile { it != '[' }
                     .dropLastWhile { it != ']' }
             Gson().fromJson(json, object : TypeToken<List<DmzzNovelItem>>() {}.type)
         }
         return arr.map { dmzz ->
-            val info = dmzz.mIntro ?: dmzz.description ?: null.toString()
-            NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author,
+            NovelItem(this, dmzz.fullName, dmzz.author,
                     // 相对路径，"../"开头，jsoup没有自动处理这样的的，
                     // TODO: URL有处理，待测试，
-                    dmzz.lnovelUrl.removePrefix("..")), info)
+                    dmzz.lnovelUrl.removePrefix(".."))
         }
     }
 

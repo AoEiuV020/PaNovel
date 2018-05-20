@@ -22,7 +22,7 @@ class YssmTest {
     @Test
     fun getNovelList() {
         context.searchNovelName("都市").forEach {
-            println(it.novel)
+            println(it)
         }
     }
 

@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.Requester
 import org.jsoup.Jsoup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -29,7 +28,7 @@ class DmzzTest {
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "打工吧魔王大人"
+                novelItem.name == "打工吧魔王大人"
             })
         }
     }

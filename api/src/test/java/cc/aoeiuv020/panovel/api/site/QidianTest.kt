@@ -33,7 +33,7 @@ class QidianTest {
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "恐怖广播"
+                novelItem.name == "恐怖广播"
             })
         }
     }

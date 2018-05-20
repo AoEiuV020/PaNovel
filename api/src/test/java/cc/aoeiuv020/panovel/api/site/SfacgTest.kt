@@ -27,7 +27,7 @@ class SfacgTest {
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "黑猫变成少女才不奇怪呢"
+                novelItem.name == "黑猫变成少女才不奇怪呢"
             })
         }
     }

@@ -59,9 +59,9 @@ abstract class JsoupNovelContext : NovelContext() {
      * 要继承[connectByNovelName]指定搜索请求方式，
      * 如果继承了[searchNovelName], 可以不继承[getSearchResultList]解析搜索页面，
      */
-    protected open fun getSearchResultList(root: Document): List<NovelListItem> = listOf()
+    protected open fun getSearchResultList(root: Document): List<NovelItem> = listOf()
 
-    override fun searchNovelName(name: String): List<NovelListItem> = getSearchResultList(parse(connectByNovelName(name)))
+    override fun searchNovelName(name: String): List<NovelItem> = getSearchResultList(parse(connectByNovelName(name)))
     protected open fun connectByNovelName(name: String): Connection = throw NotImplementedError()
 
     override fun getNextPage(extra: String): String? = getNextPage(parse(extra))

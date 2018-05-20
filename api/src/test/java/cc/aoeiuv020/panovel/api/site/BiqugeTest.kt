@@ -28,7 +28,7 @@ class BiqugeTest {
                 println(novelItem)
             }
             assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "最大权限"
+                novelItem.name == "最大权限"
             })
         }
     }

@@ -28,8 +28,7 @@ class Sfacg : JsoupNovelContext() {
         return connect("http://s.sfacg.com/?Key=$key&S=1&SS=0")
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         return root.requireElements("#form1 > table.comic_cover.Height_px22.font_gray.space10px > tbody > tr > td > ul").map {
             val a = it.requireElement("li > strong > a", name = TAG_NOVEL_LINK)
             val name = a.text()
@@ -37,10 +36,8 @@ class Sfacg : JsoupNovelContext() {
             val li = it.requireElement("> li:nth-child(2)")
             val size = li.childNodeSize()
             val all = (li.childNode(size - 3) as TextNode).wholeText.trim()
-            val (author, update) = all.pick("综合信息： ([^/]*)/(.*)")
-            val about = (li.childNode(size - 1) as TextNode).wholeText.trim()
-            val info = "更新时间: $update 简介: $about"
-            NovelListItem(NovelItem(this, name, author, bookId), info)
+            val (author, _) = all.pick("综合信息： ([^/]*)/(.*)")
+            NovelItem(this, name, author, bookId)
         }
     }
 

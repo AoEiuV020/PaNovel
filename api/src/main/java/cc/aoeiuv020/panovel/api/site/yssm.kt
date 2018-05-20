@@ -30,22 +30,14 @@ class Yssm : JsoupNovelContext() {
         return connect(realUrl("/SearchBook.php?keyword=$key")).maxBodySize(1000 * 20)
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getSearchResultList(root: Document): List<NovelListItem> {
+    override fun getSearchResultList(root: Document): List<NovelItem> {
         // 由于被截断，可能处理最后一个元素会出异常，无视，
         return root.requireElements("#container > div.details.list-type > ul > li").mapIgnoreException {
             val a = it.requireElement(query = "> span.s2 > a", name = TAG_NOVEL_LINK)
             val name = a.text()
             val bookId = findBookId(a.href())
             val author = it.requireElement(query = "> span.s3", name = TAG_AUTHOR_NAME) { it.text() }
-            val last = it.getElement(query = "> span.s2 > i > a") {
-                it.text()
-            }
-            val genre = it.getElement(query = "> span.s1") { it.text() }
-            val updateTime = it.getElement(query = "> span.s4") { it.text() }
-            val status = it.getElement(query = "> span.s5") { it.text() }
-            val info = "最新章节: $last 类别: $genre 更新时间: $updateTime 状态: $status"
-            NovelListItem(NovelItem(this, name, author, bookId), info)
+            NovelItem(this, name, author, bookId)
         }
     }
 
