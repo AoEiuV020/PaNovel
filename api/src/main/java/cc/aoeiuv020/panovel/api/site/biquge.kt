@@ -4,6 +4,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.base.JsoupNovelContext
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
@@ -15,13 +16,34 @@ import java.text.SimpleDateFormat
  *
  * Created by AoEiuV020 on 2017.10.08-21:03:33.
  */
-class Biquge : JsoupNovelContext() {
+class Biquge : DslJsoupNovelContext() {init {
+    detailTemplate = "/book/%s/"
+    contentTemplate = "/book/%s.html"
+    site {
+        name = "笔趣阁"
+        baseUrl = "https://www.biqubao.com"
+        logo = "https://imgsa.baidu.com/forum/w%3D580/sign=1d712d8332dbb6fd255be52e3925aba6/d7d2c843fbf2b211dfb81c36c18065380dd78e1b.jpg"
+    }
+    search { name ->
+        get {
+            url = "/search.php?keyword=$name"
+        }
+        document {
+            items("div.result-list > div") {
+                name("> div.result-game-item-detail > h3 > a")
+                author("> div.result-game-item-detail > div > p:nth-child(1) > span:nth-child(2)")
+            }
+        }
+    }
+}
+}
+
+class Biqugee : JsoupNovelContext() {
     override val site = NovelSite(
             name = "笔趣阁",
             baseUrl = "https://www.biqubao.com",
             logo = "https://imgsa.baidu.com/forum/w%3D580/sign=1d712d8332dbb6fd255be52e3925aba6/d7d2c843fbf2b211dfb81c36c18065380dd78e1b.jpg"
     )
-
 
     override fun connectByNovelName(name: String): Connection {
         val key = URLEncoder.encode(name, "UTF-8")
