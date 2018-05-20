@@ -30,35 +30,29 @@ data class NovelSite(
 ) : Data()
 
 /**
- * 小说分类页面，
- * 该分类第一页地址，
+ * 小说搜索页面，
+ * TODO: 改个名，之前是分类页面所以用NovelGenre，现在删除了分类页面功能，这个只用来搜索了，
+ * @param name 搜索的字符串，
+ * @param extra 用于请求搜索结果，
  */
 data class NovelGenre(
         val name: String,
-        val requester: Requester
-) : Data() {
-    constructor(name: String, url: String)
-            : this(name, Requester(url))
-}
+        val extra: String
+) : Data()
 
 /**
  * 代表一本小说，由网站名，小说名和作者唯一决定，
- * 自带详情页的请求类，
+ *
+ * @param extra 并不重要了已经，只要网站Context能用这个请求到详情页就可以，同一本小说不同extra也可以，
  */
 data class NovelItem(
         val site: String,
         val name: String,
         val author: String,
-        val requester: Requester
+        val extra: String
 ) : Data() {
-    constructor(context: NovelContext, name: String, author: String, requester: Requester)
-            : this(context.getNovelSite().name, name, author, requester)
-
-    constructor(context: NovelContext, name: String, author: String, url: String)
-            : this(context.getNovelSite().name, name, author, Requester(url))
-
-    constructor(site: String, name: String, author: String, url: String)
-            : this(site, name, author, Requester(url))
+    constructor(context: NovelContext, name: String, author: String, extra: String)
+            : this(context.getNovelSite().name, name, author, extra)
 }
 
 /**
@@ -67,11 +61,13 @@ data class NovelItem(
 data class NovelListItem(
         val novel: NovelItem,
         // 简介，最新章，或者其他任何有用的信息，
+        // TODO: 这个已经作废了，删除了吧，
         val info: String = ""
 ) : Data()
 
 /**
  * 小说详情页，
+ * @param extra 用于请求章节列表，
  */
 data class NovelDetail(
         val novel: NovelItem,
@@ -80,32 +76,24 @@ data class NovelDetail(
         val update: Date,
         // 简介，
         val introduction: String,
-        val requester: Requester
-) : Data() {
-    constructor(novel: NovelItem, bigImg: String, update: Date, info: String, url: String)
-            : this(novel, bigImg, update, info, Requester(url))
-}
+        val extra: String
+) : Data()
 
 /**
  * 小说目录，
+ * @param extra 用于本章节正文，
  */
 data class NovelChapter(
         /**
          * 章节名不包括小说名，
          */
         val name: String,
-        val requester: Requester,
+        val extra: String,
         /**
          * 本章节更新时间，没有就没有，
          */
         val update: Date? = null
-) : Data() {
-    constructor(name: String, url: String)
-            : this(name, Requester(url))
-
-    constructor(name: String, url: String, update: Date)
-            : this(name, Requester(url), update)
-}
+) : Data()
 
 /**
  * 小说文本，由一个个段落构成，

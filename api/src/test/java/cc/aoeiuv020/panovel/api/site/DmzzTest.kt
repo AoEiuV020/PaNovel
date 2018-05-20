@@ -24,14 +24,13 @@ class DmzzTest {
 
     @Test
     fun searchNovelName() {
-        context.getNovelList(context.searchNovelName("打工吧").requester).let {
+        context.searchNovelName("打工吧").also {
             it.forEach { novelItem ->
                 println(novelItem)
             }
-            val item = it.first { novelItem ->
+            assertTrue(it.any { novelItem ->
                 novelItem.novel.name == "打工吧魔王大人"
-            }
-            assertEquals("http://q.dmzj.com/1081/index.shtml", item.novel.requester.url)
+            })
         }
     }
 
@@ -44,20 +43,8 @@ class DmzzTest {
     }
 
     @Test
-    fun searchNovelAuthor() {
-        context.getNovelList(context.searchNovelAuthor("和原聪司").requester).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "打工吧魔王大人"
-            })
-        }
-    }
-
-    @Test
     fun getNovelDetail() {
-        context.getNovelDetail(Requester("http://q.dmzj.com/2137/index.shtml")).let {
+        context.getNovelDetail("http://q.dmzj.com/2137/index.shtml").let {
             assertEquals("GAMERS！电玩咖！", it.novel.name)
             assertEquals("葵せきな(葵关南)", it.novel.author)
             assertEquals("", it.introduction)
@@ -68,13 +55,13 @@ class DmzzTest {
 
     @Test
     fun getNovelChaptersAsc() {
-        context.getNovelChaptersAsc(Requester("http://q.dmzj.com/2137/index.shtml")).let { list ->
+        context.getNovelChaptersAsc("http://q.dmzj.com/2137/index.shtml").let { list ->
             list.forEach {
                 println(it)
             }
             assertEquals("转载信息", list.first().name)
         }
-        context.getNovelChaptersAsc(Requester("http://q.dmzj.com/1607/index.shtml")).let { list ->
+        context.getNovelChaptersAsc("http://q.dmzj.com/1607/index.shtml").let { list ->
             list.forEach {
                 println(it)
             }
@@ -90,7 +77,7 @@ class DmzzTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(Requester("http://q.dmzj.com/2137/8856/78730.shtml")).textList.let {
+        context.getNovelText("http://q.dmzj.com/2137/8856/78730.shtml").textList.let {
             assertEquals("「等、等很久了吗？」", it.first())
             assertEquals("——我们头顶上那片照耀着北方大陆的璀璨星空，今天异常闪耀。", it.last())
             assertEquals(629, it.size)

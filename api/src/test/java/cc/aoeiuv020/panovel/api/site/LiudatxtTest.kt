@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.Requester
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -23,19 +22,7 @@ class LiudatxtTest {
 
     @Test
     fun searchNovelName() {
-        context.getNovelList(context.searchNovelName("诸天万界反派聊天群").requester).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "诸天万界反派聊天群"
-            })
-        }
-    }
-
-    @Test
-    fun searchNovelAuthor() {
-        context.getNovelList(context.searchNovelAuthor("不要尬舞").requester).let {
+        context.searchNovelName("诸天万界反派聊天群").let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
@@ -47,7 +34,7 @@ class LiudatxtTest {
 
     @Test
     fun getNovelDetail() {
-        context.getNovelDetail(Requester("http://www.liudatxt.com/so/22921/")).let {
+        context.getNovelDetail("http://www.liudatxt.com/so/22921/").let {
             assertEquals("http://www.liudatxt.com/headimgs/22/22921/s22921.jpg", it.bigImg)
             assertEquals("诸天万界反派聊天群", it.novel.name)
             assertEquals("不要尬舞", it.novel.author)
@@ -62,7 +49,7 @@ class LiudatxtTest {
 
     @Test
     fun getNovelChaptersAsc() {
-        context.getNovelChaptersAsc(Requester("http://www.liudatxt.com/so/22921/")).let { list ->
+        context.getNovelChaptersAsc("http://www.liudatxt.com/so/22921/").let { list ->
             list.forEach {
                 println(it)
             }
@@ -72,7 +59,7 @@ class LiudatxtTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(Requester("http://www.liudatxt.com/so/22921/8710426.html")).textList.let {
+        context.getNovelText("http://www.liudatxt.com/so/22921/8710426.html").textList.let {
             assertEquals(37, it.size)
             assertEquals("“你是怪物吗？！”这会儿刘锋是真的被面前这个身上血迹斑斑的哥们给惊着了，卧槽，二十多刀刀刀避开要害，简直是人才！", it.first())
             assertEquals("顺带一提，为了避免实力一样引起的怀疑，刘锋稍稍的将刘淼这个账号的实力水平降低了一点设定在二级。", it.last())

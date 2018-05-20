@@ -6,16 +6,13 @@ import cc.aoeiuv020.panovel.api.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Connection
-import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import java.net.MalformedURLException
+import java.net.URL
 import java.net.URLEncoder
-import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import javax.crypto.Cipher
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.DESedeKeySpec
-import javax.crypto.spec.IvParameterSpec
 
 /**
  *
@@ -28,22 +25,20 @@ class Qidian : JsoupNovelContext() {
             logo = "https://qidian.gtimg.com/qd/images/logo.dbed5.png"
     )
 
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        val root = request(genre.requester)
-        val a = root.getElement("#page-container > div > ul > li > a.lbf-pagination-next")
-                ?: return null
-        val url = a.absHref()
-        if (url.isEmpty()) return null
-        return NovelGenre(genre.name, url)
+    override fun connectByNovelName(name: String): Connection {
+        val key = URLEncoder.encode(name, "UTF-8")
+        return connect(realUrl("/search?kw=$key"))
     }
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: Requester): List<NovelListItem> {
-        val root = request(requester)
+    override fun getSearchResultList(root: Document): List<NovelListItem> {
         return root.requireElements("#result-list > div > ul > li").map {
+            /*
+            <a href="//book.qidian.com/info/3548786" target="_blank" data-eid="qd_S05" data-bid="3548786" data-algrid="0.0.0">重生之<cite class="red-kw">都市</cite>修仙</a>
+             */
             val a = it.requireElement("> div.book-mid-info > h4 > a", name = TAG_NOVEL_LINK)
             val name = a.text()
-            val url = a.absHref()
+            val bookId = findBookId(a.href())
             val mid = it.requireElement("> div.book-mid-info")
             val author = mid.requireElement("> p.author", name = TAG_AUTHOR_NAME) { it.child(1).text() }
             val genre = mid.getElement("> p.author > a:nth-child(4)") { it.text() }
@@ -60,24 +55,23 @@ class Qidian : JsoupNovelContext() {
                 "类型: $genre 更新: $update 状态: $status 长度: $length 推荐: $recommend 点击: $click 简介: $introduction"
             }.toString()
             logger.debug { "result $name.$author" }
-            NovelListItem(NovelItem(this, name, author, url), info)
+            NovelListItem(NovelItem(this, name, author, bookId), info)
         }
     }
 
-    override fun searchNovelName(name: String): NovelGenre {
-        val key = URLEncoder.encode(name, "UTF-8")
-        val url = "https://www.qidian.com/search?kw=$key"
-        return NovelGenre(name, url)
+    override fun getNextPage(root: Document): String? {
+        val a = root.getElement("#page-container > div > ul > li > a.lbf-pagination-next")
+                ?: return null
+        val url = a.absHref()
+        return url.takeIf { url.isNotEmpty() }
     }
+
+    // 详情页域名和首页不一样，
+    override val detailTemplate: String
+        get() = "//book.qidian.com/info/%s"
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: Requester): NovelDetail {
-        val root = if (requester.url.startsWith("https://m.qidian.com/book/")) {
-            val pcUrl = "https://book.qidian.com/info/" + requester.url.removePrefix("https://m.qidian.com/book/")
-            request(Requester(pcUrl))
-        } else {
-            request(requester)
-        }
+    override fun getNovelDetail(root: Document): NovelDetail {
         val detail = root.requireElement("body > div.wrap > div.book-detail-wrap.center990")
         val information = detail.requireElement("> div.book-information.cf > div.book-info")
         val img = detail.requireElement("#bookImg > img", name = TAG_IMAGE) { it.absSrc() }
@@ -114,48 +108,124 @@ class Qidian : JsoupNovelContext() {
             }
         } ?: Date(0)
 
-        val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
+        val bookId = findFirstOneInt(root.location())
+        return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)
     }
 
+    override val chapterTemplate: String
+        get() = "$detailTemplate#Catalog"
+
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
+    override fun getNovelChaptersAsc(extra: String): List<NovelChapter> {
+        val bookId = findFirstOneInt(extra)
+        // 用到的接口需要cookies中的_csrfToken参数，
+        // 如果没有，就额外拿一遍详情页，取其中返回的_csrfToken，
+        // TODO: 缓存cookies的话，_csrfToken不知道会不会过期，有必要测试下如果过期会拿到什么，
         val token = cookies["_csrfToken"] ?: run {
-            response(requester).cookie("_csrfToken")
+            response(connect(realUrl("/info/$bookId"))).cookie("_csrfToken")
         }
-        val bookId = requester.url.removePrefix("https://book.qidian.com/info/")
         val category = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
-        val categoryJson = response(category).body()
+        val categoryJson = response(connect(category)).body()
+        /*
+{
+  "data": {
+    "isPublication": 0,
+    "salesMode": 1,
+    "vs": [
+      {
+        "vId": 70947019,
+        "cCnt": 26,
+        "vS": 0,
+        "isD": 0,
+        "vN": "斧头帮的崛起",
+        "cs": [
+          {
+            "uuid": 1,
+            "cN": "第一章 白手起家斧头帮",
+            "uT": "2018-04-21 09:40:53",
+            "cnt": 2109,
+            "cU": "M_bVs41zjLaRTIpqx7GUJA2/uU0Ubg1w3eLM5j8_3RRvhw2",
+            "id": 404501446,
+            "sS": 1
+          }
+        ],
+        "wC": 54704,
+        "hS": false
+      }
+    ],
+    "chapterTotalCnt": 73,
+    "firstChapterJumpurl": "//read.qidian.com/chapter/M_bVs41zjLaRTIpqx7GUJA2/uU0Ubg1w3eLM5j8_3RRvhw2",
+    "loginStatus": 0,
+    "hasRead": 0
+  },
+  "code": 0,
+  "msg": "suc"
+}
+         */
+        // 是否是vip卷，判断一下分别处理，可能省点跳转的流量，
         var vipVolume = false
         return Gson().fromJson(categoryJson, JsonObject::class.java)
                 .getAsJsonObject("data")
                 .getAsJsonArray("vs").map {
-                    it.asJsonObject.apply { getAsJsonPrimitive("vS").asInt.let { vipVolume = it == 1 } }
-                            .getAsJsonArray("cs").map {
-                                it.asJsonObject.let {
-                                    val chapterName = it.getAsJsonPrimitive("cN").asString
-                                    val cU = try {
-                                        // 有用户反应这里出问题，但是没反馈清楚，直接把这字段改成不必要的，
-                                        it.getAsJsonPrimitive("cU").asString
-                                    } catch (_: Exception) {
-                                        ""
-                                    }
-                                    val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
-                                    val uT = it.getAsJsonPrimitive("uT").asString
-                                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                                    val updateTime = sdf.parse(uT)
-                                    if (!vipVolume) {
-                                        // 免费卷，
-                                        NovelChapter(chapterName, FreeRequester(bookId, chapterId, cU), updateTime)
-                                    } else {
-                                        // VIP卷，
-                                        NovelChapter(chapterName, VipRequester(bookId, chapterId), updateTime)
-                                    }
-                                }
+                    it.asJsonObject.apply {
+                        getAsJsonPrimitive("vS").asInt.let { vipVolume = it == 1 }
+                    }.getAsJsonArray("cs").map {
+                        it.asJsonObject.let {
+                            val chapterName = it.getAsJsonPrimitive("cN").asString
+                            // 免费章节的真实最终地址包含这个cU, 但是也可以拼接成vip章节的地址然后让它自动重定向，
+                            val cU = if (!vipVolume) {
+                                // 有用户反应这里出问题，但是没反馈清楚，直接把这字段改成不必要的，
+                                // 最后发现不是这里的问题，是json被jsoup截断了，刚好停在了这里，
+                                it.getAsJsonPrimitive("cU").asString
+                            } else {
+                                ""
                             }
+                            val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
+                            val updateTime = try {
+                                val uT = it.getAsJsonPrimitive("uT").asString
+                                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                                sdf.parse(uT)
+                            } catch (e: Exception) {
+                                Date(0)
+                            }
+                            // 用冒号分开，本想和网址path分隔符统一，但还是和旧版一致吧，
+                            // 后面解析正文时分开判断，
+                            NovelChapter(chapterName, "$bookId:$chapterId:$cU:$vipVolume", updateTime)
+                        }
+                    }
                 }.reduce { acc, list ->
                     acc + list
                 }
+    }
+
+    /**
+     * 可能是冒号：分隔，
+     */
+    override val chapterIdRegex: Pattern =
+            Pattern.compile("(\\d+):(\\d+):")
+
+    // https://vipreader.qidian.com/chapter/3548786/343859470
+    override val contentTemplate: String
+        get() = "https://vipreader.qidian.com/chapter/%s"
+
+    override fun findChapterId(extra: String): String {
+        val (bookId, chapterId) = extra.pick(chapterIdRegex)
+        return "$bookId/$chapterId"
+    }
+
+    override fun getNovelContentUrl(extra: String): String = try {
+        val (_, _, cU, vipVolume) = extra.split(':')
+        require(!vipVolume.toBoolean())
+        require(cU.isNotBlank())
+        // https://read.qidian.com/chapter/WCt0Tp3YhqQ1/4byHQO_QsHnwrjbX3WA1AA2
+        "https://read.qidian.com/chapter/$cU"
+    } catch (e: Exception) {
+        try {
+            super.getNovelContentUrl(extra)
+        } catch (e: Exception) {
+            // 兼容旧版，这是特别老的情况了，以前直接存的网页完整地址，
+            extra
+        }
     }
 
     /**
@@ -164,24 +234,35 @@ class Qidian : JsoupNovelContext() {
      */
     private val paragraphSplitRegex = Regex("<p>[　 ]*")
 
-    override fun getNovelText(requester: Requester): NovelText {
-        if (requester is MobileRequester) {
-            val json = Gson().fromJson(
-                    response(requester)
-                            .body(),
-                    JsonObject::class.java)
-            val content = json.getAsJsonObject("data")
-                    .getAsJsonObject("chapterInfo")
-                    .getAsJsonPrimitive("content")
-                    .asString
-            return NovelText(content.split(paragraphSplitRegex).drop(1))
-        }
+    override fun getNovelText(extra: String): NovelText = try {
+        // 兼容旧版，也不知道多旧的，应该用不上了，传入的直接就是小说正文页面地址，
+        // 如果extra是地址，走下面的split可能有问题，因为地址可能是https://有冒号，
+        val url = URL(extra).toExternalForm()
+        @Suppress("DEPRECATION")
+        getNovelText(parse(connect(url)))
+    } catch (e: MalformedURLException) {
+        val args = extra.split(':')
+        val bookId = args[0]
+        val chapterId = args[1]
+        val apiUrl = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
+        // 不删除这个Cookie就拿不到页面，或者把同样的参数放一份在get参数里，不知道起点怎么想的，
+        val body = response(connect(apiUrl).also { it.request().removeCookie("_csrfToken") }).body()
+        val json = Gson().fromJson(body, JsonObject::class.java)
+        val content = json.getAsJsonObject("data")
+                .getAsJsonObject("chapterInfo")
+                .getAsJsonPrimitive("content")
+                .asString
+        NovelText(content.split(paragraphSplitRegex).drop(1))
+    }
+
+    @Deprecated("由于特别废流量，已经废弃了，")
+    override fun getNovelText(root: Document): NovelText {
         // 兼容以前的直接解析html,
-        val root = request(requester)
-        val query = if (requester is VipRequester) {
-            // 这部分已经废了，
+        val query = if (root.location().contains("m.qidian.com")) {
+            // 手机版页面，
             "#chapterContent > section > p"
         } else {
+            // 电脑版页面，
             "div#j_chapterBox > div > div > div.read-content.j_readContent > p"
         }
         val textList = root.requireElements(query, name = TAG_CONTENT).map {
@@ -189,149 +270,4 @@ class Qidian : JsoupNovelContext() {
         }.dropLastWhile(String::isBlank)
         return NovelText(textList)
     }
-
-    override fun getNovelItem(url: String): NovelItem {
-        val bookId = findBookId(url)
-        val detailUrl = "https://book.qidian.com/info/$bookId"
-        return super.getNovelItem(detailUrl)
-    }
-
-    abstract class MobileRequester(bookId: String, chapterId: String, cU: String) : Requester("$bookId:$chapterId:$cU") {
-        companion object {
-            fun splitExtra(extra: String): List<String> = extra.split(':')
-        }
-
-        private val apiUrl = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
-
-        override fun connect(): Connection = Jsoup.connect(apiUrl)
-        override fun doBeforeExecute(conn: Connection): Connection = conn.apply {
-            // 不删除就拿不到页面，或者把同样的参数放一份在get参数里，不知道起点怎么想的，
-            request().removeCookie("_csrfToken")
-        }
-    }
-
-    /**
-     * cU没必要，只是希望能打开电脑版最终页面，
-     * 没有的话vipreader也能打开，
-     */
-    class FreeRequester(bookId: String, chapterId: String, cU: String = "") : MobileRequester(bookId, chapterId, cU) {
-        companion object {
-            @JvmStatic
-            fun new(extra: String): FreeRequester {
-                val (bookId, chapterId, cU) = splitExtra(extra)
-                return FreeRequester(bookId, chapterId, cU)
-            }
-        }
-
-        override val url = if (cU.isEmpty()) {
-            "https://vipreader.qidian.com/chapter/$bookId/$chapterId"
-        } else {
-            "https://read.qidian.com/chapter/$cU"
-        }
-    }
-
-    /**
-     * Vip获取方式失效了已经，
-     * 2018.5.3 19:00左右，
-     */
-    class VipRequester(bookId: String, chapterId: String) : MobileRequester(bookId, chapterId, "") {
-        companion object {
-            @JvmStatic
-            fun new(extra: String): VipRequester {
-                val pattern = Pattern.compile("https://vipreader.qidian.com/chapter/(\\d*)/(\\d*)")
-                return if (pattern.matcher(extra).matches()) {
-                    // 以前直接存地址的缓存也要兼容，之后可以作废，
-                    val (bookId, chapterId) = extra.pick(pattern)
-                    VipRequester(bookId, chapterId)
-                } else {
-                    val (bookId, chapterId) = splitExtra(extra)
-                    VipRequester(bookId, chapterId)
-                }
-            }
-
-            private var cachedId = newId()
-            private var downloadCount = 0
-            private fun newId() = qidianMd5Hex(System.currentTimeMillis().toString() + Math.random().toString())
-        }
-
-        override val url = "https://vipreader.qidian.com/chapter/$bookId/$chapterId"
-
-        override fun connect(): Connection {
-            val deviceId = "878788848187878"
-            if (++downloadCount > 2000) {
-                downloadCount = 0
-                cachedId = newId() // 不锁也无所谓，顶多多换了一次id,
-            }
-            val id = cachedId
-            val urlMd5 = qidianMd5Hex(url)
-            val plain = "QDLite!@#$%|${System.currentTimeMillis()}|$deviceId|$id|1|1.0.0|1000147|$urlMd5"
-            val sign = URLEncoder.encode(qidianDes3(plain).replace(" ", ""), "ascii")
-            return super.connect().cookie("QDSign", sign)
-        }
-    }
-}
-
-/**
- * 反编译自起点畅读，不要动不要用，
- */
-private fun qidianMd5Hex(str: String): String {
-    val digest = MessageDigest.getInstance("MD5").digest(str.toByteArray(charset("UTF-8")))
-    val stringBuilder = StringBuilder(digest.size * 2)
-    for (b in digest) {
-        if (b.toInt() and 255 < 16) {
-            stringBuilder.append("0")
-        }
-        stringBuilder.append(Integer.toHexString(b.toInt() and 255))
-    }
-    return stringBuilder.toString()
-}
-
-/**
- * 反编译自起点畅读，不要动不要用，
- */
-private fun qidianDes3(str: String): String {
-    val generateSecret = SecretKeyFactory.getInstance("desede").generateSecret(DESedeKeySpec("JVYW9BWG7XJ98B3W34RT33B3".toByteArray()))
-    val instance = Cipher.getInstance("desede/CBC/PKCS5Padding")
-    instance.init(1, generateSecret, IvParameterSpec("01234567".toByteArray()))
-    return qidianBase64(instance.doFinal(str.toByteArray(charset("utf-8"))))
-}
-
-/**
- * 反编译自起点畅读，不要动不要用，
- */
-private fun qidianBase64(bArr: ByteArray): String {
-    val a = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray()
-    val length = bArr.size
-    val stringBuffer = StringBuilder(bArr.size * 3 / 2)
-    val i = length - 3
-    var i2 = 0
-    var i3 = 0
-    while (i3 <= i) {
-        var i4 = bArr[i3].toInt() and 255 shl 16 or (bArr[i3 + 1].toInt() and 255 shl 8) or (bArr[i3 + 2].toInt() and 255)
-        stringBuffer.append(a[i4 shr 18 and 63])
-        stringBuffer.append(a[i4 shr 12 and 63])
-        stringBuffer.append(a[i4 shr 6 and 63])
-        stringBuffer.append(a[i4 and 63])
-        i4 = i3 + 3
-        i3 = i2 + 1
-        if (i2 >= 14) {
-            stringBuffer.append(" ")
-            i3 = 0
-        }
-        i2 = i3
-        i3 = i4
-    }
-    if (i3 == length - 2) {
-        i3 = bArr[i3 + 1].toInt() and 255 shl 8 or (bArr[i3].toInt() and 255 shl 16)
-        stringBuffer.append(a[i3 shr 18 and 63])
-        stringBuffer.append(a[i3 shr 12 and 63])
-        stringBuffer.append(a[i3 shr 6 and 63])
-        stringBuffer.append("=")
-    } else if (i3 == length - 1) {
-        i3 = bArr[i3].toInt() and 255 shl 16
-        stringBuffer.append(a[i3 shr 18 and 63])
-        stringBuffer.append(a[i3 shr 12 and 63])
-        stringBuffer.append("==")
-    }
-    return stringBuffer.toString()
 }

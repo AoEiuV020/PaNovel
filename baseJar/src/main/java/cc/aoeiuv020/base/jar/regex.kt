@@ -5,6 +5,8 @@ import java.util.regex.Pattern
 /**
  * Created by AoEiuV020 on 2018.04.18-10:24:40.
  */
+
+// TODO: 改成支持kotlin的Regex,
 fun String.pick(pattern: Pattern): List<String> {
     val matcher = pattern.matcher(this)
     return if (matcher.find()) {

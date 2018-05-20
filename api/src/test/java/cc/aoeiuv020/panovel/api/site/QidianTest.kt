@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.Requester
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -29,7 +28,7 @@ class QidianTest {
 
     @Test
     fun searchNovelName() {
-        context.getNovelList(context.searchNovelName("恐怖广播").requester).let {
+        context.searchNovelName("恐怖广播").let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
@@ -40,20 +39,8 @@ class QidianTest {
     }
 
     @Test
-    fun searchNovelAuthor() {
-        context.getNovelList(context.searchNovelAuthor("不要尬舞").requester).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "诸天万界反派聊天群"
-            })
-        }
-    }
-
-    @Test
     fun getNovelDetail() {
-        context.getNovelDetail(Requester("https://book.qidian.com/info/3602691")).let {
+        context.getNovelDetail("https://book.qidian.com/info/3602691").let {
             assertEquals("https://qidian.qpic.cn/qdbimg/349573/3602691/180", it.bigImg)
             assertEquals("修真聊天群", it.novel.name)
             assertEquals("圣骑士的传说", it.novel.author)
@@ -66,7 +53,7 @@ class QidianTest {
                     "九洲一号群（VIP书友群，需验证）63769632", it.introduction)
             println(it.update)
         }
-        context.getNovelDetail(Requester("https://book.qidian.com/info/1010436534")).let {
+        context.getNovelDetail("https://book.qidian.com/info/1010436534").let {
             assertEquals("https://qidian.qpic.cn/qdbimg/349573/1010436534/180", it.bigImg)
             assertEquals("我是女皇的随身铠甲", it.novel.name)
             assertEquals("一文倒", it.novel.author)
@@ -81,7 +68,7 @@ class QidianTest {
             println(it.update)
         }
         // 小作者的小说详情页作者名不可点击，之前的规则不行，
-        context.getNovelDetail(Requester("https://book.qidian.com/info/1009711354")).let {
+        context.getNovelDetail("https://book.qidian.com/info/1009711354").let {
             assertEquals("https://qidian.qpic.cn/qdbimg/349573/1009711354/180", it.bigImg)
             assertEquals("超级惊悚直播", it.novel.name)
             assertEquals("宇文长弓", it.novel.author)
@@ -92,35 +79,26 @@ class QidianTest {
 
     @Test
     fun getNovelChaptersAsc() {
-        context.getNovelChaptersAsc(Requester("https://book.qidian.com/info/3602691")).let { list ->
+        context.getNovelChaptersAsc("https://book.qidian.com/info/3602691").let { list ->
             assertEquals("有趣的书评同人小故事", list.first().name)
         }
-        context.getNovelChaptersAsc(Requester("https://book.qidian.com/info/1010436534")).let { list ->
+        context.getNovelChaptersAsc("https://book.qidian.com/info/1010436534").let { list ->
             assertEquals("读者重磅回馈：感恩节福利~", list.first().name)
         }
         // 这个章节列表体积大于默认1M，
-        context.getNovelChaptersAsc(Requester("https://book.qidian.com/info/3357187")).let { list ->
+        context.getNovelChaptersAsc("https://book.qidian.com/info/3357187").let { list ->
             assertEquals("第1章 撕心裂肺的背叛", list.first().name)
         }
     }
 
     @Test
-    fun cookiesTest() {
-        context.getNovelText(Qidian.VipRequester.new("https://vipreader.qidian.com/chapter/1009999768/392293648")).textList.let {
-            it.forEach {
-                println(it)
-            }
-        }
-    }
-
-    @Test
     fun getNovelText() {
-        context.getNovelText(Requester("https://read.qidian.com/chapter/XljeBHNXyTjoTMoHyHZuUA2/LlljjtD5ydO2uJcMpdsVgA2")).textList.let {
+        context.getNovelText("https://read.qidian.com/chapter/XljeBHNXyTjoTMoHyHZuUA2/LlljjtD5ydO2uJcMpdsVgA2").textList.let {
             assertEquals(71, it.size)
             assertEquals("矿井区。", it.first())
             assertEquals("那冒泡的灵根潭面上，竟然悠悠浮起了半颗光头...", it.last())
         }
-        context.getNovelText(Qidian.FreeRequester("1005983537", "357637902", "OVN-De6rNi_mkXioLmMPXw2/2iQzTaOC37pp4rPq4Fd4KQ2")).textList.let {
+        context.getNovelText("1005983537:357637902:OVN-De6rNi_mkXioLmMPXw2/2iQzTaOC37pp4rPq4Fd4KQ2:false").textList.let {
             assertEquals(55, it.size)
             assertEquals("回到教室，陈乔山心里很是激动，就在回来的路上，突然想到上辈子他也是参加过高考的，只不过时间是三年后的2006年。", it.first())
             assertEquals("话刚说完，却见严小沁回头小心翼翼的看了他一眼，娇憨脸庞上的剪水双瞳分明蕴含一丝探究的意味。", it.last())

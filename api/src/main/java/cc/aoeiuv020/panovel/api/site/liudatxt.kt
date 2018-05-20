@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
-import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -11,38 +11,29 @@ import java.util.*
  * Created by AoEiuV020 on 2017.10.11-19:39:27.
  */
 class Liudatxt : JsoupNovelContext() {
-    companion object {
-        private val SEARCH_PAGE_URL = "http://www.liudatxt.com/search.php"
-    }
-
     override val site = NovelSite(
             name = "溜达小说",
             baseUrl = "http://www.liudatxt.com",
             logo = "https://imgsa.baidu.com/forum/w%3D580/sign=1b4c19b5f0edab6474724dc8c737af81/4afa9ae93901213f074d29a25fe736d12e2e95b9.jpg"
     )
 
-    override fun getNovelItem(url: String): NovelItem {
-        val bookId = findBookId(url)
-        val detailUrl = "${site.baseUrl}/so/$bookId/"
-        return super.getNovelItem(detailUrl)
-    }
-
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        val root = request(genre.requester)
+    override fun getNextPage(root: Document): String? {
         return root.getElement(query = "#main > div.list_center > div.pages > a:contains(下一页)") {
-            val url = it.absHref()
-            if (url.isEmpty()) null
-            else NovelGenre(genre.name, url)
+            val url = it.path()
+            return url.takeIf { url.isNotEmpty() }
         }
     }
 
+    override fun connectByNovelName(name: String): Connection {
+        return connect(realUrl("/search.php")).data("searchkey", name).method(Connection.Method.POST)
+    }
+
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: Requester): List<NovelListItem> {
-        val root = request(requester)
+    override fun getSearchResultList(root: Document): List<NovelListItem> {
         return root.requireElements(query = "#sitembox > dl").map {
             val a = it.requireElement(query = "> dd:nth-child(2) > h3 > a", name = TAG_NOVEL_LINK)
             val name = a.text()
-            val url = a.absHref()
+            val bookId = findBookId(a.href())
             val dd3 = it.requireElement(query = "> dd:nth-child(3)")
             val author = dd3.requireElement(query = "> span:nth-child(1)", name = TAG_AUTHOR_NAME) { it.text() }
             val status = dd3.getElement(query = "> span:nth-child(2)") { it.text() }
@@ -54,26 +45,15 @@ class Liudatxt : JsoupNovelContext() {
                 val update = it.select("> dd:nth-child(5) > span").first().text()
                 "最新章节: $last 类型: $genre 更新: $update 状态: $status 长度: $length 简介: $about"
             }
-            NovelListItem(NovelItem(this, name, author, url), info)
+            NovelListItem(NovelItem(this, name, author, bookId), info)
         }
     }
 
-    override fun searchNovelName(name: String): NovelGenre {
-        return NovelGenre(name, SearchRequester(name))
-    }
-
-    class SearchRequester(private val name: String) : Requester(name) {
-        override val url = SEARCH_PAGE_URL
-        override fun connect(): Connection {
-            return Jsoup.connect(SEARCH_PAGE_URL).data("searchkey", name).method(Connection.Method.POST)
-        }
-    }
+    override val detailTemplate: String
+        get() = "/%s/"
 
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: Requester): NovelDetail {
-        val chapterRoot = request(requester)
-        val detail = chapterRoot.requireElement(query = "#main > div.coverecom > div.tabstit > table > tbody > tr > td:nth-child(1) > a:nth-child(4)")
-        val root = request(detail.absHref())
+    override fun getNovelDetail(root: Document): NovelDetail {
         val img = root.requireElement(query = "#bookimg > img", name = TAG_IMAGE) { it.absSrc() }
         val bookright = root.requireElement(query = "#bookinfo > div.bookright")
         val name = bookright.requireElement(query = "> div.booktitle > h1", name = TAG_NOVEL_NAME) { it.text() }
@@ -92,19 +72,26 @@ class Liudatxt : JsoupNovelContext() {
             sdf.parse(updateString)
         } ?: Date(0)
 
-        val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        val bookId = findBookId(root.location())
+        return NovelDetail(NovelItem(this, name, author, bookId), img, update, info, bookId)
     }
 
-    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
-        val root = request(requester)
+    override val chapterTemplate: String
+        get() = "/so/%s/"
+
+    override fun getNovelChaptersAsc(root: Document): List<NovelChapter> {
         return root.requireElements(query = "#readerlist > ul > li > a", name = TAG_CHAPTER_LINK).map { a ->
-            NovelChapter(a.text(), a.absHref())
+            /*
+            <a href="/so/5861/9533241.html" title="第六章 二十岁前不入仙门，终生无望" target="_blank">第六章 二十岁前不入仙门，终生无望</a>
+             */
+            NovelChapter(a.text(), a.path())
         }
     }
 
-    override fun getNovelText(requester: Requester): NovelText {
-        val root = request(requester)
+    override val contentTemplate: String
+        get() = "/so/%s.html"
+
+    override fun getNovelText(root: Document): NovelText {
         val content = root.requireElement(query = "#content", name = TAG_CONTENT)
         return NovelText(content.textList())
     }

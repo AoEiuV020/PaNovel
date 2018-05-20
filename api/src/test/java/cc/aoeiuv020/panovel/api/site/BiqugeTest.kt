@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.NovelDetail
-import cc.aoeiuv020.panovel.api.Requester
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -24,19 +23,7 @@ class BiqugeTest {
 
     @Test
     fun searchNovelName() {
-        context.getNovelList(context.searchNovelName("最大权限").requester).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "最大权限"
-            })
-        }
-    }
-
-    @Test
-    fun searchNovelAuthor() {
-        context.getNovelList(context.searchNovelAuthor("肥鱼马甲").requester).let {
+        context.searchNovelName("最大权限").let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
@@ -57,14 +44,13 @@ class BiqugeTest {
             println(it.bigImg)
             println(it.update)
         }
-        context.getNovelDetail(Requester("http://www.biquge.cn/book/18156/")).let(assertBlock)
-        context.getNovelDetail(Requester("https://www.biqubao.com/book/18156/")).let(assertBlock)
+        context.getNovelDetail("http://www.biquge.cn/book/18156/").let(assertBlock)
+        context.getNovelDetail("http://www.biquge.cn/book/18156/").let(assertBlock)
     }
 
     @Test
     fun getNovelItem() {
         context.getNovelItem("https://m.biqubao.com/book/18156/").let {
-            assertEquals("https://www.biqubao.com/book/18156/", it.requester.url)
             assertEquals("最大权限", it.name)
             assertEquals("肥鱼马甲", it.author)
         }
@@ -72,7 +58,7 @@ class BiqugeTest {
 
     @Test
     fun getNovelChaptersAsc() {
-        context.getNovelChaptersAsc(Requester("http://www.biqubao.com/book/18156/")).let { list ->
+        context.getNovelChaptersAsc("http://www.biqubao.com/book/18156/").let { list ->
             list.forEach {
                 println(it)
             }
@@ -82,7 +68,7 @@ class BiqugeTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(Requester("http://www.biqubao.com/book/18156/8791124.html")).textList.let {
+        context.getNovelText("http://www.biqubao.com/book/18156/8791124.html").textList.let {
             assertEquals(38, it.size)
             assertEquals("中年男子下意识的接住魂晶，这东西能够让卡片使更好的修炼魂力，可以说是硬通货，属于最高等的金钱。", it.first())
             assertEquals("“没什么，绿色级别吗，这不是问题。”林陨摇了摇头，接着拿出一张卡片，直接激发，同时林陨的气息也迅速增强，瞬间魂力翻倍，直接突破一千，迈过绿色级别的门槛。", it.last())

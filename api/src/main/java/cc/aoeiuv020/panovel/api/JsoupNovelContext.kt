@@ -1,9 +1,14 @@
 package cc.aoeiuv020.panovel.api
 
+import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.trace
+import org.jsoup.Connection
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
-import java.net.URL
+import java.io.IOException
 
 /**
  * Created by AoEiuV020 on 2018.05.10-18:08:08.
@@ -28,15 +33,91 @@ abstract class JsoupNovelContext : NovelContext() {
         const val TAG_GENRE = "类型"
     }
 
+    /**
+     * 有的网站没有指定编码，只能在这里强行指定，
+     * null表示用默认的，一版可以，
+     */
+    protected open val charset: String? get() = null
+
     protected abstract val site: NovelSite
 
     override fun getNovelSite(): NovelSite = site
+
+    protected fun parse(extra: String): Document = parse(connect(realUrl(extra)))
+    protected fun parse(conn: Connection, charset: String? = this.charset): Document = try {
+        requireNotNull(response(conn, charset).parse())
+    } catch (e: Exception) {
+        throw IllegalStateException("页面<${conn.request().url()}>解析失败，", e)
+    }
+
+    /**
+     * 下面一对一对，参数String的如果被继承，就可能用不到参数Document的方法，但是也要继承，
+     */
+
+    /**
+     * 搜索，
+     * 要继承[connectByNovelName]指定搜索请求方式，
+     * 如果继承了[searchNovelName], 可以不继承[getSearchResultList]解析搜索页面，
+     */
+    protected open fun getSearchResultList(root: Document): List<NovelListItem> = listOf()
+
+    override fun searchNovelName(name: String): List<NovelListItem> = getSearchResultList(parse(connectByNovelName(name)))
+    protected open fun connectByNovelName(name: String): Connection = throw NotImplementedError()
+
+    override fun getNextPage(extra: String): String? = getNextPage(parse(extra))
+    protected open fun getNextPage(root: Document): String? = null
+
+    override fun getNovelDetail(extra: String): NovelDetail = getNovelDetail(parse(getNovelDetailUrl(extra)))
+    protected open fun getNovelDetail(root: Document): NovelDetail = throw NotImplementedError()
+
+    override fun getNovelChaptersAsc(extra: String): List<NovelChapter> = getNovelChaptersAsc(parse(getNovelChapterUrl(extra)))
+    protected open fun getNovelChaptersAsc(root: Document): List<NovelChapter> = throw NotImplementedError()
+
+    override fun getNovelText(extra: String): NovelText = getNovelText(parse(getNovelContentUrl(extra)))
+    protected open fun getNovelText(root: Document): NovelText = throw NotImplementedError()
+
+    /**
+     * 封装网络请求，主要是为了统一打log,
+     */
+    protected fun connect(url: String): Connection {
+        logger.trace {
+            val stack = Thread.currentThread().stackTrace
+            stack.drop(2).take(6).joinToString("\n", "stack trace\n") {
+                "\tat ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
+            }
+        }
+        logger.debug { "request $url" }
+        return Jsoup.connect(url).maxBodySize(0).also { conn ->
+            // 设置cookies,
+            cookies.takeIf { it.isNotEmpty() }?.let { conn.cookies(it) }
+        }
+    }
+
+    protected fun response(conn: Connection, charset: String? = this.charset): Connection.Response {
+        val response = conn.execute()
+        // 指定编码，如果存在，
+        charset?.let { response.charset(it) }
+        // 保存cookies, 按条目覆盖，
+        putCookies(response.cookies())
+        logger.debug { "status code: ${response.statusCode()}" }
+        logger.debug { "response url: ${response.url()}" }
+        logger.trace { "body length: ${response.body().length}" }
+        if (!check(response.url().toString())) {
+            throw IOException("网络被重定向，检查网络是否可用，")
+        }
+        return response
+    }
+
 
     protected fun Element.src(): String = attr("src")
     protected fun Element.absSrc(): String = absUrl("src")
     protected fun Element.href(): String = attr("href")
     protected fun Element.absHref(): String = absUrl("href")
-    protected fun Element.hrefPath(): String = URL(absHref()).path
+    /**
+     * 地址仅路径，斜杆/开头，
+     */
+    protected fun Element.path(): String = path(absHref())
+
     protected fun Element.title(): String = attr("title")
     protected fun Element.textList(): List<String> = childNodes().mapNotNull {
         (it as? TextNode)?.wholeText?.takeIf { it.isNotBlank() }?.trim()

@@ -1,9 +1,8 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.NovelGenre
-import cc.aoeiuv020.panovel.api.Requester
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -23,34 +22,8 @@ class PiaotianTest {
     }
 
     @Test
-    fun getNextPage() {
-        context.getNextPage(NovelGenre("玄幻魔法", "http://www.piaotian.com/booksort1/0/1.html")).let {
-            assertEquals("https://www.piaotian.com/booksort1/0/2.html", it!!.requester.url)
-        }
-        context.getNextPage(NovelGenre("玄幻魔法", "http://www.piaotian.com/booksort1/0/2.html")).let {
-            assertEquals("https://www.piaotian.com/booksort1/0/3.html", it!!.requester.url)
-        }
-        context.getNextPage(NovelGenre("玄幻魔法", "http://www.piaotian.com/booksort1/0/83.html")).let {
-            assertNull(it)
-        }
-        context.getNextPage(NovelGenre("全本小说", "http://www.piaotian.com/quanben/index.html")).let {
-            assertEquals("https://www.piaotian.com/quanben/index.html?page=2", it!!.requester.url)
-        }
-    }
-
-    @Test
-    fun getNovelList() {
-        context.getNovelList(Requester("http://www.piaotian.com/booksort1/0/1.html")).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertEquals(30, it.size)
-        }
-    }
-
-    @Test
     fun searchNovelName() {
-        context.getNovelList(context.searchNovelName("斗破苍穹").requester).let {
+        context.searchNovelName("斗破苍穹").let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
@@ -59,19 +32,7 @@ class PiaotianTest {
             })
         }
         // 有小说搜索后直接跳到详情页，
-        context.getNovelList(context.searchNovelName("从前").requester).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "从前有座灵剑山"
-            })
-        }
-    }
-
-    @Test
-    fun searchNovelAuthor() {
-        context.getNovelList(context.searchNovelAuthor("国王陛下").requester).let {
+        context.searchNovelName("从前").let {
             it.forEach { novelItem ->
                 println(novelItem)
             }
@@ -83,7 +44,7 @@ class PiaotianTest {
 
     @Test
     fun getNovelDetail() {
-        context.getNovelDetail(Requester("https://www.piaotian.com/bookinfo/8/8605.html")).let {
+        context.getNovelDetail("https://www.piaotian.com/bookinfo/8/8605.html").let {
             assertEquals("剑灵同居日记", it.novel.name)
             assertEquals("国王陛下", it.novel.author)
             assertEquals("“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”\n一个无敌的随身剑灵与天才美少女（们）的同居故事。", it.introduction)
@@ -94,13 +55,13 @@ class PiaotianTest {
 
     @Test
     fun getNovelChapters() {
-        context.getNovelChaptersAsc(Requester("https://www.piaotian.com/html/4/4316/index.html")).let { list ->
+        context.getNovelChaptersAsc("https://www.piaotian.com/html/4/4316/index.html").let { list ->
             list.forEach {
                 println(it)
             }
             assertEquals("序幕：天外飞仙+第一章：客栈柴房温暖如春", list.first().name)
         }
-        context.getNovelChaptersAsc(Requester("https://www.piaotian.com/html/8/8912/index.html")).let { list ->
+        context.getNovelChaptersAsc("https://www.piaotian.com/html/8/8912/index.html").let { list ->
             list.forEach {
                 println(it)
             }
@@ -111,7 +72,7 @@ class PiaotianTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText(Requester("https://www.piaotian.com/html/8/8605/5582838.html")).textList.let {
+        context.getNovelText("https://www.piaotian.com/html/8/8605/5582838.html").textList.let {
             assertEquals(21, it.size)
             assertEquals("6月1日凌晨0点，本书正式上架。", it.first())
             assertEquals("请各位绅士们量力而行，不必强求逆天。", it.last())

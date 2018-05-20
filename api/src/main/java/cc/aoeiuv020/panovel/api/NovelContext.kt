@@ -1,19 +1,18 @@
 package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
-import cc.aoeiuv020.base.jar.trace
 import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.jsoup.Connection
-import org.jsoup.nodes.Document
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.IOException
+import java.net.MalformedURLException
 import java.net.URL
+import java.util.regex.Pattern
 
 /**
  * 小说网站的上下文，
@@ -139,54 +138,49 @@ abstract class NovelContext {
         return host.substring(index2)
     }
 
-    /**
-     * 有的网站没有指定编码，只能在这里强行指定，
-     * null表示用默认的，一版可以，
-     */
-    protected open val charset: String? = null
-
     abstract fun getNovelSite(): NovelSite
-    /**
-     * 获取网站分类信息，
-     */
-    open fun getGenres(): List<NovelGenre> = listOf()
 
     /**
-     * 获取分类页面的下一页，
+     * 获取搜索页面的下一页，
+     * TODO: 考虑在搜索结果直接加上关于下一页的，
+     *
+     * @param extra [NovelGenre.extra]
      */
-    open fun getNextPage(genre: NovelGenre): NovelGenre? = null
-
-    /**
-     * 获取分类页面里的小说列表信息，
-     */
-    abstract fun getNovelList(requester: Requester): List<NovelListItem>
+    open fun getNextPage(extra: String): String? = null
 
     /**
      * 搜索小说名，
+     *
+     * @return [NovelGenre.extra]
      */
-    abstract fun searchNovelName(name: String): NovelGenre
-
-    /**
-     * 搜索小说作者，
-     */
-    open fun searchNovelAuthor(author: String): NovelGenre = searchNovelName(author)
+    abstract fun searchNovelName(name: String): List<NovelListItem>
 
     /**
      * 获取小说详情页信息，
+     *
+     * @param extra [NovelItem.extra]
      */
-    abstract fun getNovelDetail(requester: Requester): NovelDetail
+    abstract fun getNovelDetail(extra: String): NovelDetail
 
-    open fun getNovelItem(url: String): NovelItem = getNovelDetail(Requester(url)).novel
+    /**
+     * 从给定地址找到这本小说，
+     * 要尽可能支持，
+     */
+    open fun getNovelItem(url: String): NovelItem = getNovelDetail(url).novel
 
     /**
      * 获取小说章节列表，
+     *
+     * @param extra [NovelDetail.extra]
      */
-    abstract fun getNovelChaptersAsc(requester: Requester): List<NovelChapter>
+    abstract fun getNovelChaptersAsc(extra: String): List<NovelChapter>
 
     /**
      * 获取小说章节文本内容，
+     *
+     * @param extra [NovelChapter.extra]
      */
-    abstract fun getNovelText(requester: Requester): NovelText
+    abstract fun getNovelText(extra: String): NovelText
 
     /**
      * 判断这个地址是不是属于这个网站，
@@ -198,46 +192,61 @@ abstract class NovelContext {
     }
 
     /**
-     * 封装网络请求，主要是为了统一打log,
-     * TODO: 整理下，最终得到的有document、string两种，是否设置cookies再分两种，
+     * 以下几个都是为了得到真实地址，毕竟extra现在支持各种随便写法，
      */
-    protected fun connect(requester: Requester): Connection {
-        logger.trace {
-            val stack = Thread.currentThread().stackTrace
-            stack.drop(2).take(6).joinToString("\n", "stack trace\n") {
-                "\tat ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
-            }
-        }
-        logger.debug { "request $requester" }
-        return requester.connect()
-    }
+    open fun getNovelDetailUrl(extra: String): String =
+            realUrl(detailTemplate?.format(findBookId(extra)) ?: extra)
 
-    protected fun connect(url: String) = connect(Requester(url))
+    /**
+     * 详情页地址模板，String.format形式，"/book/%s/"
+     */
+    protected open val detailTemplate: String? get() = null
 
-    protected fun response(conn: Connection, doBeforeExecute: Connection.() -> Connection = { this }): Connection.Response {
-        // 设置cookies,
-        cookies.takeIf { it.isNotEmpty() }?.let { conn.cookies(it) }
-        val response = conn.doBeforeExecute().execute()
-        // 指定编码，如果存在，
-        charset?.let { response.charset(it) }
-        // 保存cookies, 按条目覆盖，
-        putCookies(response.cookies())
-        logger.debug { "status code: ${response.statusCode()}" }
-        logger.debug { "response url: ${response.url()}" }
-        logger.trace { "body length: ${response.body().length}" }
-        if (!check(response.url().toString())) {
-            throw IOException("网络被重定向，检查网络是否可用，")
-        }
-        return response
-    }
+    protected open fun getNovelChapterUrl(extra: String): String =
+            realUrl(chapterTemplate?.format(findBookId(extra)) ?: extra)
 
-    protected fun response(requester: Requester): Connection.Response = response(connect(requester), requester::doBeforeExecute)
+    /**
+     * 目录页地址模板，String.format形式，"/book/%s/"
+     */
+    protected open val chapterTemplate: String? get() = detailTemplate
 
-    protected fun response(url: String) = response(Requester(url))
+    open fun getNovelContentUrl(extra: String): String =
+            realUrl(contentTemplate?.format(findChapterId(extra)) ?: extra)
 
-    protected fun request(response: Connection.Response): Document = response.parse()
+    /**
+     * 正文页地址模板，String.format形式，"/book/%s/"
+     */
+    protected open val contentTemplate: String? get() = null
 
-    protected fun request(requester: Requester): Document = request(response(requester))
+    /**
+     * 尝试从extra获取真实地址，
+     * 只支持extra本身就是完整地址和extra为斜杆/开头的file两种情况，
+     *
+     * TODO: 改名，absUrl,
+     */
+    protected fun realUrl(extra: String): String = try {
+        // 先尝试extra是否是个合法的地址
+        // 好像没必要，URL会直接判断，
+        URL(extra)
+    } catch (e: MalformedURLException) {
+        // 再尝试extra当成spec部分，拼接上网站baseUrl,
+        URL(URL(getNovelSite().baseUrl), extra)
+    }.toExternalForm()
 
-    protected fun request(url: String) = request(Requester(url))
+    /**
+     * 有继承给定正则就用上，没有就找第一个整数当id, 这是最多网站使用的方案，
+     */
+    protected open fun findBookId(extra: String): String =
+            bookIdRegex.let { extra.pick(it).first() }
+
+    protected open val bookIdRegex: Pattern get() = firstIntPattern
+
+    /**
+     * 查找章节id, 是包括小说id的，
+     * 有继承给定正则就用上，没有就找前两个个整数当id, 这是最多网站使用的方案，
+     */
+    protected open fun findChapterId(extra: String): String =
+            chapterIdRegex.let { extra.pick(it).first() }
+
+    protected open val chapterIdRegex: Pattern get() = firstTwoIntPattern
 }
