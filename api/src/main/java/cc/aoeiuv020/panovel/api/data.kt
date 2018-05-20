@@ -30,17 +30,6 @@ data class NovelSite(
 ) : Data()
 
 /**
- * 小说搜索页面，
- * TODO: 改个名，之前是分类页面所以用NovelGenre，现在删除了分类页面功能，这个只用来搜索了，
- * @param name 搜索的字符串，
- * @param extra 用于请求搜索结果，
- */
-data class NovelGenre(
-        val name: String,
-        val extra: String
-) : Data()
-
-/**
  * 代表一本小说，由网站名，小说名和作者唯一决定，
  *
  * @param extra 并不重要了已经，只要网站Context能用这个请求到详情页就可以，同一本小说不同extra也可以，

@@ -144,14 +144,12 @@ abstract class NovelContext {
      * 获取搜索页面的下一页，
      * TODO: 考虑在搜索结果直接加上关于下一页的，
      *
-     * @param extra [NovelGenre.extra]
      */
     open fun getNextPage(extra: String): String? = null
 
     /**
      * 搜索小说名，
      *
-     * @return [NovelGenre.extra]
      */
     abstract fun searchNovelName(name: String): List<NovelItem>
 
