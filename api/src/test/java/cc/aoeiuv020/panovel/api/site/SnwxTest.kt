@@ -46,7 +46,7 @@ class SnwxTest {
             assertEquals("都市超级神尊", it.novel.name)
             assertEquals("小萌靓", it.novel.author)
             assertEquals("https://www.snwx8.com/files/article/image/257/257710/257710s.jpg", it.bigImg)
-            println(it.introduction)
+            assertEquals("仙医重生，得逆天系统，开挂打脸一切不服者！昔日萧炎，装逼略逊。仙尊北玄，稍有风骚。数装逼大乘者，还看今朝！", it.introduction)
             println(it.update)
         }
         // 之前的有可能获取不到简介，
@@ -54,7 +54,7 @@ class SnwxTest {
             assertEquals("大道独行", it.novel.name)
             assertEquals("雾外江山", it.novel.author)
             assertEquals("https://www.snwx8.com/files/article/image/28/28152/28152s.jpg", it.bigImg)
-            assertEquals("各位书友要是觉得《大道独行》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！", it.introduction)
+            assertEquals("null", it.introduction)
             println(it.update)
         }
     }

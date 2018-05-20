@@ -38,10 +38,10 @@ class LiudatxtTest {
             assertEquals("http://www.liudatxt.com/headimgs/22/22921/s22921.jpg", it.bigImg)
             assertEquals("诸天万界反派聊天群", it.novel.name)
             assertEquals("不要尬舞", it.novel.author)
-            assertEquals("这个穿越画风有些不对？开局就是地狱难度是个什么鬼？还好自带一个金手指。 " +
+            assertEquals("这个穿越画风有些不对？开局就是地狱难度是个什么鬼？还好自带一个金手指。\n" +
                     "从此以后踏上了诸天万界各大反派人生导师的不归路！露出一脸和善微笑的雄霸正指挥着风云怒肛帝释天、" +
                     "海贼世界已经成为一个出色海军的路飞正带着自己的海军攻打四皇、" +
-                    "以及把令狐冲当做亲儿子一般的对待满脸正气的岳不群。 " +
+                    "以及把令狐冲当做亲儿子一般的对待满脸正气的岳不群。\n" +
                     "......刘锋叹了一...", it.introduction)
             println(it.update)
         }
@@ -60,6 +60,7 @@ class LiudatxtTest {
     @Test
     fun getNovelText() {
         context.getNovelText("http://www.liudatxt.com/so/22921/8710426.html").textList.let {
+            // 去广告，"#content > i"都是广告，
             assertEquals(37, it.size)
             assertEquals("“你是怪物吗？！”这会儿刘锋是真的被面前这个身上血迹斑斑的哥们给惊着了，卧槽，二十多刀刀刀避开要害，简直是人才！", it.first())
             assertEquals("顺带一提，为了避免实力一样引起的怀疑，刘锋稍稍的将刘淼这个账号的实力水平降低了一点设定在二级。", it.last())

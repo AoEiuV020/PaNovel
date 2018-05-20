@@ -4,7 +4,6 @@ import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -51,7 +50,7 @@ class Sfacg : JsoupNovelContext() {
         val name = div.requireElement("> h1 > span.text", TAG_NOVEL_NAME) { it.text() }
         val author = div.requireElement("> div.count-info.clearfix > div.author-info > div.author-name > span", TAG_AUTHOR_NAME) { it.text() }
         val intro = div.getElement("> p") {
-            it.textList().joinToString("\n")
+            it.ownTextList().joinToString("\n")
         }.toString()
 
         val update = div.getElements("> div.count-info.clearfix > div.count-detail span") {
@@ -86,13 +85,8 @@ class Sfacg : JsoupNovelContext() {
     }
 
     override fun getNovelText(root: Document): NovelText {
-        val list = root.requireElement("#ChapterBody", TAG_CONTENT).childNodes().mapNotNull {
-            when {
-                it is Element && it.tagName() == "p" -> it.text()
-                it is TextNode && !it.isBlank -> it.text().trim()
-                else -> null
-            }
-        }
-        return NovelText(list)
+        // vip章节仅有的一行没有包在p里，
+        // 普通章节有"#ChapterBody > p",
+        return NovelText(root.requireElement("#ChapterBody", TAG_CONTENT).textList())
     }
 }

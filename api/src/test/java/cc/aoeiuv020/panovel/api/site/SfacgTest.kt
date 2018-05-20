@@ -72,8 +72,9 @@ class SfacgTest {
             assertEquals("“喂，等等，你们要什么？不要拉我……我真的没有语言猥亵学生啊！”", it.last())
         }
         context.getNovelText("http://book.sfacg.com/vip/c/1725750/").textList.let {
-            assertEquals(1, it.size)
-            assertEquals("双手抱胸的短发女孩，浑身上下都透露着浓厚的“夹击妹抖”（日语“风纪委员”谐音）气息，简洁干练的学生制服，不施粉黛略带怒容的俏颜，如果再给她配上一根教鞭，一定会成为令所有学生闻风丧胆的存在。 但我可不..", it.first())
+            assertEquals(2, it.size)
+            assertEquals("双手抱胸的短发女孩，浑身上下都透露着浓厚的“夹击妹抖”（日语“风纪委员”谐音）气息，简洁干练的学生制服，不施粉黛略带怒容的俏颜，如果再给她配上一根教鞭，一定会成为令所有学生闻风丧胆的存在。", it.first())
+            assertEquals("但我可不..", it.last())
         }
     }
 }

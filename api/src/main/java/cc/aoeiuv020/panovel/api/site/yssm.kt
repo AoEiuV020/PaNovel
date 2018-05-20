@@ -13,10 +13,6 @@ import java.util.regex.Pattern
  * Created by AoEiuV020 on 2018.05.10-16:48:32.
  */
 class Yssm : JsoupNovelContext() {
-    companion object {
-        private val SEARCH_PAGE_URL = "https://www.yssm.org/SearchBook.php"
-    }
-
     override val site = NovelSite(
             name = "幼狮书盟",
             baseUrl = "https://www.yssm.org",
@@ -59,7 +55,7 @@ class Yssm : JsoupNovelContext() {
             author
         }
         val intro = div.getElement("> p.intro") {
-            it.textNodes().joinToString("\n")
+            it.ownTextList().joinToString("\n")
         }.toString()
 
         val update = div.getElement("> p.stats > span.fr > i:nth-child(2)") {
@@ -92,7 +88,6 @@ class Yssm : JsoupNovelContext() {
         get() = "/uctxt/%s.html"
 
     override fun getNovelText(root: Document): NovelText {
-        val textList = root.requireElement("#content", TAG_CONTENT).textList()
-        return NovelText(textList)
+        return NovelText(root.requireElement("#content", TAG_CONTENT).ownTextList())
     }
 }

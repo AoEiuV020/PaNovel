@@ -56,12 +56,8 @@ class Biquge : JsoupNovelContext() {
         val (author) = div.requireElement(query = "> p:nth-child(2)", name = TAG_AUTHOR_NAME) {
             it.text().pick("作    者：(\\S*)")
         }
-        val intro = root.getElements("#intro > p") {
-            it.joinToString("\n") {
-                it.textNodes().joinToString("\n") {
-                    it.toString().trim()
-                }
-            }
+        val intro = root.getElements("#intro > p:not(:nth-last-child(1))") {
+            it.ownTextList().joinToString("\n")
         }.toString()
 
         val update = div.getElement(query = "#info > p:nth-child(4)") {
@@ -88,6 +84,6 @@ class Biquge : JsoupNovelContext() {
 
     override fun getNovelText(root: Document): NovelText {
         val content = root.requireElement(query = "#content", name = TAG_CONTENT)
-        return NovelText(content.textList())
+        return NovelText(content.ownTextList())
     }
 }

@@ -4,7 +4,6 @@ import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.TextNode
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -77,8 +76,8 @@ class Syxs : JsoupNovelContext() {
         val (author) = div.requireElement("> p:nth-child(2)", TAG_AUTHOR_NAME) { it.text() }
                 .pick("作    者：(\\S*)")
         val intro = root.requireElement("#intro") {
-            it.childNode(0).let { (it as TextNode).wholeText }.trim()
-        }
+            it.ownTextList().joinToString("\n")
+        }.toString()
         val update = root.getElement("head > meta[property=og:novel:update_time]") {
             val updateString = it.attr("content")
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -103,9 +102,6 @@ class Syxs : JsoupNovelContext() {
         get() = "/%s.html"
 
     override fun getNovelText(root: Document): NovelText {
-        val textList = root.requireElements("#content > p", TAG_CONTENT).map {
-            it.text().trim()
-        }
-        return NovelText(textList)
+        return NovelText(root.requireElements("#content > p", TAG_CONTENT).ownTextList())
     }
 }

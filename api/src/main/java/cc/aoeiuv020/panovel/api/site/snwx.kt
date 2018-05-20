@@ -4,7 +4,6 @@ import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.TextNode
 import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
@@ -56,9 +55,16 @@ class Snwx : JsoupNovelContext() {
             authorString
         }
         val intro = div.getElement(query = "> div.intro") {
-            it.childNodes().first {
-                it is TextNode && !it.isBlank
-            }.let { (it as TextNode).wholeText }.trim()
+            // 只有第一个textNode是简介，其他都是广告文字，
+            it.textNodes().first {
+                // TextNode不可避免的有空的，
+                !it.isBlank
+                        && !it.wholeText.let {
+                    // 后面几个TextNode广告包含这些文字，
+                    it.startsWith("各位书友要是觉得《${name}》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！")
+                            || it.startsWith("${name}最新章节,${name}无弹窗,${name}全文阅读.")
+                }
+            }.ownTextList().joinToString()
         }.toString()
         val update = Date(0)
 
@@ -80,6 +86,6 @@ class Snwx : JsoupNovelContext() {
 
     override fun getNovelText(root: Document): NovelText {
         val content = root.requireElement("#BookText")
-        return NovelText(content.textList())
+        return NovelText(content.ownTextList())
     }
 }

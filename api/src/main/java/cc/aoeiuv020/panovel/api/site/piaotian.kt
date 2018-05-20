@@ -91,9 +91,9 @@ class Piaotian : JsoupNovelContext() {
 
         val td = tbody1.requireElement(query = "tr:nth-child(4) > td > table > tbody > tr > td:nth-child(2)")
         val img = td.requireElement(query = "a > img", name = TAG_IMAGE) { it.src() }
-        val intro = td.requireElement(query = "div") {
-            it.textList().joinToString("\n")
-        }
+        val intro = td.getElement(query = "div") {
+            it.ownTextList().joinToString("\n")
+        }.toString()
 
         val update = try {
             val (updateString) = list.drop(5)
@@ -140,6 +140,8 @@ class Piaotian : JsoupNovelContext() {
         get() = "/html/%s.html"
 
     override fun getNovelText(root: Document): NovelText {
-        return NovelText(root.body().textList())
+        // 这网站拿到的html是有问题的，
+        // 结构也和最终加载js后解析出来的不一样，
+        return NovelText(root.body().ownTextList())
     }
 }

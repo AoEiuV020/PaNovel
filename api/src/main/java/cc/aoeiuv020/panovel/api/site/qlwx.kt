@@ -74,8 +74,8 @@ class Qlyx : JsoupNovelContext() {
         val (author) = eInfo.requireElement(query = "> p:nth-child(2)", name = TAG_AUTHOR_NAME) {
             it.text().pick("作    者：(\\S*)")
         }
-        val intro = root.getElement(query = "#intro > p") {
-            it.text().replaceWhiteWithNewLine()
+        val intro = root.getElements("#intro > p:not(:nth-last-child(1))") {
+            it.ownTextList().joinToString("\n")
         }.toString()
 
         val update = eInfo.getElement(query = "> p:nth-child(4)") {
@@ -114,6 +114,6 @@ class Qlyx : JsoupNovelContext() {
 
     override fun getNovelText(root: Document): NovelText {
         val content = root.requireElement(query = "#content", name = TAG_CONTENT)
-        return NovelText(content.textList())
+        return NovelText(content.ownTextList())
     }
 }

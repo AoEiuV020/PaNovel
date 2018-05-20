@@ -6,9 +6,13 @@ import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
+import org.jsoup.select.NodeTraversor
+import org.jsoup.select.NodeVisitor
 import java.io.IOException
+import java.util.*
 
 /**
  * Created by AoEiuV020 on 2018.05.10-18:08:08.
@@ -31,6 +35,57 @@ abstract class JsoupNovelContext : NovelContext() {
         const val TAG_STATUS = "状态"
         const val TAG_UPDATE_TIME = "更新时间"
         const val TAG_GENRE = "类型"
+
+        /**
+         * 匹配空白符和空格符，
+         * 和kotlin的trim效果一致，
+         * javaWhitespace能匹配全角空格，
+         * javaSpaceChar能匹配utf-8扩充的半角空格，
+         */
+        private val whitespaceRegex = Regex("[\\p{javaWhitespace}\\p{javaSpaceChar}]+")
+
+        /**
+         * 得到列表中每个元素的文字，包括子元素，
+         * 所有文字部分按空白字符分割，这是最常有的情况，
+         */
+        fun textList(elements: Elements): List<String> = elements.flatMap { textList(it) }
+
+        /**
+         * 用所有空格或空白符分割元素里的文字，
+         * 支持全角空格，
+         */
+        fun textList(element: Element): List<String> {
+            // 用LinkedList方便频繁添加，
+            val list = LinkedList<String>()
+            NodeTraversor(object : NodeVisitor {
+                override fun tail(node: Node?, depth: Int) {
+                }
+
+                override fun head(node: Node?, depth: Int) {
+                    if (node is TextNode) {
+                        ownTextList(node).toCollection(list)
+                    }
+                }
+
+            }).traverse(element)
+            // 转成RandomAccess的ArrayList,
+            return list.toList()
+        }
+
+        /**
+         * 并不得到子元素里的文字，
+         * 支持全角空格，
+         */
+        fun ownTextList(element: Element): List<String> =
+                element.textNodes().flatMap { ownTextList(it) }
+
+        /**
+         * 切开所有空白符，
+         */
+        fun ownTextList(node: TextNode): List<String> =
+        // trim里的判断和这个whitespaceRegex是一样的，
+        // trim后可能得到空字符串，判断一下，
+                node.wholeText.trim().takeIf(String::isNotEmpty)?.split(whitespaceRegex) ?: listOf()
     }
 
     /**
@@ -119,9 +174,11 @@ abstract class JsoupNovelContext : NovelContext() {
     protected fun Element.path(): String = path(absHref())
 
     protected fun Element.title(): String = attr("title")
-    protected fun Element.textList(): List<String> = childNodes().mapNotNull {
-        (it as? TextNode)?.wholeText?.takeIf { it.isNotBlank() }?.trim()
-    }
+    protected fun Elements.textList(): List<String> = flatMap { it.textList() }
+    protected fun Element.textList(): List<String> = Companion.textList(this)
+    protected fun Elements.ownTextList(): List<String> = flatMap { it.ownTextList() }
+    protected fun Element.ownTextList(): List<String> = Companion.ownTextList(this)
+    protected fun TextNode.ownTextList(): List<String> = Companion.ownTextList(this)
 
     private val replaceWhiteWithNewLineRegex = Regex("\\s+")
     protected fun String.replaceWhiteWithNewLine(): String =

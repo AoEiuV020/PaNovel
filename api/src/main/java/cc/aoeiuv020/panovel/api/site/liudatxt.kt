@@ -48,12 +48,8 @@ class Liudatxt : JsoupNovelContext() {
         val bookright = root.requireElement(query = "#bookinfo > div.bookright")
         val name = bookright.requireElement(query = "> div.booktitle > h1", name = TAG_NOVEL_NAME) { it.text() }
         val author = bookright.requireElement(query = "#author > a", name = TAG_AUTHOR_NAME) { it.text() }
-        val info = bookright.getElements(query = "#bookintro > p") {
-            it.joinToString("\n") {
-                it.textNodes().joinToString("\n") {
-                    it.toString().trim()
-                }
-            }
+        val intro = bookright.getElements(query = "#bookintro > p") {
+            it.ownTextList().joinToString("\n")
         }.toString()
 
         val update = bookright.getElement(query = "> div.new > span > span") {
@@ -63,7 +59,7 @@ class Liudatxt : JsoupNovelContext() {
         } ?: Date(0)
 
         val bookId = findBookId(root.location())
-        return NovelDetail(NovelItem(this, name, author, bookId), img, update, info, bookId)
+        return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)
     }
 
     override val chapterTemplate: String
@@ -83,6 +79,7 @@ class Liudatxt : JsoupNovelContext() {
 
     override fun getNovelText(root: Document): NovelText {
         val content = root.requireElement(query = "#content", name = TAG_CONTENT)
-        return NovelText(content.textList())
+        // 去广告，"#content > i"都是广告，
+        return NovelText(content.ownTextList())
     }
 }

@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Connection
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.MalformedURLException
 import java.net.URL
@@ -64,9 +65,7 @@ class Qidian : JsoupNovelContext() {
         val name = information.requireElement("> h1 > em", name = TAG_NOVEL_NAME) { it.text() }
         val author = information.requireElement("h1 > span", name = TAG_AUTHOR_NAME) { it.text().removeSuffix(" 著") }
         val intro = detail.getElement("div.book-intro > p") {
-            it.textNodes().joinToString("\n") {
-                it.toString().trim()
-            }
+            it.ownTextList().joinToString("\n")
         }.toString()
 
         // 先从章节列表中解析更新时间，不存在就从小说详情解析，
@@ -214,12 +213,6 @@ class Qidian : JsoupNovelContext() {
         }
     }
 
-    /**
-     * 缓存分段的正则规则，
-     *  <p> 后面可能是半角空格或全角空格，
-     */
-    private val paragraphSplitRegex = Regex("<p>[　 ]*")
-
     override fun getNovelText(extra: String): NovelText = try {
         // 兼容旧版，也不知道多旧的，应该用不上了，传入的直接就是小说正文页面地址，
         // 如果extra是地址，走下面的split可能有问题，因为地址可能是https://有冒号，
@@ -238,7 +231,7 @@ class Qidian : JsoupNovelContext() {
                 .getAsJsonObject("chapterInfo")
                 .getAsJsonPrimitive("content")
                 .asString
-        NovelText(content.split(paragraphSplitRegex).drop(1))
+        NovelText(Jsoup.parse(content).select("p").ownTextList())
     }
 
     @Deprecated("由于特别废流量，已经废弃了，")
@@ -251,9 +244,6 @@ class Qidian : JsoupNovelContext() {
             // 电脑版页面，
             "div#j_chapterBox > div > div > div.read-content.j_readContent > p"
         }
-        val textList = root.requireElements(query, name = TAG_CONTENT).map {
-            it.text().trim()
-        }.dropLastWhile(String::isBlank)
-        return NovelText(textList)
+        return NovelText(root.requireElements(query = query, name = TAG_CONTENT).ownTextList())
     }
 }

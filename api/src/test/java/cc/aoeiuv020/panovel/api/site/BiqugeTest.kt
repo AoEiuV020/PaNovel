@@ -39,8 +39,7 @@ class BiqugeTest {
             assertEquals("最大权限", it.novel.name)
             assertEquals("肥鱼马甲", it.novel.author)
             assertEquals("制作游戏成功的林陨意外猝死，穿越到自己制作的游戏世界，结果拥有了这个世界的最大权限！\n" +
-                    "最大权限书友群：305908807\n" +
-                    "各位书友要是觉得《最大权限》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！", it.introduction)
+                    "最大权限书友群：305908807", it.introduction)
             println(it.bigImg)
             println(it.update)
         }
