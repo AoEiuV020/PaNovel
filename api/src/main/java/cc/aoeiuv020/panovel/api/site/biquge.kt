@@ -9,7 +9,6 @@ import org.jsoup.nodes.Document
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  *
@@ -64,7 +63,7 @@ class Biquge : JsoupNovelContext() {
             val (updateString) = it.text().pick("最后更新：(.*)")
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             sdf.parse(updateString)
-        } ?: Date(0)
+        }
 
         val bookId = findBookId(root.location())
         return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)

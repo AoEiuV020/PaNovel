@@ -7,7 +7,6 @@ import org.jsoup.nodes.Document
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * Created by AoEiuV020 on 2018.05.10-18:11:57.
@@ -82,7 +81,7 @@ class Qlyx : JsoupNovelContext() {
             val (updateString) = it.text().pick("更新时间：(.*)")
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             sdf.parse(updateString)
-        } ?: Date(0)
+        }
 
         val bookId = findFirstOneInt(root.location())
         return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)

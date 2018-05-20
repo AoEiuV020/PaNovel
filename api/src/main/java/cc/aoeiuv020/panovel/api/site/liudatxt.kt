@@ -4,7 +4,6 @@ import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  *
@@ -56,7 +55,7 @@ class Liudatxt : JsoupNovelContext() {
             val updateString = it.text()
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             sdf.parse(updateString)
-        } ?: Date(0)
+        }
 
         val bookId = findBookId(root.location())
         return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)

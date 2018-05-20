@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document
 import java.net.URL
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
-import java.util.*
 
 
 /**
@@ -79,7 +78,7 @@ class Dmzz : JsoupNovelContext() {
             val (updateString) = it.text().pick("更新：(.*)")
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             sdf.parse(updateString)
-        } ?: Date(0)
+        }
         val intro = ""
 
         val bookId = findBookId(root.location())

@@ -52,7 +52,7 @@ data class NovelDetail(
         val novel: NovelItem,
         val bigImg: String,
         // 最后更新的时间，
-        val update: Date,
+        val update: Date?,
         // 简介，
         val introduction: String,
         val extra: String

@@ -104,7 +104,7 @@ class Piaotian : JsoupNovelContext() {
             Date(year.toInt() - 1900, month.toInt() - 1, day.toInt(), hour.toInt(), minute.toInt())
         } catch (e: Exception) {
             logger.error("更新时间解析失败", e)
-            Date(0)
+            null
         }
 
         /*

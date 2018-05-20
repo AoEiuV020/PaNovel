@@ -7,7 +7,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.TextNode
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
-import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -57,7 +56,7 @@ class Sfacg : JsoupNovelContext() {
             val (updateString) = it[3].text().pick("更新：(.*)")
             val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
             sdf.parse(updateString)
-        } ?: Date(0)
+        }
 
         val bookId = findFirstOneInt(root.location())
         return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)

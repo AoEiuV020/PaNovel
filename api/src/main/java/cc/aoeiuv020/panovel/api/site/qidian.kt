@@ -91,7 +91,7 @@ class Qidian : JsoupNovelContext() {
                     sdf.parse(updateString)
                 }
             }
-        } ?: Date(0)
+        }
 
         val bookId = findFirstOneInt(root.location())
         return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)

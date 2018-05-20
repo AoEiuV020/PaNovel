@@ -5,7 +5,6 @@ import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import java.net.URLEncoder
-import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -66,7 +65,7 @@ class Snwx : JsoupNovelContext() {
                 }
             }.ownTextList().joinToString()
         }.toString()
-        val update = Date(0)
+        val update = null
 
         val bookId = findFirstOneInt(root.location())
         return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)
