@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.base.JsoupNovelContext
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.TextNode

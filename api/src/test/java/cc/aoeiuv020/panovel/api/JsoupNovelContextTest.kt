@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api
 
+import cc.aoeiuv020.panovel.api.base.JsoupNovelContext
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import org.junit.Assert.assertEquals

@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.base.JsoupNovelContext
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat

@@ -1,7 +1,8 @@
-package cc.aoeiuv020.panovel.api
+package cc.aoeiuv020.panovel.api.base
 
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.trace
+import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -175,10 +176,10 @@ abstract class JsoupNovelContext : NovelContext() {
 
     protected fun Element.title(): String = attr("title")
     protected fun Elements.textList(): List<String> = flatMap { it.textList() }
-    protected fun Element.textList(): List<String> = Companion.textList(this)
+    protected fun Element.textList(): List<String> = textList(this)
     protected fun Elements.ownTextList(): List<String> = flatMap { it.ownTextList() }
-    protected fun Element.ownTextList(): List<String> = Companion.ownTextList(this)
-    protected fun TextNode.ownTextList(): List<String> = Companion.ownTextList(this)
+    protected fun Element.ownTextList(): List<String> = ownTextList(this)
+    protected fun TextNode.ownTextList(): List<String> = ownTextList(this)
 
     private val replaceWhiteWithNewLineRegex = Regex("\\s+")
     protected fun String.replaceWhiteWithNewLine(): String =

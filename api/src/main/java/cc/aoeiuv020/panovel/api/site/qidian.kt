@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.base.JsoupNovelContext
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Connection
