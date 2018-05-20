@@ -21,7 +21,7 @@ class Snwx : JsoupNovelContext() {
 
     override fun connectByNovelName(name: String): Connection {
         val key = URLEncoder.encode(name, "GBK")
-        return connect(realUrl("/modules/article/search.php?searchkey=$key")).also {
+        return connect(absUrl("/modules/article/search.php?searchkey=$key")).also {
             // 删除cookie绕开搜索时间间隔限制，
             it.request().removeCookie("jieqiVisitTime")
         }

@@ -25,7 +25,7 @@ class Liudatxt : JsoupNovelContext() {
     }
 
     override fun connectByNovelName(name: String): Connection {
-        return connect(realUrl("/search.php")).data("searchkey", name).method(Connection.Method.POST)
+        return connect(absUrl("/search.php")).data("searchkey", name).method(Connection.Method.POST)
     }
 
     override fun getSearchResultList(root: Document): List<NovelItem> {

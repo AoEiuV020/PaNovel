@@ -193,7 +193,7 @@ abstract class NovelContext {
      * 以下几个都是为了得到真实地址，毕竟extra现在支持各种随便写法，
      */
     open fun getNovelDetailUrl(extra: String): String =
-            realUrl(detailTemplate?.format(findBookId(extra)) ?: extra)
+            absUrl(detailTemplate?.format(findBookId(extra)) ?: extra)
 
     /**
      * 详情页地址模板，String.format形式，"/book/%s/"
@@ -201,7 +201,7 @@ abstract class NovelContext {
     protected open val detailTemplate: String? get() = null
 
     protected open fun getNovelChapterUrl(extra: String): String =
-            realUrl(chapterTemplate?.format(findBookId(extra)) ?: extra)
+            absUrl(chapterTemplate?.format(findBookId(extra)) ?: extra)
 
     /**
      * 目录页地址模板，String.format形式，"/book/%s/"
@@ -209,7 +209,7 @@ abstract class NovelContext {
     protected open val chapterTemplate: String? get() = detailTemplate
 
     open fun getNovelContentUrl(extra: String): String =
-            realUrl(contentTemplate?.format(findChapterId(extra)) ?: extra)
+            absUrl(contentTemplate?.format(findChapterId(extra)) ?: extra)
 
     /**
      * 正文页地址模板，String.format形式，"/book/%s/"
@@ -219,10 +219,8 @@ abstract class NovelContext {
     /**
      * 尝试从extra获取真实地址，
      * 只支持extra本身就是完整地址和extra为斜杆/开头的file两种情况，
-     *
-     * TODO: 改名，absUrl,
      */
-    protected fun realUrl(extra: String): String = try {
+    protected fun absUrl(extra: String): String = try {
         // 先尝试extra是否是个合法的地址
         // 好像没必要，URL会直接判断，
         URL(extra)

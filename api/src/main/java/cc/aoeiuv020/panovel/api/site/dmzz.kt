@@ -30,7 +30,7 @@ class Dmzz : JsoupNovelContext() {
     }
 
     override fun searchNovelName(name: String): List<NovelItem> {
-        val arr: List<DmzzNovelItem> = response(connect(realUrl(name)).ignoreContentType(true)).body().let { js ->
+        val arr: List<DmzzNovelItem> = response(connect(absUrl(name)).ignoreContentType(true)).body().let { js ->
             val json = js.dropWhile { it != '[' }
                     .dropLastWhile { it != ']' }
             Gson().fromJson(json, object : TypeToken<List<DmzzNovelItem>>() {}.type)
@@ -104,7 +104,7 @@ class Dmzz : JsoupNovelContext() {
                 val url = if (it.isEmpty()) {
                     root.location()
                 } else {
-                    realUrl(it)
+                    absUrl(it)
                 }
                 parse(url).requireElements(query = "p")
                         .dropLastWhile { it.className() == "zlist" }

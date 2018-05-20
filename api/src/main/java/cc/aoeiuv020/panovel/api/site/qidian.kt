@@ -28,7 +28,7 @@ class Qidian : JsoupNovelContext() {
 
     override fun connectByNovelName(name: String): Connection {
         val key = URLEncoder.encode(name, "UTF-8")
-        return connect(realUrl("/search?kw=$key"))
+        return connect(absUrl("/search?kw=$key"))
     }
 
     override fun getSearchResultList(root: Document): List<NovelItem> {
@@ -107,7 +107,7 @@ class Qidian : JsoupNovelContext() {
         // 如果没有，就额外拿一遍详情页，取其中返回的_csrfToken，
         // TODO: 缓存cookies的话，_csrfToken不知道会不会过期，有必要测试下如果过期会拿到什么，
         val token = cookies["_csrfToken"] ?: run {
-            response(connect(realUrl("/info/$bookId"))).cookie("_csrfToken")
+            response(connect(absUrl("/info/$bookId"))).cookie("_csrfToken")
         }
         val category = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
         val categoryJson = response(connect(category)).body()

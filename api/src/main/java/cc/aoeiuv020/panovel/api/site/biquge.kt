@@ -25,7 +25,7 @@ class Biquge : JsoupNovelContext() {
 
     override fun connectByNovelName(name: String): Connection {
         val key = URLEncoder.encode(name, "UTF-8")
-        return connect(realUrl("/search.php?keyword=$key"))
+        return connect(absUrl("/search.php?keyword=$key"))
     }
 
     override fun getSearchResultList(root: Document): List<NovelItem> {

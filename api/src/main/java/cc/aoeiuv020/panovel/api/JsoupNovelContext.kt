@@ -98,7 +98,7 @@ abstract class JsoupNovelContext : NovelContext() {
 
     override fun getNovelSite(): NovelSite = site
 
-    protected fun parse(extra: String): Document = parse(connect(realUrl(extra)))
+    protected fun parse(extra: String): Document = parse(connect(absUrl(extra)))
     protected fun parse(conn: Connection, charset: String? = this.charset): Document = try {
         requireNotNull(response(conn, charset).parse())
     } catch (e: Exception) {

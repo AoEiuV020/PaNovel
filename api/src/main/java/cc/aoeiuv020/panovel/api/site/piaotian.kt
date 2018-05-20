@@ -28,7 +28,7 @@ class Piaotian : JsoupNovelContext() {
         val key = URLEncoder.encode(name, "GBK")
         // 加上&page=1可以避开搜索时间间隔的限制，
         // 之前是通过不加载cookies避开搜索时间间隔的限制，
-        return connect(realUrl("/modules/article/search.php?searchtype=articlename&searchkey=$key&page=1"))
+        return connect(absUrl("/modules/article/search.php?searchtype=articlename&searchkey=$key&page=1"))
     }
 
     override fun searchNovelName(name: String): List<NovelItem> {

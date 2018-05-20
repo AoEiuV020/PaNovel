@@ -23,7 +23,7 @@ class Yssm : JsoupNovelContext() {
         val key = URLEncoder.encode(name, "UTF-8")
         // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
         // 这里限制一下，20K大概小几十个结果，
-        return connect(realUrl("/SearchBook.php?keyword=$key")).maxBodySize(1000 * 20)
+        return connect(absUrl("/SearchBook.php?keyword=$key")).maxBodySize(1000 * 20)
     }
 
     override fun getSearchResultList(root: Document): List<NovelItem> {
