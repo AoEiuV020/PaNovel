@@ -48,7 +48,7 @@ class Syxs : DslJsoupNovelContext() {init {
             val div = root.requireElement("#info")
             novel {
                 name("> h1", parent = div)
-                author("> p:nth-child(2)", block = pickString("作    者：(\\S*)"))
+                author("> p:nth-child(2)", parent = div, block = pickString("作    者：(\\S*)"))
             }
             image("#fmimg > img")
             introduction("#intro") {
