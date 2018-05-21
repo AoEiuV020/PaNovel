@@ -1,6 +1,9 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.api.path
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -69,6 +72,34 @@ class PiaotianTest {
             assertTrue(list.last().name.isNotEmpty())
         }
     }
+
+    @Test
+    fun jsHref() {
+        val html = """
+<ul>
+    <li><a href="javascript:window.external.addFavorite('http://www.piaotian.com/bookinfo/4/4316.html','飘天文学-从前有座灵剑山在线阅读')">添加到IE收藏夹</a></li>
+    <li><a href="javascript:window.open('http://shuqian.qq.com/post?from=3&amp;title='+encodeURIComponent(document.title)+'&amp;uri='+encodeURIComponent(document.location.href)+'&amp;jumpback=2&amp;noui=1','favit','width=930,height=470,left=50,top=50,toolbar=no,menubar=no,location=no,scrollbars=yes,status=yes,resizable=yes');void(0)">收藏到QQ书签</a></li>
+    <li><a href="javascript:window.open('http://cang.baidu.com/do/add?it='+encodeURIComponent(document.title.substring(0,76))+'&amp;iu='+encodeURIComponent(location.href)+'&amp;fr=ien#nw=1','_blank','scrollbars=no,width=600,height=450,left=75,top=20,status=no,resizable=yes'); void 0">+到百度搜藏</a></li>
+    <li><a href="#" onclick="window.open('http://myweb.cn.yahoo.com/popadd.html?url='+encodeURIComponent(document.location.href)+'&amp;title='+encodeURIComponent(document.title), 'Yahoo','scrollbars=yes,width=780,height=550,left=80,top=80,status=yes,resizable=yes');">+到雅虎收藏</a></li>
+</ul>
+"""
+        val root = Jsoup.parse(html, "https://www.piaotian.com/html/4/4316/index.html")
+        root.select("a").forEachIndexed { index, it ->
+            println("href: " + it.href())
+            if (index in 0..2) {
+                assertTrue(it.absHref().isEmpty())
+                assertTrue(it.path().isEmpty())
+            } else if (index == 3) {
+                assertEquals("#", it.href())
+                assertEquals("https://www.piaotian.com/html/4/4316/index.html#", it.absHref())
+                assertEquals("/html/4/4316/index.html", it.path())
+            }
+        }
+    }
+
+    private fun Element.href(): String = attr("href")
+    private fun Element.absHref(): String = absUrl("href")
+    private fun Element.path(): String = path(absHref())
 
     @Test
     fun getNovelText() {

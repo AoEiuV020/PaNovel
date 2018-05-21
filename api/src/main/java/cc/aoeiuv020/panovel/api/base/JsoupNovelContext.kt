@@ -13,6 +13,7 @@ import org.jsoup.select.Elements
 import org.jsoup.select.NodeTraversor
 import org.jsoup.select.NodeVisitor
 import java.io.IOException
+import java.net.URLEncoder
 import java.util.*
 
 /**
@@ -262,4 +263,9 @@ abstract class JsoupNovelContext : NovelContext() {
     } catch (e: Exception) {
         null
     }
+
+    /**
+     * URLEncode with gbk file encoding,
+     */
+    protected fun gbk(value: String): String = URLEncoder.encode(value, "GBK")
 }

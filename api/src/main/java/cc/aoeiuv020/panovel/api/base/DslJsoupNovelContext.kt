@@ -85,7 +85,18 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     protected inner class _NovelItemListParser(root: Element)
         : _Parser<List<NovelItem>>(root) {
-        private lateinit var novelItemList: List<NovelItem>
+        lateinit var novelItemList: List<NovelItem>
+        fun single(init: _NovelItemParser.() -> Unit) {
+            novelItemList = listOf(
+                    _NovelItemParser(root).run {
+                        // 搜索结果只有一个，认为是跳转到详情页了，没法用items, 默认直接从地址找bookId,
+                        extra = findBookId(root.ownerDocument().location())
+                        init()
+                        parse()
+                    }
+            )
+        }
+
         fun items(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit) {
             novelItemList = parent.requireElements(query).map {
                 _NovelItemParser(it).run {
@@ -243,10 +254,12 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
             extra = findChapterId(root.path())
         }) {
-            novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).map {
-                _NovelChapterParser(it).run {
-                    init()
-                    parse()
+            novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {
+                tryOrNul {
+                    _NovelChapterParser(it).run {
+                        init()
+                        parse()
+                    }
                 }
             }
         }
@@ -254,10 +267,13 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         override fun parse(): List<NovelChapter> = novelChapterList
     }
 
+    // TODO: 考虑加个filter, 不过就parse返回null, 配给mapNotNull用，
     protected inner class _NovelChapterParser(root: Element)
         : _Parser<NovelChapter>(root) {
         private val _novelChapter = _NovelChapter()
-        override fun parse(): NovelChapter = _novelChapter.createNovelChapter()
+        override fun parse(): NovelChapter? = tryOrNul {
+            _novelChapter.createNovelChapter()
+        }
 
         var name: String?
             get() = _novelChapter.name
@@ -355,7 +371,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             name = parent.requireElement(query = query, name = TAG_NOVEL_NAME) {
                 // 为了从列表中拿小说时方便，
                 // 尝试从该元素中提取bookId，如果能成功，就不需要调用extra块，
-                // 如果是详情页，在这前后传入详情页的extra都可以，
+                // 如果是详情页，在这前后传入详情页的extra都可以，不会被这里覆盖，
                 if (_novelItem.extra == null && it.href().isNotBlank()) {
                     _novelItem.extra = findBookId(it.path())
                 }
@@ -409,7 +425,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         fun element(query: String, parent: Element = root) =
                 parent.requireElement(query)
 
-        abstract fun parse(): T
+        abstract fun parse(): T?
     }
 
     /*

@@ -33,3 +33,9 @@ fun path(url: String): String = try {
 } catch (e: MalformedURLException) {
     url
 }
+
+inline fun <T> tryOrNul(block: () -> T?): T? = try {
+    block()
+} catch (e: Exception) {
+    null
+}
