@@ -52,15 +52,33 @@ class Sfacg : DslJsoupNovelContext() { init {
             }
             image("#hasTicket > div.left-part > div > div.pic > a > img")
             introduction("> p", parent = div)
-            update("> div.count-info.clearfix > div.count-detail span:nth-child(4)", format = "yyyy/MM/dd HH:mm:ss", block = pickString("更新：(.*)"))
+            // 排版有两种，重要的是更新时间的位置不同，
+            // http://book.sfacg.com/Novel/123589/
+            update("> div.count-info.clearfix > div.count-detail span:nth-child(4)", parent = div,
+                    format = "yyyy/MM/dd HH:mm:ss", block = pickString("更新：(.*)"))
+            if (update == null) {
+                // http://book.sfacg.com/Novel/114367/
+                update("body > div.container > div.d-banner > div > div > div.summary-content" +
+                        " > div.count-info.clearfix > div.count-detail > div:nth-child(2) > span",
+                        format = "yyyy/MM/dd HH:mm:ss", block = pickString("更新：(.*)"))
+            }
         }
     }
     chapterTemplate = "/Novel/%s/MainIndex/"
     chapters {
+        /*
+        <li>
+            <a href="/vip/c/1892767/" title="第四十一章" class="">
+                <span class="icn_vip">VIP</span> 第四十一章
+            </a>
+        </li>
+         */
         document {
             items("div.story-catalog > div.catalog-list > ul > li > a") {
-                name = root.text()
-                extra = root.href()
+                // vip章节这里包含一个小标签，写着VIP,
+                name = root.ownText()
+                // vip章节和普通章节规则不一致，统一拿全路径，
+                extra = root.path()
             }
         }
     }

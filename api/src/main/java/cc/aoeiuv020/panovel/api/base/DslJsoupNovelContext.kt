@@ -269,6 +269,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         fun lastUpdate(query: String, parent: Element = root, block: (Element) -> Date) {
             novelChapterList.last().update = parent.getElement(query = query, block = block)
         }
+
         fun items(query: String, parent: Element = root, init: _NovelChapterParser.() -> Unit = {
             name = root.text()
             // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，

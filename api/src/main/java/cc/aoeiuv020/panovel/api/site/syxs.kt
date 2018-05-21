@@ -23,7 +23,7 @@ class Syxs : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            url = "/search.php?keywords=$it"
+            url = "/search.php?keywords=${gbk(it)}"
         }
         document {
             /*
@@ -34,7 +34,7 @@ class Syxs : DslJsoupNovelContext() {init {
                 <td class="odd">2018-05-21 05:26:24</td>
             </tr>
              */
-            items("#content > table > tbody > tr:not(nth-child(1)") {
+            items("#content > table > tbody > tr:not(:nth-child(1))") {
                 name(" > td:nth-child(1) > a:nth-child(2)")
                 author(" > td.even")
             }

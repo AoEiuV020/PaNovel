@@ -245,24 +245,28 @@ abstract class JsoupNovelContext : NovelContext() {
     protected fun Element.getElements(query: String): Elements? = try {
         select(query)
     } catch (e: Exception) {
+        logger.debug("解析元素($query)失败，", e)
         null
     }
 
     protected inline fun <T> Element.getElements(query: String, block: (Elements) -> T?): T? = try {
         select(query).let(block)
     } catch (e: Exception) {
+        logger.debug("解析元素($query)失败，", e)
         null
     }
 
     protected fun Element.getElement(query: String): Element? = try {
-        select(query).firstOrNull()
+        select(query).first()
     } catch (e: Exception) {
+        logger.debug("解析元素($query)失败，", e)
         null
     }
 
     protected inline fun <T> Element.getElement(query: String, block: (Element) -> T?): T? = try {
-        select(query).firstOrNull()?.let(block)
+        select(query).first().let(block)
     } catch (e: Exception) {
+        logger.debug("解析元素($query)失败，", e)
         null
     }
 

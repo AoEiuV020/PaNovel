@@ -27,7 +27,11 @@ class Qlyx : DslJsoupNovelContext() { init {
         }
         document {
             if (URL(root.ownerDocument().location()).path.startsWith("/book/")) {
-                TODO()
+                single {
+                    val eInfo = element(query = "#maininfo #info")
+                    name("> h1", eInfo)
+                    author("> p:nth-child(2)", eInfo, block = pickString("作    者：(\\S*)"))
+                }
             } else {
                 items("#main > table > tbody > tr:not(:nth-child(1))") {
                     name("td:nth-child(1) > a")
@@ -39,15 +43,14 @@ class Qlyx : DslJsoupNovelContext() { init {
     detailTemplate = "/book/%s/"
     detail {
         document {
-            val eMaininfo = element(query = "#maininfo")
-            val eInfo = element(query = "#info", parent = eMaininfo)
+            val eInfo = element(query = "#maininfo #info")
             novel {
                 name("> h1", eInfo)
-                author("> p:nth-child(2)", eInfo)
+                author("> p:nth-child(2)", eInfo, block = pickString("作    者：(\\S*)"))
             }
             image("#fmimg > img")
             introduction("#intro > p:not(:nth-last-child(1))")
-            update("> p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("更新时间：(.*)"))
+            update("> p:nth-child(4)", parent = eInfo, format = "yyyy-MM-dd HH:mm:ss", block = pickString("更新时间：(.*)"))
         }
     }
     chapters {
@@ -55,14 +58,16 @@ class Qlyx : DslJsoupNovelContext() { init {
         // 但也可能没有这重复的 9 章，
         val list = document {
             items("#list > dl > dd > a")
+            lastUpdate("#maininfo #info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("更新时间：(.*)"))
         }
         var index = 0
         // 以防万一，
         if (list.size == 1) return@chapters list
         // 倒序列表判断是否重复章节，
+        // 最后一章被填充了更新时间，第一章重复的没有，所以不能直接==判断NovelChapter对象，
         val reversedList = list.asReversed()
         list.dropWhile {
-            (it == reversedList[index]).also { ++index }
+            (it.extra == reversedList[index].extra).also { ++index }
         }
     }
     // http://www.76wx.com/book/161/892418.html

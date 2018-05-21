@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.*
 import org.junit.Assert.*
 import org.junit.Before
 import java.text.SimpleDateFormat
@@ -21,27 +21,31 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
         context = clazz.java.newInstance()
     }
 
-    protected fun search(name: String, count: Int = 3) {
+    protected fun search(name: String, count: Int = 3): List<NovelItem> {
         val list = context.searchNovelName(name)
         println(list.size)
         list.take(count).forEach {
             println(it)
         }
         assertTrue(list.any { it.name.contains(name) })
+        return list
     }
 
-    protected fun detail(detailExtra: String, name: String, author: String, extra: String, image: String, intro: String? = null, update: String? = null) {
+    protected fun detail(detailExtra: String, extra: String, name: String, author: String,
+                         image: String, intro: String? = null, update: String? = null): NovelDetail {
         val detail = context.getNovelDetail(detailExtra)
         println(detail)
         assertEquals(name, detail.novel.name)
         assertEquals(author, detail.novel.author)
+        assertEquals(detailExtra, detail.novel.extra)
         assertEquals(image, detail.bigImg)
         assertEquals(intro, detail.introduction)
         assertEquals(extra, detail.extra)
         compareUpdate(update, detail.update)
+        return detail
     }
 
-    private val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     /**
      * @return 返回true表示对比通过，actual比once时间更晚，
      */
@@ -49,7 +53,9 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
         if (once == null) {
             assertNull(actual)
         } else {
-            val update = requireNotNull(actual)
+            val update = requireNotNull(actual) {
+                "没有更新时间，"
+            }
             println(sdf.format(update))
             assertTrue(update >= sdf.parse(once))
         }
@@ -60,7 +66,7 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
                            firstName: String, firstExtra: String, firstUpdate: String?,
                            lastName: String, lastExtra: String, lastUpdate: String?,
                            size: Int,
-                           count: Int = 3) {
+                           count: Int = 3): List<NovelChapter> {
         val list = context.getNovelChaptersAsc(extra)
         println(list.size)
         list.take(count).forEach {
@@ -79,19 +85,24 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
         assertEquals(lastExtra, last.extra)
         // 可能有的网站只有最新章节有更新时间，
         compareUpdate(lastUpdate, last.update ?: newList.lastOrNull()?.update)
-        assertTrue(size == list.size - newList.size)
+        assertEquals(size, list.size - newList.size)
+        return list
     }
 
     protected fun content(extra: String,
                           firstLine: String,
                           lastLine: String,
-                          size: Int) {
+                          size: Int, count: Int = 3): NovelText {
         val novelText = context.getNovelText(extra)
         val list = novelText.textList
         println(list.size)
+        list.take(count).forEach {
+            println(it)
+        }
         assertEquals(firstLine, list.first())
         assertEquals(lastLine, list.last())
         assertEquals(size, list.size)
+        return novelText
     }
 
 }
