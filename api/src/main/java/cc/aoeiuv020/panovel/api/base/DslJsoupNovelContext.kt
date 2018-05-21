@@ -10,7 +10,9 @@ import java.util.regex.Pattern
 /**
  * Created by AoEiuV020 on 2018.05.20-16:26:44.
  */
-@Suppress("ClassName", "LocalVariableName")
+// MemberVisibilityCanBePrivate, 有不少预先准备的成员，可能暂时没有被使用，但是不能private,
+// ClassName, LocalVariableName, 内部使用的类和变量通通下划线_开头，可能不符合规范，
+@Suppress("ClassName", "LocalVariableName", "MemberVisibilityCanBePrivate")
 abstract class DslJsoupNovelContext : JsoupNovelContext() {
     /*
     *************** member ***************
@@ -71,6 +73,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _Search(name: String)
         : _Requester(name) {
 
+        // 改成init有个参数，extra直接传进去，这样估计_Request也可以做成DSL TAG，
         fun document(init: _NovelItemListParser.() -> Unit): List<NovelItem> =
                 _NovelItemListParser(
                         parse(requireNotNull(connection), charset)
@@ -82,8 +85,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         private lateinit var novelItemList: List<NovelItem>
         // 返回的是不可改的List, 但并不是最终的结果，
         // 最终结果在document外面，需要删改应该在document方法返回后，
-        fun items(query: String, init: _NovelItemParser.() -> Unit): List<NovelItem> =
-                root.requireElements(query).map {
+        fun items(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit): List<NovelItem> =
+                parent.requireElements(query).map {
                     _NovelItemParser(it).run {
                         init()
                         parse()
@@ -144,8 +147,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.image = value
             }
 
-        fun image(query: String, block: (Element) -> String = { it.absSrc() }) {
-            image = root.requireElement(query = query, name = TAG_IMAGE, block = block)
+        fun image(query: String, parent: Element = root, block: (Element) -> String = { it.absSrc() }) {
+            image = parent.requireElement(query = query, name = TAG_IMAGE, block = block)
         }
 
         var update: Date?
@@ -155,14 +158,15 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
 
         @SuppressWarnings("SimpleDateFormat")
-        fun update(query: String, format: String, block: (Element) -> String = { it.text() }) = update(query) {
-            val updateString = block(it)
-            val sdf = SimpleDateFormat(format)
-            sdf.parse(updateString)
-        }
+        fun update(query: String, parent: Element = root, format: String, block: (Element) -> String = { it.text() }) =
+                update(query = query, parent = parent) {
+                    val updateString = block(it)
+                    val sdf = SimpleDateFormat(format)
+                    sdf.parse(updateString)
+                }
 
-        fun update(query: String, block: (Element) -> Date) {
-            update = root.getElement(query = query, block = block)
+        fun update(query: String, parent: Element = root, block: (Element) -> Date) {
+            update = parent.getElement(query = query, block = block)
         }
 
         var introduction: String?
@@ -171,8 +175,12 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.introduction = value
             }
 
-        fun introduction(query: String, block: (Element) -> String = { it.textList().joinToString("\n") }) {
-            introduction = root.getElement(query = query, block = block)
+        fun introduction(
+                query: String,
+                parent: Element = root,
+                block: (Element) -> String = { it.textList().joinToString("\n") }
+        ) {
+            introduction = parent.getElement(query = query, block = block)
         }
 
         var extra: String?
@@ -182,8 +190,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
 
         // 目录页一般可以靠bookId拼接地址搞定，如果不行，要调用这个方法，就很可能需要完整地址，所以默认用absHref,
-        fun extra(query: String, block: (Element) -> String = { it.absHref() }) {
-            extra = root.requireElement(query = query, name = TAG_CHAPTER_PAGE, block = block)
+        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.absHref() }) {
+            extra = parent.requireElement(query = query, name = TAG_CHAPTER_PAGE, block = block)
         }
 
         override fun parse(): NovelDetail = _novelDetail.createNovelDetail()
@@ -228,12 +236,12 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         private lateinit var novelChapterList: List<NovelChapter>
         // 需要删改解析出来的列表中的元素应该在document返回后，
         // TODO: items方法返回值并没有用，考虑删除，
-        fun items(query: String, init: _NovelChapterParser.() -> Unit = {
+        fun items(query: String, parent: Element = root, init: _NovelChapterParser.() -> Unit = {
             name = root.text()
             // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
             extra = findChapterId(root.path())
         }): List<NovelChapter> =
-                root.requireElements(query, name = TAG_CHAPTER_LINK).map {
+                parent.requireElements(query, name = TAG_CHAPTER_LINK).map {
                     _NovelChapterParser(it).run {
                         init()
                         parse()
@@ -254,8 +262,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelChapter.name = value
             }
 
-        fun name(query: String, block: (Element) -> String = { it.text() }) {
-            name = root.requireElement(query, block = block)
+        fun name(query: String, parent: Element = root, block: (Element) -> String = { it.text() }) {
+            name = parent.requireElement(query, block = block)
         }
 
         var extra: String?
@@ -264,8 +272,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelChapter.extra = value
             }
 
-        fun extra(query: String, block: (Element) -> String = { it.absHref() }) {
-            extra = root.requireElement(query, block = block)
+        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.absHref() }) {
+            extra = parent.requireElement(query, block = block)
         }
 
         var update: Date?
@@ -275,14 +283,15 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
 
         @SuppressWarnings("SimpleDateFormat")
-        fun update(query: String, format: String, block: (Element) -> String = { it.text() }) = update(query) {
-            val updateString = block(it)
-            val sdf = SimpleDateFormat(format)
-            sdf.parse(updateString)
-        }
+        fun update(query: String, parent: Element = root, format: String, block: (Element) -> String = { it.text() }) =
+                update(query = query, parent = parent) {
+                    val updateString = block(it)
+                    val sdf = SimpleDateFormat(format)
+                    sdf.parse(updateString)
+                }
 
-        fun update(query: String, block: (Element) -> Date) {
-            update = root.getElement(query = query, block = block)
+        fun update(query: String, parent: Element = root, block: (Element) -> Date) {
+            update = parent.getElement(query = query, block = block)
         }
 
         private inner class _NovelChapter {
@@ -318,8 +327,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         : _Parser<List<String>>(root) {
         private lateinit var novelContent: List<String>
         // 查到的可以是一个元素，也可以是一列元素，
-        fun items(query: String, block: (Element) -> List<String> = { it.textList() }) {
-            novelContent = root.requireElements(query, name = TAG_CONTENT).flatMap {
+        fun items(query: String, parent: Element = root, block: (Element) -> List<String> = { it.textList() }) {
+            novelContent = parent.requireElements(query, name = TAG_CONTENT).flatMap {
                 block(it)
             }
         }
@@ -338,8 +347,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             set(value) {
                 _novelItem.name = value
             }
-        fun name(query: String, block: (Element) -> String = { it.text() }) {
-            name = root.requireElement(query = query, name = TAG_NOVEL_NAME) {
+
+        fun name(query: String, parent: Element = root, block: (Element) -> String = { it.text() }) {
+            name = parent.requireElement(query = query, name = TAG_NOVEL_NAME) {
                 // 为了从列表中拿小说时方便，
                 // 尝试从该元素中提取bookId，如果能成功，就不需要调用extra块，
                 // 如果是详情页，在这前后传入详情页的extra都可以，
@@ -355,8 +365,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             set(value) {
                 _novelItem.author = value
             }
-        fun author(query: String, block: (Element) -> String = { it.text() }) {
-            author = root.requireElement(query = query, name = TAG_AUTHOR_NAME, block = block)
+
+        fun author(query: String, parent: Element = root, block: (Element) -> String = { it.text() }) {
+            author = parent.requireElement(query = query, name = TAG_AUTHOR_NAME, block = block)
         }
 
         var extra: String?
@@ -365,8 +376,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelItem.extra = value
             }
 
-        fun extra(query: String, block: (Element) -> String = { findBookId(it.path()) }) {
-            extra = root.requireElement(query = query, name = TAG_NOVEL_LINK, block = block)
+        fun extra(query: String, parent: Element = root, block: (Element) -> String = { findBookId(it.path()) }) {
+            extra = parent.requireElement(query = query, name = TAG_NOVEL_LINK, block = block)
         }
 
         override fun parse(): NovelItem = _novelItem.createNovelItem()
@@ -392,6 +403,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected abstract inner class _Parser<out T>(
             val root: Element
     ) {
+        fun element(query: String, parent: Element = root) =
+                parent.requireElement(query)
+
         abstract fun parse(): T
     }
 
@@ -424,16 +438,17 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     // 这个不做为dsl标签，为了能直接访问外面的变量，比如extra,
     protected inner class _Request {
         var url: String? = null
+        var charset: String? = this@DslJsoupNovelContext.charset
         var method: Connection.Method? = null
         var dataMap: Map<String, String>? = null
         fun createConnection(): Connection = connect(absUrl(requireNotNull(url)))
                 .method(requireNotNull(method))
-                .apply { if (dataMap != null) data(dataMap) }
+                .apply { dataMap?.also { data(it) } }
+                .apply { charset?.also { postDataCharset(it) } }
 
         /**
          * TODO: 这种方法装载参数的话，如果是get, jsoup写死URLEncode编码utf-8, 需要用到的话就整个改okhttp吧，
          */
-        @Deprecated("如果是get, jsoup写死URLEncode编码utf-8, 先别用，")
         fun data(init: _Data.() -> Unit) {
             _Data().also { _data ->
                 _data.init()

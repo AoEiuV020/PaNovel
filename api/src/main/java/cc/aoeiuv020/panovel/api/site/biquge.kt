@@ -43,7 +43,7 @@ class Biquge : DslJsoupNovelContext() {init {
                 }
             }
             image("#fmimg > img")
-            update("#info > p:nth-child(4)", "yyyy-MM-dd HH:mm:ss") {
+            update("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss") {
                 it.text().pick("最后更新：(.*)").first()
             }
             introduction("#intro > p:not(:nth-last-child(1))") {
@@ -53,6 +53,9 @@ class Biquge : DslJsoupNovelContext() {init {
     }
     chapters {
         document {
+            /*
+            <a href="/book/1196/443990.html">第一章 觉醒日</a>
+             */
             items("#list > dl > dd > a")
         }
     }
@@ -65,6 +68,8 @@ class Biquge : DslJsoupNovelContext() {init {
 }
 }
 
+// 这类已经不用了，搞定dsl就删除，
+@Suppress("ClassName", "unused")
 class _Biquge : JsoupNovelContext() {
     override val site = NovelSite(
             name = "笔趣阁",
@@ -120,9 +125,6 @@ class _Biquge : JsoupNovelContext() {
     }
 
     override fun getNovelChaptersAsc(root: Document): List<NovelChapter> {
-        /*
-        <a href="/book/1196/443990.html">第一章 觉醒日</a>
-         */
         return root.requireElements(query = "#list > dl > dd > a", name = TAG_CHAPTER_LINK).map { a ->
             NovelChapter(a.text(), a.path())
         }

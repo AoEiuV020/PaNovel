@@ -142,7 +142,7 @@ abstract class NovelContext {
 
     /**
      * 获取搜索页面的下一页，
-     * TODO: 考虑在搜索结果直接加上关于下一页的，
+     * TODO: 考虑在搜索结果直接加上关于下一页的，或者干脆不要下一页吧，反正现在搜索结果和下一页分别获取解析页面挺浪费的，
      *
      */
     open fun getNextPage(extra: String): String? = null
