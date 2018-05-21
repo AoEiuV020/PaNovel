@@ -93,12 +93,7 @@ class QidianTest {
 
     @Test
     fun getNovelText() {
-        context.getNovelText("https://read.qidian.com/chapter/XljeBHNXyTjoTMoHyHZuUA2/LlljjtD5ydO2uJcMpdsVgA2").textList.let {
-            assertEquals(71, it.size)
-            assertEquals("矿井区。", it.first())
-            assertEquals("那冒泡的灵根潭面上，竟然悠悠浮起了半颗光头...", it.last())
-        }
-        context.getNovelText("1005983537:357637902:OVN-De6rNi_mkXioLmMPXw2/2iQzTaOC37pp4rPq4Fd4KQ2:false").textList.let {
+        context.getNovelText("1005983537/357637902").textList.let {
             assertEquals(55, it.size)
             assertEquals("回到教室，陈乔山心里很是激动，就在回来的路上，突然想到上辈子他也是参加过高考的，只不过时间是三年后的2006年。", it.first())
             assertEquals("话刚说完，却见严小沁回头小心翼翼的看了他一眼，娇憨脸庞上的剪水双瞳分明蕴含一丝探究的意味。", it.last())

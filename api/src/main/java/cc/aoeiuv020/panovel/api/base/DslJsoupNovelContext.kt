@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.api.base
 
 import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.text.SimpleDateFormat
 import java.util.*
@@ -113,19 +114,20 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     *************** detail ***************
      */
     override fun getNovelDetail(extra: String): NovelDetail =
-            _Detail(extra).initDetail()
+            _Detail(extra).initDetail(extra)
 
-    private lateinit var initDetail: _Detail.() -> NovelDetail
-    protected fun detail(init: _Detail.() -> NovelDetail) {
+    private lateinit var initDetail: _Detail.(String) -> NovelDetail
+    protected fun detail(init: _Detail.(String) -> NovelDetail) {
         initDetail = init
     }
 
     protected inner class _Detail(extra: String) : _Requester(extra) {
-
-        fun document(init: _NovelDetailParser.() -> Unit): NovelDetail =
-                _NovelDetailParser(extra,
-                        parse(connection ?: connect(getNovelDetailUrl(extra)), charset)
-                ).also(init).parse()
+        fun document(
+                document: Document = parse(connection
+                        ?: connect(getNovelDetailUrl(extra)), charset),
+                init: _NovelDetailParser.() -> Unit
+        ): NovelDetail =
+                _NovelDetailParser(extra, document).also(init).parse()
     }
 
     protected inner class _NovelDetailParser(
@@ -172,11 +174,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.update = value
             }
 
-        @SuppressWarnings("SimpleDateFormat")
         fun update(query: String, parent: Element = root, format: String, block: (Element) -> String = { it.text() }) =
                 update(query = query, parent = parent) {
                     val updateString = block(it)
-                    val sdf = SimpleDateFormat(format)
+                    val sdf = SimpleDateFormat(format, Locale.CHINA)
                     sdf.parse(updateString)
                 }
 
@@ -232,18 +233,20 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         */
 
     override fun getNovelChaptersAsc(extra: String): List<NovelChapter> =
-            _Chapters(extra).initChapters()
+            _Chapters(extra).initChapters(extra)
 
-    private lateinit var initChapters: _Chapters.() -> List<NovelChapter>
-    protected fun chapters(init: _Chapters.() -> List<NovelChapter>) {
+    private lateinit var initChapters: _Chapters.(String) -> List<NovelChapter>
+    protected fun chapters(init: _Chapters.(String) -> List<NovelChapter>) {
         initChapters = init
     }
 
     protected inner class _Chapters(extra: String) : _Requester(extra) {
-        fun document(init: _NovelChapterListParser.() -> Unit): List<NovelChapter> =
-                _NovelChapterListParser(
-                        parse(connection ?: connect(getNovelChapterUrl(extra)), charset)
-                ).also(init).parse()
+        fun document(
+                document: Document = parse(connection
+                        ?: connect(getNovelChapterUrl(extra)), charset),
+                init: _NovelChapterListParser.() -> Unit
+        ): List<NovelChapter> =
+                _NovelChapterListParser(document).also(init).parse()
     }
 
     protected inner class _NovelChapterListParser(root: Element)
@@ -326,20 +329,21 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     }
 
     override fun getNovelText(extra: String): NovelText =
-            _Content(extra).initContent()
+            _Content(extra).initContent(extra)
 
-    private lateinit var initContent: _Content.() -> NovelText
-    protected fun content(init: _Content.() -> NovelText) {
+    private lateinit var initContent: _Content.(String) -> NovelText
+    protected fun content(init: _Content.(String) -> NovelText) {
         initContent = init
     }
 
     protected inner class _Content(extra: String) : _Requester(extra) {
-        fun document(init: _NovelContentParser.() -> Unit): NovelText =
-                _NovelContentParser(
-                        parse(connection ?: connect(getNovelContentUrl(extra)), charset)
-                ).also(init).parse().let {
-                    NovelText(it)
-                }
+        fun document(
+                document: Document = parse(connection
+                        ?: connect(getNovelContentUrl(extra)), charset),
+                init: _NovelContentParser.() -> Unit
+        ): NovelText = _NovelContentParser(document).also(init).parse().let {
+            NovelText(it)
+        }
     }
 
     protected inner class _NovelContentParser(root: Element)
@@ -405,7 +409,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             var site: String = this@DslJsoupNovelContext.site.name
             var name: String? = null
             var author: String? = null
+            // extra不能给初值，搜索结果页面要有个自动判断填充extra的逻辑，
             var extra: String? = null
+
             fun createNovelItem() = NovelItem(
                     site,
                     requireNotNull(name),
@@ -454,6 +460,11 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 init()
                 createConnection()
             }
+        }
+
+        fun <T> response(block: (String) -> T): T {
+            val body = response(requireNotNull(connection).ignoreContentType(true)).body()
+            return block(body)
         }
     }
 
