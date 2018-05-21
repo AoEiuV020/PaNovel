@@ -22,7 +22,28 @@ class QlyxTest {
     fun getNovelChaptersAsc() {
         context.getNovelChaptersAsc("http://www.76wx.com/book/454/").let {
             val firstChapter = it.first()
-            assertEquals("/book/454/277839.html", firstChapter.extra)
+            assertEquals("第一章 黄山真君和九洲一号群", firstChapter.name)
+            assertEquals("454/277839", firstChapter.extra)
+        }
+    }
+
+    @Test
+    fun reverseRemoveTest() {
+        val list = listOf(9, 8, 7, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+        reverseRemove(list).let {
+            println(it)
+        }
+    }
+
+    private fun reverseRemove(list: List<Int>): List<Int> {
+        var index = 0
+        // 以防万一，
+        if (list.size == 1) return list
+        // 倒序列表判断是否重复章节，
+        val reversedList = list.asReversed()
+        return list.dropWhile {
+            @Suppress("DEPRECATED_IDENTITY_EQUALS")
+            (it === reversedList[index]).also { ++index }
         }
     }
 
