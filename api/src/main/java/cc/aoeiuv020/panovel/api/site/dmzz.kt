@@ -21,7 +21,8 @@ class Dmzz : JsoupNovelContext() {
     override val site = NovelSite(
             name = "动漫之家",
             baseUrl = "http://q.dmzj.com",
-            logo = "http://m.dmzj.com/images/head_logo.gif"
+            logo = "http://m.dmzj.com/images/head_logo.gif",
+            enabled = false
     )
 
     override fun connectByNovelName(name: String): Connection {
