@@ -124,7 +124,7 @@ class Qidian : DslJsoupNovelContext() {init {
                                     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
                                     sdf.parse(uT)
                                 } catch (e: Exception) {
-                                    Date(0)
+                                    null
                                 }
                                 NovelChapter(chapterName, "$bookId/$chapterId", updateTime)
                             }
