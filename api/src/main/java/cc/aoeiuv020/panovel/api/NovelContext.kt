@@ -230,19 +230,25 @@ abstract class NovelContext {
     }.toExternalForm()
 
     /**
-     * 有继承给定正则就用上，没有就找第一个整数当id, 这是最多网站使用的方案，
+     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是bookId了，
      */
-    protected open fun findBookId(extra: String): String =
-            bookIdRegex.let { extra.pick(it).first() }
+    protected open fun findBookId(extra: String): String = try {
+        extra.pick(bookIdRegex).first()
+    } catch (e: Exception) {
+        extra
+    }
 
     protected open val bookIdRegex: Pattern get() = firstIntPattern
 
     /**
      * 查找章节id, 是包括小说id的，
-     * 有继承给定正则就用上，没有就找前两个个整数当id, 这是最多网站使用的方案，
+     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是chapterId了，
      */
-    protected open fun findChapterId(extra: String): String =
-            chapterIdRegex.let { extra.pick(it).first() }
+    protected open fun findChapterId(extra: String): String = try {
+        extra.pick(chapterIdRegex).first()
+    } catch (e: Exception) {
+        extra
+    }
 
     protected open val chapterIdRegex: Pattern get() = firstTwoIntPattern
 }

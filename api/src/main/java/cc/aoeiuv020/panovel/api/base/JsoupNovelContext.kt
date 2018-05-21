@@ -27,6 +27,7 @@ abstract class JsoupNovelContext : NovelContext() {
         const val TAG_SEARCH_RESULT_LIST = "搜索结果列表"
         const val TAG_INTRODUCTION = "简介"
         const val TAG_CHAPTER_LINK = "章节链接"
+        const val TAG_CHAPTER_PAGE = "目录页"
         const val TAG_CONTENT = "正文"
         const val TAG_ELEMENT = "元素"
         const val TAG_LIST = "列表"
@@ -212,6 +213,7 @@ abstract class JsoupNovelContext : NovelContext() {
     /**
      * 下面的封装关键在于分开必要和不必要的，是否捕获Exception,
      * 必要的解析失败时统一抛异常，
+     * TODO: 改成query可以为空，默认就返回当前元素，
      */
     protected fun Element.requireElements(query: String, name: String = TAG_LIST): Elements = try {
         select(query)

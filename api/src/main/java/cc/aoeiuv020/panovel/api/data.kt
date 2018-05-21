@@ -50,6 +50,7 @@ data class NovelItem(
  */
 data class NovelDetail(
         val novel: NovelItem,
+        // TODO: 考虑改名，就叫image,
         val bigImg: String,
         // 最后更新的时间，
         val update: Date?,
@@ -60,7 +61,7 @@ data class NovelDetail(
 
 /**
  * 小说目录，
- * @param extra 用于本章节正文，
+ * @param extra 用于请求本章节正文，
  */
 data class NovelChapter(
         /**
@@ -75,7 +76,8 @@ data class NovelChapter(
 ) : Data()
 
 /**
- * 小说文本，由一个个段落构成，
+ * 小说正文，由一个个段落构成，
+ * TODO: 为了支持图片，要把String改成别的，比如直接Any, 类名也可以改掉，
  */
 data class NovelText(
         val textList: List<String>
