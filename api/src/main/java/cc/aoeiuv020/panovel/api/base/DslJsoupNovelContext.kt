@@ -28,6 +28,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
             field = value
         }
+    // TODO: 改名contents,
     override var chapterTemplate: String? = null
     override var contentTemplate: String? = null
     override var bookIdRegex: Pattern = firstIntPattern
@@ -99,10 +100,14 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
 
         fun items(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit) {
-            novelItemList = parent.requireElements(query).map {
-                _NovelItemParser(it).run {
-                    init()
-                    parse()
+            novelItemList = parent.requireElements(query).mapNotNull {
+                try {
+                    _NovelItemParser(it).run {
+                        init()
+                        parse()
+                    }
+                } catch (e: Exception) {
+                    null
                 }
             }
         }
@@ -498,10 +503,25 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
     }
 
-
     /*
     *************** annotation ***************
      */
     @DslMarker
     annotation class DslTag
+
+    /*
+    *************** url ***************
+     */
+    override fun getNovelContentUrl(extra: String): String {
+        return if (::getNovelContentUrlLambda.isInitialized) {
+            getNovelContentUrlLambda(extra)
+        } else {
+            super.getNovelContentUrl(extra)
+        }
+    }
+
+    private lateinit var getNovelContentUrlLambda: (String) -> String
+    fun getNovelContentUrl(lambda: (String) -> String) {
+        getNovelContentUrlLambda = lambda
+    }
 }
