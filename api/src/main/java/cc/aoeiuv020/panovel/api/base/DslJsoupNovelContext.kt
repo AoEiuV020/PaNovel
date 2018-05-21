@@ -525,7 +525,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     override fun getNovelContentUrl(extra: String): String {
         return if (::getNovelContentUrlLambda.isInitialized) {
-            getNovelContentUrlLambda(extra)
+            absUrl(getNovelContentUrlLambda(extra))
         } else {
             super.getNovelContentUrl(extra)
         }

@@ -69,11 +69,11 @@ class Sfacg : DslJsoupNovelContext() { init {
         try {
             // http://book.sfacg.com/Novel/123589/204084/1887037/
             val bookId = it.pick(firstThreeIntPattern).first()
-            "http://book.sfacg.com/Novel/$bookId/"
+            "/Novel/$bookId/"
         } catch (e: Exception) {
             // http://book.sfacg.com/vip/c/1725750/
             val bookId = it.pick(firstIntPattern).first()
-            "http://book.sfacg.com/vip/c/$bookId/"
+            "/vip/c/$bookId/"
         }
     }
     content {
