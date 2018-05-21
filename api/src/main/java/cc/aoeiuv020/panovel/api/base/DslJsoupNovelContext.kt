@@ -39,10 +39,14 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     override lateinit var site: NovelSite
 
+    /**
+     * site这块是直接跑一遍存起结果，
+     * 其他块都是存起lambda用的时候才调用，
+     */
     protected fun site(init: _NovelSite.() -> Unit) {
-        _NovelSite().also { _site ->
-            _site.init()
-            site = _site.createNovelSite()
+        site = _NovelSite().run {
+            init()
+            createNovelSite()
         }
     }
 
@@ -63,17 +67,16 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     *************** search ***************
      */
     override fun searchNovelName(name: String): List<NovelItem> =
-            _Search(name).initSearch()
+            _Search(name).initSearch(name)
 
-    private lateinit var initSearch: _Search.() -> List<NovelItem>
-    protected fun search(init: _Search.() -> List<NovelItem>) {
+    private lateinit var initSearch: _Search.(String) -> List<NovelItem>
+    protected fun search(init: _Search.(String) -> List<NovelItem>) {
         initSearch = init
     }
 
     protected inner class _Search(name: String)
         : _Requester(name) {
 
-        // TODO: 改成init有个参数，extra直接传进去，这样估计_Request也可以做成DSL TAG，
         fun document(init: _NovelItemListParser.() -> Unit): List<NovelItem> =
                 _NovelItemListParser(
                         parse(requireNotNull(connection), charset)
@@ -414,7 +417,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     @DslTag
     protected abstract inner class _Requester(
-            val extra: String
+            protected val extra: String
     ) {
         var connection: Connection? = null
         // 指定响应的编码，用于jsoup解析html时，
@@ -438,8 +441,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
     }
 
-    //    @DslTag
-    // 这个不做为dsl标签，为了能直接访问外面的变量，比如extra,
+    @DslTag
     protected inner class _Request {
         var url: String? = null
         var charset: String? = this@DslJsoupNovelContext.charset

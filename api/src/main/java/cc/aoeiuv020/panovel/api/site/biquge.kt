@@ -24,7 +24,7 @@ class Biquge : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            url = "/search.php?keyword=$extra"
+            url = "/search.php?keyword=$it"
         }
         document {
             items("div.result-list > div") {

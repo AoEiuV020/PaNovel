@@ -21,7 +21,7 @@ class Liudatxt : DslJsoupNovelContext() { init {
         post {
             url = "/search.php"
             data {
-                +("searchkey" to extra)
+                +("searchkey" to it)
             }
         }
         /*
