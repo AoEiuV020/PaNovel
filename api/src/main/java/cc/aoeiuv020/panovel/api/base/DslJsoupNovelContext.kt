@@ -275,7 +275,6 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         override fun parse(): List<NovelChapter> = novelChapterList
     }
 
-    // TODO: 考虑加个filter, 不过就parse返回null, 配给mapNotNull用，
     protected inner class _NovelChapterParser(root: Element)
         : _Parser<NovelChapter>(root) {
         private val _novelChapter = _NovelChapter()
