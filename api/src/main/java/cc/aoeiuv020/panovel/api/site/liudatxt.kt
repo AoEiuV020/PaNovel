@@ -104,6 +104,7 @@ class Liudatxt : DslJsoupNovelContext() { init {
          */
         document {
             items("#readerlist > ul > li > a")
+            lastUpdate("#smallcons > span:nth-child(6)", format = "yyyy-MM-dd HH:mm:ss")
         }
     }
     // http://www.liudatxt.com/so/2034/529879.html
