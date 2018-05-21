@@ -123,7 +123,7 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
         // 目前没有获取到updateTime，比如章节还没获取，或者章节里没有更新时间，
         updateTime = novelDetail.update
         Glide.with(ctx)
-                .load(novelDetail.bigImg)
+                .load(novelDetail.image)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
                         Glide.with(ctx).load("https://www.snwx8.com/modules/article/images/nocover.jpg")

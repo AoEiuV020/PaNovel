@@ -15,6 +15,7 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     protected lateinit var context: NovelContext
     @Before
     fun setUp() {
@@ -38,7 +39,7 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
         assertEquals(name, detail.novel.name)
         assertEquals(author, detail.novel.author)
         assertEquals(detailExtra, detail.novel.extra)
-        assertEquals(image, detail.bigImg)
+        assertEquals(image, detail.image)
         assertEquals(intro, detail.introduction)
         assertEquals(extra, detail.extra)
         compareUpdate(update, detail.update)

@@ -50,8 +50,7 @@ data class NovelItem(
  */
 data class NovelDetail(
         val novel: NovelItem,
-        // TODO: 考虑改名，就叫image,
-        val bigImg: String,
+        val image: String,
         // 最后更新的时间，
         val update: Date?,
         // 简介，

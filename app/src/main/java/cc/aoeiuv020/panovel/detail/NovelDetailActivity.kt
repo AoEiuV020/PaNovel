@@ -144,7 +144,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     fun showNovelDetail(detail: NovelDetail) {
         this.novelDetail = detail
         setTitle(detail.novel)
-        Glide.with(this).load(detail.bigImg).into(toolbar_layout.image)
+        Glide.with(this).load(detail.image).into(toolbar_layout.image)
         presenter.requestChapters(detail.requester)
     }
 

@@ -47,7 +47,7 @@
 //            assertEquals("GAMERS！电玩咖！", it.novel.name)
 //            assertEquals("葵せきな(葵关南)", it.novel.author)
 //            assertEquals("", it.introduction)
-//            assertEquals("https://xs.dmzj.com/img/webpic/4/games56989l.jpg", it.bigImg)
+//            assertEquals("https://xs.dmzj.com/img/webpic/4/games56989l.jpg", it.image)
 //            println(it.update)
 //        }
 //    }
