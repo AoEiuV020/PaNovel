@@ -73,7 +73,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _Search(name: String)
         : _Requester(name) {
 
-        // 改成init有个参数，extra直接传进去，这样估计_Request也可以做成DSL TAG，
+        // TODO: 改成init有个参数，extra直接传进去，这样估计_Request也可以做成DSL TAG，
         fun document(init: _NovelItemListParser.() -> Unit): List<NovelItem> =
                 _NovelItemListParser(
                         parse(requireNotNull(connection), charset)
@@ -83,15 +83,14 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _NovelItemListParser(root: Element)
         : _Parser<List<NovelItem>>(root) {
         private lateinit var novelItemList: List<NovelItem>
-        // 返回的是不可改的List, 但并不是最终的结果，
-        // 最终结果在document外面，需要删改应该在document方法返回后，
-        fun items(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit): List<NovelItem> =
-                parent.requireElements(query).map {
-                    _NovelItemParser(it).run {
-                        init()
-                        parse()
-                    }
-                }.also { novelItemList = it }
+        fun items(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit) {
+            novelItemList = parent.requireElements(query).map {
+                _NovelItemParser(it).run {
+                    init()
+                    parse()
+                }
+            }
+        }
 
         override fun parse(): List<NovelItem> = novelItemList
     }
@@ -134,12 +133,14 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.novel = value
             }
 
-        fun novel(init: _NovelItemParser.() -> Unit): NovelItem = _NovelItemParser(root).run {
-            // 自己的extra本来就是能用来请求详情页的extra,
-            extra = this@_NovelDetailParser.detailExtra
-            init()
-            parse()
-        }.also { novel = it }
+        fun novel(init: _NovelItemParser.() -> Unit) {
+            novel = _NovelItemParser(root).run {
+                // 自己的extra本来就是能用来请求详情页的extra,
+                extra = this@_NovelDetailParser.detailExtra
+                init()
+                parse()
+            }
+        }
 
         var image: String?
             get() = _novelDetail.image
@@ -234,19 +235,18 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _NovelChapterListParser(root: Element)
         : _Parser<List<NovelChapter>>(root) {
         private lateinit var novelChapterList: List<NovelChapter>
-        // 需要删改解析出来的列表中的元素应该在document返回后，
-        // TODO: items方法返回值并没有用，考虑删除，
         fun items(query: String, parent: Element = root, init: _NovelChapterParser.() -> Unit = {
             name = root.text()
             // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
             extra = findChapterId(root.path())
-        }): List<NovelChapter> =
-                parent.requireElements(query, name = TAG_CHAPTER_LINK).map {
-                    _NovelChapterParser(it).run {
-                        init()
-                        parse()
-                    }
-                }.also { novelChapterList = it }
+        }) {
+            novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).map {
+                _NovelChapterParser(it).run {
+                    init()
+                    parse()
+                }
+            }
+        }
 
         override fun parse(): List<NovelChapter> = novelChapterList
     }
@@ -421,17 +421,21 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         // 不是参数的编码，参数不进行额外的URLEncode,
         var charset: String? = this@DslJsoupNovelContext.charset
 
-        fun get(init: _Request.() -> Unit): Connection = _Request().run {
-            method = Connection.Method.GET
-            init()
-            createConnection()
-        }.also { connection = it }
+        fun get(init: _Request.() -> Unit) {
+            connection = _Request().run {
+                method = Connection.Method.GET
+                init()
+                createConnection()
+            }
+        }
 
-        fun post(init: _Request.() -> Unit): Connection = _Request().run {
-            method = Connection.Method.POST
-            init()
-            createConnection()
-        }.also { connection = it }
+        fun post(init: _Request.() -> Unit) {
+            connection = _Request().run {
+                method = Connection.Method.POST
+                init()
+                createConnection()
+            }
+        }
     }
 
     //    @DslTag
