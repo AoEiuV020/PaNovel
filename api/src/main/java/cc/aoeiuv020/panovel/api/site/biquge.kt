@@ -51,6 +51,7 @@ class Biquge : DslJsoupNovelContext() {init {
             <a href="/book/1196/443990.html">第一章 觉醒日</a>
              */
             items("#list > dl > dd > a")
+            lastUpdate("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
         }
     }
     contentTemplate = "/book/%s.html"

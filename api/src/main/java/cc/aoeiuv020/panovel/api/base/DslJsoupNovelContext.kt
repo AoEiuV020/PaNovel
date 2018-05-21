@@ -257,6 +257,18 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _NovelChapterListParser(root: Element)
         : _Parser<List<NovelChapter>>(root) {
         private lateinit var novelChapterList: List<NovelChapter>
+
+        @SuppressWarnings("SimpleDateFormat")
+        fun lastUpdate(query: String, parent: Element = root, format: String, block: (Element) -> String = { it.text() }) =
+                lastUpdate(query = query, parent = parent) {
+                    val updateString = block(it)
+                    val sdf = SimpleDateFormat(format)
+                    sdf.parse(updateString)
+                }
+
+        fun lastUpdate(query: String, parent: Element = root, block: (Element) -> Date) {
+            novelChapterList.last().update = parent.getElement(query = query, block = block)
+        }
         fun items(query: String, parent: Element = root, init: _NovelChapterParser.() -> Unit = {
             name = root.text()
             // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，

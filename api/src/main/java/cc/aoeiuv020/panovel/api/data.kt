@@ -71,8 +71,10 @@ data class NovelChapter(
         val extra: String,
         /**
          * 本章节更新时间，没有就没有，
+         * 为了可以只修改列表中最后一章的更新时间，这个变量要可变，
+         * 因为有的网站目录页和详情页是一样的，可以拿到最后更新时间，
          */
-        val update: Date? = null
+        var update: Date? = null
 ) : Data()
 
 /**

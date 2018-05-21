@@ -158,7 +158,7 @@ abstract class NovelContext {
     /**
      * 获取小说详情页信息，
      *
-     * @param extra [NovelItem.extra]
+     * @param extra [NovelItem.extra] 尽量直接让这个extra就是bookId,
      */
     abstract fun getNovelDetail(extra: String): NovelDetail
 
@@ -166,7 +166,7 @@ abstract class NovelContext {
      * 从给定地址找到这本小说，
      * 要尽可能支持，
      */
-    open fun getNovelItem(url: String): NovelItem = getNovelDetail(url).novel
+    open fun getNovelItem(url: String): NovelItem = getNovelDetail(findBookId(url)).novel
 
     /**
      * 获取小说章节列表，
