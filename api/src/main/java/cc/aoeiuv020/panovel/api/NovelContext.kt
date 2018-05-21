@@ -44,10 +44,12 @@ abstract class NovelContext {
         }
 
         @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf(
-                Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx(), Syxs(),
-                Yssm(), Qlyx()
-        )
+        private val contexts: List<NovelContext> by lazy {
+            listOf(
+                    Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx(), Syxs(),
+                    Yssm(), Qlyx()
+            )
+        }
         private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
         private val nameMap = contexts.associateBy { it.getNovelSite().name }
         fun getNovelContexts(): List<NovelContext> = contexts
