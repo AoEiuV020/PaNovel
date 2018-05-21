@@ -21,8 +21,11 @@ class YssmTest {
 
     @Test
     fun getNovelList() {
-        context.searchNovelName("都市").forEach {
-            println(it)
+        context.searchNovelName("都市").let {
+            assertTrue(it.any { it.name.contains("都市") })
+            it.take(10).forEach {
+                println(it)
+            }
         }
     }
 
@@ -32,6 +35,13 @@ class YssmTest {
             assertTrue(it.isNotEmpty())
             println(it.size)
             println(it.first())
+        }
+        context.getNovelChaptersAsc("https://www.yssm.org/uctxt/57/57794/").let {
+            assertTrue(it.isNotEmpty())
+            println(it.size)
+            it.take(18).forEach {
+                println(it)
+            }
         }
     }
 }
