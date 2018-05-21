@@ -143,7 +143,7 @@ class Qidian : DslJsoupNovelContext() {init {
             url = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
         }
         // 不删除这个Cookie就拿不到页面，或者把同样的参数放一份在get参数里，不知道起点怎么想的，
-        connection = requireNotNull(connection).also { it.request().removeCookie("_csrfToken") }
+        requireNotNull(connection).request().removeCookie("_csrfToken")
         response {
             val json = gson.fromJson(it, JsonObject::class.java)
             val content = json.getAsJsonObject("data")

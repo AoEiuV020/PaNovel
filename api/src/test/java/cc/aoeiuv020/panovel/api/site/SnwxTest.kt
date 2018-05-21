@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -39,7 +38,7 @@ class SnwxTest {
             assertEquals("一夜风云起", it.novel.author)
             assertEquals("祖魔的简介：一个超级世家大家族少爷，却天生丹田堵塞，难以修真！本有着疼爱自己的父母，却一夜之间家族没落，自此身负血海深仇！恋人的背叛，父母的离去，最终让他指天怒骂！天道不公，以万物为刍狗！既然天已无道，我愿舍身成魔！以血染天，以杀破道！", it.introduction)
             assertEquals("https://www.snwx8.com/files/article/image/66/66076/66076s.jpg", it.bigImg)
-            println(it.update)
+            assertNull(it.update)
         }
         // TODO: 获取不到封面，麻烦，是图片有地址但下载不到，要加上onError,
         context.getNovelDetail("https://www.snwx8.com/book/257/257710/").let {
@@ -47,7 +46,7 @@ class SnwxTest {
             assertEquals("小萌靓", it.novel.author)
             assertEquals("https://www.snwx8.com/files/article/image/257/257710/257710s.jpg", it.bigImg)
             assertEquals("仙医重生，得逆天系统，开挂打脸一切不服者！昔日萧炎，装逼略逊。仙尊北玄，稍有风骚。数装逼大乘者，还看今朝！", it.introduction)
-            println(it.update)
+            assertNull(it.update)
         }
         // 之前的有可能获取不到简介，
         context.getNovelDetail("https://www.snwx8.com/book/28/28152/").let {
@@ -55,7 +54,7 @@ class SnwxTest {
             assertEquals("雾外江山", it.novel.author)
             assertEquals("https://www.snwx8.com/files/article/image/28/28152/28152s.jpg", it.bigImg)
             assertEquals("null", it.introduction)
-            println(it.update)
+            assertNull(it.update)
         }
     }
 
