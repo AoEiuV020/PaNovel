@@ -38,17 +38,11 @@ class Biquge : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#info > h1")
-                author("#info > p:nth-child(2)") {
-                    it.text().pick("作    者：(\\S*)").first()
-                }
+                author("#info > p:nth-child(2)", block = pickString("作    者：(\\S*)"))
             }
             image("#fmimg > img")
-            update("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss") {
-                it.text().pick("最后更新：(.*)").first()
-            }
-            introduction("#intro > p:not(:nth-last-child(1))") {
-                it.ownTextList().joinToString("\n")
-            }
+            update("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
+            introduction("#intro > p:not(:nth-last-child(1))")
         }
     }
     chapters {

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
+import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.util.SignatureUtil
 import cc.aoeiuv020.panovel.util.VersionUtil
@@ -15,7 +16,6 @@ import org.jetbrains.anko.*
 import org.jsoup.Jsoup
 import java.io.BufferedReader
 import java.net.URL
-import java.util.regex.Pattern
 
 /**
  *
@@ -58,7 +58,7 @@ object Check : BaseLocalSource(), AnkoLogger {
     }
 
     private fun BufferedReader.cutChangeLog(fromVersion: String): String {
-        val pattern = Pattern.compile("([0-9.]*):")
+        val pattern = compilePattern("([0-9.]*):")
         return useLines {
             it.takeWhile {
                 try {

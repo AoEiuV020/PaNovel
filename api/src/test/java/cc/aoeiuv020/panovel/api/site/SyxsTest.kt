@@ -29,4 +29,14 @@ class SyxsTest {
             println(it.update)
         }
     }
+
+    @Test
+    fun getNovelChapters() {
+        context.getNovelChaptersAsc("http://www.31xs.net/7/7787/10344197.html").let {
+            repeat(15) { index ->
+                println(it[index])
+            }
+            assertEquals("第一章 道法无情", it.first().name)
+        }
+    }
 }

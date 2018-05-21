@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.api.base
 
+import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.trace
 import cc.aoeiuv020.panovel.api.*
 import org.jsoup.Connection
@@ -262,6 +264,13 @@ abstract class JsoupNovelContext : NovelContext() {
         select(query).firstOrNull()?.let(block)
     } catch (e: Exception) {
         null
+    }
+
+    /**
+     * 返回通过pattern提取元素中的字符串的lambda,
+     */
+    protected fun pickString(pattern: String): (Element) -> String = {
+        it.text().pick(compilePattern(pattern)).first()
     }
 
     /**

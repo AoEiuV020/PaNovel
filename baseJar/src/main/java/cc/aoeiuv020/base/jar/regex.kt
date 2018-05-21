@@ -1,5 +1,6 @@
 package cc.aoeiuv020.base.jar
 
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -21,4 +22,15 @@ fun String.pick(pattern: Pattern): List<String> {
 /**
  * 默认识别换行，整个字符串作为整体，
  */
-fun String.pick(pattern: String) = pick(Pattern.compile(pattern, Pattern.DOTALL))
+fun String.pick(pattern: String) = pick(compilePattern(pattern))
+
+
+private val patternMap = WeakHashMap<String, Pattern>()
+/**
+ * 缓存pattern, 弱引用，WeekHashMap,
+ */
+fun compilePattern(pattern: String): Pattern {
+    return patternMap.getOrPut(pattern) {
+        Pattern.compile(pattern, Pattern.DOTALL)
+    }
+}

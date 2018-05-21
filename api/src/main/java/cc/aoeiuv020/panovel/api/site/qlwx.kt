@@ -47,9 +47,7 @@ class Qlyx : DslJsoupNovelContext() { init {
             }
             image("#fmimg > img")
             introduction("#intro > p:not(:nth-last-child(1))")
-            update("> p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss") {
-                it.text().pick("更新时间：(.*)").first()
-            }
+            update("> p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("更新时间：(.*)"))
         }
     }
     chapters {

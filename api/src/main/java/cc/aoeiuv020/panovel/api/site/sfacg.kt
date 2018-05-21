@@ -38,9 +38,7 @@ class Sfacg : DslJsoupNovelContext() { init {
              */
             items("#form1 > table.comic_cover.Height_px22.font_gray.space10px > tbody > tr > td > ul") {
                 name("li > strong > a")
-                author("> li:nth-child(2)") {
-                    it.ownText().pick("综合信息： ([^/]*)/").first()
-                }
+                author("> li:nth-child(2)", block = pickString("综合信息： ([^/]*)/"))
             }
         }
     }
@@ -54,9 +52,7 @@ class Sfacg : DslJsoupNovelContext() { init {
             }
             image("#hasTicket > div.left-part > div > div.pic > a > img")
             introduction("> p", parent = div)
-            update("> div.count-info.clearfix > div.count-detail span:nth-child(4)", format = "yyyy/MM/dd HH:mm:ss") {
-                it.text().pick("更新：(.*)").first()
-            }
+            update("> div.count-info.clearfix > div.count-detail span:nth-child(4)", format = "yyyy/MM/dd HH:mm:ss", block = pickString("更新：(.*)"))
         }
     }
     chapterTemplate = "/Novel/%s/MainIndex/"

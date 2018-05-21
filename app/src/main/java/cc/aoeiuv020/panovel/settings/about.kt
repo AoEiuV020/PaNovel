@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.R
 import kotlinx.android.synthetic.main.content_about.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.yesButton
-import java.util.regex.Pattern
 
 /**
  *
@@ -29,7 +29,7 @@ class AboutFragment : Fragment() {
 
         tvLicenses.setOnClickListener {
             // [jsoup](https://github.com/jhy/jsoup)
-            val pattern = Pattern.compile("\\[(\\S*)\\]\\((\\S*)\\)")
+            val pattern = compilePattern("\\[(\\S*)\\]\\((\\S*)\\)")
             val (nameList, linkList) = activity.assets.open("Licenses.txt").reader().readLines()
                     .mapNotNull {
                         try {
