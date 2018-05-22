@@ -32,7 +32,7 @@ data class NovelSite(
 /**
  * 代表一本小说，由网站名，小说名和作者唯一决定，
  *
- * @param extra 并不重要了已经，只要网站Context能用这个请求到详情页就可以，同一本小说不同extra也可以，
+ * @param extra 只要网站Context能用这个请求到详情页就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
  */
 data class NovelItem(
         val site: String,
@@ -46,7 +46,8 @@ data class NovelItem(
 
 /**
  * 小说详情页，
- * @param extra 用于请求章节列表，
+ * @param extra 只要网站Context能用这个请求到章节列表就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
+ * @param update 本小说最后更新时间，没有就null,
  */
 data class NovelDetail(
         val novel: NovelItem,
@@ -60,7 +61,8 @@ data class NovelDetail(
 
 /**
  * 小说目录，
- * @param extra 用于请求本章节正文，
+ * @param extra 只要网站Context能用这个请求到本章节正文就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
+ * @param update 本章节更新时间，没有就null，
  */
 data class NovelChapter(
         /**
@@ -73,12 +75,16 @@ data class NovelChapter(
          * 为了可以只修改列表中最后一章的更新时间，这个变量要可变，
          * 因为有的网站目录页和详情页是一样的，可以拿到最后更新时间，
          */
+        /*
+         * 为了可以只修改列表中最后一章的更新时间，这个变量要可变，
+         * 因为有的网站目录页和详情页是一样的，可以拿到最后更新时间，
+         */
         var update: Date? = null
 ) : Data()
 
 /**
  * 小说正文，由一个个段落构成，
- * TODO: 为了支持图片，要把String改成别的，比如直接Any, 类名也可以改掉，
+ * TODO: 考虑放弃这个数据类，就算要支持图片，也可以保存String, 然后用正则匹配判断特殊格式，比如模仿Markdown格式支持图片，
  */
 data class NovelText(
         val textList: List<String>
