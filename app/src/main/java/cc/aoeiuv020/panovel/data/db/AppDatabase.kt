@@ -4,14 +4,16 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
+import cc.aoeiuv020.panovel.data.dao.NovelDao
 import cc.aoeiuv020.panovel.data.dao.SiteEnabledDao
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.data.entity.SiteEnabled
 
 /**
  * Created by AoEiuV020 on 2018.05.13-18:00:33.
  */
 @Database(
-        entities = [SiteEnabled::class],
+        entities = [Novel::class, SiteEnabled::class],
         version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -31,4 +33,5 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     abstract fun siteEnabledDao(): SiteEnabledDao
+    abstract fun novelDao(): NovelDao
 }

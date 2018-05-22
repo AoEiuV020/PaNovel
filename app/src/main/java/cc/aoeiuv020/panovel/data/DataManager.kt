@@ -5,7 +5,7 @@ import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 
 /**
  * 封装多个数据库的联用，
- * 隐藏所有数据库实体，这里进出的都是专用的kotlin数据类，
+ * 隐藏api模块的数据类，app只使用这里的数据库实体，
  *
  * Created by AoEiuV020 on 2018.04.28-16:53:14.
  */
