@@ -6,7 +6,6 @@ import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.local.PrimarySettings
 import cc.aoeiuv020.panovel.local.Settings
@@ -32,11 +31,13 @@ class App : MultiDexApplication(), AnkoLogger {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var ctx: Context
-        val gsonBuilder: GsonBuilder = GsonBuilder()
+        /**
+         * 用于app不同页面传递数据时的序列化，
+         */
+        val gson: Gson = GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
-                .paNovel()
-        val gson: Gson = gsonBuilder.create()
+                .create()
 
         lateinit var adRequest: AdRequest
     }
