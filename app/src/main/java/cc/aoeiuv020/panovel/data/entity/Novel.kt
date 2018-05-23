@@ -59,20 +59,20 @@ data class Novel(
          * 阅读进度，
          * 阅读至的章节索引，
          */
-        val readAtChapterIndex: Int = 0,
+        var readAtChapterIndex: Int = 0,
         /**
          * 章节内的阅读进度，
          * 看到第几页或者第几个字，具体没决定，
          */
-        val readAtTextIndex: Int = 0,
+        var readAtTextIndex: Int = 0,
         /**
          * 是否在书架上，sqlite没有分区，只建个索引，
          */
-        val bookshelf: Boolean = false,
+        var bookshelf: Boolean = false,
         /**
          * 章节数，
          */
-        val chaptersCount: Int = 0,
+        var chaptersCount: Int = 0,
 
         // 小说详情页的信息，一次更新后写死，
         // 之后就非空，
