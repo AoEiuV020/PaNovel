@@ -345,7 +345,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
     }
 
-    override fun getNovelText(extra: String): List<String> =
+    override fun getNovelContent(extra: String): List<String> =
             _Content(extra).initContent(extra)
 
     private lateinit var initContent: _Content.(String) -> List<String>

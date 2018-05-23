@@ -4,7 +4,6 @@ import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.Requester
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.id
@@ -68,7 +67,7 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                         debug { "${Thread.currentThread().name} downloading $index" }
                         val chapter = chapters[index]
                         Cache.text.get(novelItem, chapter.id)?.also { em.onNext(listOf(exists.incrementAndGet(), downloads.get(), errors.get(), left.decrementAndGet())) } ?: try {
-                            context.getNovelText(chapter.requester)
+                            context.getNovelContent(chapter.requester)
                         } catch (_: Exception) {
                             em.onNext(listOf(exists.get(), downloads.get(), errors.incrementAndGet(), left.decrementAndGet()))
                             null
@@ -140,11 +139,11 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
         val chapter = chapterList[index]
         return if (refresh) {
             debug { "$this refresh $chapter" }
-            context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
+            context.getNovelContent(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
         } else {
             debug { "$this load $chapter" }
             Cache.text.get(novelItem, chapter.id)
-                    ?: context.getNovelText(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
+                    ?: context.getNovelContent(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
         }.let { Text(it.textList) }
     }
 

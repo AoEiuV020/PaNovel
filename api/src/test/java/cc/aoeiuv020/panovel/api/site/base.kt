@@ -98,7 +98,7 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
                           firstLine: String,
                           lastLine: String,
                           size: Int, count: Int = 3): List<String> {
-        val list = context.getNovelText(extra)
+        val list = context.getNovelContent(extra)
         println(list.size)
         list.take(count).forEach {
             println(it)
