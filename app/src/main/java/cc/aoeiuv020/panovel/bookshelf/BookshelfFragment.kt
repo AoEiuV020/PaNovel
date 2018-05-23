@@ -8,40 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.list.NovelItemActionAdapter
+import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
 import cc.aoeiuv020.panovel.list.NovelListAdapter
-import cc.aoeiuv020.panovel.list.NovelViewHolder
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.main.MainActivity
-import cc.aoeiuv020.panovel.report.Reporter
 import kotlinx.android.synthetic.main.novel_item_list.*
-import org.jetbrains.anko.doAsync
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.15-17:22:28.
  */
 class BookshelfFragment : Fragment(), IView {
-    private inner class ItemListener : NovelItemActionAdapter() {
-        override fun onStarChanged(vh: NovelViewHolder, star: Boolean) {
-            vh.novel.bookshelf = true
-            doAsync({ e ->
-                val message = "更新书架失败，"
-                // 这应该是数据库操作出问题，正常情况不会出现才对，
-                // 未知异常统一上报，
-                Reporter.post(message, e)
-                activity?.runOnUiThread {
-                    showError(message, e)
-                }
-            }) {
-                DataManager.updateBookshelf(vh.novel, star)
-            }
-        }
+    private val itemListener = DefaultNovelItemActionListener { message, e ->
+        showError(message, e)
     }
-
-    private val mAdapter = NovelListAdapter(R.layout.novel_item_big, ItemListener())
+    private val mAdapter = NovelListAdapter(R.layout.novel_item_big, itemListener)
     private val presenter: BookshelfPresenter = BookshelfPresenter()
     /**
      * 标记是否要强制刷新，

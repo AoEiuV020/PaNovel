@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.panovel.App
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.jetbrains.anko.AnkoLogger
@@ -21,12 +22,9 @@ import kotlin.reflect.KProperty
  * 指定包含一个SharedPreferences，用于Delegate，
  */
 interface Pref {
+    val name: String
     val sharedPreferences: SharedPreferences
-}
-
-fun Pref.getSharedPreferences(ctx: Context, name: String? = null): SharedPreferences {
-    val realName = name ?: this.javaClass.simpleName
-    return ctx.getSharedPreferences(ctx.packageName + "_$realName", Context.MODE_PRIVATE)
+        get() = App.ctx.getSharedPreferences(App.ctx.packageName + "_$name", Context.MODE_PRIVATE)
 }
 
 /**
@@ -48,6 +46,9 @@ object PrefDelegates {
 
     fun boolean(default: Boolean, key: String? = null) =
             PrefDelegate.Boolean(default, key)
+
+    inline fun <reified T : Enum<*>> enum(default: T, key: kotlin.String? = null) =
+            PrefDelegate.Enum.new(default, key)
 
     inline fun <reified T : kotlin.Any> any(default: T, key: kotlin.String? = null) =
             PrefDelegate.Any.new(default, key)
@@ -148,13 +149,36 @@ sealed class PrefDelegate<T>(
         }
     }
 
+    class Enum<T : kotlin.Enum<*>>(
+            private val default: T,
+            key: kotlin.String? = null,
+            private val type: Class<T>
+    ) : PrefDelegate<T>(key) {
+        companion object {
+            val gson: Gson = GsonBuilder()
+                    .create()
+
+            inline fun <reified T : kotlin.Enum<*>> new(default: T, key: kotlin.String? = null) = Enum(default, key, T::class.java)
+        }
+
+        override fun getValue(sp: SharedPreferences, key: kotlin.String): T {
+            // 没有引号的字符串gson也可以解析的，
+            return sp.getString(key, null)?.toBean(gson, type) ?: default
+        }
+
+        override fun setValue(editor: SharedPreferences.Editor, key: kotlin.String, value: T) {
+            // 不能用gson转String, 会带上引号“，
+            editor.putString(key, value.toString())
+        }
+    }
+
     /**
      * 读写用gson转成字符串，非空，
      *
      * T要指定为kotlin.Any，否则会被当成可空，
      */
     class Any<T : kotlin.Any>(
-            private val defaultString: kotlin.String,
+            private val default: T,
             key: kotlin.String? = null,
             private val type: Class<T>
     ) : PrefDelegate<T>(key) {
@@ -165,14 +189,8 @@ sealed class PrefDelegate<T>(
             inline fun <reified T : kotlin.Any> new(default: T, key: kotlin.String? = null) = Any(default, key, T::class.java)
         }
 
-        constructor(
-                default: T,
-                key: kotlin.String?,
-                type: Class<T>
-        ) : this(default.toJson(gson), key, type)
-
         override fun getValue(sp: SharedPreferences, key: kotlin.String): T {
-            return sp.getString(key, defaultString).toBean(gson, type)
+            return sp.getString(key, null)?.toBean(gson, type) ?: default
         }
 
         override fun setValue(editor: SharedPreferences.Editor, key: kotlin.String, value: T) {

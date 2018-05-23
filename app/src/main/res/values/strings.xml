@@ -179,6 +179,29 @@
     <string name="migrating_message_placeholder">从"%s"到"%s",\n迁移内容：%s</string>
     <string name="migrate_error_message_placeholder">@string/migrating_message_placeholder</string>
     <string name="ignore">忽略</string>
-
+    <string name="title_more_action">选择操作</string>
+    <string name="remove_bookshelf">移出书架</string>
+    <string name="add_bookshelf">加入书架</string>
+    <string name="refresh_chapters">刷新章节</string>
+    <string-array name="content_more_action">
+        <!--
+                ReadContinue,
+                ReadLastChapter,
+                OpenDetail,
+                RefineSearch,
+                Export,
+                AddBookshelf,
+                RemoveBookshelf,
+                Refresh
+        -->
+        <item>@string/read_continue</item>
+        <item>@string/read_last_chapter</item>
+        <item>@string/detail</item>
+        <item>@string/refine_search</item>
+        <item>@string/export_exists_chapter_to_text_file</item>
+        <item>@string/remove_bookshelf</item>
+        <item>@string/add_bookshelf</item>
+        <item>@string/refresh_chapters</item>
+    </string-array>
 
 </resources>

@@ -26,4 +26,10 @@ object DataManager {
     fun updateBookshelf(novel: Novel, star: Boolean) {
         app.db.novelDao().updateBookshelf(novel.id, star)
     }
+
+    fun refreshChapters(novel: Novel) {
+        // 先判断是否存在请求章节用的extra, novel.chapters,
+        // 没有就先请求详情页，
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

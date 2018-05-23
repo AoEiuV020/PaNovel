@@ -1,11 +1,13 @@
 package cc.aoeiuv020.panovel.migration
 
 import android.content.Context
-import android.content.SharedPreferences
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.migration.impl.LoginMigration
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.util.*
+import cc.aoeiuv020.panovel.util.Pref
+import cc.aoeiuv020.panovel.util.PrefDelegates
+import cc.aoeiuv020.panovel.util.VersionName
+import cc.aoeiuv020.panovel.util.VersionUtil
 import org.jetbrains.anko.*
 
 /**
@@ -18,11 +20,7 @@ import org.jetbrains.anko.*
 class MigrationPresenter(
         private val ctx: Context
 ) : Presenter<MigrationView>(), Pref, AnkoLogger {
-    /**
-     * sp file name is ctx.packageName + "_MigrationPresenter"
-     */
-    override val sharedPreferences: SharedPreferences =
-            getSharedPreferences(ctx, "MigrationPresenter")
+    override val name: String = "MigrationPresenter"
     /**
      * 缓存以前的版本，
      * key is "cachedVersion",

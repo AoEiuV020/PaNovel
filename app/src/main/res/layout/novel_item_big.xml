@@ -7,7 +7,7 @@
     android:background="?android:attr/selectableItemBackground">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/ivImage"
         android:layout_width="100dp"
         android:layout_height="150dp"
         android:layout_marginLeft="8dp"
@@ -32,7 +32,7 @@
         android:singleLine="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/ivImage"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="小说名" />
 
@@ -55,7 +55,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:singleLine="true"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/ivImage"
         app:layout_constraintTop_toBottomOf="@+id/tvName"
         tools:text="作者名" />
 
@@ -68,7 +68,7 @@
         android:layout_marginStart="8dp"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/textView10"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/ivImage"
         tools:text="更新时间" />
 
     <TextView
@@ -96,7 +96,7 @@
         android:layout_marginStart="8dp"
         android:background="?android:attr/selectableItemBackground"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintBottom_toBottomOf="@+id/ivImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView10"
         tools:text="最新章节" />
@@ -110,8 +110,8 @@
         android:layout_marginStart="8dp"
         android:singleLine="true"
         android:text="@string/last_chapter"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintStart_toEndOf="@+id/imageView" />
+        app:layout_constraintBottom_toBottomOf="@+id/ivImage"
+        app:layout_constraintStart_toEndOf="@+id/ivImage" />
 
     <TextView
         android:id="@+id/textView11"
@@ -122,7 +122,7 @@
         android:layout_marginTop="8dp"
         android:singleLine="true"
         android:text="@string/read_at"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/ivImage"
         app:layout_constraintTop_toBottomOf="@+id/tvAuthor" />
 
     <FrameLayout

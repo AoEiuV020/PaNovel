@@ -1,9 +1,11 @@
+# 枚举都不混淆，
+-keep enum ** { *; }
+
 # 导入导出的选项枚举不混淆，要作为文件名，
 -keepclassmembers class cc.aoeiuv020.panovel.export.ExportOption { <fields>; }
 
 # 本地持久化用到的实体类不能混淆，
--keepclassmembers class cc.aoeiuv020.panovel.data.entity.** { *; }
--keepnames class cc.aoeiuv020.panovel.data.entity.**
+-keep class cc.aoeiuv020.panovel.data.entity.** { *; }
 
 # 和服务器端交互用的pojo需要gson序列化，不混淆，
 -keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.** { <fields>; }
