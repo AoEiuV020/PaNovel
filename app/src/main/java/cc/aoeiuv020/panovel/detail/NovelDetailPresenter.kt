@@ -5,8 +5,6 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.qrcode.QrCodeManager
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.util.suffixThreadName
-import io.reactivex.Observable
 import org.jetbrains.anko.*
 import java.io.IOException
 
@@ -28,19 +26,27 @@ class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity
     }
 
     fun share() {
-        Observable.fromCallable {
-            suffixThreadName("shareBook")
-            val url = novelItem.requester.url
-            val qrCode = QrCodeManager.generate(novelItem.requester.url)
-            url to qrCode
-        }.async().subscribe({ (url, qrCode) ->
-            view?.showSharedUrl(url, qrCode)
-        }, { e ->
-            val message = "上传失败，"
-            error(message, e)
-            view?.showError(message, e)
-        }).let { addDisposable(it, 1) }
-
+        novel?.let {
+            doAsync({ e ->
+                val message = "获取小说《${it.name}》<${it.site}, ${it.detail}>详情页地址失败，"
+                // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
+                Reporter.post(message, e)
+                error(message, e)
+                view?.runOnUiThread {
+                    view?.showError(message, e)
+                }
+            }) {
+                val url = DataManager.getDetailUrl(it)
+                // 简单拼接，这步不可能不问题，
+                val qrCode = QrCodeManager.generate(url)
+                uiThread {
+                    view?.showSharedUrl(url, qrCode)
+                }
+            }
+        } ?: run {
+            val message = "还没获取到小说详情，"
+            view?.showError(message)
+        }
     }
 
     private fun requestNovelDetail() {

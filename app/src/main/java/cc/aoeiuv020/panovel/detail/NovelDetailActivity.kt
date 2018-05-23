@@ -15,6 +15,7 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
@@ -190,6 +191,10 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_detail, menu)
         return true
+    }
+
+    fun showSharedUrl(url: String, qrCode: String) {
+        Share.alert(this, url, qrCode)
     }
 
 }
