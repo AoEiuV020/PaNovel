@@ -88,4 +88,12 @@ class ApiManager(ctx: Context) {
     fun search(context: NovelContext, name: String): List<NovelItem> {
         return context.searchNovelName(name)
     }
+
+    fun getNovelFromUrl(context: NovelContext, url: String): NovelItem {
+        return context.getNovelItem(url)
+    }
+
+    fun removeCookies(context: NovelContext) {
+        context.removeCookies()
+    }
 }

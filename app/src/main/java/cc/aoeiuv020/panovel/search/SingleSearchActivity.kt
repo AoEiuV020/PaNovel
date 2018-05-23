@@ -13,13 +13,9 @@ import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.NovelSite
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.local.toBean
-import cc.aoeiuv020.panovel.local.toJson
-import cc.aoeiuv020.panovel.util.getStringExtra
-import com.miguelcatalan.materialsearchview.MaterialSearchView
+import cc.aoeiuv020.panovel.report.Reporter
 import kotlinx.android.synthetic.main.activity_single_search.*
 import org.jetbrains.anko.*
 
@@ -29,12 +25,12 @@ import org.jetbrains.anko.*
  */
 class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     companion object {
-        fun start(ctx: Context, site: NovelSite) {
-            ctx.startActivity<SingleSearchActivity>("site" to site.toJson())
+        fun start(ctx: Context, site: String) {
+            ctx.startActivity<SingleSearchActivity>("site" to site)
         }
     }
 
-    private lateinit var site: NovelSite
+    private lateinit var siteName: String
     private lateinit var presenter: SingleSearchPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,21 +39,13 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        site = getStringExtra("site", savedInstanceState)?.toBean()
-                ?: throw IllegalArgumentException("必须传入一个网站，")
-
-        title = site.name
-
-        // TODO: 这里没启用，现在是点击搜索图标直接跳到模糊搜索，
-        searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchView.hideKeyboard(searchView)
-                FuzzySearchActivity.start(ctx, site, query)
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean = false
-        })
+        siteName = intent?.getStringExtra("site") ?: run {
+            Reporter.unreachable()
+            finish()
+            return
+        }
+        debug { "receive site: $siteName" }
+        title = siteName
 
         srlRefresh.isRefreshing = true
         srlRefresh.setOnRefreshListener {
@@ -67,7 +55,7 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
         initWebView()
 
-        presenter = SingleSearchPresenter(site)
+        presenter = SingleSearchPresenter(siteName)
         presenter.attach(this)
 
         presenter.start()
@@ -137,8 +125,8 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.removeCookies()
     }
 
-    fun openNovelDetail(novelItem: NovelItem) {
-        NovelDetailActivity.start(ctx, novelItem)
+    fun openNovelDetail(novel: Novel) {
+        NovelDetailActivity.start(ctx, novel)
     }
 
     fun showError(message: String, e: Throwable) {
@@ -170,7 +158,7 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> FuzzySearchActivity.start(ctx, site)
+            R.id.search -> FuzzySearchActivity.start(ctx, siteName)
             R.id.open -> open()
             R.id.close -> finish()
             R.id.removeCookies -> removeCookies()

@@ -1,8 +1,14 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
+import android.support.annotation.MainThread
+import android.support.annotation.WorkerThread
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.report.Reporter
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
+import org.jetbrains.anko.error
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 
 /**
@@ -11,9 +17,10 @@ import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
  *
  * Created by AoEiuV020 on 2018.04.28-16:53:14.
  */
-object DataManager {
+object DataManager : AnkoLogger {
     lateinit var app: AppDatabaseManager
     lateinit var api: ApiManager
+    lateinit var cookie: CookieManager
     @Synchronized
     fun init(ctx: Context) {
         if (!::app.isInitialized) {
@@ -21,6 +28,9 @@ object DataManager {
         }
         if (!::api.isInitialized) {
             api = ApiManager(ctx)
+        }
+        if (!::cookie.isInitialized) {
+            cookie = CookieManager(ctx)
         }
     }
 
@@ -119,5 +129,70 @@ object DataManager {
             // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
             app.queryOrNew(it.site, it.author, it.name, it.extra)
         }
+    }
+
+    fun getNovelContextByName(site: String) =
+            api.getNovelContextByName(site)
+
+    @MainThread
+    fun pushCookiesToWebView(context: NovelContext) {
+        // 高版本的设置cookie的回调乱七八糟的，用不上，
+        context.cookies.forEach { (key, value) ->
+            val cookiePair = "$key=$value"
+            debug { "push cookie: <$cookie>" }
+            context.cookieDomainList().forEach { domain ->
+                cookie.putCookie(domain, cookiePair)
+            }
+        }
+    }
+
+    @WorkerThread
+    fun syncCookies() = cookie.sync()
+
+    /**
+     * TODO: 这里有NovelContext拿到cookies后的文件操作，
+     * 但是WebView cookies操作好像只能在主线程，
+     * 索性都放主线程吧，不是很费时，
+     */
+    @MainThread
+    fun pullCookiesFromWebView(context: NovelContext) {
+        val cookieManager = android.webkit.CookieManager.getInstance()
+        val cookiesMap = mutableMapOf<String, String>()
+        context.cookieDomainList().forEach { domain ->
+            cookie.getCookies(domain)
+                    ?.split(';')?.map {
+                        it.trim()
+                    }?.mapNotNull { cookiePair ->
+                        debug { "pull cookie: <$cookiePair>" }
+                        try {
+                            val index = cookiePair.indexOf('=')
+                            val key = cookiePair.substring(0, index)
+                            val value = cookiePair.substring(index + 1)
+                            key to value
+                        } catch (e: Exception) {
+                            // 一个cookie处理错误直接无视，
+                            val message = "cookie不合法，<$cookiePair>,"
+                            Reporter.post(message, e)
+                            error(message, e)
+                            null
+                        }
+                    }?.toMap(cookiesMap)
+        }
+        context.putCookies(cookiesMap)
+    }
+
+    fun getNovelFromUrl(site: String, url: String): Novel {
+        return api.getNovelFromUrl(getNovelContextByName(site), url).let {
+            // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
+            app.queryOrNew(it.site, it.author, it.name, it.extra)
+        }
+    }
+
+    fun removeWebViewCookies() {
+        cookie.removeCookies()
+    }
+
+    fun removeNovelContextCookies(site: String) {
+        api.removeCookies(getNovelContextByName(site))
     }
 }

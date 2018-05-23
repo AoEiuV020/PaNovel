@@ -120,6 +120,11 @@ abstract class NovelContext {
     abstract val site: NovelSite
 
     /**
+     * 打开网站的话，可能不希望打开根目录，那就重写这个变量，
+     */
+    val homePage: String get() = site.baseUrl
+
+    /**
      * 获取搜索页面的下一页，
      * TODO: 考虑在搜索结果直接加上关于下一页的，或者干脆不要下一页吧，反正现在搜索结果和下一页分别获取解析页面挺浪费的，
      *
