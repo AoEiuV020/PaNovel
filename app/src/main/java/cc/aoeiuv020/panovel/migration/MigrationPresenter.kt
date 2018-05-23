@@ -60,12 +60,13 @@ class MigrationPresenter(
                 }
                 view?.doAsync({ e ->
                     if (e !is MigrateException) {
-                        Reporter.postException(e)
+                        Reporter.unreachable(e)
+                        error("不可到达，", e)
                         return@doAsync
                     }
                     val message = "迁移旧版数据失败，从<${cachedVersionName.name}>到<${e.migration.to.name}>"
+                    Reporter.post(message, e)
                     error(message, e)
-                    Reporter.postException(e)
                     ctx.runOnUiThread {
                         view?.showMigrateError(from = cachedVersionName, migration = e.migration)
                     }
@@ -108,7 +109,9 @@ class MigrationPresenter(
             "ignoreMigration $migration"
         }
         view?.doAsync({ e ->
-            Reporter.postException(e)
+            val message = "sp保存出错，"
+            Reporter.post(message, e)
+            error(message, e)
         }) {
             cachedVersion = migration.to.name
         }

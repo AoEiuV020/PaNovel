@@ -13,7 +13,7 @@ import java.util.*
  */
 class ApiManager(ctx: Context) {
     @Suppress("RemoveExplicitTypeArguments")
-    private val contexts: List<NovelContext> by lazy {
+    val contexts: List<NovelContext> by lazy {
         listOf(
                 Piaotian(), Biquge(), Liudatxt(), Qidian(),
                 Dmzz(), Sfacg(), Snwx(), Syxs(),

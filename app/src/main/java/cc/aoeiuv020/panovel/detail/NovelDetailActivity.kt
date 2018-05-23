@@ -11,10 +11,11 @@ import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.show
@@ -22,9 +23,7 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.*
 
 /**
  *
@@ -68,10 +67,10 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
 
         title = id.toString()
 
-/*
         fabRead.setOnClickListener {
             NovelTextActivity.start(this, id)
         }
+/*
         fabStar.isChecked = Bookshelf.contains(novelItem)
         fabStar.setOnClickListener {
             fabStar.toggle()
@@ -130,10 +129,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         chapterAdapter.refresh()
     }
 
-    private fun setTitle(novelItem: NovelItem) {
-        toolbar_layout.title = "${novelItem.name} - ${novelItem.author}"
-    }
-
     fun showNovelDetail(novel: Novel) {
         this.novel = novel
         title = novel.name
@@ -141,6 +136,26 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         // TODO: 下面考虑用viewPager两页实现简介和目录，
         tvIntroduction.text = novel.introduction
         Glide.with(this).load(novel.image).into(toolbar_layout.image)
+        fabRead.setOnClickListener {
+            NovelTextActivity.start(this, novel)
+        }
+        fabStar.isChecked = novel.bookshelf
+        fabStar.setOnClickListener {
+            fabStar.toggle()
+            novel.bookshelf = fabStar.isChecked
+            doAsync({ e ->
+                val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.name}》失败，"
+                // 这应该是数据库操作出问题，正常情况不会出现才对，
+                // 未知异常统一上报，
+                Reporter.post(message, e)
+                error(message, e)
+                runOnUiThread {
+                    showError(message, e)
+                }
+            }) {
+                DataManager.updateBookshelf(novel)
+            }
+        }
     }
 
     fun showError(message: String, e: Throwable? = null) {
@@ -149,12 +164,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
             alert(alertDialog, message)
         } else {
             alertError(alertDialog, message, e)
-        }
-    }
-
-    private fun showNovelAbout() {
-        novelDetail?.let {
-            alert(alertDialog, it.introduction, "${it.novel.name} - ${it.novel.author}")
         }
     }
 
@@ -170,7 +179,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.browse -> presenter.browse()
-            R.id.info -> showNovelAbout()
             R.id.refresh -> refresh()
             R.id.share -> share()
             android.R.id.home -> onBackPressed()

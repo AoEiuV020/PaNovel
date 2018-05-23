@@ -9,17 +9,14 @@ import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ItemActionEnum
 import cc.aoeiuv020.panovel.settings.ItemActionEnum.*
 import cc.aoeiuv020.panovel.text.NovelTextActivity
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.selector
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
 
 /**
  * Created by AoEiuV020 on 2018.05.23-12:49:51.
  */
 class DefaultNovelItemActionListener(
         private val onError: (String, Throwable) -> Unit
-) : NovelItemActionListener {
+) : NovelItemActionListener, AnkoLogger {
     fun on(enum: ItemActionEnum, vh: NovelViewHolder): Boolean {
         when (enum) {
             ReadLastChapter -> NovelTextActivity.start(vh.ctx, vh.novel, -1)
@@ -81,17 +78,18 @@ class DefaultNovelItemActionListener(
     }
 
     override fun onStarChanged(vh: NovelViewHolder, star: Boolean) {
-        vh.novel.bookshelf = true
+        vh.novel.bookshelf = star
         doAsync({ e ->
             val message = "${if (star) "添加" else "删除"}书架《${vh.novel.name}》失败，"
             // 这应该是数据库操作出问题，正常情况不会出现才对，
             // 未知异常统一上报，
-            Reporter.postException(IllegalStateException(message, e))
+            Reporter.post(message, e)
+            error(message, e)
             vh.ctx.runOnUiThread {
                 onError(message, e)
             }
         }) {
-            DataManager.updateBookshelf(vh.novel, star)
+            DataManager.updateBookshelf(vh.novel)
         }
 
     }
@@ -99,7 +97,8 @@ class DefaultNovelItemActionListener(
     override fun requireRefresh(vh: NovelViewHolder) {
         doAsync({ e ->
             val message = "刷新小说《${vh.novel.name}》失败，"
-            Reporter.postException(IllegalStateException(message, e))
+            Reporter.post(message, e)
+            error(message, e)
             vh.ctx.runOnUiThread {
                 // 失败也停止显示正在刷新，
                 vh.refreshed(vh.novel)

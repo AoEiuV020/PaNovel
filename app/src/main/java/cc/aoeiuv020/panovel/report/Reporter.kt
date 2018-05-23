@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import cc.aoeiuv020.panovel.local.Settings
 import com.tencent.bugly.crashreport.CrashReport
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 
 /**
  * 封装异常上报，
@@ -11,7 +13,7 @@ import com.tencent.bugly.crashreport.CrashReport
  *
  * Created by AoEiuV020 on 2018.05.17-18:04:30.
  */
-object Reporter {
+object Reporter : AnkoLogger {
     @SuppressLint("HardwareIds")
     fun init(ctx: Context) {
         // 第三个参数为SDK调试模式开关，
@@ -29,14 +31,20 @@ object Reporter {
     }
 
     fun post(message: String) {
+        debug(message)
         postException(IllegalStateException(message))
     }
 
+    fun unreachable(t: Throwable) {
+        post("不可到达，", t)
+    }
+
     fun post(message: String, t: Throwable) {
+        debug(message, t)
         postException(IllegalStateException(message, t))
     }
 
-    fun postException(t: Throwable) {
+    private fun postException(t: Throwable) {
         CrashReport.postCatchedException(t)
     }
 }

@@ -2,8 +2,7 @@ package cc.aoeiuv020.panovel.migration.impl
 
 import android.content.Context
 import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.migration.MigrateException
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.VersionName
@@ -62,7 +61,7 @@ class LoginMigration : Migration(), AnkoLogger {
                 "幼狮书盟" to "i",
                 "齐鲁文学" to "e"
         )
-        NovelContext.getNovelContexts().forEach { novelContext ->
+        DataManager.api.contexts.forEach { novelContext ->
             // 新网站不在map里就跳过，
             val fileName = nameMap[novelContext.getNovelSite().name].also {
                 debug {
@@ -89,12 +88,8 @@ class LoginMigration : Migration(), AnkoLogger {
             } catch (e: Exception) {
                 // 单个网站处理失败正常继续，不抛异常，只上报异常，可能是这个网站数据被其他原因破坏了，
                 val message = "网站<${novelContext.getNovelSite().name}>登录状态迁移失败，"
+                Reporter.post(message, e)
                 error(message, e)
-                Reporter.postException(MigrateException(
-                        migration = this,
-                        message = message,
-                        cause = e
-                ))
             }
         }
     }

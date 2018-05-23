@@ -65,6 +65,7 @@ class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity
                 val message = "获取小说《${it.name}》<${it.site}, ${it.detail}>详情页地址失败，"
                 // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
                 Reporter.post(message, e)
+                error(message, e)
                 view?.runOnUiThread {
                     view?.showError(message, e)
                 }

@@ -27,8 +27,8 @@ object DataManager {
         return app.db.novelDao().listBookshelf()
     }
 
-    fun updateBookshelf(novel: Novel, star: Boolean) {
-        app.db.novelDao().updateBookshelf(novel.nId, star)
+    fun updateBookshelf(novel: Novel) {
+        app.db.novelDao().updateBookshelf(novel.nId, novel.bookshelf)
     }
 
     fun refreshChapters(novel: Novel) {
