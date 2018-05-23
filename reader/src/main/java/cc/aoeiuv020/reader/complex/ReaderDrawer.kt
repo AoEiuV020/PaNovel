@@ -304,6 +304,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
         requestingList.add(requestIndex)
         debug { "$this lazyRequest $requestIndex, refresh = $refresh" }
+        // TODO: 不要RxJava的东西，
         Single.fromCallable {
             val text = requester.request(requestIndex, refresh)
             val pages = typesetting(reader.chapterList[requestIndex].name, text)

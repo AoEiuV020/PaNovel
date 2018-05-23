@@ -55,6 +55,7 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
         ntrAdapter.clear()
         ntrAdapter.setChapterName(chapter.name)
         disposable?.dispose()
+        // TODO: 不要RxJava,
         disposable = Single.fromCallable {
             requester.request(index, refresh)
         }.subscribeOn(Schedulers.io())

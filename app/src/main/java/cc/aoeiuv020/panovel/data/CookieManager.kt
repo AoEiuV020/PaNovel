@@ -14,7 +14,7 @@ import org.jetbrains.anko.debug
 /**
  * Created by AoEiuV020 on 2018.05.23-20:25:48.
  */
-class CookieManager(private val ctx: Context) : AnkoLogger {
+class CookieManager(ctx: Context) : AnkoLogger {
     private val cookieManager = CookieManager.getInstance()
 
     fun putCookie(domain: String, cookiePair: String) {
@@ -33,10 +33,13 @@ class CookieManager(private val ctx: Context) : AnkoLogger {
 
     }
 
-    fun sync() {
+    // 莫名，旧版刷新方法需要Context,
+    // 方便起见，传入ctx可空，为空就不刷低版本的了，
+    fun sync(ctx: Context?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             cookieManager.flush()
         } else {
+            ctx ?: return
             val syncManager = CookieSyncManager.createInstance(ctx)
             syncManager.sync()
         }

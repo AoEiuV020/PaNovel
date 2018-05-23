@@ -1,7 +1,5 @@
 package cc.aoeiuv020.reader
 
-import io.reactivex.Single
-
 /**
  *
  * Created by AoEiuV020 on 2017.12.01-02:17:55.
@@ -9,8 +7,6 @@ import io.reactivex.Single
 
 interface TextRequester {
     fun request(index: Int, refresh: Boolean = false): Text
-    fun lazyRequest(index: Int, refresh: Boolean = false): Single<Text>
-            = Single.fromCallable { request(index, refresh) }
 }
 
 /**

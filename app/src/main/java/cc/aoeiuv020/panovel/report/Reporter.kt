@@ -30,6 +30,16 @@ object Reporter : AnkoLogger {
         post("不可到达，")
     }
 
+    inline fun <reified T> notNull(t: T?): T {
+        if (t == null) {
+            val message = "<${T::class.java}>不可空，"
+            val e = NullPointerException(message)
+            post(message, e)
+            throw  e
+        }
+        return t
+    }
+
     fun post(message: String) {
         debug(message)
         postException(IllegalStateException(message))

@@ -15,22 +15,36 @@ import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
-import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.local.History
+import cc.aoeiuv020.panovel.local.Margins
+import cc.aoeiuv020.panovel.local.Progress
+import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
-import cc.aoeiuv020.panovel.util.*
+import cc.aoeiuv020.panovel.util.alert
+import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.loading
+import cc.aoeiuv020.panovel.util.notify
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.browse
+import org.jetbrains.anko.debug
+import org.jetbrains.anko.error
+import org.jetbrains.anko.startActivity
 import java.io.FileNotFoundException
-import cc.aoeiuv020.panovel.data.entity.Novel as NovelData
+import cc.aoeiuv020.reader.Novel as ReaderNovelItem
 
 
 /**
@@ -39,31 +53,47 @@ import cc.aoeiuv020.panovel.data.entity.Novel as NovelData
  */
 class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     companion object {
-        fun start(ctx: Context, novel: NovelData) {
+        fun start(ctx: Context, novel: Novel) {
             start(ctx, novel.nId)
         }
 
         fun start(ctx: Context, id: Long) {
-            ctx.startActivity<NovelTextActivity>(NovelData.id to id)
+            ctx.startActivity<NovelTextActivity>(Novel.id to id)
+        }
+
+        fun start(ctx: Context, novel: Novel, index: Int) {
+            ctx.startActivity<NovelTextActivity>(
+                    Novel.id to novel.nId,
+                    "index" to index
+            )
+
         }
     }
 
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
-    private lateinit var presenter: NovelTextPresenter
-    private lateinit var novelName: String
+    lateinit var presenter: NovelTextPresenter
     private var chaptersAsc: List<NovelChapter> = listOf()
-    private var novelDetail: NovelDetail? = null
-    private lateinit var novelItem: NovelItem
-    private lateinit var progress: NovelProgress
-    private lateinit var navigation: NovelTextNavigation
+    private var navigation: NovelTextNavigation? = null
     private lateinit var reader: INovelReader
+    // 缓存传入的索引，阅读器准备好后跳到这一章，-1表示最后一章，
+    private var index: Int? = null
+    private var _novel: Novel? = null
+    private var novel: Novel
+        get() = Reporter.notNull(_novel)
+        set(value) {
+            _novel = value
+        }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        _novel ?: return
         outState.apply {
-            putString("novelItem", novelItem.toJson())
-            putString("progress", progress.toJson())
+            // pause时有本地持久化阅读进度，
+            // 不是很清楚要否必要存在state里，
+            // 防止的是android恢复了intent的数据，初始化阅读器时就跳到intent持有的index章节了，
+            // onCreate先读取state里的index，存在就无视intent,
+            putString("index", novel.readAtChapterIndex.toJson(App.gson))
         }
     }
 
@@ -74,38 +104,64 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         alertDialog = AlertDialog.Builder(this).create()
         progressDialog = ProgressDialog(this)
 
-        novelItem = getStringExtra("novelItem", savedInstanceState)?.toBean() ?: run {
-            // 不应该会到这里，
-            // TODO: 这种不应该到的地方都加上bugly上报，
-            toast("奇怪，重新打开试试，")
+        val id = intent?.getLongExtra(cc.aoeiuv020.panovel.data.entity.Novel.id, -1L)
+        debug { "receive id: $id" }
+        if (id == null || id == -1L) {
+            Reporter.unreachable()
             finish()
             return
         }
-        // 进度，读取顺序， savedInstanceState > intent > ReadProgress
-        progress = savedInstanceState?.run { getString("progress").toBean<NovelProgress>() }
-                ?: (intent.getSerializableExtra("index") as? Int)?.let { NovelProgress(it) } ?: Progress.load(novelItem)
-        debug { "receive $novelItem, $progress" }
-        val requester = novelItem.requester
-        novelName = novelItem.name
+        title = id.toString()
 
-        urlTextView.text = requester.url
-        urlBar.setOnClickListener {
-            browse(urlTextView.text.toString())
-        }
+        // 进度，读取顺序， savedInstanceState > intent > DataManager
+        // intent传入的index，activity死了再开，应该会恢复这个intent, 不能让intent覆盖了死前的阅读进度，
+        // 用getSerializableExtra读Int不需要默认值，
+        index = savedInstanceState?.run { getString("index").toBean<Int>(App.gson) }
+                ?: (intent.getSerializableExtra("index") as? Int)
 
-        presenter = NovelTextPresenter(novelItem)
-
-        initReader()
-
-        navigation = NovelTextNavigation(this, novelItem, nav_view)
+        presenter = NovelTextPresenter(id)
 
         loading(progressDialog, R.string.novel_chapters)
         presenter.attach(this)
         presenter.start()
     }
 
-    private fun initReader() {
-        reader = Readers.getReader(this, Novel(novelItem.name, novelItem.author), flContent, presenter.getRequester(), Settings.makeReaderConfig()).apply {
+    fun showNovel(novel: Novel) {
+        this.novel = novel
+        initReader(novel)
+        navigation = NovelTextNavigation(this, novel, nav_view)
+        try {
+            urlTextView.text = DataManager.getDetailUrl(novel)
+        } catch (e: Exception) {
+            val message = "获取小说《${novel.name}》<${novel.site}, ${novel.detail}>详情页地址失败，"
+            // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
+            Reporter.post(message, e)
+            error(message, e)
+            showError(message, e)
+        }
+        urlBar.setOnClickListener {
+            // urlTextView只显示完整地址，以便点击打开，
+            browse(urlTextView.text.toString())
+        }
+        presenter.requestChapters(novel)
+    }
+
+    fun showChapters(chapters: List<NovelChapter>) {
+        this.chaptersAsc = chapters
+        reader.chapterList = chapters.map {
+            Chapter(it.name)
+        }
+    }
+
+    private val contentRequester: TextRequester = object : TextRequester {
+        override fun request(index: Int, refresh: Boolean): Text {
+            return presenter.requestContent(novel, chaptersAsc[index], refresh)
+        }
+    }
+
+    private fun initReader(novel: Novel) {
+        reader = Readers.getReader(this, ReaderNovelItem(novel.name, novel.author),
+                flContent, presenter.getRequester(), Settings.makeReaderConfig()).apply {
             menuListener = object : MenuListener {
                 override fun hide() {
                     this@NovelTextActivity.hide()
@@ -137,7 +193,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     override fun show() {
         super.show()
-        navigation.reset(reader.maxTextProgress, reader.textProgress)
+        navigation?.reset(reader.maxTextProgress, reader.textProgress)
     }
 
     fun previousChapter() {
@@ -159,7 +215,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private fun resetReader() {
         reader.onDestroy()
         flContent.removeAllViews() // 多余，上面已经移除，
-        initReader()
+        initReader(novel)
         showChaptersAsc(chaptersAsc)
     }
 
@@ -338,7 +394,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     fun showDetail(detail: NovelDetail) {
         this.novelDetail = detail
         History.add(detail.novel)
-        presenter.requestChapters(detail.requester)
     }
 
     fun showChaptersAsc(chaptersAsc: List<NovelChapter>) {

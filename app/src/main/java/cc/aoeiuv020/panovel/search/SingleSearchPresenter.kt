@@ -15,19 +15,15 @@ class SingleSearchPresenter(
         private val site: String
 ) : Presenter<SingleSearchActivity>(), AnkoLogger {
     fun start() {
-        debug {
-            "start,"
-        }
+        debug { "start," }
     }
 
     fun pushCookies() {
-        debug {
-            "pushCookies,"
-        }
+        debug { "pushCookies," }
         val context = DataManager.getNovelContextByName(site)
         DataManager.pushCookiesToWebView(context)
         view?.doAsync {
-            DataManager.syncCookies()
+            DataManager.syncCookies(view)
             uiThread {
                 if (view?.getCurrentUrl() == null) {
                     debug {
@@ -41,17 +37,13 @@ class SingleSearchPresenter(
     }
 
     fun pullCookies() {
-        debug {
-            "pullCookies,"
-        }
+        debug { "pullCookies," }
         val context = DataManager.getNovelContextByName(site)
         DataManager.pullCookiesFromWebView(context)
     }
 
     fun open(currentUrl: String) {
-        debug {
-            "open <$currentUrl>,"
-        }
+        debug { "open <$currentUrl>," }
         view?.doAsync({ e ->
             val message = "打开地址<$currentUrl>失败，"
             if (e !is IllegalArgumentException) {
@@ -77,7 +69,7 @@ class SingleSearchPresenter(
         debug { "removeCookies," }
         DataManager.removeWebViewCookies()
         view?.doAsync {
-            DataManager.syncCookies()
+            DataManager.syncCookies(view)
             DataManager.removeNovelContextCookies(site)
             uiThread {
                 view?.showRemoveCookiesDone()

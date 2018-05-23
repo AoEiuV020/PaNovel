@@ -66,24 +66,35 @@ class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity
     }
 
     fun browse() {
-        novel?.let {
-            doAsync({ e ->
+        novel?.also {
+            try {
+                val url = DataManager.getDetailUrl(it)
+                view?.browse(url)
+            } catch (e: Exception) {
                 val message = "获取小说《${it.name}》<${it.site}, ${it.detail}>详情页地址失败，"
                 // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
                 Reporter.post(message, e)
                 error(message, e)
-                view?.runOnUiThread {
-                    view?.showError(message, e)
-                }
-            }) {
-                val url = DataManager.getDetailUrl(it)
-                uiThread {
-                    view?.browse(url)
-                }
+                view?.showError(message, e)
             }
         } ?: run {
             val message = "还没获取到小说详情，"
             view?.showError(message)
+        }
+    }
+
+    fun updateBookshelf(novel: Novel) {
+        doAsync({ e ->
+            val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.name}》失败，"
+            // 这应该是数据库操作出问题，正常情况不会出现才对，
+            // 未知异常统一上报，
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.updateBookshelf(novel)
         }
     }
 }

@@ -3,20 +3,19 @@ package cc.aoeiuv020.panovel.text
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.Cache
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.id
+import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.suffixThreadName
 import cc.aoeiuv020.reader.Text
 import cc.aoeiuv020.reader.TextRequester
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.error
+import org.jetbrains.anko.*
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -24,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * Created by AoEiuV020 on 2017.10.03-19:06:50.
  */
-class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelTextActivity>(), TextRequester, AnkoLogger {
+class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(), AnkoLogger {
     private val context: NovelContext by lazy {
         NovelContext.getNovelContextByUrl(novelItem.requester.url)
     }
@@ -38,6 +37,21 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
     fun refreshChapterList() {
         refresh = true
         requestNovelDetail()
+    }
+
+    private fun requestNovelDetail() {
+        doAsync({ e ->
+            val message = "获取小说详情失败，"
+            if (e !is IOException) {
+                Reporter.post(message, e)
+            }
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            val novel = DataManager.getNovelDetail(id)
+            view?.showNovel(novel)
+        }
     }
 
     fun download(fromIndex: Int) {
@@ -66,12 +80,13 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
                     while (index < size && !em.isDisposed) {
                         debug { "${Thread.currentThread().name} downloading $index" }
                         val chapter = chapters[index]
-                        Cache.text.get(novelItem, chapter.id)?.also { em.onNext(listOf(exists.incrementAndGet(), downloads.get(), errors.get(), left.decrementAndGet())) } ?: try {
-                            context.getNovelContent(chapter.requester)
-                        } catch (_: Exception) {
-                            em.onNext(listOf(exists.get(), downloads.get(), errors.incrementAndGet(), left.decrementAndGet()))
-                            null
-                        }?.also { Cache.text.put(novelItem, it, chapter.id); em.onNext(listOf(exists.get(), downloads.incrementAndGet(), errors.get(), left.decrementAndGet())) }
+                        Cache.text.get(novelItem, chapter.id)?.also { em.onNext(listOf(exists.incrementAndGet(), downloads.get(), errors.get(), left.decrementAndGet())) }
+                                ?: try {
+                                    context.getNovelContent(chapter.requester)
+                                } catch (_: Exception) {
+                                    em.onNext(listOf(exists.get(), downloads.get(), errors.incrementAndGet(), left.decrementAndGet()))
+                                    null
+                                }?.also { Cache.text.put(novelItem, it, chapter.id); em.onNext(listOf(exists.get(), downloads.incrementAndGet(), errors.get(), left.decrementAndGet())) }
                         index = nextIndex.getAndIncrement()
                     }
                 }.subscribeOn(Schedulers.io()).subscribe()
@@ -92,63 +107,40 @@ class NovelTextPresenter(private val novelItem: NovelItem) : Presenter<NovelText
         }).let { addDisposable(it, 2) }
     }
 
-    private fun requestNovelDetail() {
-        val requester = novelItem.requester
-        Observable.fromCallable {
-            suffixThreadName("requestNovelDetailFromText")
-            Cache.detail.get(novelItem)
-                    ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
-        }.async().subscribe({ detail ->
-            view?.showDetail(detail)
-        }, { e ->
-            val message = "加载小说章节详情失败，"
-            error(message, e)
-            view?.showError(message, e)
-        }).let { addDisposable(it, 0) }
-    }
-
-    fun requestChapters(requester: Requester) {
-        Observable.fromCallable {
-            // 还有其他地方有requestChapters，所以多加个后缀，
-            suffixThreadName("requestChaptersText")
-            if (refresh) {
-                context.getNovelChaptersAsc(requester).also { Cache.chapters.put(novelItem, it) }
-            } else {
-                try {
-                    Cache.chapters.get(novelItem)
-                            ?: context.getNovelChaptersAsc(requester).also { Cache.chapters.put(novelItem, it) }
-                } catch (e: IOException) {
-                    error { "网络有问题，读取缓存不判断超时，" }
-                    Cache.chapters.get(novelItem, refreshTime = 0) ?: throw e
-                }
-            }
-        }.async().subscribe({ chapters ->
-            chapterList = chapters
-            view?.showChaptersAsc(chapters)
-        }, { e ->
+    fun requestChapters(novel: Novel) {
+        doAsync({ e ->
             val message = "加载小说章节列表失败，"
+            Reporter.post(message, e)
             error(message, e)
             view?.showError(message, e)
-        }).let { addDisposable(it, 1) }
+        }) {
+            val list = DataManager.requestChapters(novel)
+            uiThread {
+                view?.showChaptersAsc(list)
+            }
+        }
     }
 
-    fun getRequester(): TextRequester
-            = this
+    fun getRequester(): TextRequester = this
 
-    override fun request(index: Int, refresh: Boolean): Text {
-        val chapter = chapterList[index]
-        return if (refresh) {
-            debug { "$this refresh $chapter" }
-            context.getNovelContent(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
-        } else {
-            debug { "$this load $chapter" }
-            Cache.text.get(novelItem, chapter.id)
-                    ?: context.getNovelContent(chapter.requester).also { Cache.text.put(novelItem, it, chapter.id) }
-        }.let { Text(it.textList) }
+    fun updateBookshelf(novel: Novel) {
+        doAsync({ e ->
+            val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.name}》失败，"
+            // 这应该是数据库操作出问题，正常情况不会出现才对，
+            // 未知异常统一上报，
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.updateBookshelf(novel)
+        }
     }
 
-    override fun lazyRequest(index: Int, refresh: Boolean): Single<Text> {
-        debug { "$this lazyRequest $index, refresh = $refresh" }
-        return super.lazyRequest(index, refresh).async()
+    fun requestContent(novel: Novel, chapter: NovelChapter, refresh: Boolean): Text {
+        // TODO: 没必要这个Text,
+        return Text(DataManager.requestContent(novel, chapter, refresh))
     }
+
 }

@@ -5,8 +5,7 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.local.Bookshelf
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.Margins
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.text.NovelTextNavigation.Direction.*
@@ -30,7 +29,7 @@ import org.jetbrains.anko.debug
  *
  * Created by AoEiuV020 on 2017.11.20-21:59:26.
  */
-class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem, navigation: View) : AnkoLogger {
+class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigation: View) : AnkoLogger {
     private val mPanelDefault = navigation.panelDefault
     private val mPanelSettings = navigation.panelSettings
     private val mPanelTypesetting = navigation.panelTypesetting
@@ -53,14 +52,11 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             view.fullScreen()
         }
         mPanelDefault.ivStar.apply {
-            isChecked = Bookshelf.contains(novelItem)
+            isChecked = novel.bookshelf
             setOnClickListener {
                 toggle()
-                if (isChecked) {
-                    Bookshelf.add(novelItem)
-                } else {
-                    Bookshelf.remove(novelItem)
-                }
+                novel.bookshelf = isChecked
+                view.presenter.updateBookshelf(novel)
             }
         }
         mPanelDefault.ivDetail.setOnClickListener {

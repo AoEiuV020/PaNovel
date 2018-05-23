@@ -96,4 +96,8 @@ class ApiManager(ctx: Context) {
     fun removeCookies(context: NovelContext) {
         context.removeCookies()
     }
+
+    fun getNovelContent(novel: Novel, chapter: NovelChapter): List<String> {
+        return context(novel).getNovelContent(chapter.extra)
+    }
 }

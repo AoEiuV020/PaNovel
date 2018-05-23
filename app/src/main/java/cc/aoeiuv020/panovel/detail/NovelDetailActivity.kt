@@ -11,7 +11,6 @@ import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
@@ -24,7 +23,9 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
+import org.jetbrains.anko.startActivity
 
 /**
  *
@@ -144,18 +145,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         fabStar.setOnClickListener {
             fabStar.toggle()
             novel.bookshelf = fabStar.isChecked
-            doAsync({ e ->
-                val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.name}》失败，"
-                // 这应该是数据库操作出问题，正常情况不会出现才对，
-                // 未知异常统一上报，
-                Reporter.post(message, e)
-                error(message, e)
-                runOnUiThread {
-                    showError(message, e)
-                }
-            }) {
-                DataManager.updateBookshelf(novel)
-            }
+            presenter.updateBookshelf(novel)
         }
     }
 

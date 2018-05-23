@@ -1,8 +1,10 @@
 package cc.aoeiuv020.panovel.data
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
+import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.report.Reporter
@@ -20,7 +22,9 @@ import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 object DataManager : AnkoLogger {
     lateinit var app: AppDatabaseManager
     lateinit var api: ApiManager
+    @SuppressLint("StaticFieldLeak")
     lateinit var cookie: CookieManager
+    lateinit var cache: CacheManager
     @Synchronized
     fun init(ctx: Context) {
         if (!::app.isInitialized) {
@@ -32,6 +36,9 @@ object DataManager : AnkoLogger {
         if (!::cookie.isInitialized) {
             cookie = CookieManager(ctx)
         }
+        if (!::cache.isInitialized) {
+            cache = CacheManager(ctx)
+        }
     }
 
     fun listBookshelf(): List<Novel> {
@@ -41,7 +48,7 @@ object DataManager : AnkoLogger {
     fun updateBookshelf(novel: Novel) =
             app.updateBookshelf(novel.nId, novel.bookshelf)
 
-    fun refreshChapters(novel: Novel) {
+    fun refreshChapters(novel: Novel): List<NovelChapter> {
         // 确保存在详情页信息，
         requireNovelDetail(novel)
         val list = api.requestNovelChapters(novel)
@@ -51,7 +58,17 @@ object DataManager : AnkoLogger {
                 novel.readAtChapterName, novel.lastChapterName,
                 novel.updateTime, novel.checkUpdateTime, novel.receiveUpdateTime
         )
-        TODO("cache.save(list)")
+        cache.saveChapters(novel, list)
+        return list
+    }
+
+    // TODO: NovelChapter也不要暴露，
+    fun requestChapters(novel: Novel): List<NovelChapter> {
+        // 先读取缓存，
+        cache.loadChapters(novel)?.also {
+            return it
+        }
+        return refreshChapters(novel)
     }
 
     private fun requireNovelDetail(novel: Novel) {
@@ -62,6 +79,10 @@ object DataManager : AnkoLogger {
         api.updateNovelDetail(novel)
         // 写入数据库，
         app.updateNovelDetail(novel.nId, novel.image, novel.introduction, novel.updateTime)
+    }
+
+    fun getNovel(id: Long): Novel {
+        return app.query(id)
     }
 
     fun getNovelDetail(id: Long): Novel {
@@ -147,7 +168,7 @@ object DataManager : AnkoLogger {
     }
 
     @WorkerThread
-    fun syncCookies() = cookie.sync()
+    fun syncCookies(ctx: Context?) = cookie.sync(ctx)
 
     /**
      * TODO: 这里有NovelContext拿到cookies后的文件操作，
@@ -194,5 +215,18 @@ object DataManager : AnkoLogger {
 
     fun removeNovelContextCookies(site: String) {
         api.removeCookies(getNovelContextByName(site))
+    }
+
+    fun requestContent(novel: Novel, chapter: NovelChapter, refresh: Boolean): List<String> {
+        // 指定刷新的话就不读缓存，
+        if (!refresh) {
+            cache.loadContent(novel, chapter)?.also {
+                return it
+            }
+        }
+        return api.getNovelContent(novel, chapter).also {
+            // 缓存起来，
+            cache.saveContent(novel, chapter, it)
+        }
     }
 }
