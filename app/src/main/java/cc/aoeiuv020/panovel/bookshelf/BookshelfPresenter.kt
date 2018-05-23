@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.bookshelf
 
-import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
+import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.suffixThreadName
@@ -11,7 +11,7 @@ import org.jetbrains.anko.error
  *
  * Created by AoEiuV020 on 2017.10.14-21:54.
  */
-class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment>() {
+class BookshelfPresenter : Presenter<BookshelfFragment>() {
 
     fun start() {
         requestBookshelf()
@@ -30,7 +30,7 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment>() {
         }).let { addDisposable(it) }
     }
 
-    override fun refresh() {
+    fun refresh() {
         requestBookshelf()
     }
 }

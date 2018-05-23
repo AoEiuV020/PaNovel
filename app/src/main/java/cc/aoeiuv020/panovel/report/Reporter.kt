@@ -24,6 +24,10 @@ object Reporter {
         CrashReport.setUserId(androidId)
     }
 
+    fun post(message: String, t: Throwable) {
+        postException(IllegalStateException(message, t))
+    }
+
     fun postException(t: Throwable) {
         CrashReport.postCatchedException(t)
     }
