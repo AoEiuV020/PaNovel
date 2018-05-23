@@ -180,7 +180,7 @@ abstract class NovelContext {
      *
      * @param extra [NovelChapter.extra]
      */
-    abstract fun getNovelText(extra: String): NovelText
+    abstract fun getNovelText(extra: String): List<String>
 
     /**
      * 判断这个地址是不是属于这个网站，

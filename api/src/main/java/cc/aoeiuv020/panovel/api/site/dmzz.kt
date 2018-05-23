@@ -1,7 +1,10 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.NovelChapter
+import cc.aoeiuv020.panovel.api.NovelDetail
+import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.api.base.JsoupNovelContext
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -97,7 +100,7 @@ class Dmzz : JsoupNovelContext() {
         }
     }
 
-    override fun getNovelText(root: Document): NovelText {
+    override fun getNovelText(root: Document): List<String> {
         val textList = root.requireElement(query = "head > script:nth-child(10)", name = TAG_CONTENT) {
             val (json) = it.html().pick("var g_chapter_pages_url = (\\[.*\\]);")
             val urlList: List<String> = Gson().fromJson(json, object : TypeToken<List<String>>() {}.type)
@@ -118,6 +121,6 @@ class Dmzz : JsoupNovelContext() {
                 acc + list
             }
         }
-        return NovelText(textList)
+        return textList
     }
 }

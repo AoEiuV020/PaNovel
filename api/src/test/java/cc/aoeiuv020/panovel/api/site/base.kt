@@ -1,6 +1,9 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.panovel.api.NovelChapter
+import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.NovelDetail
+import cc.aoeiuv020.panovel.api.NovelItem
 import org.junit.Assert.*
 import org.junit.Before
 import java.text.SimpleDateFormat
@@ -17,6 +20,7 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
 
     @Suppress("MemberVisibilityCanBePrivate")
     protected lateinit var context: NovelContext
+
     @Before
     fun setUp() {
         context = clazz.java.newInstance()
@@ -93,17 +97,19 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
     protected fun content(extra: String,
                           firstLine: String,
                           lastLine: String,
-                          size: Int, count: Int = 3): NovelText {
-        val novelText = context.getNovelText(extra)
-        val list = novelText.textList
+                          size: Int, count: Int = 3): List<String> {
+        val list = context.getNovelText(extra)
         println(list.size)
         list.take(count).forEach {
+            println(it)
+        }
+        list.takeLast(maxOf(0, minOf(count, list.size - count))).forEach {
             println(it)
         }
         assertEquals(firstLine, list.first())
         assertEquals(lastLine, list.last())
         assertEquals(size, list.size)
-        return novelText
+        return list
     }
 
 }

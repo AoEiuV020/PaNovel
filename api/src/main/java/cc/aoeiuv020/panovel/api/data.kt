@@ -82,11 +82,3 @@ data class NovelChapter(
         var update: Date? = null
 ) : Data()
 
-/**
- * 小说正文，由一个个段落构成，
- * TODO: 考虑放弃这个数据类，就算要支持图片，也可以保存String, 然后用正则匹配判断特殊格式，比如模仿Markdown格式支持图片，
- */
-data class NovelText(
-        val textList: List<String>
-) : Data()
-

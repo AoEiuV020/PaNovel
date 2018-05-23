@@ -133,8 +133,8 @@ abstract class JsoupNovelContext : NovelContext() {
     override fun getNovelChaptersAsc(extra: String): List<NovelChapter> = getNovelChaptersAsc(parse(getNovelChapterUrl(extra)))
     protected open fun getNovelChaptersAsc(root: Document): List<NovelChapter> = throw NotImplementedError()
 
-    override fun getNovelText(extra: String): NovelText = getNovelText(parse(getNovelContentUrl(extra)))
-    protected open fun getNovelText(root: Document): NovelText = throw NotImplementedError()
+    override fun getNovelText(extra: String): List<String> = getNovelText(parse(getNovelContentUrl(extra)))
+    protected open fun getNovelText(root: Document): List<String> = throw NotImplementedError()
 
     /**
      * 封装网络请求，主要是为了统一打log,

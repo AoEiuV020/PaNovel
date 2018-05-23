@@ -4,7 +4,6 @@ import cc.aoeiuv020.base.jar.type
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.NovelText
 import java.io.File
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
@@ -32,7 +31,7 @@ class Cache<T>(private val type: Type,
         private val chaptersCacheTimeout: Long = TimeUnit.DAYS.toMillis(1)
         val chapters: Cache<List<NovelChapter>> = new("NovelChapters", chaptersCacheTimeout)
 
-        val text: Cache<NovelText> = new()
+        val text: Cache<List<String>> = new()
 
         val progress: Cache<NovelProgress> = new()
 

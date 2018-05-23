@@ -345,11 +345,11 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
     }
 
-    override fun getNovelText(extra: String): NovelText =
+    override fun getNovelText(extra: String): List<String> =
             _Content(extra).initContent(extra)
 
-    private lateinit var initContent: _Content.(String) -> NovelText
-    protected fun content(init: _Content.(String) -> NovelText) {
+    private lateinit var initContent: _Content.(String) -> List<String>
+    protected fun content(init: _Content.(String) -> List<String>) {
         initContent = init
     }
 
@@ -358,9 +358,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 document: Document = parse(connection
                         ?: connect(getNovelContentUrl(extra)), charset),
                 init: _NovelContentParser.() -> Unit
-        ): NovelText = _NovelContentParser(document).also(init).parse().let {
-            NovelText(it)
-        }
+        ): List<String> = _NovelContentParser(document).also(init).parse()
     }
 
     protected inner class _NovelContentParser(root: Element)
