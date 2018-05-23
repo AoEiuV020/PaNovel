@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.base.item.BaseItemListView
-import cc.aoeiuv020.panovel.local.NovelHistory
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.main.MainActivity
 import kotlinx.android.synthetic.main.novel_item_list.*
@@ -18,25 +18,25 @@ import kotlinx.android.synthetic.main.novel_item_list.*
  * Created by AoEiuV020 on 2017.10.15-17:22:28.
  */
 class BookshelfFragment : Fragment(), BaseItemListView {
-    private lateinit var mAdapter: BookshelfItemListAdapter
+    private val mAdapter = BookshelfItemListAdapter()
     private val presenter: BookshelfPresenter = BookshelfPresenter()
     /**
      * 标记是否要强制刷新，
      * create后需要强制刷新，其他情况回来的不需要，
      * 强制刷新前会先验证Settings里的设置，
+     * 其实就是标记是否是刚启动状态，
      */
     private var shouldForceRefresh = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.novel_item_list, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        recyclerView.setLayoutManager(LinearLayoutManager(context))
-        mAdapter = BookshelfItemListAdapter(context!!, presenter)
-        recyclerView.setAdapter(mAdapter)
-        recyclerView.setRefreshAction {
+        rvNovel.layoutManager = LinearLayoutManager(context)
+        rvNovel.adapter = mAdapter
+        srlRefresh.setOnRefreshListener {
             forceRefresh()
         }
 
@@ -62,7 +62,7 @@ class BookshelfFragment : Fragment(), BaseItemListView {
     }
 
     fun refresh() {
-        recyclerView.showSwipeRefresh()
+        srlRefresh.isRefreshing = true
         presenter.refresh()
     }
 
@@ -73,10 +73,9 @@ class BookshelfFragment : Fragment(), BaseItemListView {
         presenter.forceRefresh()
     }
 
-    fun showNovelList(list: List<NovelHistory>) {
+    fun showNovelList(list: List<Novel>) {
         mAdapter.data = list
-        recyclerView.dismissSwipeRefresh()
-        recyclerView.showNoMore()
+        srlRefresh.isRefreshing = false
     }
 
     override fun showError(message: String, e: Throwable) {

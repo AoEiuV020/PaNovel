@@ -79,12 +79,12 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
             override fun onQueryTextChange(newText: String?): Boolean = false
         })
 
-        recyclerView.setLayoutManager(LinearLayoutManager(this))
+        rvNovel.setLayoutManager(LinearLayoutManager(this))
         presenter = FuzzySearchPresenter()
         presenter.attach(this)
         mAdapter = DefaultItemListAdapter(this, presenter)
-        recyclerView.setAdapter(mAdapter)
-        recyclerView.setRefreshAction {
+        rvNovel.setAdapter(mAdapter)
+        rvNovel.setRefreshAction {
             forceRefresh()
         }
 
@@ -163,29 +163,29 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         mAdapter.clear()
         mAdapter.openLoadMore()
         presenter.forceRefresh()
-        recyclerView.dismissSwipeRefresh()
+        rvNovel.dismissSwipeRefresh()
     }
 
     fun addNovel(item: NovelItem) {
         // 插入有时会导致下滑，原因不明，保存状态解决，
-        val state = recyclerView.recyclerView.layoutManager.onSaveInstanceState()
+        val state = rvNovel.recyclerView.layoutManager.onSaveInstanceState()
         mAdapter.add(NovelHistory(item))
-        recyclerView.recyclerView.layoutManager.onRestoreInstanceState(state)
+        rvNovel.recyclerView.layoutManager.onRestoreInstanceState(state)
     }
 
     fun showOnComplete() {
-        recyclerView.dismissSwipeRefresh()
-        recyclerView.showNoMore()
+        rvNovel.dismissSwipeRefresh()
+        rvNovel.showNoMore()
     }
 
     private val snack: Snackbar by lazy {
-        Snackbar.make(recyclerView, "", Snackbar.LENGTH_SHORT)
+        Snackbar.make(rvNovel, "", Snackbar.LENGTH_SHORT)
     }
 
     override fun showError(message: String, e: Throwable) {
         snack.setText(message + e.message)
         snack.show()
-        recyclerView.dismissSwipeRefresh()
+        rvNovel.dismissSwipeRefresh()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

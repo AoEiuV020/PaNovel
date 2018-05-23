@@ -8,10 +8,9 @@ import android.widget.TextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
-import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Bookshelf
-import cc.aoeiuv020.panovel.local.NovelHistory
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.text.CheckableImageView
@@ -35,7 +34,7 @@ import java.util.*
 abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val itemListPresenter: BaseItemListPresenter<*, T>,
                                                                   protected val ctx: Context, parent: ViewGroup?, layoutId: Int,
                                                                   listener: OnItemLongClickListener? = null)
-    : BaseViewHolder<NovelHistory>(parent, layoutId), SmallItemView, AnkoLogger {
+    : BaseViewHolder<Novel>(parent, layoutId), SmallItemView, AnkoLogger {
     @Suppress("UNCHECKED_CAST")
     protected val presenter: T = itemListPresenter.subPresenter()
     private val image = itemView.imageView
@@ -51,9 +50,7 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
      * 书架页没有这个star按钮，
      */
     private val star: CheckableImageView? = itemView.ivStar
-    protected lateinit var novelHistory: NovelHistory
-    protected val novelItem: NovelItem
-        get() = novelHistory.novel
+    protected lateinit var novel: Novel
 
     init {
         name.setOnClickListener {
@@ -98,7 +95,7 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
     override fun hideProgressBar() {
     }
 
-    override fun setData(data: NovelHistory) {
+    override fun setData(data: Novel) {
         this.novelHistory = data
         debug {
             "${this.hashCode()} $layoutPosition setData $data"
@@ -149,9 +146,9 @@ abstract class SmallItemViewHolder<out T : SmallItemPresenter<*>>(protected val 
     }
 }
 
-open class DefaultItemViewHolder<out T : BigItemPresenter<*>>(itemListPresenter: BaseItemListPresenter<*, T>,
-                                                              ctx: Context, parent: ViewGroup?, layoutId: Int,
-                                                              listener: OnItemLongClickListener? = null)
+open class DefaultItemViewHolder<>(itemListPresenter: BaseItemListPresenter<*, T>,
+                                   ctx: Context, parent: ViewGroup?, layoutId: Int,
+                                   listener: OnItemLongClickListener? = null)
     : SmallItemViewHolder<T>(itemListPresenter, ctx, parent, layoutId, listener), BigItemView {
     companion object {
         @SuppressLint("SimpleDateFormat")
@@ -164,7 +161,7 @@ open class DefaultItemViewHolder<out T : BigItemPresenter<*>>(itemListPresenter:
     private val update: TextView? = itemView.tvUpdate
     private val readAt: TextView? = itemView.tvReadAt
 
-    override fun setData(data: NovelHistory) {
+    override fun setData(data: Novel) {
         super.setData(data)
 
         // 清空残留数据，避免闪烁，

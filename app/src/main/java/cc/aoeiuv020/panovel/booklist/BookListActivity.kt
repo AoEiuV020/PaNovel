@@ -61,11 +61,11 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
         title = bookListName
 
-        recyclerView.setLayoutManager(LinearLayoutManager(this))
+        rvNovel.setLayoutManager(LinearLayoutManager(this))
         presenter = BookListActivityPresenter(bookListName)
         mAdapter = DefaultItemListAdapter(this, presenter, this)
-        recyclerView.setAdapter(mAdapter)
-        recyclerView.setRefreshAction {
+        rvNovel.setAdapter(mAdapter)
+        rvNovel.setRefreshAction {
             forceRefresh()
         }
 
@@ -103,7 +103,7 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
     }
 
     private fun refresh() {
-        recyclerView.showSwipeRefresh()
+        rvNovel.showSwipeRefresh()
         presenter.refresh()
     }
 
@@ -116,8 +116,8 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
     fun showNovelList(list: List<NovelHistory>) {
         mAdapter.data = ArrayList(list)
-        recyclerView.dismissSwipeRefresh()
-        recyclerView.showNoMore()
+        rvNovel.dismissSwipeRefresh()
+        rvNovel.showNoMore()
     }
 
     fun showSaveComplete(size: Int) {
@@ -176,13 +176,13 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
 
     private val snack: Snackbar by lazy {
-        Snackbar.make(recyclerView, "", Snackbar.LENGTH_SHORT)
+        Snackbar.make(rvNovel, "", Snackbar.LENGTH_SHORT)
     }
 
     override fun showError(message: String, e: Throwable) {
         snack.setText(message + e.message)
         snack.show()
-        recyclerView.dismissSwipeRefresh()
+        rvNovel.dismissSwipeRefresh()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

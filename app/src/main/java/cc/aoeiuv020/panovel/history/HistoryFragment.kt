@@ -30,10 +30,10 @@ class HistoryFragment : Fragment(), BaseItemListView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView.setLayoutManager(LinearLayoutManager(context))
+        rvNovel.setLayoutManager(LinearLayoutManager(context))
         mAdapter = DefaultItemListAdapter(context!!, presenter)
-        recyclerView.setAdapter(mAdapter)
-        recyclerView.setRefreshAction {
+        rvNovel.setAdapter(mAdapter)
+        rvNovel.setRefreshAction {
             forceRefresh()
         }
 
@@ -51,7 +51,7 @@ class HistoryFragment : Fragment(), BaseItemListView {
     }
 
     private fun refresh() {
-        recyclerView.showSwipeRefresh()
+        rvNovel.showSwipeRefresh()
         presenter.refresh()
     }
 
@@ -64,8 +64,8 @@ class HistoryFragment : Fragment(), BaseItemListView {
 
     fun showNovelList(list: List<NovelHistory>) {
         mAdapter.data = list
-        recyclerView.dismissSwipeRefresh()
-        recyclerView.showNoMore()
+        rvNovel.dismissSwipeRefresh()
+        rvNovel.showNoMore()
     }
 
     override fun showError(message: String, e: Throwable) {

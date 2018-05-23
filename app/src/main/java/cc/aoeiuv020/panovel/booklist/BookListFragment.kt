@@ -36,14 +36,14 @@ class BookListFragment : Fragment(), IView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         progressDialog = ProgressDialog(context)
-        recyclerView.setLayoutManager(LinearLayoutManager(context))
+        rvNovel.setLayoutManager(LinearLayoutManager(context))
         mAdapter = BookListFragmentAdapter(context!!, presenter)
-        recyclerView.setAdapter(mAdapter)
-        recyclerView.setRefreshAction {
+        rvNovel.setAdapter(mAdapter)
+        rvNovel.setRefreshAction {
             refresh()
         }
 
-        recyclerView.showSwipeRefresh()
+        rvNovel.showSwipeRefresh()
         presenter.attach(this)
     }
 
@@ -58,14 +58,14 @@ class BookListFragment : Fragment(), IView {
     }
 
     fun refresh() {
-        recyclerView.showSwipeRefresh()
+        rvNovel.showSwipeRefresh()
         presenter.refresh()
     }
 
     fun showBookListList(list: List<BookListData>) {
         mAdapter.data = list
-        recyclerView.dismissSwipeRefresh()
-        recyclerView.showNoMore()
+        rvNovel.dismissSwipeRefresh()
+        rvNovel.showNoMore()
     }
 
     fun showUploading() {

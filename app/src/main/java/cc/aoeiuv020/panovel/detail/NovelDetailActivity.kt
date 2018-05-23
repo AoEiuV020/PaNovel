@@ -74,8 +74,8 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         debug { "receive $requester" }
 
         chapterAdapter = NovelChaptersAdapter(this, novelItem)
-        recyclerView.setAdapter(chapterAdapter)
-        recyclerView.setLayoutManager(GridLayoutManager(this@NovelDetailActivity, 3))
+        rvNovel.setAdapter(chapterAdapter)
+        rvNovel.setLayoutManager(GridLayoutManager(this@NovelDetailActivity, 3))
 
         setTitle(novelItem)
 
@@ -150,7 +150,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
 
     fun showNovelChaptersDesc(chapters: ArrayList<NovelChapter>) {
         chapterAdapter.data = chapters
-        recyclerView.recyclerView.post {
+        rvNovel.recyclerView.post {
             swipeRefreshLayout.isRefreshing = false
         }
     }

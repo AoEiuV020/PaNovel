@@ -1,21 +1,17 @@
 package cc.aoeiuv020.panovel.bookshelf
 
 import cc.aoeiuv020.panovel.base.item.BaseItemListPresenter
-import cc.aoeiuv020.panovel.base.item.BigItemPresenter
-import cc.aoeiuv020.panovel.local.Bookshelf
-import cc.aoeiuv020.panovel.local.History
-import cc.aoeiuv020.panovel.local.NovelHistory
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.util.async
 import cc.aoeiuv020.panovel.util.suffixThreadName
 import io.reactivex.Observable
 import org.jetbrains.anko.error
-import java.util.*
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.14-21:54.
  */
-class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment, BookshelfItemPresenter>() {
+class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment>() {
 
     fun start() {
         requestBookshelf()
@@ -24,8 +20,7 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment, BookshelfIte
     private fun requestBookshelf() {
         Observable.fromCallable {
             suffixThreadName("requestBookshelf")
-            val history = History.list().map { Pair(it.novel, it.date) }.toMap()
-            Bookshelf.list().map { NovelHistory(it, history[it] ?: Date(0)) }.sortedByDescending { it.date }
+            DataManager.listBookshelf()
         }.async().subscribe({ list ->
             view?.showNovelList(list)
         }, { e ->
@@ -38,20 +33,5 @@ class BookshelfPresenter : BaseItemListPresenter<BookshelfFragment, BookshelfIte
     override fun refresh() {
         requestBookshelf()
     }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun subPresenter(): BookshelfItemPresenter =
-            BookshelfItemPresenter(this)
-
 }
 
-class BookshelfItemPresenter(presenter: BaseItemListPresenter<*, BookshelfItemPresenter>) : BigItemPresenter<BookshelfItemViewHolder>(presenter) {
-    private var itemRefreshTime = 0L
-    override val refreshTime: Long
-        get() = maxOf(super.refreshTime, itemRefreshTime)
-
-    fun forceRefresh(novelHistory: NovelHistory) {
-        itemRefreshTime = System.currentTimeMillis()
-        view?.setData(novelHistory)
-    }
-}

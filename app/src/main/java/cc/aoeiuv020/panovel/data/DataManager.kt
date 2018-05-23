@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 
 /**
@@ -16,5 +17,13 @@ object DataManager {
         if (!::app.isInitialized) {
             app = AppDatabaseManager(context)
         }
+    }
+
+    fun listBookshelf(): List<Novel> {
+        return app.db.novelDao().listBookshelf()
+    }
+
+    fun updateBookshelf(novel: Novel, star: Boolean) {
+        app.db.novelDao().updateBookshelf(novel.id, star)
     }
 }

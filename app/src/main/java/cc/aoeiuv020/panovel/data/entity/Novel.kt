@@ -30,7 +30,7 @@ data class Novel(
          * 普通的id,
          */
         @PrimaryKey(autoGenerate = true)
-        val id: Long? = null,
+        val id: Long,
         /**
          * 网站名，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],

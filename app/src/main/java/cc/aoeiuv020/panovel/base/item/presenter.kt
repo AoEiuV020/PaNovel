@@ -19,10 +19,10 @@ import org.jetbrains.anko.verbose
 import java.util.*
 
 /**
- *
+ * TODO: 这些Item都改名为Novel,
  * Created by AoEiuV020 on 2017.11.22-10:45:36.
  */
-abstract class BaseItemListPresenter<V : BaseItemListView, out T : SmallItemPresenter<*>> : Presenter<V>() {
+abstract class BaseItemListPresenter<V : BaseItemListView> : Presenter<V>() {
     var refreshTime = 0L
 
     abstract fun refresh()
@@ -32,7 +32,6 @@ abstract class BaseItemListPresenter<V : BaseItemListView, out T : SmallItemPres
         refresh()
     }
 
-    abstract fun subPresenter(): T
 }
 
 abstract class DefaultItemListPresenter<V : BaseItemListView>
