@@ -12,7 +12,7 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.NovelItemActionAdapter
 import cc.aoeiuv020.panovel.list.NovelListAdapter
-import cc.aoeiuv020.panovel.list.NovelListViewHolder
+import cc.aoeiuv020.panovel.list.NovelViewHolder
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
@@ -25,7 +25,7 @@ import org.jetbrains.anko.doAsync
  */
 class BookshelfFragment : Fragment(), IView {
     private inner class ItemListener : NovelItemActionAdapter() {
-        override fun onStarChanged(vh: NovelListViewHolder, star: Boolean) {
+        override fun onStarChanged(vh: NovelViewHolder, star: Boolean) {
             vh.novel.bookshelf = true
             doAsync({ e ->
                 val message = "更新书架失败，"

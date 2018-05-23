@@ -14,8 +14,8 @@ import kotlinx.android.synthetic.main.novel_item_big.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NovelListViewHolder(itemView: View,
-                          private val itemListener: NovelItemActionListener)
+class NovelViewHolder(itemView: View,
+                      private val itemListener: NovelItemActionListener)
     : RecyclerView.ViewHolder(itemView) {
     companion object {
         // 用于格式化时间，可能有展示更新时间，

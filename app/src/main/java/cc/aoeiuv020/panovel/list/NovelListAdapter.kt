@@ -11,7 +11,7 @@ class NovelListAdapter(
         @LayoutRes
         private val layout: Int,
         private val itemListener: NovelItemActionListener = NovelItemActionAdapter()
-) : RecyclerView.Adapter<NovelListViewHolder>() {
+) : RecyclerView.Adapter<NovelViewHolder>() {
     var data: List<Novel> = emptyList()
         set(value) {
             field = value
@@ -26,16 +26,16 @@ class NovelListAdapter(
         refreshTime = Date()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NovelListViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NovelViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return NovelListViewHolder(itemView, itemListener)
+        return NovelViewHolder(itemView, itemListener)
     }
 
     override fun getItemCount(): Int {
         return data.size
     }
 
-    override fun onBindViewHolder(holder: NovelListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: NovelViewHolder, position: Int) {
         val novel = data[position]
         holder.apply(novel, refreshTime)
     }

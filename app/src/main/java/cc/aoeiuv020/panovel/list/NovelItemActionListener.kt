@@ -1,13 +1,13 @@
 package cc.aoeiuv020.panovel.list
 
 interface NovelItemActionListener {
-    fun onDotClick(vh: NovelListViewHolder)
-    fun onDotLongClick(vh: NovelListViewHolder): Boolean
-    fun onNameClick(vh: NovelListViewHolder)
-    fun onNameLongClick(vh: NovelListViewHolder): Boolean
-    fun onLastChapterClick(vh: NovelListViewHolder)
-    fun onItemClick(vh: NovelListViewHolder)
-    fun onItemLongClick(vh: NovelListViewHolder): Boolean
-    fun onStarChanged(vh: NovelListViewHolder, star: Boolean)
-    fun requireRefresh(vh: NovelListViewHolder)
+    fun onDotClick(vh: NovelViewHolder)
+    fun onDotLongClick(vh: NovelViewHolder): Boolean
+    fun onNameClick(vh: NovelViewHolder)
+    fun onNameLongClick(vh: NovelViewHolder): Boolean
+    fun onLastChapterClick(vh: NovelViewHolder)
+    fun onItemClick(vh: NovelViewHolder)
+    fun onItemLongClick(vh: NovelViewHolder): Boolean
+    fun onStarChanged(vh: NovelViewHolder, star: Boolean)
+    fun requireRefresh(vh: NovelViewHolder)
 }
