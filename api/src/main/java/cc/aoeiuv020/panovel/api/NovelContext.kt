@@ -50,7 +50,7 @@ abstract class NovelContext {
     /**
      * 用网站名当数据保存目录名，网站名不能重复，
      */
-    private val fileName get() = getNovelSite().name
+    private val fileName get() = site.name
     /**
      * 缓存文件夹，可以随时被删除的，
      */
@@ -106,7 +106,7 @@ abstract class NovelContext {
      *
      */
     open fun cookieDomainList(): List<String> {
-        val host = URL(getNovelSite().baseUrl).host
+        val host = URL(site.baseUrl).host
         val domain = secondLevelDomain(host)
         return listOf(domain)
     }
@@ -117,7 +117,7 @@ abstract class NovelContext {
         return host.substring(index2)
     }
 
-    abstract fun getNovelSite(): NovelSite
+    abstract val site: NovelSite
 
     /**
      * 获取搜索页面的下一页，
@@ -165,7 +165,7 @@ abstract class NovelContext {
      * 有的网站可能用到站外地址，比如使用了百度搜索，不能单纯缓存host,
      */
     open fun check(url: String): Boolean = try {
-        secondLevelDomain(URL(getNovelSite().baseUrl).host) == secondLevelDomain(URL(url).host)
+        secondLevelDomain(URL(site.baseUrl).host) == secondLevelDomain(URL(url).host)
     } catch (_: Exception) {
         false
     }
@@ -208,7 +208,7 @@ abstract class NovelContext {
         URL(extra)
     } catch (e: MalformedURLException) {
         // 再尝试extra当成spec部分，拼接上网站baseUrl,
-        URL(URL(getNovelSite().baseUrl), extra)
+        URL(URL(site.baseUrl), extra)
     }.toExternalForm()
 
     /**

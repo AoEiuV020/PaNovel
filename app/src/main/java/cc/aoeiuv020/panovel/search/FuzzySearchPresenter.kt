@@ -1,31 +1,23 @@
 package cc.aoeiuv020.panovel.search
 
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.NovelSite
-import cc.aoeiuv020.panovel.base.item.DefaultItemListPresenter
+import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.local.Cache
-import cc.aoeiuv020.panovel.local.NovelId
-import cc.aoeiuv020.panovel.local.bookId
-import cc.aoeiuv020.panovel.util.async
-import cc.aoeiuv020.panovel.util.suffixThreadName
-import io.reactivex.Emitter
-import io.reactivex.Observable
+import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
-import org.jetbrains.anko.verbose
+import org.jetbrains.anko.uiThread
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.22-18:18:58.
  */
-class FuzzySearchPresenter : DefaultItemListPresenter<FuzzySearchActivity>() {
+class FuzzySearchPresenter : Presenter<FuzzySearchActivity>() {
     var name: String? = null
     private var author: String? = null
-    private var site: NovelSite? = null
+    private var site: String? = null
 
-    fun singleSite(site: NovelSite) {
+    fun singleSite(site: String) {
         this.site = site
     }
 
@@ -35,75 +27,31 @@ class FuzzySearchPresenter : DefaultItemListPresenter<FuzzySearchActivity>() {
         searchActual(name, author)
     }
 
-    private fun searchActual(em: Emitter<NovelItem>, context: NovelContext, name: String, author: String?, singleSite: Boolean) {
-        debug { "search ${context.getNovelSite().name}" }
-        fun next(novelItem: NovelItem) {
-            debug { "search result <${novelItem.bookId}>" }
-            em.onNext(novelItem)
-        }
-        try {
-            when {
-                singleSite -> // 单个网站的话，不过滤结果，
-                    context.getNovelList(context.searchNovelName(name).requester).forEach {
-                        verbose { it.novel }
-                        next(it.novel)
-                    }
-                author != null -> // 精确搜索，refine search,
-                    // 如果传入了作者，就可以尝试读缓存，
-                    (Cache.item.get(NovelId(context.getNovelSite().name, author, name))
-                            ?: context.getNovelList(context.searchNovelName(name).requester)
-                                    .firstOrNull { it.novel.name == name && it.novel.author == author }
-                                    ?.novel)
-                            ?.let { next(it) }
-                else -> // 模糊搜索，fuzzy search,
-                    context.getNovelList(context.searchNovelName(name).requester).filter {
-                        verbose { it.novel }
-                        name in it.novel.name
-                    }.forEach { next(it.novel) }
-            }
-        } catch (e: Exception) {
-            // 一个网站搜索失败不抛异常，
-            error { e }
-        }
-    }
-
     private fun searchActual(name: String, author: String?) {
         debug { "search <$name, $author>" }
-        Observable.create<NovelItem> { em ->
-            suffixThreadName("refineSearch")
-
-            val siteEnabledMap = DataManager.app.db.siteEnabledDao().list()
-                    .map {
-                        it.name to it.enabled
-                    }.toMap()
+        doAsync({ e ->
+            val message = "搜索<$name, $author>失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+                // 失败时不需要通知Complete，反正没做什么，
+            }
+        }) {
             site?.let {
-                NovelContext.getNovelContextBySite(it).let { context ->
-                    searchActual(em, context, name, author, true)
+                DataManager.search(it, name, author).let { list ->
+                    uiThread {
+                        view?.addResult(list)
+                    }
                 }
             } ?: run {
-                NovelContext.getNovelContexts().filter {
-                    val site = it.getNovelSite()
-                    siteEnabledMap[site.name] ?: site.enabled
-                }.forEach { context ->
-                    searchActual(em, context, name, author, false)
+                DataManager.search(name, author) { list ->
+                    uiThread {
+                        view?.addResult(list)
+                    }
                 }
             }
-            em.onComplete()
-        }.async().subscribe({ item ->
-            view?.addNovel(item)
-        }, { e ->
-            val message = "搜索小说失败，"
-            error(message, e)
-            view?.showError(message, e)
             view?.showOnComplete()
-        }, {
-            view?.showOnComplete()
-        }).let { addDisposable(it) }
-    }
-
-    override fun refresh() {
-        name?.let { nameNonnull ->
-            searchActual(nameNonnull, author)
-        } ?: view?.showOnComplete()
+        }
     }
 }

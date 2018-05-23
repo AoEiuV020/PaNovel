@@ -23,6 +23,7 @@ class BookshelfFragment : Fragment(), IView {
     private val itemListener = DefaultNovelItemActionListener { message, e ->
         showError(message, e)
     }
+    // TODO: 要支持多种视图，
     private val mAdapter = NovelListAdapter(R.layout.novel_item_big, itemListener)
     private val presenter: BookshelfPresenter = BookshelfPresenter()
     /**

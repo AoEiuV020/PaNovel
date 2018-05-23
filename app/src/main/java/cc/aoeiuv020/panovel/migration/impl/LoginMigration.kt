@@ -61,11 +61,11 @@ class LoginMigration : Migration(), AnkoLogger {
                 "幼狮书盟" to "i",
                 "齐鲁文学" to "e"
         )
-        DataManager.api.contexts.forEach { novelContext ->
+        DataManager.allNovelContexts().forEach { novelContext ->
             // 新网站不在map里就跳过，
-            val fileName = nameMap[novelContext.getNovelSite().name].also {
+            val fileName = nameMap[novelContext.site.name].also {
                 debug {
-                    "判断<${novelContext.getNovelSite().name}, $it>"
+                    "判断<${novelContext.site.name}, $it>"
                 }
             } ?: return@forEach
             if (!fileList.contains(fileName)) {
@@ -81,13 +81,13 @@ class LoginMigration : Migration(), AnkoLogger {
                 }
                 val cookies: Map<String, String> = oldCookiesFile.readText().toBean(gson)
                 debug {
-                    "${novelContext.getNovelSite().name}: $cookies"
+                    "${novelContext.site.name}: $cookies"
                 }
                 // 导入旧版本cookies，
                 novelContext.putCookies(cookies)
             } catch (e: Exception) {
                 // 单个网站处理失败正常继续，不抛异常，只上报异常，可能是这个网站数据被其他原因破坏了，
-                val message = "网站<${novelContext.getNovelSite().name}>登录状态迁移失败，"
+                val message = "网站<${novelContext.site.name}>登录状态迁移失败，"
                 Reporter.post(message, e)
                 error(message, e)
             }

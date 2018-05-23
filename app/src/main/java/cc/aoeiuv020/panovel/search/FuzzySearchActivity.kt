@@ -8,12 +8,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
+import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.NovelSite
-import cc.aoeiuv020.panovel.base.item.BaseItemListView
-import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
-import cc.aoeiuv020.panovel.local.NovelHistory
+import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
+import cc.aoeiuv020.panovel.list.NovelMutableListAdapter
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
@@ -27,25 +27,25 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 
 
-class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
+class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
     companion object {
-        fun start(context: Context) {
-            context.startActivity<FuzzySearchActivity>()
+        fun start(ctx: Context) {
+            ctx.startActivity<FuzzySearchActivity>()
         }
 
-        fun start(context: Context, novelItem: NovelItem) {
+        fun start(ctx: Context, novel: Novel) {
             // 精确搜索，refine search,
-            start(context, novelItem.name, novelItem.author)
+            start(ctx, novel.name, novel.author)
         }
 
-        fun start(context: Context, name: String) {
+        fun start(ctx: Context, name: String) {
             // 模糊搜索，fuzzy search,
-            context.startActivity<FuzzySearchActivity>("name" to name)
+            ctx.startActivity<FuzzySearchActivity>("name" to name)
         }
 
-        fun start(context: Context, name: String, author: String) {
+        fun start(ctx: Context, name: String, author: String) {
             // 精确搜索，refine search,
-            context.startActivity<FuzzySearchActivity>("name" to name, "author" to author)
+            ctx.startActivity<FuzzySearchActivity>("name" to name, "author" to author)
         }
 
         fun start(ctx: Context, site: NovelSite) {
@@ -58,10 +58,14 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     }
 
     private lateinit var presenter: FuzzySearchPresenter
-    private lateinit var mAdapter: DefaultItemListAdapter
+    private val itemListener = DefaultNovelItemActionListener { message, e ->
+        showError(message, e)
+    }
+    private val mAdapter = NovelMutableListAdapter(R.layout.novel_item_big, itemListener)
+
     private var name: String? = null
     private var author: String? = null
-    private var site: NovelSite? = null
+    private var site: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,14 +83,10 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
             override fun onQueryTextChange(newText: String?): Boolean = false
         })
 
-        rvNovel.setLayoutManager(LinearLayoutManager(this))
+        rvNovel.layoutManager = LinearLayoutManager(this)
         presenter = FuzzySearchPresenter()
         presenter.attach(this)
-        mAdapter = DefaultItemListAdapter(this, presenter)
-        rvNovel.setAdapter(mAdapter)
-        rvNovel.setRefreshAction {
-            forceRefresh()
-        }
+        rvNovel.adapter = mAdapter
 
         name = getStringExtra("name", savedInstanceState)
         author = getStringExtra("author", savedInstanceState)
@@ -95,7 +95,12 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         site?.let {
             presenter.singleSite(it)
         }
+        srlRefresh.setOnRefreshListener {
+            // 任何时候刷新都没影响，所以一开始就初始化好，
+            forceRefresh()
+        }
 
+        // 如果传入了名字，就直接开始搜索，
         name?.let { nameNonnull ->
             search(nameNonnull, author)
         } ?: searchView.post { showSearch() }
@@ -127,11 +132,6 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
         super.onPause()
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        refresh()
-    }
-
     override fun onResume() {
         super.onResume()
         ad_view.resume()
@@ -144,11 +144,11 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
     }
 
     private fun search(name: String, author: String? = null) {
+        srlRefresh.isRefreshing = true
         title = name
         this.name = name
         this.author = author
         mAdapter.clear()
-        mAdapter.openLoadMore()
         presenter.search(name, author)
     }
 
@@ -158,34 +158,33 @@ class FuzzySearchActivity : AppCompatActivity(), BaseItemListView, AnkoLogger {
 
     /**
      * 刷新列表，同时刷新小说章节信息，
+     * 为了方便从书架过来，找一本小说的所有源的最新章节，
      */
     private fun forceRefresh() {
         mAdapter.clear()
-        mAdapter.openLoadMore()
-        presenter.forceRefresh()
-        rvNovel.dismissSwipeRefresh()
+        mAdapter.refresh()
+        refresh()
     }
 
-    fun addNovel(item: NovelItem) {
+    fun addResult(list: List<Novel>) {
         // 插入有时会导致下滑，原因不明，保存状态解决，
-        val state = rvNovel.recyclerView.layoutManager.onSaveInstanceState()
-        mAdapter.add(NovelHistory(item))
-        rvNovel.recyclerView.layoutManager.onRestoreInstanceState(state)
+        val state = rvNovel.layoutManager.onSaveInstanceState()
+        mAdapter.addAll(list)
+        rvNovel.layoutManager.onRestoreInstanceState(state)
     }
 
     fun showOnComplete() {
-        rvNovel.dismissSwipeRefresh()
-        rvNovel.showNoMore()
+        srlRefresh.isRefreshing = false
     }
 
     private val snack: Snackbar by lazy {
         Snackbar.make(rvNovel, "", Snackbar.LENGTH_SHORT)
     }
 
-    override fun showError(message: String, e: Throwable) {
+    fun showError(message: String, e: Throwable) {
+        srlRefresh.isRefreshing = false
         snack.setText(message + e.message)
         snack.show()
-        rvNovel.dismissSwipeRefresh()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

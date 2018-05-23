@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
+import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 
@@ -24,19 +25,18 @@ object DataManager {
     }
 
     fun listBookshelf(): List<Novel> {
-        return app.db.novelDao().listBookshelf()
+        return app.listBookshelf()
     }
 
-    fun updateBookshelf(novel: Novel) {
-        app.db.novelDao().updateBookshelf(novel.nId, novel.bookshelf)
-    }
+    fun updateBookshelf(novel: Novel) =
+            app.updateBookshelf(novel.nId, novel.bookshelf)
 
     fun refreshChapters(novel: Novel) {
         // 确保存在详情页信息，
         requireNovelDetail(novel)
         val list = api.requestNovelChapters(novel)
         // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
-        app.db.novelDao().updateChapters(
+        app.updateChapters(
                 novel.nId, novel.chaptersCount,
                 novel.readAtChapterName, novel.lastChapterName,
                 novel.updateTime, novel.checkUpdateTime, novel.receiveUpdateTime
@@ -51,11 +51,11 @@ object DataManager {
         }
         api.updateNovelDetail(novel)
         // 写入数据库，
-        app.db.novelDao().updateNovelDetail(novel.nId, novel.image, novel.introduction, novel.updateTime)
+        app.updateNovelDetail(novel.nId, novel.image, novel.introduction, novel.updateTime)
     }
 
     fun getNovelDetail(id: Long): Novel {
-        val novel = app.db.novelDao().query(id)
+        val novel = app.query(id)
         // 确保存在详情页信息，
         requireNovelDetail(novel)
         return novel
@@ -63,5 +63,61 @@ object DataManager {
 
     fun getDetailUrl(novel: Novel): String {
         return api.getDetailUrl(novel)
+    }
+
+    fun allNovelContexts() = api.contexts
+
+    fun enabledNovelContexts(): List<NovelContext> {
+        // 先取出关于网站是否启用的设置，
+        val map = app.db.siteEnabledDao().list().map {
+            it.name to it.enabled
+        }.toMap()
+        // 从所有网站过滤，
+        return allNovelContexts().filter {
+            map[it.site.name] ?: it.site.enabled
+        }
+    }
+
+
+    /**
+     * @param author 作者名为空就不从数据库查询，
+     * @param block 回调，对每个网站搜索结果进行操作，
+     */
+    fun search(name: String, author: String?, block: (List<Novel>) -> Unit) {
+        enabledNovelContexts().forEach {
+            search(it, name, author).also(block)
+        }
+    }
+
+    /**
+     * @param author 作者名为空就不从数据库查询，
+     */
+    fun search(site: String, name: String, author: String?): List<Novel> {
+        if (author != null) {
+            // 如果有作者名，那结果只可能有一个，
+            // 如果数据库里有了，就直接返回，
+            app.query(site, author, name)?.also {
+                return listOf(it)
+            }
+        }
+        val context = api.getNovelContextByName(site)
+        return search(context, name, author)
+    }
+
+    /**
+     * @param author 作者名为空就不从数据库查询，
+     */
+    fun search(context: NovelContext, name: String, author: String?): List<Novel> {
+        if (author != null) {
+            // 如果有作者名，那结果只可能有一个，
+            // 如果数据库里有了，就直接返回，
+            app.query(context.site.name, author, name)?.also {
+                return listOf(it)
+            }
+        }
+        return api.search(context, name).map {
+            // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
+            app.queryOrNew(it.site, it.author, it.name, it.extra)
+        }
     }
 }

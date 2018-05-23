@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.data
 import android.content.Context
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.site.*
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.net.URL
@@ -12,20 +13,21 @@ import java.util.*
  * Created by AoEiuV020 on 2018.05.23-15:55:11.
  */
 class ApiManager(ctx: Context) {
+    // TODO: 动漫之家还是维护，等开放了，测试后再添加，
     @Suppress("RemoveExplicitTypeArguments")
     val contexts: List<NovelContext> by lazy {
         listOf(
                 Piaotian(), Biquge(), Liudatxt(), Qidian(),
-                Dmzz(), Sfacg(), Snwx(), Syxs(),
+                Sfacg(), Snwx(), Syxs(),
                 Yssm(), Qlyx()
         )
     }
     // 缓存host对应网站上下文的映射，正常来说主页的host
     private val hostMap: MutableMap<String, NovelContext> by lazy {
-        contexts.associateByTo(mutableMapOf()) { URL(it.getNovelSite().baseUrl).host }
+        contexts.associateByTo(mutableMapOf()) { URL(it.site.baseUrl).host }
     }
     private val nameMap by lazy {
-        contexts.associateBy { it.getNovelSite().name }
+        contexts.associateBy { it.site.name }
     }
 
     @Suppress("unused")
@@ -35,7 +37,7 @@ class ApiManager(ctx: Context) {
                 ?: throw IllegalArgumentException("网址不支持: $url")
     }
 
-    private fun getNovelContextByName(name: String): NovelContext {
+    fun getNovelContextByName(name: String): NovelContext {
         return nameMap[name] ?: throw IllegalArgumentException("网站不支持: $name")
     }
 
@@ -81,5 +83,9 @@ class ApiManager(ctx: Context) {
 
     fun getDetailUrl(novel: Novel): String {
         return context(novel).getNovelDetailUrl(novel.detail)
+    }
+
+    fun search(context: NovelContext, name: String): List<NovelItem> {
+        return context.searchNovelName(name)
     }
 }

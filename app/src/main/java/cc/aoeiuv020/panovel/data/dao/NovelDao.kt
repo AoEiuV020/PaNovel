@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.data.dao
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.util.*
@@ -16,9 +17,15 @@ abstract class NovelDao {
     @Query("update Novel set bookshelf = :bookshelf where id$1 = :id")
     abstract fun updateBookshelf(id: Long, bookshelf: Boolean)
 
+    /**
+     * 返回非空，所以传入的id不能是不存在的，
+     */
     // TODO: 为什么会有id$1,
     @Query("select * from Novel where id$1 = :id")
     abstract fun query(id: Long): Novel
+
+    @Query("select * from Novel where site = :site and author = :author and name = :name")
+    abstract fun query(site: String, author: String, name: String): Novel?
 
     @Query("update Novel set image = :image and introduction = introduction and updateTime = updateTime where id$1 = :id")
     abstract fun updateNovelDetail(id: Long, image: String, introduction: String, updateTime: Date)
@@ -29,4 +36,8 @@ abstract class NovelDao {
             readAtChapterName: String, lastChapterName: String,
             updateTime: Date, checkUpdateTime: Date, receiveUpdateTime: Date
     )
+
+    // 插入前都有查询，所以不用在插入失败时尝试更新，
+    @Insert
+    abstract fun insert(novel: Novel)
 }

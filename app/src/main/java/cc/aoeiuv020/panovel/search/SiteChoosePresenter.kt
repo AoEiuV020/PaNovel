@@ -19,7 +19,7 @@ class SiteChoosePresenter : Presenter<SiteChooseActivity>() {
                         it.name to it.enabled
                     }.toMap()
             NovelContext.getNovelContexts().map {
-                it.getNovelSite()
+                it.site
             }.onEach { site ->
                 // 关于是否启用，存在并和现有设置不同则反个enabled,
                 if ((siteEnabledMap[site.name] ?: site.enabled) != site.enabled) {

@@ -7,14 +7,17 @@ import android.view.ViewGroup
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.util.*
 
-class NovelListAdapter(
+open class NovelListAdapter(
         @LayoutRes
         private val layout: Int,
         private val itemListener: NovelItemActionListener = NovelItemActionAdapter()
 ) : RecyclerView.Adapter<NovelViewHolder>() {
-    var data: List<Novel> = emptyList()
+    @Suppress("PropertyName")
+    protected open var _data: MutableList<Novel> = mutableListOf()
+    var data: List<Novel>
+        get() = _data
         set(value) {
-            field = value
+            _data = value.toMutableList()
             notifyDataSetChanged()
         }
 
@@ -32,11 +35,11 @@ class NovelListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return _data.size
     }
 
     override fun onBindViewHolder(holder: NovelViewHolder, position: Int) {
-        val novel = data[position]
+        val novel = _data[position]
         holder.apply(novel, refreshTime)
     }
 }

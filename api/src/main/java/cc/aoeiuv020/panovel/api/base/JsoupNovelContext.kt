@@ -99,13 +99,12 @@ abstract class JsoupNovelContext : NovelContext() {
      */
     protected open val charset: String? get() = null
 
-    protected abstract val site: NovelSite
-
-    override fun getNovelSite(): NovelSite = site
-
     protected fun parse(extra: String): Document = parse(connect(absUrl(extra)))
     protected fun parse(conn: Connection, charset: String? = this.charset): Document = try {
         requireNotNull(response(conn, charset).parse())
+    } catch (e: IOException) {
+        // IOException保持IOException, 使用的时候统一把IOException当成网络错误，不上报错误，
+        throw IOException("网络连接错误，", e)
     } catch (e: Exception) {
         throw IllegalStateException("页面<${conn.request().url()}>解析失败，", e)
     }

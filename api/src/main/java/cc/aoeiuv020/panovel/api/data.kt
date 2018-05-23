@@ -41,7 +41,7 @@ data class NovelItem(
         val extra: String
 ) : Data() {
     constructor(context: NovelContext, name: String, author: String, extra: String)
-            : this(context.getNovelSite().name, name, author, extra)
+            : this(context.site.name, name, author, extra)
 }
 
 /**

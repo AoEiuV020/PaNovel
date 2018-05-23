@@ -12,6 +12,7 @@ import cc.aoeiuv020.panovel.data.entity.SiteEnabled
 /**
  * Created by AoEiuV020 on 2018.05.13-18:00:33.
  */
+// TODO: 加了张表，版本号要换，顺便可以写写数据迁移，
 @Database(
         entities = [Novel::class, SiteEnabled::class],
         version = 1
