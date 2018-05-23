@@ -24,6 +24,14 @@ object Reporter {
         CrashReport.setUserId(androidId)
     }
 
+    fun unreachable() {
+        post("不可到达，")
+    }
+
+    fun post(message: String) {
+        postException(IllegalStateException(message))
+    }
+
     fun post(message: String, t: Throwable) {
         postException(IllegalStateException(message, t))
     }

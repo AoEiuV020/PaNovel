@@ -4,7 +4,6 @@ import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
-import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.slf4j.Logger
@@ -43,28 +42,6 @@ abstract class NovelContext {
             this.sFilesDir = filesDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
         }
 
-        @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> by lazy {
-            listOf(
-                    Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx(), Syxs(),
-                    Yssm(), Qlyx()
-            )
-        }
-        private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
-        private val nameMap = contexts.associateBy { it.getNovelSite().name }
-        fun getNovelContexts(): List<NovelContext> = contexts
-        fun getNovelContextByUrl(url: String): NovelContext {
-            val host = URL(url).host
-            return hostMap[host] ?: contexts.firstOrNull { it.check(url) }
-            ?: throw IllegalArgumentException("网址不支持: $url")
-        }
-
-        fun getNovelContextBySite(site: NovelSite): NovelContext = getNovelContextByUrl(site.baseUrl)
-
-        @Suppress("unused")
-        fun getNovelContextByName(name: String): NovelContext {
-            return nameMap[name] ?: throw IllegalArgumentException("网站不支持: $name")
-        }
     }
 
     @Suppress("MemberVisibilityCanPrivate")
@@ -184,6 +161,8 @@ abstract class NovelContext {
 
     /**
      * 判断这个地址是不是属于这个网站，
+     * 默认对比二级域名，正常情况所有三级域名都是一个同一个网站同一个NovelContext的，
+     * 有的网站可能用到站外地址，比如使用了百度搜索，不能单纯缓存host,
      */
     open fun check(url: String): Boolean = try {
         secondLevelDomain(URL(getNovelSite().baseUrl).host) == secondLevelDomain(URL(url).host)
@@ -193,6 +172,7 @@ abstract class NovelContext {
 
     /**
      * 以下几个都是为了得到真实地址，毕竟extra现在支持各种随便写法，
+     * 要快，要能在ui线程使用，不能有网络请求，
      */
     open fun getNovelDetailUrl(extra: String): String =
             absUrl(detailTemplate?.format(findBookId(extra)) ?: extra)

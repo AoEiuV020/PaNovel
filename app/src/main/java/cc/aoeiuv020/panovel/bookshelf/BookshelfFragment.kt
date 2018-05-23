@@ -85,6 +85,8 @@ class BookshelfFragment : Fragment(), IView {
     }
 
     fun showError(message: String, e: Throwable) {
+        // 按理说到这里已经不会是正在刷新的状态了，
+        srlRefresh.isRefreshing = false
         (activity as? MainActivity)?.showError(message, e)
     }
 }

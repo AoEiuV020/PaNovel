@@ -30,6 +30,7 @@ import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
+import cc.aoeiuv020.panovel.data.entity.Novel as NovelData
 
 
 /**
@@ -38,12 +39,12 @@ import java.io.FileNotFoundException
  */
 class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     companion object {
-        fun start(context: Context, novelItem: NovelItem) {
-            context.startActivity<NovelTextActivity>("novelItem" to novelItem.toJson())
+        fun start(ctx: Context, novel: NovelData) {
+            start(ctx, novel.nId)
         }
 
-        fun start(context: Context, novelItem: NovelItem, index: Int) {
-            context.startActivity<NovelTextActivity>("novelItem" to novelItem.toJson(), "index" to index)
+        fun start(ctx: Context, id: Long) {
+            ctx.startActivity<NovelTextActivity>(NovelData.id to id)
         }
     }
 

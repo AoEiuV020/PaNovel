@@ -28,9 +28,10 @@ import java.util.*
 data class Novel(
         /**
          * 普通的id,
+         * 要给个null才能autoGenerate，
          */
         @PrimaryKey(autoGenerate = true)
-        val id: Long,
+        val id: Long? = null,
         /**
          * 网站名，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
@@ -123,8 +124,20 @@ data class Novel(
         var checkUpdateTime: Date = Date(0),
         /**
          * 拿到上一个更新的时间, 也就是上次刷出更新的[checkUpdateTime],
+         * 是否刷出更新只判断章节数量，
+         *
          * 用来对比阅读时间就知道是否是已读了，
          * 时间只用于对比和展示，没刷新过章节就是默认最小时间，
          */
         var receiveUpdateTime: Date = Date(0)
-)
+) {
+    // id的非空版本，实在是要经常用id, 而且是不可能为空的id,
+    val nId: Long get() = requireNotNull(id)
+    // chapters的非空版本，用的不多，
+    val nChapters: String get() = requireNotNull(chapters)
+
+    companion object {
+        // 用作传参时的key,
+        const val id: String = "id"
+    }
+}

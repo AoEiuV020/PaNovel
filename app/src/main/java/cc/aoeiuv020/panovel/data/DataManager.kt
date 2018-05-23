@@ -12,10 +12,14 @@ import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
  */
 object DataManager {
     lateinit var app: AppDatabaseManager
+    lateinit var api: ApiManager
     @Synchronized
-    fun init(context: Context) {
+    fun init(ctx: Context) {
         if (!::app.isInitialized) {
-            app = AppDatabaseManager(context)
+            app = AppDatabaseManager(ctx)
+        }
+        if (!::api.isInitialized) {
+            api = ApiManager(ctx)
         }
     }
 
@@ -24,12 +28,40 @@ object DataManager {
     }
 
     fun updateBookshelf(novel: Novel, star: Boolean) {
-        app.db.novelDao().updateBookshelf(novel.id, star)
+        app.db.novelDao().updateBookshelf(novel.nId, star)
     }
 
     fun refreshChapters(novel: Novel) {
-        // 先判断是否存在请求章节用的extra, novel.chapters,
-        // 没有就先请求详情页，
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // 确保存在详情页信息，
+        requireNovelDetail(novel)
+        val list = api.requestNovelChapters(novel)
+        // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
+        app.db.novelDao().updateChapters(
+                novel.nId, novel.chaptersCount,
+                novel.readAtChapterName, novel.lastChapterName,
+                novel.updateTime, novel.checkUpdateTime, novel.receiveUpdateTime
+        )
+        TODO("cache.save(list)")
+    }
+
+    private fun requireNovelDetail(novel: Novel) {
+        // chapters非空表示已经获取过小说详情了，
+        if (novel.chapters != null) {
+            return
+        }
+        api.updateNovelDetail(novel)
+        // 写入数据库，
+        app.db.novelDao().updateNovelDetail(novel.nId, novel.image, novel.introduction, novel.updateTime)
+    }
+
+    fun getNovelDetail(id: Long): Novel {
+        val novel = app.db.novelDao().query(id)
+        // 确保存在详情页信息，
+        requireNovelDetail(novel)
+        return novel
+    }
+
+    fun getDetailUrl(novel: Novel): String {
+        return api.getDetailUrl(novel)
     }
 }
