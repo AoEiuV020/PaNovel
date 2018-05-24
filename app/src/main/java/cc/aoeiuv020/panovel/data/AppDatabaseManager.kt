@@ -45,4 +45,11 @@ class AppDatabaseManager(context: Context) {
     fun listBookshelf(): List<Novel> =
             db.novelDao().listBookshelf()
 
+    fun pinned(novel: Novel) {
+        db.novelDao().updatePinnedTime(novel.nId, Date())
+    }
+
+    fun cancelPinned(novel: Novel) {
+        db.novelDao().updatePinnedTime(novel.nId, Date(0))
+    }
 }

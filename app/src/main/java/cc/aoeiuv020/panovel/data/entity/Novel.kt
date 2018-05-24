@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.data.entity
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
+import cc.aoeiuv020.panovel.report.Reporter
 import java.util.*
 
 /**
@@ -129,10 +130,17 @@ data class Novel(
          * 用来对比阅读时间就知道是否是已读了，
          * 时间只用于对比和展示，没刷新过章节就是默认最小时间，
          */
-        var receiveUpdateTime: Date = Date(0)
+        var receiveUpdateTime: Date = Date(0),
+        /**
+         * 置顶时间，书架按这个排序，
+         * 不置顶的给个最小时间，
+         * 不过这样不好判断是否置顶，对比0时间的话，可能有时区问题，
+         * 没法设置个按钮置顶时显示取消置顶，
+         */
+        var pinnedTime: Date = Date(0)
 ) {
     // id的非空版本，实在是要经常用id, 而且是不可能为空的id,
-    val nId: Long get() = requireNotNull(id)
+    val nId: Long get() = Reporter.notNull(id)
     // chapters的非空版本，用的不多，
     val nChapters: String get() = requireNotNull(chapters)
 

@@ -229,4 +229,12 @@ object DataManager : AnkoLogger {
             cache.saveContent(novel, chapter, it)
         }
     }
+
+    fun pinned(novel: Novel) {
+        app.pinned(novel)
+    }
+
+    fun cacelPinned(novel: Novel) {
+        app.cancelPinned(novel)
+    }
 }

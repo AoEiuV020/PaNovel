@@ -21,6 +21,9 @@ enum class ItemActionEnum {
     OpenDetail, ReadLastChapter, ReadContinue,
     RefineSearch, Refresh, MoreAction,
     Export, RemoveBookshelf, AddBookshelf,
+    // 置顶，
+    Pinned,
+    CancelPinned,
     // 什么都不做，
     None,
 }

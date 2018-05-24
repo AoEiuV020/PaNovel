@@ -27,6 +27,8 @@ class DefaultNovelItemActionListener(
             AddBookshelf -> vh.addBookshelf() // vh里再反过来调用onStarChanged，
             RemoveBookshelf -> vh.removeBookshelf() // vh里再反过来调用onStarChanged，
             Refresh -> vh.refresh()
+            Pinned -> pinned(vh)
+            CancelPinned -> cancelPinned(vh)
             MoreAction -> {
                 val list = vh.ctx.resources.getStringArray(R.array.content_more_action).toList()
                 val actions = listOf(
@@ -109,6 +111,34 @@ class DefaultNovelItemActionListener(
             uiThread {
                 vh.refreshed(vh.novel)
             }
+        }
+    }
+
+    private fun pinned(vh: NovelViewHolder) {
+        doAsync({ e ->
+            val message = "置顶小说《${vh.novel.name}》失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            vh.ctx.runOnUiThread {
+                onError(message, e)
+            }
+        }) {
+            DataManager.pinned(vh.novel)
+            // TODO: 置顶后刷新列表， 移到开头,
+        }
+    }
+
+    private fun cancelPinned(vh: NovelViewHolder) {
+        doAsync({ e ->
+            val message = "取消置顶小说《${vh.novel.name}》失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            vh.ctx.runOnUiThread {
+                onError(message, e)
+            }
+        }) {
+            DataManager.pinned(vh.novel)
+            // TODO: 取消置顶后刷新列表，
         }
     }
 }

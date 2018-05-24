@@ -30,6 +30,9 @@ object Reporter : AnkoLogger {
         post("不可到达，")
     }
 
+    /**
+     * requireNotNull,
+     */
     inline fun <reified T> notNull(t: T?): T {
         if (t == null) {
             val message = "<${T::class.java}>不可空，"

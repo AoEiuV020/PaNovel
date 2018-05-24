@@ -11,7 +11,7 @@ import java.util.*
  */
 @Dao
 abstract class NovelDao {
-    @Query("select * from Novel where bookshelf = 1")
+    @Query("select * from Novel where bookshelf = 1 order by pinnedTime desc")
     abstract fun listBookshelf(): List<Novel>
 
     @Query("update Novel set bookshelf = :bookshelf where id$1 = :id")
@@ -40,4 +40,7 @@ abstract class NovelDao {
     // 插入前都有查询，所以不用在插入失败时尝试更新，
     @Insert
     abstract fun insert(novel: Novel)
+
+    @Query("update Novel set pinnedTime = :pinnedTime where id$1 = :id")
+    abstract fun updatePinnedTime(id: Long, pinnedTime: Date)
 }
