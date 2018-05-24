@@ -20,22 +20,23 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
     private var chapterList: List<NovelChapter> = emptyList()
 
     fun start() {
-        requestNovelDetail()
+        requestNovel()
     }
 
     fun refreshChapterList() {
         refresh = true
-        requestNovelDetail()
+        requestNovel()
     }
 
-    private fun requestNovelDetail() {
+    private fun requestNovel() {
         doAsync({ e ->
             val message = "获取小说详情失败，"
             if (e !is IOException) {
                 Reporter.post(message, e)
             }
+            error(message, e)
             view?.runOnUiThread {
-                view?.showError(message, e)
+                view?.showNovelNotFound(message, e)
             }
         }) {
             val novel = DataManager.getNovelDetail(id)

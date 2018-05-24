@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.data.entity
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
+import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.util.notNull
 import java.util.*
 
@@ -144,6 +145,12 @@ data class Novel(
     val nId: Long get() = id.notNull()
     // chapters的非空版本，用的不多，
     val nChapters: String get() = requireNotNull(chapters)
+
+    fun readAt(index: Int, chapters: List<NovelChapter>) {
+        readAtChapterIndex = index
+        // 同时改保存的章节名，
+        readAtChapterName = chapters[index].name
+    }
 
     companion object {
         // 用作传参时的key,

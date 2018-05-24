@@ -100,4 +100,8 @@ class ApiManager(ctx: Context) {
     fun getNovelContent(novel: Novel, chapter: NovelChapter): List<String> {
         return context(novel).getNovelContent(chapter.extra)
     }
+
+    fun getContentUrl(novel: Novel, chapter: NovelChapter): String {
+        return context(novel).getNovelContentUrl(chapter.extra)
+    }
 }

@@ -22,7 +22,7 @@
     <string name="browse">浏览</string>
     <string name="info">简介</string>
     <string name="search_result">搜索结果</string>
-    <string name="novel_not_support">浏览失败或者不支持该小说</string>
+    <string name="novel_not_support">阅读失败或者不支持该小说</string>
     <string name="no_previous_issue">没有上一话了</string>
     <string name="no_next_issue">没有下一话了</string>
     <string name="now_loading_previous_issue">正在加载上一话</string>

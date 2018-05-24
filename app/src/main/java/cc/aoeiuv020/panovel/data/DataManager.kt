@@ -41,12 +41,9 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun listBookshelf(): List<Novel> {
-        return app.listBookshelf()
-    }
+    fun listBookshelf(): List<Novel> = app.listBookshelf()
 
-    fun updateBookshelf(novel: Novel) =
-            app.updateBookshelf(novel.nId, novel.bookshelf)
+    fun updateBookshelf(novel: Novel) = app.updateBookshelf(novel.nId, novel.bookshelf)
 
     fun refreshChapters(novel: Novel): List<NovelChapter> {
         // 确保存在详情页信息，
@@ -81,9 +78,7 @@ object DataManager : AnkoLogger {
         app.updateNovelDetail(novel.nId, novel.image, novel.introduction, novel.updateTime)
     }
 
-    fun getNovel(id: Long): Novel {
-        return app.query(id)
-    }
+    fun getNovel(id: Long): Novel = app.query(id)
 
     fun getNovelDetail(id: Long): Novel {
         val novel = app.query(id)
@@ -92,9 +87,11 @@ object DataManager : AnkoLogger {
         return novel
     }
 
-    fun getDetailUrl(novel: Novel): String {
-        return api.getDetailUrl(novel)
-    }
+    fun getDetailUrl(novel: Novel): String =
+            api.getDetailUrl(novel)
+
+    fun getContentUrl(novel: Novel, chapter: NovelChapter): String =
+            api.getContentUrl(novel, chapter)
 
     fun allNovelContexts() = api.contexts
 
@@ -152,8 +149,7 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun getNovelContextByName(site: String) =
-            api.getNovelContextByName(site)
+    fun getNovelContextByName(site: String) = api.getNovelContextByName(site)
 
     @MainThread
     fun pushCookiesToWebView(context: NovelContext) {
@@ -209,13 +205,9 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun removeWebViewCookies() {
-        cookie.removeCookies()
-    }
+    fun removeWebViewCookies() = cookie.removeCookies()
 
-    fun removeNovelContextCookies(site: String) {
-        api.removeCookies(getNovelContextByName(site))
-    }
+    fun removeNovelContextCookies(site: String) = api.removeCookies(getNovelContextByName(site))
 
     fun requestContent(novel: Novel, chapter: NovelChapter, refresh: Boolean): List<String> {
         // 指定刷新的话就不读缓存，
@@ -230,11 +222,9 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun pinned(novel: Novel) {
-        app.pinned(novel)
-    }
+    fun pinned(novel: Novel) = app.pinned(novel)
 
-    fun cacelPinned(novel: Novel) {
-        app.cancelPinned(novel)
-    }
+    fun cancelPinned(novel: Novel) = app.cancelPinned(novel)
+
+    fun updateReadStatus(novel: Novel) = app.updateReadStatus(novel)
 }

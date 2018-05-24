@@ -25,7 +25,6 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.Margins
-import cc.aoeiuv020.panovel.local.Progress
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
@@ -34,12 +33,9 @@ import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
-import org.jetbrains.anko.browse
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.error
-import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.*
 import java.io.FileNotFoundException
-import cc.aoeiuv020.reader.Novel as ReaderNovelItem
+import java.util.*
 
 
 /**
@@ -59,9 +55,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         fun start(ctx: Context, novel: Novel, index: Int) {
             ctx.startActivity<NovelTextActivity>(
                     Novel.id to novel.nId,
-                    "index" to index
+                    "index" to index.toJson(App.gson)
             )
-
         }
     }
 
@@ -112,17 +107,27 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         // intent传入的index，activity死了再开，应该会恢复这个intent, 不能让intent覆盖了死前的阅读进度，
         // 用getSerializableExtra读Int不需要默认值，
         index = savedInstanceState?.run { getString("index").toBean<Int>(App.gson) }
-                ?: (intent.getSerializableExtra("index") as? Int)
+                ?: intent.getStringExtra("index").toBean(App.gson)
 
         presenter = NovelTextPresenter(id)
 
         loading(progressDialog, R.string.novel_chapters)
         presenter.attach(this)
+        // 进去后根据id得到小说对象，
+        // 只查询数据库，认为很快，所以不考虑没有小说对象时的用户操作，
         presenter.start()
     }
 
     fun showNovel(novel: Novel) {
         this.novel = novel
+        index?.let { chapterIndex ->
+            // 如果有传入章节索引，就修改novel里存的阅读进度，
+            novel.readAt(chapterIndex, chaptersAsc)
+            // 章节内进度改成本章开头，
+            novel.readAtTextIndex = 0
+            // 以防万一index再被使用，不知道是否必要，
+            index = null
+        }
         initReader(novel)
         navigation = NovelTextNavigation(this, novel, nav_view)
         try {
@@ -368,13 +373,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     /**
      * 这个无论是用户翻页切换章节还是其他跳章节都要调用，
+     * 改变界面上显示的内容，
      */
     private fun onChapterSelected(index: Int) {
         debug { "onChapterSelected $index" }
-        progress.chapter = index
+        // 可能重复赋值，但是无所谓了，
+        novel.readAt(index, chaptersAsc)
         val chapter = chaptersAsc[index]
-        title = "$novelName - ${chapter.name}"
-        urlTextView.text = chapter.requester.url
+        title = "${novel.name} - ${chapter.name}"
+        urlTextView.text = DataManager.getContentUrl(novel, chapter)
     }
 
     fun showError(message: String, e: Throwable) {
@@ -383,49 +390,75 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         show()
     }
 
+    /**
+     * 给定id找不到小说也就不用继续了，
+     */
+    fun showNovelNotFound(message: String, e: Throwable) {
+        // 两个参数已经打过日志了，这里就不重复了，
+        toast("小说不存在，")
+        finish()
+    }
+
     fun showChaptersAsc(chaptersAsc: List<NovelChapter>) {
         debug { "chapters loaded ${chaptersAsc.size}" }
         this.chaptersAsc = chaptersAsc
-        // 支持跳到倒数第一章，
-        if (progress.chapter == -1) {
-            progress.chapter = chaptersAsc.lastIndex
+        if (novel.readAtChapterIndex == -1) {
+            // 支持跳到最后一章，
+            novel.readAt(chaptersAsc.lastIndex, chaptersAsc)
         }
-        onChapterSelected(progress.chapter)
+        onChapterSelected(novel.readAtChapterIndex)
         progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {
+            // 真有小说空章节的，不知道怎么回事，
+            // https://m.qidian.com/book/2346657
             alert(alertDialog, R.string.novel_not_support)
             // 无法浏览的情况显示状态栏标题栏导航栏，方便离开，
             show()
             return
         }
-        reader.chapterList = chaptersAsc.map { it.name }
-        reader.currentChapter = progress.chapter
-        reader.textProgress = progress.text
+        doAsync {
+            val chapterList = chaptersAsc.map { it.name }
+            uiThread {
+                reader.chapterList = chapterList
+                reader.currentChapter = novel.readAtChapterIndex
+                reader.textProgress = novel.readAtTextIndex
+            }
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        // 比如断网，如果没有展示出章节，就直接保存持有的进度，
-        reader.textProgress.let { progress.text = it }
-        debug {
-            "save progress $progress"
+        // 要是没得到小说对象，避免进入后面的保存进度，
+        _novel ?: return
+        // 得到小说novel对象后，进度始终保存在其中，
+        // 这里刷一下数据库就好，
+        doAsync({ e ->
+            val message = "保存阅读进度失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            runOnUiThread {
+                showError(message, e)
+            }
+        }) {
+            // 这里更新阅读时间，
+            novel.readTime = Date()
+            DataManager.updateReadStatus(novel)
         }
-        Progress.save(novelItem, progress)
     }
 
     private fun refineSearch() {
-        FuzzySearchActivity.start(this, novelItem)
+        FuzzySearchActivity.start(this, novel)
     }
 
     fun refreshChapterList() {
         loading(progressDialog, R.string.novel_chapters)
         // 保存一下的进度，
-        reader.textProgress.let { progress.text = it }
+        reader.textProgress.let { novel.readAtTextIndex = it }
         presenter.refreshChapterList()
     }
 
     fun detail() {
-        NovelDetailActivity.start(this, novelItem)
+        NovelDetailActivity.start(this, novel)
     }
 
     fun download() {

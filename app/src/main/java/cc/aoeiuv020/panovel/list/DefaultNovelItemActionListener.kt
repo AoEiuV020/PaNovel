@@ -137,7 +137,7 @@ class DefaultNovelItemActionListener(
                 onError(message, e)
             }
         }) {
-            DataManager.pinned(vh.novel)
+            DataManager.cancelPinned(vh.novel)
             // TODO: 取消置顶后刷新列表，
         }
     }

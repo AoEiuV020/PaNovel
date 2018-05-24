@@ -24,8 +24,7 @@ class AppDatabaseManager(context: Context) {
                 }
     }
 
-    fun query(id: Long): Novel =
-            db.novelDao().query(id)
+    fun query(id: Long): Novel = db.novelDao().query(id)
 
     fun query(site: String, author: String, name: String): Novel? =
             db.novelDao().query(site, author, name)
@@ -43,14 +42,13 @@ class AppDatabaseManager(context: Context) {
     fun updateBookshelf(id: Long, bookshelf: Boolean) =
             db.novelDao().updateBookshelf(id, bookshelf)
 
-    fun listBookshelf(): List<Novel> =
-            db.novelDao().listBookshelf()
+    fun listBookshelf(): List<Novel> = db.novelDao().listBookshelf()
 
-    fun pinned(novel: Novel) {
-        db.novelDao().updatePinnedTime(novel.nId, Date())
-    }
+    fun pinned(novel: Novel) = db.novelDao().updatePinnedTime(novel.nId, Date())
 
-    fun cancelPinned(novel: Novel) {
-        db.novelDao().updatePinnedTime(novel.nId, Date(0))
-    }
+    fun cancelPinned(novel: Novel) = db.novelDao().updatePinnedTime(novel.nId, Date(0))
+
+    fun updateReadStatus(novel: Novel) = db.novelDao().updateReadStatus(novel.nId,
+            novel.readAtChapterIndex, novel.readAtTextIndex,
+            novel.readAtChapterName, novel.readTime)
 }
