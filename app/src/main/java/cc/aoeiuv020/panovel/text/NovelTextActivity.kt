@@ -416,7 +416,14 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             show()
             return
         }
-        doAsync {
+        doAsync({ e ->
+            val message = "处理小说章节列表失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            runOnUiThread {
+                showError(message, e)
+            }
+        }) {
             val chapterList = chaptersAsc.map { it.name }
             uiThread {
                 reader.chapterList = chapterList

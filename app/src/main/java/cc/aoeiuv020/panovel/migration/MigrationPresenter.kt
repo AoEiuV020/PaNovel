@@ -59,12 +59,11 @@ class MigrationPresenter(
                     "migrate start <${cachedVersionName.name} to ${currentVersionName.name}>"
                 }
                 view?.doAsync({ e ->
-                    if (e !is MigrateException) {
-                        Reporter.unreachable(e)
-                        error("不可到达，", e)
-                        return@doAsync
+                    val message = if (e is MigrateException) {
+                        "迁移旧版数据失败，从<${cachedVersionName.name}>到<${e.migration.to.name}>"
+                    } else {
+                        "不可到达，"
                     }
-                    val message = "迁移旧版数据失败，从<${cachedVersionName.name}>到<${e.migration.to.name}>"
                     Reporter.post(message, e)
                     error(message, e)
                     ctx.runOnUiThread {

@@ -22,7 +22,14 @@ class SingleSearchPresenter(
         debug { "pushCookies," }
         val context = DataManager.getNovelContextByName(site)
         DataManager.pushCookiesToWebView(context)
-        view?.doAsync {
+        view?.doAsync({ e ->
+            val message = "传递cookies给浏览器失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
             DataManager.syncCookies(view)
             uiThread {
                 if (view?.getCurrentUrl() == null) {
@@ -68,7 +75,14 @@ class SingleSearchPresenter(
     fun removeCookies() {
         debug { "removeCookies," }
         DataManager.removeWebViewCookies()
-        view?.doAsync {
+        view?.doAsync({ e ->
+            val message = "删除cookies失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
             DataManager.syncCookies(view)
             DataManager.removeNovelContextCookies(site)
             uiThread {
