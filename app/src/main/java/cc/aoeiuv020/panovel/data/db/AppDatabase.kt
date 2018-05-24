@@ -4,8 +4,10 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
+import cc.aoeiuv020.panovel.data.dao.BookListDao
 import cc.aoeiuv020.panovel.data.dao.NovelDao
 import cc.aoeiuv020.panovel.data.dao.SiteDao
+import cc.aoeiuv020.panovel.data.entity.BookListItem
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.data.entity.Site
 
@@ -14,7 +16,7 @@ import cc.aoeiuv020.panovel.data.entity.Site
  */
 // TODO: 加了张表，写写数据迁移， 也就网站是否启用，
 @Database(
-        entities = [Novel::class, Site::class],
+        entities = [Novel::class, Site::class, BookListItem::class],
         version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -35,4 +37,5 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun siteDao(): SiteDao
     abstract fun novelDao(): NovelDao
+    abstract fun bookListDao(): BookListDao
 }

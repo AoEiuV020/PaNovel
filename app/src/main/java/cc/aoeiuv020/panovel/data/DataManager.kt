@@ -6,6 +6,7 @@ import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
+import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.data.entity.Site
 import cc.aoeiuv020.panovel.report.Reporter
@@ -228,4 +229,16 @@ object DataManager : AnkoLogger {
     fun siteEnabledChange(site: Site) = app.siteEnabledChange(site)
 
     fun history(historyCount: Int): List<Novel> = app.history(historyCount)
+
+    fun getBookList(bookListId: Long): BookList = app.getBookList(bookListId)
+
+    /**
+     * 列表中的小说在该书单里的包含情况，
+     */
+    fun inBookList(bookListId: Long, list: List<Novel>) = app.inBookList(bookListId, list)
+
+    fun addToBookList(bookListId: Long, novel: Novel) = app.addToBookList(bookListId, novel)
+    fun removeFromBookList(bookListId: Long, novel: Novel) = app.removeFromBookList(bookListId, novel)
+
+    fun getNovelFromBookShelf(bookListId: Long): List<Novel> = app.getNovelFromBookShelf(bookListId)
 }

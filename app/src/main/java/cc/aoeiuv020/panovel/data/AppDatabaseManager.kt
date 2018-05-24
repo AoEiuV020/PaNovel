@@ -3,6 +3,8 @@ package cc.aoeiuv020.panovel.data
 import android.content.Context
 import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.panovel.data.db.AppDatabase
+import cc.aoeiuv020.panovel.data.entity.BookList
+import cc.aoeiuv020.panovel.data.entity.BookListItem
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.data.entity.Site
 import java.util.*
@@ -63,4 +65,19 @@ class AppDatabaseManager(context: Context) {
 
     fun siteEnabledChange(site: Site) = db.siteDao().updateEnabled(site.name, site.enabled)
     fun history(historyCount: Int): List<Novel> = db.novelDao().history(historyCount)
+    fun getBookList(bookListId: Long): BookList = db.bookListDao().queryBookList(bookListId)
+    fun inBookList(bookListId: Long, list: List<Novel>): List<Boolean> = db.runInTransaction<List<Boolean>> {
+        list.map {
+            db.bookListDao().contains(bookListId, it.nId)
+        }
+    }
+
+    fun addToBookList(bookListId: Long, novel: Novel) =
+            db.bookListDao().insert(BookListItem(bookListId = bookListId, novelId = novel.nId))
+
+    fun removeFromBookList(bookListId: Long, novel: Novel) =
+            db.bookListDao().delete(BookListItem(bookListId = bookListId, novelId = novel.nId))
+
+    fun getNovelFromBookShelf(bookListId: Long): List<Novel> =
+            db.bookListDao().queryBookListLeftJoin(bookListId)
 }

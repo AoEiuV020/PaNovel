@@ -14,7 +14,7 @@ import org.jetbrains.anko.*
 /**
  * Created by AoEiuV020 on 2018.05.23-12:49:51.
  */
-class DefaultNovelItemActionListener(
+open class DefaultNovelItemActionListener(
         private val onError: (String, Throwable) -> Unit
 ) : NovelItemActionListener, AnkoLogger {
     fun on(enum: ItemActionEnum, vh: NovelViewHolder): Boolean {

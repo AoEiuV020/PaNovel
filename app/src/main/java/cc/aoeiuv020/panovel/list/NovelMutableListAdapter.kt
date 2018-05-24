@@ -21,4 +21,9 @@ class NovelMutableListAdapter(
         _data.clear()
         notifyDataSetChanged()
     }
+
+    fun remove(position: Int) {
+        _data.removeAt(position)
+        notifyItemRemoved(position)
+    }
 }

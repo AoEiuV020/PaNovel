@@ -1,77 +1,118 @@
 package cc.aoeiuv020.panovel.booklist
 
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.base.item.DefaultItemListPresenter
-import cc.aoeiuv020.panovel.local.BookList
-import cc.aoeiuv020.panovel.local.BookListData
-import cc.aoeiuv020.panovel.local.NovelHistory
-import cc.aoeiuv020.panovel.util.async
-import cc.aoeiuv020.panovel.util.suffixThreadName
-import io.reactivex.Observable
+import cc.aoeiuv020.panovel.Presenter
+import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.report.Reporter
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
-import java.util.*
+import org.jetbrains.anko.uiThread
 
 /**
  *
  * Created by AoEiuV020 on 2017.11.22-15:47:37.
  */
-class BookListActivityPresenter(private val bookListName: String) : DefaultItemListPresenter<BookListActivity>() {
-    private lateinit var list: MutableList<NovelHistory>
-    private val bookListData: BookListData by lazy {
-        BookList.get(bookListName)
-                ?: throw Exception("书单不存在")
-    }
+class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookListActivity>() {
 
-    private fun requestHistory() {
-        Observable.fromCallable {
-            suffixThreadName("requestHistory")
-            list = ArrayList(bookListData.list.map { NovelHistory(it, Date(0)) })
-            list
-        }.async().subscribe({ list ->
-            view?.showNovelList(list)
-        }, { e ->
-            val message = "获取书单小说列表失败，"
+    fun start() {
+        view?.doAsync({ e ->
+            val message = "查找书单失败，"
+            Reporter.post(message, e)
             error(message, e)
-            view?.showError(message, e)
-        }).let { addDisposable(it) }
+            view?.runOnUiThread {
+                view?.showBookListNotFound(message, e)
+            }
+        }) {
+            val bookList = DataManager.getBookList(bookListId)
+            uiThread {
+                view?.showBookList(bookList)
+            }
+        }
     }
 
-    override fun refresh() {
-        requestHistory()
-    }
-
-    fun addOk() {
-        view?.showNovelList(list)
-    }
-
-    fun contains(novelItem: NovelItem)
-            = list.any { it.novel == novelItem }
-
-    fun add(novelItem: NovelItem) {
-        list.add(NovelHistory(novelItem))
-    }
-
-    fun remove(novelItem: NovelItem) {
-        list.remove(NovelHistory(novelItem))
-    }
-
-    fun remove(position: Int) {
-        list.removeAt(position)
-    }
-
-    fun saveBookList() {
-        Observable.fromCallable {
-            suffixThreadName("saveBookList")
-            bookListData.list.clear()
-            bookListData.list.addAll(list.map { it.novel })
-            BookList.put(bookListData)
-            bookListData.list.size
-        }.async().subscribe({ size ->
-            view?.showSaveComplete(size)
-        }, { e ->
-            val message = "保存书单小说列表失败，"
+    fun refresh() {
+        view?.doAsync({ e ->
+            val message = "读取书单中的小说列表失败，"
+            Reporter.post(message, e)
             error(message, e)
-            view?.showError(message, e)
-        }).let { addDisposable(it) }
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            val list = DataManager.getNovelFromBookShelf(bookListId)
+            uiThread {
+                view?.showNovelList(list)
+            }
+        }
+    }
+
+    fun add(novel: Novel) {
+        view?.doAsync({ e ->
+            val message = "添加小说到书单失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.addToBookList(bookListId, novel)
+        }
+    }
+
+    fun remove(novel: Novel) {
+        view?.doAsync({ e ->
+            val message = "删除小说到书单失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.removeFromBookList(bookListId, novel)
+        }
+    }
+
+    fun addFromHistory() {
+        view?.doAsync({ e ->
+            val message = "查询历史记录中的小说在书单中的包含情况失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            val list = DataManager.history(50)
+            val nameArray = list.map {
+                it.run {
+                    "$name.$author.$site"
+                }
+            }.toTypedArray()
+            val containsArray = DataManager.inBookList(bookListId, list).toBooleanArray()
+            uiThread {
+                view?.selectToAdd(list, nameArray, containsArray)
+            }
+        }
+    }
+
+    fun addFromBookshelf() {
+        view?.doAsync({ e ->
+            val message = "查询书架中的小说在书单中的包含情况失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            val list = DataManager.listBookshelf()
+            val nameArray = list.map {
+                it.run {
+                    "$name.$author.$site"
+                }
+            }.toTypedArray()
+            val containsArray = DataManager.inBookList(bookListId, list).toBooleanArray()
+            uiThread {
+                view?.selectToAdd(list, nameArray, containsArray)
+            }
+        }
     }
 }

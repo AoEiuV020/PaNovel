@@ -157,5 +157,5 @@ fun Bundle.toMap(): Map<String, Any?> = BaseBundle::class.java.getDeclaredField(
         .get(this) as Map<String, *>
 
 // 从保存的状态或者传入的intent中拿String,
-fun Activity.getStringExtra(key: String, savedInstanceState: Bundle?): String? = savedInstanceState?.run { getString(key) }
+fun Activity.getStringExtra(key: String, savedInstanceState: Bundle? = null): String? = savedInstanceState?.run { getString(key) }
         ?: intent.getStringExtra(key)
