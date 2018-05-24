@@ -39,7 +39,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                 view?.showNovelNotFound(message, e)
             }
         }) {
-            val novel = DataManager.getNovelDetail(id)
+            val novel = DataManager.getNovel(id)
             view?.showNovel(novel)
         }
     }

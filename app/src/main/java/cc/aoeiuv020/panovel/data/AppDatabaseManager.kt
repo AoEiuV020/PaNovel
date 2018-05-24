@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.panovel.data.db.AppDatabase
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.entity.Site
 import java.util.*
 
 /**
@@ -15,13 +16,21 @@ class AppDatabaseManager(context: Context) {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val db: AppDatabase = AppDatabase.getInstance(context)
 
-    fun queryOrNew(site: String, author: String, name: String, extra: String): Novel = db.runInTransaction<Novel> {
+    fun queryOrNewNovel(site: String, author: String, name: String, extra: String): Novel = db.runInTransaction<Novel> {
         db.novelDao().query(site, author, name)
                 ?: Novel(id = null, site = site, author = author, name = name, detail = extra).also {
                     // 数据库里没有，需要插入，
                     // 插入后确保novel要有这个id,
                     it.id = db.novelDao().insert(it)
                 }
+    }
+
+    fun queryOrNewSite(name: String, baseUrl: String, logo: String, enabled: Boolean): Site = db.runInTransaction<Site> {
+        db.siteDao().query(name) ?: Site(
+                name, baseUrl, logo, enabled
+        ).also {
+            db.siteDao().insert(it)
+        }
     }
 
     fun query(id: Long): Novel = db.novelDao().query(id)
@@ -51,4 +60,6 @@ class AppDatabaseManager(context: Context) {
     fun updateReadStatus(novel: Novel) = db.novelDao().updateReadStatus(novel.nId,
             novel.readAtChapterIndex, novel.readAtTextIndex,
             novel.readAtChapterName, novel.readTime)
+
+    fun siteEnabledChange(site: Site) = db.siteDao().updateEnabled(site.name, site.enabled)
 }

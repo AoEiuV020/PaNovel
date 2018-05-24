@@ -7,6 +7,7 @@ import android.support.annotation.WorkerThread
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.entity.Site
 import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -95,25 +96,25 @@ object DataManager : AnkoLogger {
 
     fun allNovelContexts() = api.contexts
 
-    fun enabledNovelContexts(): List<NovelContext> {
-        // 先取出关于网站是否启用的设置，
-        val map = app.db.siteEnabledDao().list().map {
-            it.name to it.enabled
-        }.toMap()
-        // 从所有网站过滤，
-        return allNovelContexts().filter {
-            map[it.site.name] ?: it.site.enabled
+    /**
+     * 列出所有网站，
+     */
+    fun listSites(): List<Site> = app.db.runInTransaction<List<Site>> {
+        // 每次都遍历网站有点傻，考虑写死site表，升级时直接写入新支持的网站，
+        allNovelContexts().map {
+            it.site.run {
+                app.queryOrNewSite(name, baseUrl, logo, enabled)
+            }
         }
     }
-
 
     /**
      * @param author 作者名为空就不从数据库查询，
      * @param block 回调，对每个网站搜索结果进行操作，
      */
     fun search(name: String, author: String?, block: (List<Novel>) -> Unit) {
-        enabledNovelContexts().forEach {
-            search(it, name, author).also(block)
+        listSites().filter(Site::enabled).forEach {
+            search(it.name, name, author).also(block)
         }
     }
 
@@ -129,23 +130,12 @@ object DataManager : AnkoLogger {
             }
         }
         val context = api.getNovelContextByName(site)
-        return search(context, name, author)
-    }
-
-    /**
-     * @param author 作者名为空就不从数据库查询，
-     */
-    fun search(context: NovelContext, name: String, author: String?): List<Novel> {
-        if (author != null) {
-            // 如果有作者名，那结果只可能有一个，
-            // 如果数据库里有了，就直接返回，
-            app.query(context.site.name, author, name)?.also {
-                return listOf(it)
+        val resultList = api.search(context, name)
+        return app.db.runInTransaction<List<Novel>> {
+            resultList.map {
+                // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
+                app.queryOrNewNovel(it.site, it.author, it.name, it.extra)
             }
-        }
-        return api.search(context, name).map {
-            // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
-            app.queryOrNew(it.site, it.author, it.name, it.extra)
         }
     }
 
@@ -201,7 +191,7 @@ object DataManager : AnkoLogger {
     fun getNovelFromUrl(site: String, url: String): Novel {
         return api.getNovelFromUrl(getNovelContextByName(site), url).let {
             // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
-            app.queryOrNew(it.site, it.author, it.name, it.extra)
+            app.queryOrNewNovel(it.site, it.author, it.name, it.extra)
         }
     }
 
@@ -234,4 +224,6 @@ object DataManager : AnkoLogger {
      * 只用于contains判断特定章节是否已经缓存，不用于读取章节信息，
      */
     fun novelContentsCached(novel: Novel): Collection<String> = cache.novelContentCachedSet(novel)
+
+    fun siteEnabledChange(site: Site) = app.siteEnabledChange(site)
 }

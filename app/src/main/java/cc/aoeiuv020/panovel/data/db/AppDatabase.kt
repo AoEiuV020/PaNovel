@@ -5,17 +5,17 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import cc.aoeiuv020.panovel.data.dao.NovelDao
-import cc.aoeiuv020.panovel.data.dao.SiteEnabledDao
+import cc.aoeiuv020.panovel.data.dao.SiteDao
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.data.entity.SiteEnabled
+import cc.aoeiuv020.panovel.data.entity.Site
 
 /**
  * Created by AoEiuV020 on 2018.05.13-18:00:33.
  */
-// TODO: 加了张表，版本号要换，顺便可以写写数据迁移，
+// TODO: 加了张表，写写数据迁移， 也就网站是否启用，
 @Database(
-        entities = [Novel::class, SiteEnabled::class],
-        version = 1
+        entities = [Novel::class, Site::class],
+        version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
     companion object {
@@ -33,6 +33,6 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 
-    abstract fun siteEnabledDao(): SiteEnabledDao
+    abstract fun siteDao(): SiteDao
     abstract fun novelDao(): NovelDao
 }

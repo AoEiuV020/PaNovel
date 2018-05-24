@@ -8,7 +8,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelSite
+import cc.aoeiuv020.panovel.data.entity.Site
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.site_list_item.view.*
 
@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.site_list_item.view.*
  * Created by AoEiuV020 on 2018.05.13-16:50:53.
  */
 class SiteListAdapter(
-        private val novelSiteList: List<NovelSite>,
-        private val itemListener: SiteChooseActivity.ItemListener
+        private val novelSiteList: List<Site>,
+        private val itemListener: ItemListener
 ) : RecyclerView.Adapter<SiteListAdapter.ViewHolder>() {
     override fun getItemCount(): Int {
         return novelSiteList.size
@@ -36,7 +36,7 @@ class SiteListAdapter(
         val tvName: TextView = itemView.tvName
         val ivLogo: ImageView = itemView.ivLogo
         val cbEnabled: CheckBox = itemView.cbEnabled
-        private lateinit var data: NovelSite
+        private lateinit var data: Site
 
         init {
             cbEnabled.setOnCheckedChangeListener { _, checked: Boolean ->
@@ -55,11 +55,17 @@ class SiteListAdapter(
             }
         }
 
-        fun bind(data: NovelSite) {
+        fun bind(data: Site) {
             this.data = data
             tvName.text = data.name
             Glide.with(ivLogo).load(data.logo).into(ivLogo)
             cbEnabled.isChecked = data.enabled
         }
     }
+
+    interface ItemListener {
+        fun onEnabledChanged(site: Site, enabled: Boolean)
+        fun onSiteSelect(site: Site)
+    }
+
 }

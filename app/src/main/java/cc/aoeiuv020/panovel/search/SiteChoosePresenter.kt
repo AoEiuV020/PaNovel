@@ -1,11 +1,11 @@
 package cc.aoeiuv020.panovel.search
 
 import cc.aoeiuv020.panovel.Presenter
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.data.entity.SiteEnabled
+import cc.aoeiuv020.panovel.data.entity.Site
+import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.error
 import org.jetbrains.anko.uiThread
 
 /**
@@ -13,32 +13,32 @@ import org.jetbrains.anko.uiThread
  */
 class SiteChoosePresenter : Presenter<SiteChooseActivity>() {
     fun start() {
-        view?.doAsync {
-            val siteEnabledMap = DataManager.app.db.siteEnabledDao().list()
-                    .map {
-                        it.name to it.enabled
-                    }.toMap()
-            NovelContext.getNovelContexts().map {
-                it.site
-            }.onEach { site ->
-                // 关于是否启用，存在并和现有设置不同则反个enabled,
-                if ((siteEnabledMap[site.name] ?: site.enabled) != site.enabled) {
-                    site.enabled = !site.enabled
-                }
-            }.let { novelSiteList ->
-                uiThread {
-                    view?.showSiteList(novelSiteList)
-                }
+        view?.doAsync({ e ->
+            val message = "加载网站列表失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            val list = DataManager.listSites()
+            uiThread {
+                view?.showSiteList(list)
             }
         }
     }
 
-    fun enabledChange(site: NovelSite, enabled: Boolean) {
-        view?.doAsync {
-            DataManager.app.db.siteEnabledDao().insert(SiteEnabled(
-                    name = site.name,
-                    enabled = enabled
-            ))
+    fun enabledChange(site: Site, enabled: Boolean) {
+        view?.doAsync({ e ->
+            val message = "${if (enabled) "启用" else "禁用"}网站失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            site.enabled = enabled
+            DataManager.siteEnabledChange(site)
         }
     }
 }

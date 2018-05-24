@@ -8,10 +8,11 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelSite
+import cc.aoeiuv020.panovel.data.entity.Site
 import kotlinx.android.synthetic.main.activity_site_choose.*
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 class SiteChooseActivity : AppCompatActivity(), IView {
     companion object {
@@ -22,13 +23,13 @@ class SiteChooseActivity : AppCompatActivity(), IView {
 
     private lateinit var presenter: SiteChoosePresenter
 
-    private val itemListener = object : ItemListener {
-        override fun onEnabledChanged(site: NovelSite, enabled: Boolean) {
+    private val itemListener = object : SiteListAdapter.ItemListener {
+        override fun onEnabledChanged(site: Site, enabled: Boolean) {
             presenter.enabledChange(site, enabled)
         }
 
-        override fun onSiteSelect(data: NovelSite) {
-            SingleSearchActivity.start(ctx, data)
+        override fun onSiteSelect(site: Site) {
+            SingleSearchActivity.start(ctx, site.name)
         }
     }
 
@@ -45,8 +46,8 @@ class SiteChooseActivity : AppCompatActivity(), IView {
         presenter.start()
     }
 
-    fun showSiteList(novelSiteList: List<NovelSite>) {
-        val adapter = SiteListAdapter(novelSiteList, itemListener)
+    fun showSiteList(siteList: List<Site>) {
+        val adapter = SiteListAdapter(siteList, itemListener)
         rvSiteList.adapter = adapter
     }
 
@@ -68,8 +69,7 @@ class SiteChooseActivity : AppCompatActivity(), IView {
         return true
     }
 
-    interface ItemListener {
-        fun onEnabledChanged(site: NovelSite, enabled: Boolean)
-        fun onSiteSelect(data: NovelSite)
+    fun showError(message: String, e: Throwable) {
+        toast(message + e)
     }
 }
