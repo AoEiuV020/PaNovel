@@ -49,4 +49,7 @@ abstract class NovelDao {
 
     @Query("update Novel set readAtChapterIndex = :readAtChapterIndex and readAtTextIndex = :readAtTextIndex and readAtChapterName = :readAtChapterName and readTime = :readTime where id$1 = :id")
     abstract fun updateReadStatus(id: Long, readAtChapterIndex: Int, readAtTextIndex: Int, readAtChapterName: String, readTime: Date)
+
+    @Query("select * from Novel order by readTime desc limit :count")
+    abstract fun history(count: Int): List<Novel>
 }

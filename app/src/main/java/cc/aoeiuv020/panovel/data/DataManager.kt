@@ -226,4 +226,6 @@ object DataManager : AnkoLogger {
     fun novelContentsCached(novel: Novel): Collection<String> = cache.novelContentCachedSet(novel)
 
     fun siteEnabledChange(site: Site) = app.siteEnabledChange(site)
+
+    fun history(historyCount: Int): List<Novel> = app.history(historyCount)
 }

@@ -7,10 +7,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.base.item.BaseItemListView
-import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
-import cc.aoeiuv020.panovel.local.NovelHistory
+import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
+import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.main.MainActivity
 import kotlinx.android.synthetic.main.novel_item_list.*
 
@@ -19,21 +20,22 @@ import kotlinx.android.synthetic.main.novel_item_list.*
  * 绝大部分照搬书架，
  * Created by AoEiuV020 on 2017.10.15-18:07:39.
  */
-class HistoryFragment : Fragment(), BaseItemListView {
-    private lateinit var mAdapter: DefaultItemListAdapter
+class HistoryFragment : Fragment(), IView {
+    private val itemListener = DefaultNovelItemActionListener { message, e ->
+        showError(message, e)
+    }
+    private val mAdapter = NovelListAdapter(R.layout.novel_item_big, itemListener)
     private val presenter: HistoryPresenter = HistoryPresenter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.novel_item_list, container, false)
+                              savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.novel_item_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        rvNovel.setLayoutManager(LinearLayoutManager(context))
-        mAdapter = DefaultItemListAdapter(context!!, presenter)
-        rvNovel.setAdapter(mAdapter)
-        rvNovel.setRefreshAction {
+        rvNovel.layoutManager = LinearLayoutManager(context)
+        rvNovel.adapter = mAdapter
+        srlRefresh.setOnRefreshListener {
             forceRefresh()
         }
 
@@ -51,7 +53,7 @@ class HistoryFragment : Fragment(), BaseItemListView {
     }
 
     private fun refresh() {
-        rvNovel.showSwipeRefresh()
+        srlRefresh.isRefreshing = true
         presenter.refresh()
     }
 
@@ -59,16 +61,16 @@ class HistoryFragment : Fragment(), BaseItemListView {
      * 强行刷新，重新下载小说详情，主要是看最新章，
      */
     private fun forceRefresh() {
-        presenter.forceRefresh()
+        mAdapter.refresh()
+        refresh()
     }
 
-    fun showNovelList(list: List<NovelHistory>) {
+    fun showNovelList(list: List<Novel>) {
         mAdapter.data = list
-        rvNovel.dismissSwipeRefresh()
-        rvNovel.showNoMore()
+        srlRefresh.isRefreshing = false
     }
 
-    override fun showError(message: String, e: Throwable) {
+    fun showError(message: String, e: Throwable) {
         (activity as? MainActivity)?.showError(message, e)
     }
 }

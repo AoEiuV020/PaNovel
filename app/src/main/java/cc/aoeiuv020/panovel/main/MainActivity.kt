@@ -42,7 +42,6 @@ import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
 import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.VersionName
-import cc.aoeiuv020.panovel.util.asyncExecutor
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_main.*
@@ -311,7 +310,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     private fun subscript() {
         // 初始化，其中有用到Handler，要在主线程初始化，
         TagAliasOperatorHelper.getInstance()
-        asyncExecutor.execute {
+        doAsync {
             val bean = TagAliasBean()
             bean.action = TagAliasOperatorHelper.ACTION_SET
             bean.tags = Bookshelf.list().map {

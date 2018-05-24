@@ -62,4 +62,5 @@ class AppDatabaseManager(context: Context) {
             novel.readAtChapterName, novel.readTime)
 
     fun siteEnabledChange(site: Site) = db.siteDao().updateEnabled(site.name, site.enabled)
+    fun history(historyCount: Int): List<Novel> = db.novelDao().history(historyCount)
 }
