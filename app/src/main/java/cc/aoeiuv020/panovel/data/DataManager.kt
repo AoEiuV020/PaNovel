@@ -227,4 +227,11 @@ object DataManager : AnkoLogger {
     fun cancelPinned(novel: Novel) = app.cancelPinned(novel)
 
     fun updateReadStatus(novel: Novel) = app.updateReadStatus(novel)
+
+    /**
+     * @return 返回该小说已经缓存的章节列表，
+     * 考虑到缓存可能对key进行了单向加密，
+     * 只用于contains判断特定章节是否已经缓存，不用于读取章节信息，
+     */
+    fun novelContentsCached(novel: Novel): Collection<String> = cache.novelContentCachedSet(novel)
 }

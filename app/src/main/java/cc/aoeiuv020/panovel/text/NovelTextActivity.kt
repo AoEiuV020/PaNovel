@@ -464,22 +464,36 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     fun download() {
         val index = reader.currentChapter
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
-                , novelItem.name
+                , novel.name
                 , R.drawable.ic_file_download)
         presenter.download(index)
     }
 
     fun showContents() {
-        AlertDialog.Builder(this)
-                .setTitle(R.string.contents)
-                .setAdapter(NovelContentsAdapter(this, novelItem, chaptersAsc, progress.chapter)) { _, index ->
-                    selectChapter(index)
-                }.create().apply {
-                    listView.isFastScrollEnabled = true
-                    listView.post {
-                        listView.setSelection(progress.chapter)
-                    }
-                }.show()
+        doAsync({ e ->
+            val message = "加载小说正文缓存列表失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            runOnUiThread {
+                showError(message, e)
+            }
+        }) {
+            // 虽然给了异步，但还是要快，因为没给任何提示，
+            // 查询小说已经缓存的章节列表，
+            val cachedList = DataManager.novelContentsCached(novel)
+            uiThread {
+                AlertDialog.Builder(it)
+                        .setTitle(R.string.contents)
+                        .setAdapter(NovelContentsAdapter(it, novel, chaptersAsc, cachedList)) { _, index ->
+                            selectChapter(index)
+                        }.create().apply {
+                            listView.isFastScrollEnabled = true
+                            listView.post {
+                                listView.setSelection(novel.readAtChapterIndex)
+                            }
+                        }.show()
+            }
+        }
     }
 
     private val handler: Handler = Handler()

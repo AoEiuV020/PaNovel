@@ -23,4 +23,8 @@ class CacheManager(ctx: Context) {
     fun saveContent(novel: Novel, chapter: NovelChapter, text: List<String>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    fun novelContentCachedSet(novel: Novel): Collection<String> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
