@@ -6,7 +6,7 @@ package cc.aoeiuv020.reader
  */
 
 interface TextRequester {
-    fun request(index: Int, refresh: Boolean = false): Text
+    fun request(index: Int, refresh: Boolean = false): List<String>
 }
 
 /**

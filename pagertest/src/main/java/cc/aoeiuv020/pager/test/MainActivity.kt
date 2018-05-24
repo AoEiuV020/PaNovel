@@ -20,12 +20,12 @@ class MainActivity : Activity(), AnkoLogger {
         setContentView(fl)
 
         val requester = object : TextRequester {
-            override fun request(index: Int, refresh: Boolean): Text {
-                return Text(List(10) {
+            override fun request(index: Int, refresh: Boolean): List<String> {
+                return List(10) {
                     List(it + 1) {
                         "小说内容ablIj" + it
                     }.joinToString(";")
-                })
+                }
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

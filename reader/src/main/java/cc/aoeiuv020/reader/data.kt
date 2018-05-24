@@ -8,4 +8,3 @@ data class Novel(val name: String, val author: String)
 
 data class Chapter(val name: String)
 
-data class Text(val list: List<String>)

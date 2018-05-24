@@ -9,8 +9,11 @@ import cc.aoeiuv020.pager.IMargins
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
-import cc.aoeiuv020.reader.*
+import cc.aoeiuv020.reader.ConfigChangedListener
+import cc.aoeiuv020.reader.Novel
+import cc.aoeiuv020.reader.ReaderConfigName
 import cc.aoeiuv020.reader.ReaderConfigName.*
+import cc.aoeiuv020.reader.TextRequester
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -327,14 +330,14 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         })
     }
 
-    private fun typesetting(chapter: String, text: Text): List<Page> {
+    private fun typesetting(chapter: String, list: List<String>): List<Page> {
         val pages = mutableListOf<Page>()
         var height = 0
         val lines = mutableListOf<Any>()
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         val textHeight = textPaint.textSize.toInt()
-        (listOf(chapter) + text.list).forEachIndexed { index, str ->
+        (listOf(chapter) + list).forEachIndexed { index, str ->
             val paragraph = if (index == 0) str else "　　" + str
             var start = 0
             var count: Int

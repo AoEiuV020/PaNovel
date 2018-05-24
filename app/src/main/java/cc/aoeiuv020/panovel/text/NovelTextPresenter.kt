@@ -2,31 +2,20 @@ package cc.aoeiuv020.panovel.text
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.local.Cache
-import cc.aoeiuv020.panovel.local.Settings
-import cc.aoeiuv020.panovel.local.id
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.util.async
-import cc.aoeiuv020.panovel.util.suffixThreadName
-import cc.aoeiuv020.reader.Text
-import cc.aoeiuv020.reader.TextRequester
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.error
+import org.jetbrains.anko.uiThread
 import java.io.IOException
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.03-19:06:50.
  */
 class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(), AnkoLogger {
-    private val context: NovelContext by lazy {
-        NovelContext.getNovelContextByUrl(novelItem.requester.url)
-    }
     private var refresh = false
     private var chapterList: List<NovelChapter> = emptyList()
 
@@ -55,6 +44,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
     }
 
     fun download(fromIndex: Int) {
+/*
         Observable.create<List<Int>> { em ->
             suffixThreadName("download")
             val detail = Cache.detail.get(novelItem)
@@ -105,6 +95,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             error(message, e)
             view?.showError(message, e)
         }).let { addDisposable(it, 2) }
+*/
     }
 
     fun requestChapters(novel: Novel) {
@@ -121,8 +112,6 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
         }
     }
 
-    fun getRequester(): TextRequester = this
-
     fun updateBookshelf(novel: Novel) {
         doAsync({ e ->
             val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.name}》失败，"
@@ -138,9 +127,8 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
         }
     }
 
-    fun requestContent(novel: Novel, chapter: NovelChapter, refresh: Boolean): Text {
-        // TODO: 没必要这个Text,
-        return Text(DataManager.requestContent(novel, chapter, refresh))
+    fun requestContent(novel: Novel, chapter: NovelChapter, refresh: Boolean): List<String> {
+        return DataManager.requestContent(novel, chapter, refresh)
     }
 
 }

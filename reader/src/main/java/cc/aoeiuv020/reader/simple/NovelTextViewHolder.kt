@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import cc.aoeiuv020.reader.R
-import cc.aoeiuv020.reader.Text
 import cc.aoeiuv020.reader.hide
 import cc.aoeiuv020.reader.show
 import io.reactivex.Single
@@ -77,8 +76,8 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
         request(index, true)
     }
 
-    private fun showText(text: Text) {
-        ntrAdapter.data = text.list
+    private fun showText(text: List<String>) {
+        ntrAdapter.data = text
         textProgress?.let {
             textRecyclerView.run {
                 post { scrollToPosition(it) }

@@ -154,14 +154,14 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     private val contentRequester: TextRequester = object : TextRequester {
-        override fun request(index: Int, refresh: Boolean): Text {
+        override fun request(index: Int, refresh: Boolean): List<String> {
             return presenter.requestContent(novel, chaptersAsc[index], refresh)
         }
     }
 
     private fun initReader(novel: Novel) {
         reader = Readers.getReader(this, ReaderNovelItem(novel.name, novel.author),
-                flContent, presenter.getRequester(), Settings.makeReaderConfig()).apply {
+                flContent, contentRequester, Settings.makeReaderConfig()).apply {
             menuListener = object : MenuListener {
                 override fun hide() {
                     this@NovelTextActivity.hide()
