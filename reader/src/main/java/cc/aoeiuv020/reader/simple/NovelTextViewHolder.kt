@@ -52,7 +52,7 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
         val chapter = reader.chapterList[index]
         progressBar.show()
         ntrAdapter.clear()
-        ntrAdapter.setChapterName(chapter.name)
+        ntrAdapter.setChapterName(chapter)
         disposable?.dispose()
         // TODO: 不要RxJava,
         disposable = Single.fromCallable {
