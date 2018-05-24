@@ -76,8 +76,18 @@ class AppDatabaseManager(context: Context) {
             db.bookListDao().insert(BookListItem(bookListId = bookListId, novelId = novel.nId))
 
     fun removeFromBookList(bookListId: Long, novel: Novel) =
-            db.bookListDao().delete(BookListItem(bookListId = bookListId, novelId = novel.nId))
+            db.bookListDao().deleteItem(BookListItem(bookListId = bookListId, novelId = novel.nId))
 
     fun getNovelFromBookShelf(bookListId: Long): List<Novel> =
             db.bookListDao().queryBookListLeftJoin(bookListId)
+
+    fun allBookList(): List<BookList> = db.bookListDao().list()
+    fun renameBookList(bookList: BookList, name: String) =
+            db.bookListDao().updateBookListName(bookList.nId, name)
+
+    fun removeBookList(bookList: BookList) = db.bookListDao().deleteList(bookList)
+
+    fun newBookList(name: String) =
+            db.bookListDao().insert(BookList(id = null, name = name, createTime = Date()))
+
 }

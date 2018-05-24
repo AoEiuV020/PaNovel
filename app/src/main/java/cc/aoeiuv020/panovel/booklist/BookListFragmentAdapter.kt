@@ -1,76 +1,68 @@
 package cc.aoeiuv020.panovel.booklist
 
 import android.content.Context
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.local.BookList
-import cc.aoeiuv020.panovel.local.BookListData
-import cc.aoeiuv020.panovel.util.showKeyboard
-import cn.lemon.view.adapter.BaseViewHolder
-import cn.lemon.view.adapter.RecyclerAdapter
+import cc.aoeiuv020.panovel.data.entity.BookList
 import kotlinx.android.synthetic.main.book_list_item.view.*
-import kotlinx.android.synthetic.main.dialog_editor.view.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.selector
-import org.jetbrains.anko.yesButton
 
 /**
  *
  * Created by AoEiuV020 on 2017.11.22-14:33:36.
  */
-class BookListFragmentAdapter(context: Context, val presenter: BookListFragmentPresenter)
-    : RecyclerAdapter<BookListData>(context) {
-    override fun onCreateBaseViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<BookListData>
-            = ViewHolder(parent, R.layout.book_list_item)
+class BookListFragmentAdapter(
+        private val itemListener: ItemListener
+) : RecyclerView.Adapter<BookListFragmentAdapter.ViewHolder>() {
+    private var _data: MutableList<BookList> = mutableListOf()
+    var data: List<BookList>
+        get() = _data
+        set(value) {
+            _data = value.toMutableList()
+            notifyDataSetChanged()
+        }
 
-    fun remove(bookList: BookListData, position: Int) {
-        BookList.remove(bookList)
-        remove(position)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.book_list_item, parent, false)
+        return ViewHolder(itemView, itemListener)
     }
 
-    fun rename(bookList: BookListData) {
-        context.alert {
-            titleResource = R.string.rename
-            val layout = View.inflate(context, R.layout.dialog_editor, null)
-            customView = layout
-            val etName = layout.editText
-            yesButton {
-                val name = etName.text.toString()
-                if (name.isNotEmpty()) {
-                    presenter.renameBookList(bookList, name)
-                } else {
-                    // 改名为空的话直接无视，懒得报错了，
-                }
-            }
-            etName.post { etName.showKeyboard() }
-        }.show()
+    override fun getItemCount(): Int = data.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = data[position]
+        holder.apply(item)
     }
 
-    fun shareBookList(bookList: BookListData) {
-        presenter.shareBookList(bookList)
-    }
-
-    inner class ViewHolder(parent: ViewGroup?, layoutId: Int) : BaseViewHolder<BookListData>(parent, layoutId) {
+    class ViewHolder(itemView: View, itemListener: ItemListener) : RecyclerView.ViewHolder(itemView) {
         private val name = itemView.ivName
         private val count = itemView.ivCount
+        // 提供外面的加调方法使用，
+        lateinit var bookList: BookList
+            private set
+        val ctx: Context = itemView.context
 
-        override fun setData(data: BookListData) {
+        init {
             itemView.setOnClickListener {
-                BookListActivity.start(context, data.name)
+                itemListener.onClick(this)
             }
             itemView.setOnLongClickListener {
-                val list = listOf(R.string.remove to { i: Int -> remove(data, i) },
-                        R.string.rename to { _: Int -> rename(data) },
-                        R.string.share to { _: Int -> shareBookList(data) })
-                context.selector(context.getString(R.string.action), list.unzip().first.map { context.getString(it) }) { _, i ->
-                    list[i].second.invoke(layoutPosition)
-                }
-
-                true
+                itemListener.onLongClick(this)
             }
-            name.text = data.name
-            count.text = data.list.size.toString()
         }
+
+        fun apply(bookList: BookList) {
+            this.bookList = bookList
+            name.text = bookList.name
+            // TODO: 改改，顺便要查到数量，
+            count.text = ""
+        }
+    }
+
+    interface ItemListener {
+        fun onClick(vh: ViewHolder)
+        fun onLongClick(vh: ViewHolder): Boolean
     }
 }

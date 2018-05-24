@@ -34,9 +34,7 @@ open class NovelListAdapter(
         return NovelViewHolder(itemView, itemListener)
     }
 
-    override fun getItemCount(): Int {
-        return _data.size
-    }
+    override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: NovelViewHolder, position: Int) {
         val novel = _data[position]

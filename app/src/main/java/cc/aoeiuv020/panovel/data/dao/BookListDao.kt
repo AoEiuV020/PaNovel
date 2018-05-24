@@ -29,9 +29,24 @@ abstract class BookListDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(bookListItem: BookListItem)
 
+    /**
+     * 插入的只能是不带有主键id的，不可能重复，
+     */
+    @Insert
+    abstract fun insert(bookList: BookList)
+
     @Delete
-    abstract fun delete(bookListItem: BookListItem)
+    abstract fun deleteItem(bookListItem: BookListItem)
+
+    @Delete
+    abstract fun deleteList(bookList: BookList)
 
     @Query("select * from BookList where id = :id")
     abstract fun queryBookList(id: Long): BookList
+
+    @Query("select * from BookList")
+    abstract fun list(): List<BookList>
+
+    @Query("update BookList set name = :name where id = :id")
+    abstract fun updateBookListName(id: Long, name: String)
 }

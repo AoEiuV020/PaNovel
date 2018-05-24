@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.share
 import android.content.Context
 import android.view.View
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.local.BookListData
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
@@ -23,11 +24,13 @@ object Share {
         return paste.check(url)
     }
 
-    fun shareBookList(bookList: BookListData, shareExpiration: Expiration): String {
+    fun shareBookList(bookList: BookList, shareExpiration: Expiration): String {
+        TODO("要从bookList查到小说再上传，")
         return paste.upload(PasteUbuntu.PasteUbuntuData(bookList.toJson(), expiration = shareExpiration))
     }
 
     fun receiveBookList(url: String): BookListData {
+        TODO("要兼容旧版，")
         val text = paste.download(url)
         return text.toBean()
     }
