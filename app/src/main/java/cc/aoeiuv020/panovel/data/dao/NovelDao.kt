@@ -37,9 +37,12 @@ abstract class NovelDao {
             updateTime: Date, checkUpdateTime: Date, receiveUpdateTime: Date
     )
 
-    // 插入前都有查询，所以不用在插入失败时尝试更新，
+    /**
+     * 插入前都有查询，所以不用在插入失败时尝试更新，
+     * 返回id, 要赋值回novel,
+     */
     @Insert
-    abstract fun insert(novel: Novel)
+    abstract fun insert(novel: Novel): Long
 
     @Query("update Novel set pinnedTime = :pinnedTime where id$1 = :id")
     abstract fun updatePinnedTime(id: Long, pinnedTime: Date)

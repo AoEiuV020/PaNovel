@@ -19,7 +19,8 @@ class AppDatabaseManager(context: Context) {
         db.novelDao().query(site, author, name)
                 ?: Novel(id = null, site = site, author = author, name = name, detail = extra).also {
                     // 数据库里没有，需要插入，
-                    db.novelDao().insert(it)
+                    // 插入后确保novel要有这个id,
+                    it.id = db.novelDao().insert(it)
                 }
     }
 

@@ -30,9 +30,10 @@ data class Novel(
         /**
          * 普通的id,
          * 要给个null才能autoGenerate，
+         * 插入时拿到id再赋值回来，所以要可变var，
          */
         @PrimaryKey(autoGenerate = true)
-        val id: Long? = null,
+        var id: Long? = null,
         /**
          * 网站名，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
