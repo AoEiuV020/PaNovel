@@ -21,20 +21,15 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.local.History
 import cc.aoeiuv020.panovel.local.Margins
 import cc.aoeiuv020.panovel.local.Progress
 import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
-import cc.aoeiuv020.panovel.util.alert
-import cc.aoeiuv020.panovel.util.alertError
-import cc.aoeiuv020.panovel.util.loading
-import cc.aoeiuv020.panovel.util.notify
+import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
@@ -80,7 +75,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private var index: Int? = null
     private var _novel: Novel? = null
     private var novel: Novel
-        get() = Reporter.notNull(_novel)
+        get() = _novel.notNull()
         set(value) {
             _novel = value
         }
@@ -146,13 +141,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         presenter.requestChapters(novel)
     }
 
-    fun showChapters(chapters: List<NovelChapter>) {
-        this.chaptersAsc = chapters
-        reader.chapterList = chapters.map {
-            Chapter(it.name)
-        }
-    }
-
     private val contentRequester: TextRequester = object : TextRequester {
         override fun request(index: Int, refresh: Boolean): List<String> {
             return presenter.requestContent(novel, chaptersAsc[index], refresh)
@@ -160,7 +148,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     private fun initReader(novel: Novel) {
-        reader = Readers.getReader(this, ReaderNovelItem(novel.name, novel.author),
+        reader = Readers.getReader(this, novel.name,
                 flContent, contentRequester, Settings.makeReaderConfig()).apply {
             menuListener = object : MenuListener {
                 override fun hide() {
@@ -212,6 +200,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         reader.refreshCurrentChapter()
     }
 
+    /**
+     * 切换动画时调用,
+     * 重置阅读器，
+     */
     private fun resetReader() {
         reader.onDestroy()
         flContent.removeAllViews() // 多余，上面已经移除，
@@ -391,11 +383,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         show()
     }
 
-    fun showDetail(detail: NovelDetail) {
-        this.novelDetail = detail
-        History.add(detail.novel)
-    }
-
     fun showChaptersAsc(chaptersAsc: List<NovelChapter>) {
         debug { "chapters loaded ${chaptersAsc.size}" }
         this.chaptersAsc = chaptersAsc
@@ -411,7 +398,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             show()
             return
         }
-        reader.chapterList = chaptersAsc.map { Chapter(it.name) }
+        reader.chapterList = chaptersAsc.map { it.name }
         reader.currentChapter = progress.chapter
         reader.textProgress = progress.text
     }

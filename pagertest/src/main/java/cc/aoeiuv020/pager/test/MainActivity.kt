@@ -7,7 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.FrameLayout
 import cc.aoeiuv020.pager.Margins
-import cc.aoeiuv020.reader.*
+import cc.aoeiuv020.reader.AnimationMode
+import cc.aoeiuv020.reader.ReaderConfig
+import cc.aoeiuv020.reader.Readers
+import cc.aoeiuv020.reader.TextRequester
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.ctx
 
@@ -42,7 +45,7 @@ class MainActivity : Activity(), AnkoLogger {
                 AnimationMode.SIMULATION, animationSpeed = 0.2f)
         val reader = Readers.getReader(ctx, Novel("书名", "作者名"), fl, requester, config)
         val chapters = List(20) {
-            Chapter("章节名" + it)
+            "章节名$it"
         }
         reader.chapterList = chapters
     }

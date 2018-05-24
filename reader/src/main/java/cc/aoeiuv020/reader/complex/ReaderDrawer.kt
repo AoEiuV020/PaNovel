@@ -10,7 +10,6 @@ import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
 import cc.aoeiuv020.reader.ConfigChangedListener
-import cc.aoeiuv020.reader.Novel
 import cc.aoeiuv020.reader.ReaderConfigName
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import cc.aoeiuv020.reader.TextRequester
@@ -26,7 +25,7 @@ import java.util.*
  * Created by AoEiuV020 on 2017.12.03-04:09:17.
  */
 @SuppressWarnings("SimpleDateFormat")
-class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, private val requester: TextRequester)
+class ReaderDrawer(private val reader: ComplexReader, private val novel: String, private val requester: TextRequester)
     : PagerDrawer(), AnkoLogger {
     val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
     private lateinit var titlePaint: TextPaint
@@ -127,10 +126,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             drawPagination(background, pages)
         }
         if (reader.config.chapterNameMargins.enabled) {
-            drawMessage(background, reader.chapterList[chapterIndex].name, reader.config.chapterNameMargins)
+            drawMessage(background, reader.chapterList[chapterIndex], reader.config.chapterNameMargins)
         }
         if (reader.config.bookNameMargins.enabled) {
-            drawMessage(background, novel.name, reader.config.bookNameMargins)
+            drawMessage(background, novel, reader.config.bookNameMargins)
         }
         if (reader.config.timeMargins.enabled) {
             drawTime(background)
@@ -310,7 +309,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         // TODO: 不要RxJava的东西，
         Single.fromCallable {
             val text = requester.request(requestIndex, refresh)
-            val pages = typesetting(reader.chapterList[requestIndex].name, text)
+            val pages = typesetting(reader.chapterList[requestIndex], text)
             pagesCache.put(requestIndex, pages)
             requestingList.remove(requestIndex)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
@@ -319,7 +318,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 pager?.refresh()
             }
         }, {
-            val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex].name}"
+            val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex]}"
             error { message }
             // 缓存空的页面，到时候显示本章空内容，
             pagesCache.put(requestIndex, listOf())

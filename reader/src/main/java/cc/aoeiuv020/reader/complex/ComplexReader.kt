@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.ViewGroup
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.reader.BaseNovelReader
-import cc.aoeiuv020.reader.Novel
 import cc.aoeiuv020.reader.ReaderConfig
 import cc.aoeiuv020.reader.TextRequester
 import org.jetbrains.anko.AnkoLogger
@@ -13,7 +12,7 @@ import org.jetbrains.anko.AnkoLogger
  *
  * Created by AoEiuV020 on 2017.12.01-20:31:49.
  */
-class ComplexReader(override var ctx: Context, novel: Novel, private val parent: ViewGroup, requester: TextRequester, override var config: ReaderConfig)
+class ComplexReader(override var ctx: Context, novel: String, private val parent: ViewGroup, requester: TextRequester, override var config: ReaderConfig)
     : BaseNovelReader(novel, requester), AnkoLogger {
     private val pageView: Pager = Pager(ctx)
     private val drawer = ReaderDrawer(this, novel, requester)

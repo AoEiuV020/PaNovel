@@ -37,6 +37,7 @@ object Reporter : AnkoLogger {
         if (t == null) {
             val message = "<${T::class.java}>不可空，"
             val e = NullPointerException(message)
+            // 可能有重复上报，抛出去的异常可能再被捕获然后上报，但不嫌多，
             post(message, e)
             throw  e
         }
