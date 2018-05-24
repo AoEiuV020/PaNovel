@@ -29,7 +29,7 @@ class FuzzySearchPresenter : Presenter<FuzzySearchActivity>() {
 
     private fun searchActual(name: String, author: String?) {
         debug { "search <$name, $author>" }
-        doAsync({ e ->
+        view?.doAsync({ e ->
             val message = "搜索<$name, $author>失败，"
             Reporter.post(message, e)
             error(message, e)

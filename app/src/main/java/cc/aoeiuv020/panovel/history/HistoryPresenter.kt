@@ -16,7 +16,7 @@ import org.jetbrains.anko.uiThread
 class HistoryPresenter : Presenter<HistoryFragment>(), AnkoLogger {
 
     private fun requestHistory() {
-        doAsync({ e ->
+        view?.doAsync({ e ->
             val message = "获取历史列表失败，"
             Reporter.post(message, e)
             error(message, e)

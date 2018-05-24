@@ -6,7 +6,6 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.qrcode.QrCodeManager
 import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.*
-import java.io.IOException
 
 /**
  *
@@ -27,7 +26,7 @@ class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity
 
     fun share() {
         novel?.let {
-            doAsync({ e ->
+            view?.doAsync({ e ->
                 val message = "获取小说《${it.name}》<${it.site}, ${it.detail}>详情页地址失败，"
                 // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
                 Reporter.post(message, e)
@@ -50,11 +49,9 @@ class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity
     }
 
     private fun requestNovelDetail() {
-        doAsync({ e ->
+        view?.doAsync({ e ->
             val message = "获取小说详情失败，"
-            if (e !is IOException) {
-                Reporter.post(message, e)
-            }
+            Reporter.post(message, e)
             view?.runOnUiThread {
                 view?.showError(message, e)
             }
@@ -84,7 +81,7 @@ class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity
     }
 
     fun updateBookshelf(novel: Novel) {
-        doAsync({ e ->
+        view?.doAsync({ e ->
             val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.name}》失败，"
             // 这应该是数据库操作出问题，正常情况不会出现才对，
             // 未知异常统一上报，

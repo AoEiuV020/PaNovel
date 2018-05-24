@@ -25,7 +25,6 @@ import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
-import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Check
 import cc.aoeiuv020.panovel.local.DevMessage
 import cc.aoeiuv020.panovel.local.Settings
@@ -35,8 +34,6 @@ import cc.aoeiuv020.panovel.migration.MigrationView
 import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.server.UpdateManager
-import cc.aoeiuv020.panovel.server.common.md5
-import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
 import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
 import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
@@ -313,6 +310,8 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         doAsync {
             val bean = TagAliasBean()
             bean.action = TagAliasOperatorHelper.ACTION_SET
+            TODO("改成添加书架时就订阅极光，手动订阅时覆盖，")
+/*
             bean.tags = Bookshelf.list().map {
                 it.requester.run {
                     Novel().apply {
@@ -322,6 +321,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
                 }
             }.toSet()
             TagAliasOperatorHelper.getInstance().handleAction(this, sequence.getAndIncrement(), bean)
+*/
         }
     }
 

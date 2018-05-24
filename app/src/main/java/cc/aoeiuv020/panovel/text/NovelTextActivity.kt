@@ -103,6 +103,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
         title = id.toString()
 
+        // TODO: 进来时就取消有新章节的通知，cancel notify,
+
         // 进度，读取顺序， savedInstanceState > intent > DataManager
         // intent传入的index，activity死了再开，应该会恢复这个intent, 不能让intent覆盖了死前的阅读进度，
         // 用getSerializableExtra读Int不需要默认值，
@@ -473,7 +475,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
                 , novel.name
                 , R.drawable.ic_file_download)
-        presenter.download(index)
+        presenter.download(novel, index)
     }
 
     fun showContents() {
@@ -522,7 +524,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
         override fun run() {
             notify(1, getString(R.string.downloading_placeholder, exists, downloads, errors, left)
-                    , novelItem.name
+                    , novel.name
                     , R.drawable.ic_file_download)
         }
     }
@@ -536,7 +538,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     fun showDownloadComplete(exists: Int, downloads: Int, errors: Int) {
         handler.removeCallbacks(downloadingRunnable)
         notify(1, getString(R.string.download_complete_placeholder, exists, downloads, errors)
-                , novelItem.name)
+                , novel.name)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
