@@ -49,17 +49,17 @@ object Reporter : AnkoLogger {
         postException(IllegalStateException(message))
     }
 
-    fun unreachable(t: Throwable) {
-        post("不可到达，", t)
+    fun unreachable(e: Throwable) {
+        post("不可到达，", e)
     }
 
-    fun post(message: String, t: Throwable) {
-        debug(message, t)
+    fun post(message: String, e: Throwable) {
+        debug(message, e)
         // 断网导致的问题也一并上报了，
-        postException(IllegalStateException(message, t))
+        postException(IllegalStateException(message, e))
     }
 
-    private fun postException(t: Throwable) {
-        CrashReport.postCatchedException(t)
+    private fun postException(e: Throwable) {
+        CrashReport.postCatchedException(e)
     }
 }

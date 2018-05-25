@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.BookList
-import cc.aoeiuv020.panovel.local.BookListData
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
 import com.bumptech.glide.Glide
@@ -29,7 +28,10 @@ object Share {
         return paste.upload(PasteUbuntu.PasteUbuntuData(bookList.toJson(), expiration = shareExpiration))
     }
 
-    fun receiveBookList(url: String): BookListData {
+    /**
+     * @return 返回导入的书单中的小说数量，
+     */
+    fun receiveBookList(url: String): Int {
         TODO("要兼容旧版，")
         val text = paste.download(url)
         return text.toBean()

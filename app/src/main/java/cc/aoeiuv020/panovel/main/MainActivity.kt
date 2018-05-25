@@ -22,6 +22,8 @@ import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
+import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
@@ -39,6 +41,7 @@ import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
 import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.VersionName
+import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_main.*
@@ -65,6 +68,26 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     private lateinit var bookshelfFragment: BookshelfFragment
     private lateinit var historyFragment: HistoryFragment
     lateinit var bookListFragment: BookListFragment
+
+    private val openListener: OpenManager.OpenListener = object : OpenManager.OpenListener {
+        override fun onNovelOpened(novel: Novel) {
+            NovelDetailActivity.start(ctx, novel)
+        }
+
+        override fun onBookListReceived(count: Int) {
+            progressDialog.dismiss()
+            bookListFragment.refresh()
+            showMessage("添加书单，共${count}本，")
+        }
+
+        override fun onError(message: String, e: Throwable) {
+            showError(message, e)
+        }
+
+        override fun onLoading(status: String) {
+            loading(progressDialog, status)
+        }
+    }
 
     private lateinit var migrationPresenter: MigrationPresenter
 
@@ -291,7 +314,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             yesButton {
                 val url = etName.text.toString()
                 if (url.isNotEmpty()) {
-                    OpenManager.open(this@MainActivity, url)
+                    OpenManager.open(this@MainActivity, url, openListener)
                 }
             }
         }.show()
@@ -331,7 +354,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         data?.extras?.getString("SCAN_RESULT")?.let {
-            OpenManager.open(this, it)
+            OpenManager.open(this, it, openListener)
         }
     }
 

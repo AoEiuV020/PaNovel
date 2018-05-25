@@ -245,4 +245,12 @@ object DataManager : AnkoLogger {
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)
     fun removeBookList(bookList: BookList) = app.removeBookList(bookList)
     fun newBookList(name: String) = app.newBookList(name)
+
+    /**
+     * @throws IllegalArgumentException 不支持的地址直接抛异常，
+     */
+    fun getNovelFromUrl(url: String): Novel = api.getNovelFromUrl(api.getNovelContextByUrl(url), url).let {
+        // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
+        app.queryOrNewNovel(it.site, it.author, it.name, it.extra)
+    }
 }
