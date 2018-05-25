@@ -77,7 +77,7 @@ object DataManager : AnkoLogger {
         }
         api.updateNovelDetail(novel)
         // 写入数据库，
-        app.updateNovelDetail(novel.nId, novel.image, novel.introduction, novel.updateTime)
+        app.updateNovelDetail(novel.nId, novel.detail, novel.image, novel.introduction, novel.updateTime)
     }
 
     fun getNovel(id: Long): Novel = app.query(id)
