@@ -1,25 +1,12 @@
 package cc.aoeiuv020.panovel.server
 
 import android.content.Context
-import android.util.Log
-import cc.aoeiuv020.panovel.BuildConfig
-import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.Requester
-import cc.aoeiuv020.panovel.local.Bookshelf
-import cc.aoeiuv020.panovel.local.Cache
-import cc.aoeiuv020.panovel.server.common.gson
-import cc.aoeiuv020.panovel.server.common.toBean
-import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
+import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.server.service.NovelService
-import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
-import cc.aoeiuv020.panovel.util.VersionUtil
-import cc.aoeiuv020.panovel.util.async
-import cc.aoeiuv020.panovel.util.notify
-import com.google.gson.JsonObject
-import io.reactivex.Observable
-import org.jetbrains.anko.*
-import java.util.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.error
 
 /**
  *
@@ -35,8 +22,16 @@ object UpdateManager : AnkoLogger {
             val time: Long?
     )
 
-    fun downloadUpdate(context: Context, extra: String) {
+    fun downloadUpdate(ctx: Context, extra: String) {
         debug { "downloadUpdate $extra" }
+        ctx.doAsync({ e ->
+            val message = "更新通知解析失败,"
+            Reporter.post(message, e)
+            error(message, e)
+        }) {
+
+        }
+/*
         Observable.create<Notification> { em ->
             val novelJson: String = gson.fromJson(extra, JsonObject::class.java)
                     .getAsJsonPrimitive("novel")
@@ -77,8 +72,10 @@ object UpdateManager : AnkoLogger {
         }, { e ->
             error("更新通知解析失败,", e)
         })
+*/
     }
 
+/*
     fun query(requester: Requester): Novel? {
         debug { "query ：${requester.extra}" }
         val service = novelService ?: return null
@@ -94,10 +91,19 @@ object UpdateManager : AnkoLogger {
         }
 
     }
+*/
 
+/*
     fun touch(requester: Requester, chaptersCount: Int, updateTime: Date? = null) {
         debug { "touch ：${requester.extra}" }
         novelService ?: return
+        ctx.doAsync({ e ->
+            val message = "更新通知解析失败,"
+            Reporter.post(message, e)
+            error(message, e)
+        }) {
+
+        }
         Observable.fromCallable {
             val novel = Novel().also {
                 it.requesterType = requester.type
@@ -114,7 +120,9 @@ object UpdateManager : AnkoLogger {
         })
 
     }
+*/
 
+/*
     fun uploadUpdate(requester: Requester, chaptersCount: Int, updateTime: Date? = null) {
         debug { "uploadUpdate ：${requester.extra}" }
         novelService ?: return
@@ -132,7 +140,9 @@ object UpdateManager : AnkoLogger {
             error("上传更新失败，", e)
         })
     }
+*/
 
+/*
     fun create(context: Context) {
         debug { "create ${context.javaClass}" }
         novelService?.let { return }
@@ -156,6 +166,7 @@ object UpdateManager : AnkoLogger {
             novelService = NovelServiceImpl(ServerAddress())
         })
     }
+*/
 
     fun destroy(context: Context) {
         debug { "destroy ${context.javaClass}" }

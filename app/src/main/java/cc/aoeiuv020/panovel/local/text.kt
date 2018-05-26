@@ -1,22 +1,10 @@
 package cc.aoeiuv020.panovel.local
 
-import android.os.Handler
-import android.os.Looper
-import cc.aoeiuv020.panovel.App
-import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.util.async
-import cc.aoeiuv020.panovel.util.notify
-import cc.aoeiuv020.panovel.util.suffixThreadName
-import io.reactivex.Observable
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-
 /**
  * 导出小说文本，
  * Created by AoEiuV020 on 2017.11.20-17:03:21.
  */
+/*
 object Text : BaseLocalSource(), AnkoLogger {
     private val handler = Handler(Looper.getMainLooper())
     private var index = 0
@@ -92,3 +80,4 @@ object Text : BaseLocalSource(), AnkoLogger {
         })
     }
 }
+*/
