@@ -101,7 +101,7 @@
     <string name="library">库</string>
     <string name="book_list_auto_save">书单修改自动保存</string>
     <string name="ad_enabled">展示广告</string>
-    <string name="full_screen_delay">全屏延迟</string>
+    <string name="full_screen_delay">全屏延迟(ms)</string>
     <string name="back_press_out_of_fullScreen">返回键退出全屏</string>
     <string name="donate">捐赠</string>
     <string name="paypal">Paypal</string>
@@ -183,6 +183,7 @@
     <string name="remove_bookshelf">移出书架</string>
     <string name="add_bookshelf">加入书架</string>
     <string name="refresh_chapters">刷新章节</string>
+    <string name="auto_refresh_interval">自动刷新间隔(s)</string>
     <string-array name="content_more_action">
         <!--
                 ReadContinue,

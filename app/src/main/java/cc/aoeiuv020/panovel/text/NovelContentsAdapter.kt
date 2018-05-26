@@ -9,7 +9,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.id
-import cc.aoeiuv020.panovel.settings.ReaderSettings
+import cc.aoeiuv020.panovel.settings.OtherSettings
 import kotlinx.android.synthetic.main.novel_chapter_item.view.*
 
 /**
@@ -24,7 +24,7 @@ class NovelContentsAdapter(
         private var cachedList: Collection<String>
 ) : BaseAdapter() {
     // 颜色列表，只读一次设置，
-    private val chapterColorList = ReaderSettings.chapterColorList
+    private val chapterColorList = OtherSettings.chapterColorList
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView
                 ?: LayoutInflater.from(context).inflate(R.layout.novel_chapter_item, parent, false).apply {

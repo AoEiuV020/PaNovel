@@ -1,14 +1,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="book_small_layout"
-        android:title="@string/book_small_layout" />
-
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:inputType="number"
-        android:key="history_count"
+        android:key="historyCount"
         android:maxLines="1"
         android:defaultValue="30"
         android:selectAllOnFocus="true"
@@ -18,16 +13,7 @@
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:inputType="number"
-        android:key="async_thread_count"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/async_thread_count" />
-
-    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
-        android:capitalize="words"
-        android:inputType="number"
-        android:key="download_thread_count"
+        android:key="downloadThreadsLimit"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -36,7 +22,7 @@
     <SwitchPreference
         android:defaultValue="true"
         android:enabled="false"
-        android:key="ad_enabled"
+        android:key="adEnabled"
         android:title="@string/ad_enabled" />
 
 </PreferenceScreen>

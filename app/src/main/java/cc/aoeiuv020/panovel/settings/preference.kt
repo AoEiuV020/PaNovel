@@ -9,7 +9,6 @@ import android.support.annotation.RequiresApi
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
-import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.find
 
 
@@ -20,7 +19,7 @@ import org.jetbrains.anko.find
 /**
  * 实现控件右边显示当前值，
  */
-class ListPreference : android.preference.ListPreference, AnkoLogger {
+class ListPreference : android.preference.ListPreference {
     constructor(context: Context)
             : super(context)
 
@@ -37,9 +36,14 @@ class ListPreference : android.preference.ListPreference, AnkoLogger {
 
     init {
         widgetLayoutResource = android.R.layout.simple_list_item_1
+    }
 
-        // 默认可能没有读取数据初始化，所以要这句，
-        value = getPersistedString(value)
+    // 自动设置默认值，这里存起来，下面onBindView能拿到，
+    override fun onGetDefaultValue(a: TypedArray?, index: Int): Any? {
+        return super.onGetDefaultValue(a, index)?.also {
+            // 直接保存字符串，如果字符串不存在列表里，只是entry==null,
+            value = it.toString()
+        }
     }
 
     override fun onBindView(view: View) {
@@ -72,8 +76,9 @@ open class EditTextPreference : android.preference.EditTextPreference {
     }
 
     // 自动设置默认值，这里存起来，下面onBindView能拿到，
-    override fun onGetDefaultValue(a: TypedArray?, index: Int): Any {
-        return super.onGetDefaultValue(a, index).also {
+    override fun onGetDefaultValue(a: TypedArray?, index: Int): Any? {
+        // 不知道是否会进来null, 以防万一用?.also,
+        return super.onGetDefaultValue(a, index)?.also {
             text = it.toString()
         }
     }

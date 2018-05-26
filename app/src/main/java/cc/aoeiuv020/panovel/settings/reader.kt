@@ -1,7 +1,5 @@
 package cc.aoeiuv020.panovel.settings
 
-import android.R
-import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.net.Uri
 import cc.aoeiuv020.panovel.report.Reporter
@@ -18,28 +16,8 @@ object ReaderSettings : Pref {
         get() = "Reader"
 
     val fullScreenClickNextPage: Boolean by Delegates.boolean(false)
-    val volumeKeyScroll: Boolean by Delegates.boolean(false)
+    val volumeKeyScroll: Boolean by Delegates.boolean(true)
     val centerPercent: Float by Delegates.float(0.5f)
-
-    val chapterColorDefault: Int by Delegates.int(0xff000000.toInt())
-    // TODO: 这个默认颜色改暗些，
-    val chapterColorCached: Int by Delegates.int(0xff00ff00.toInt())
-    val chapterColorReadAt: Int by Delegates.int(0xffff0000.toInt())
-    val chapterColorList
-        get() = ColorStateList(
-                arrayOf(
-                        // isChecked代表阅读到的章节，
-                        intArrayOf(R.attr.state_checked),
-                        // isSelected代表已经缓存的章节，
-                        intArrayOf(-R.attr.state_checked, R.attr.state_selected),
-                        intArrayOf()
-                ),
-                intArrayOf(
-                        chapterColorReadAt,
-                        chapterColorCached,
-                        chapterColorDefault
-                )
-        )
     /**
      * 阅读界面点击退出全屏的延迟，
      * 有点延迟看着顺眼点，
@@ -103,5 +81,4 @@ object ReaderSettings : Pref {
             autoRefreshInterval,
             fullScreenClickNextPage
     )
-
 }
