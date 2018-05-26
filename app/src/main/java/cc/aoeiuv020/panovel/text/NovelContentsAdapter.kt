@@ -8,7 +8,6 @@ import android.widget.BaseAdapter
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.local.id
 import cc.aoeiuv020.panovel.settings.OtherSettings
 import kotlinx.android.synthetic.main.novel_chapter_item.view.*
 
@@ -37,7 +36,7 @@ class NovelContentsAdapter(
             // isChecked代表阅读到的章节，
             isChecked = novel.readAtChapterIndex == position
             // isSelected代表已经缓存的章节，
-            isSelected = cachedList.contains(chapter.id)
+            isSelected = cachedList.contains(chapter.extra)
         }
         return view
     }
