@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.data.db
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import cc.aoeiuv020.panovel.data.dao.BookListDao
 import cc.aoeiuv020.panovel.data.dao.NovelDao
@@ -19,6 +20,7 @@ import cc.aoeiuv020.panovel.data.entity.Site
         entities = [Novel::class, Site::class, BookListItem::class],
         version = 2
 )
+@TypeConverters(value = [DateTypeConverter::class])
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         private var sInstance: AppDatabase? = null
