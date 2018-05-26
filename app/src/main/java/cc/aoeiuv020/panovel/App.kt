@@ -6,10 +6,8 @@ import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.local.PrimarySettings
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.OtherSettings
-import cc.aoeiuv020.panovel.util.ignoreException
 import cn.jpush.android.api.JPushInterface
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
@@ -47,8 +45,6 @@ class App : MultiDexApplication(), AnkoLogger {
 
         initDataSources()
 
-        checkBaseFile()
-
         // android4连接https可能抛SSLHandshakeException，
         // 是tls1.2没有启用，
         TLSSocketFactory.makeDefault()
@@ -81,14 +77,6 @@ class App : MultiDexApplication(), AnkoLogger {
         JPushInterface.init(ctx)
     }
 
-    private fun checkBaseFile() {
-        PrimarySettings.baseFilePath = ctx.getExternalFilesDir(null)?.takeIf { base ->
-            val test = base.resolve("test")
-            test.exists() || ignoreException { test.writeText("true") }
-        }?.path
-                ?: ctx.filesDir.path
-    }
-
     private fun initAdmob() {
         MobileAds.initialize(this, "ca-app-pub-3036112914192534~4631187497")
         adRequest = AdRequest.Builder()
@@ -111,5 +99,4 @@ class App : MultiDexApplication(), AnkoLogger {
     private fun initReporter() {
         Reporter.init(ctx)
     }
-
 }
