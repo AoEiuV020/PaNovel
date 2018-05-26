@@ -60,7 +60,7 @@ object PrefDelegates {
  * 不要用在自定义的Serializable类，
  * 非空，
  *
- * @param key 如果key为空，直接用成员变量名，
+ * @param key 如果key为空，直接用成员变量名，不受混淆影响，
  */
 sealed class PrefDelegate<T>(
         private val key: kotlin.String?

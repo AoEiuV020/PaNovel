@@ -4,8 +4,8 @@ import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.*
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicInteger
@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(), AnkoLogger {
     private var refresh = false
-    private var chapterList: List<NovelChapter> = emptyList()
 
     fun start() {
         requestNovel()
@@ -66,7 +65,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                 "download start <$fromIndex/$size>"
             }
             // 同时启动多个线程下载，
-            repeat(Settings.downloadThreadCount) {
+            repeat(GeneralSettings.downloadThreadsLimit) {
                 view?.doAsync {
                     // 每次循环最后再获取，
                     var index = nextIndex.getAndIncrement()

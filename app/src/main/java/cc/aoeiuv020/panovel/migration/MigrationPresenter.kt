@@ -20,7 +20,8 @@ import org.jetbrains.anko.*
 class MigrationPresenter(
         private val ctx: Context
 ) : Presenter<MigrationView>(), Pref, AnkoLogger {
-    override val name: String = "MigrationPresenter"
+    // sp file is App.ctx.packageName + "_$name"
+    override val name: String = "Migration"
     /**
      * 缓存以前的版本，
      * key is "cachedVersion",
@@ -62,12 +63,16 @@ class MigrationPresenter(
                     val message = if (e is MigrateException) {
                         "迁移旧版数据失败，从<${cachedVersionName.name}>到<${e.migration.to.name}>"
                     } else {
-                        "不可到达，"
+                        "未知错误，"
                     }
                     Reporter.post(message, e)
                     error(message, e)
                     ctx.runOnUiThread {
-                        view?.showMigrateError(from = cachedVersionName, migration = e.migration)
+                        if (e is MigrateException) {
+                            view?.showMigrateError(from = cachedVersionName, migration = e.migration)
+                        } else {
+                            view?.showError(message, e)
+                        }
                     }
                 }) {
                     // 缓存一开始的版本，迁移完成后展示，
@@ -89,7 +94,6 @@ class MigrationPresenter(
                         }
                         // 每个阶段分别保存升级后的版本，
                         cachedVersionName = migration.to
-                        // TODO: 测试一下这个cachedVersion能不能在异步保存，应该没问题，
                         cachedVersion = cachedVersionName.name
                     }
                     // 最后缓存当前版本，
@@ -104,13 +108,14 @@ class MigrationPresenter(
     }
 
     fun ignoreMigration(migration: Migration) {
-        debug {
-            "ignoreMigration $migration"
-        }
+        debug { "ignoreMigration $migration" }
         view?.doAsync({ e ->
             val message = "sp保存出错，"
             Reporter.post(message, e)
             error(message, e)
+            ctx.runOnUiThread {
+                view?.showError(message, e)
+            }
         }) {
             cachedVersion = migration.to.name
         }

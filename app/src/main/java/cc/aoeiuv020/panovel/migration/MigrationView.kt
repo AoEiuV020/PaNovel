@@ -11,4 +11,5 @@ interface MigrationView : IView {
     fun showMigrateComplete(from: VersionName, to: VersionName)
     fun showUpgrading(from: VersionName, migration: Migration)
     fun showMigrateError(from: VersionName, migration: Migration)
+    fun showError(message: String, e: Throwable)
 }

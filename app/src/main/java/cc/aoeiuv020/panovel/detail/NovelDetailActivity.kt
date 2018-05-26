@@ -12,8 +12,8 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
@@ -105,7 +105,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
             }
         }
 
-        if (Settings.adEnabled) {
+        if (GeneralSettings.adEnabled) {
             ad_view.loadAd(App.adRequest)
         }
     }

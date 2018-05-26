@@ -29,7 +29,6 @@ import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.local.Check
 import cc.aoeiuv020.panovel.local.DevMessage
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.migration.MigrationPresenter
 import cc.aoeiuv020.panovel.migration.MigrationView
@@ -39,6 +38,7 @@ import cc.aoeiuv020.panovel.server.UpdateManager
 import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
 import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
 import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.loading
@@ -204,7 +204,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             }
         }
 
-        if (Settings.adEnabled) {
+        if (GeneralSettings.adEnabled) {
             ad_view.loadAd(App.adRequest)
         }
 
@@ -387,7 +387,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         snack.show()
     }
 
-    fun showError(message: String, e: Throwable) {
+    override fun showError(message: String, e: Throwable) {
         progressDialog.dismiss()
         snack.setText(message + e.message)
         snack.show()

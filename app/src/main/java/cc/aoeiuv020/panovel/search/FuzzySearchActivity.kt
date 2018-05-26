@@ -14,9 +14,9 @@ import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
 import cc.aoeiuv020.panovel.list.NovelMutableListAdapter
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.local.toBean
 import cc.aoeiuv020.panovel.local.toJson
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
@@ -111,7 +111,7 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
             }
         }
 
-        if (Settings.adEnabled) {
+        if (GeneralSettings.adEnabled) {
             ad_view.loadAd(App.adRequest)
         }
     }
