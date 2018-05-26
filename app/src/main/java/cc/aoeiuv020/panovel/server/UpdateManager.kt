@@ -29,7 +29,7 @@ object UpdateManager : AnkoLogger {
             Reporter.post(message, e)
             error(message, e)
         }) {
-
+            TODO("接收极光更新通知，")
         }
 /*
         Observable.create<Notification> { em ->

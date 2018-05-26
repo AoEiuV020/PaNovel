@@ -1,14 +1,9 @@
 package cc.aoeiuv020.panovel.export
 
 import android.content.Context
-import cc.aoeiuv020.base.jar.toJson
-import cc.aoeiuv020.base.jar.type
-import cc.aoeiuv020.panovel.local.*
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.error
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -16,27 +11,15 @@ import java.io.OutputStream
  * Created by AoEiuV020 on 2018.05.11-18:52:50.
  */
 class ExporterV1(ctx: Context) : DefaultExporter(ctx), AnkoLogger {
-    /**
-     * TODO: 这个gson忘了处理requester特殊的序列化，但目前只有DetailRequester, 就这样也行，
-     */
     private val gson = GsonBuilder()
             .create()
-
-    private fun Any.toJson(): String = toJson(gson)
-    private inline fun <reified T> T.toJson(output: OutputStream): T = this.apply {
-        output.writer().also {
-            gson.toJson(this, it)
-            it.flush()
-        }
-    }
-
-    // reified T 可以直接给gson用，没有reified的T用TypeToken包装也没用，只能传入type,
-    private inline fun <reified T> InputStream.toBean(): T = gson.fromJson(this.reader(), type<T>())
 
     override fun import(input: InputStream, option: ExportOption): Int {
         debug {
             "import $option"
         }
+        TODO("导入，")
+/*
         return when (option) {
             ExportOption.Bookshelf -> {
                 input.toBean<List<NovelItemWithProgress>>().also {
@@ -57,6 +40,7 @@ class ExporterV1(ctx: Context) : DefaultExporter(ctx), AnkoLogger {
                 input.toBean<JsonObject>().also {
                     it.entrySet().forEach { (key, value) ->
                         try {
+                            // TODO: when对比大量字符串应该不会hash，改成map,
                             when (key) {
                                 "bookshelfRedDotNotifyNotReadOrNewChapter" -> Settings.bookshelfRedDotNotifyNotReadOrNewChapter = value.asBoolean
                                 "bookshelfShowMoreActionDot" -> Settings.bookshelfShowMoreActionDot = value.asBoolean
@@ -106,12 +90,14 @@ class ExporterV1(ctx: Context) : DefaultExporter(ctx), AnkoLogger {
                 // TODO: 这里返回size不对，要计算实际成功导入的数量，
             }
         }
+*/
     }
 
     override fun export(output: OutputStream, option: ExportOption): Int {
         debug {
             "export $option"
         }
+/*
         return when (option) {
             ExportOption.Bookshelf -> {
                 Bookshelf.list().map {
@@ -168,5 +154,7 @@ class ExporterV1(ctx: Context) : DefaultExporter(ctx), AnkoLogger {
                         .size()
             }
         }
+*/
+        TODO("导出，")
     }
 }
