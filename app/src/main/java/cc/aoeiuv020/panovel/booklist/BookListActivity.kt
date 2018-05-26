@@ -62,7 +62,7 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
             return true
         }
     }
-    private val mAdapter = NovelMutableListAdapter(R.layout.book_list_item, itemListener)
+    private val mAdapter = NovelMutableListAdapter(itemListener)
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

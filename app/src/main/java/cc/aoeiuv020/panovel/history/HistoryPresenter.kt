@@ -2,8 +2,8 @@ package cc.aoeiuv020.panovel.history
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
@@ -25,7 +25,7 @@ class HistoryPresenter : Presenter<HistoryFragment>(), AnkoLogger {
             }
         }) {
             // TODO: 改成翻页的实现，试试page库之类的，
-            val list = DataManager.history(Settings.historyCount)
+            val list = DataManager.history(GeneralSettings.historyCount)
             uiThread {
                 view?.showNovelList(list)
             }

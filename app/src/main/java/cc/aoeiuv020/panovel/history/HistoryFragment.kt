@@ -24,7 +24,7 @@ class HistoryFragment : Fragment(), IView {
     private val itemListener = DefaultNovelItemActionListener { message, e ->
         showError(message, e)
     }
-    private val mAdapter = NovelListAdapter(R.layout.novel_item_big, itemListener)
+    private val mAdapter = NovelListAdapter(itemListener)
     private val presenter: HistoryPresenter = HistoryPresenter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

@@ -8,12 +8,12 @@
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="cc.aoeiuv020.panovel.settings.BookshelfPreferenceFragment"
+        android:fragment="cc.aoeiuv020.panovel.settings.ListPreferenceFragment"
         android:icon="@drawable/ic_read"
         android:title="@string/pref_header_bookshelf" />
 
     <header
-        android:fragment="cc.aoeiuv020.panovel.settings.ReadPreferenceFragment"
+        android:fragment="cc.aoeiuv020.panovel.settings.ReaderPreferenceFragment"
         android:icon="@drawable/ic_read"
         android:title="@string/pref_header_read" />
 

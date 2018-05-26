@@ -19,7 +19,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NovelViewHolder(itemView: View,
-                      private val itemListener: NovelItemActionListener)
+                      private val itemListener: NovelItemActionListener,
+                      initItem: (View) -> Unit = {},
+                      dotColor: Int,
+                      dotSize: Float)
     : RecyclerView.ViewHolder(itemView) {
     companion object {
         // 用于格式化时间，可能有展示更新时间，
@@ -75,12 +78,10 @@ class NovelViewHolder(itemView: View,
             it.toggle()
             itemListener.onStarChanged(this, it.isChecked)
         }
+        refreshingDot?.setDotColor(dotColor)
+        refreshingDot?.setDotSize(dotSize)
 
-/*
-TODO:
-        newChapterDot.setHeight(ctx.dip(Settings.bookshelfRedDotSize))
-        newChapterDot.setColorFilter(Settings.bookshelfRedDotColor)
-*/
+        initItem(itemView)
     }
 
     fun apply(novel: Novel, refreshTime: Date) {

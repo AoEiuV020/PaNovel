@@ -11,8 +11,10 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
 import cc.aoeiuv020.panovel.list.NovelListAdapter
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.util.hide
+import cc.aoeiuv020.panovel.util.show
+import kotlinx.android.synthetic.main.novel_item_big.view.*
 import kotlinx.android.synthetic.main.novel_item_list.*
 
 /**
@@ -23,16 +25,13 @@ class BookshelfFragment : Fragment(), IView {
     private val itemListener = DefaultNovelItemActionListener { message, e ->
         showError(message, e)
     }
-    // TODO: 要支持多种视图，
-    private val mAdapter = NovelListAdapter(R.layout.novel_item_big, itemListener)
+    private val mAdapter = NovelListAdapter(itemListener = itemListener) {
+        // 显示小红点控件，包括代表正在刷新的圆形进度条，
+        it.rdRefreshing.show()
+        // 隐藏用于添加书架的按钮，
+        it.ivStar.hide()
+    }
     private val presenter: BookshelfPresenter = BookshelfPresenter()
-    /**
-     * 标记是否要强制刷新，
-     * create后需要强制刷新，其他情况回来的不需要，
-     * 强制刷新前会先验证Settings里的设置，
-     * 其实就是标记是否是刚启动状态，
-     */
-    private var shouldForceRefresh = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.novel_item_list, container, false)
@@ -46,8 +45,6 @@ class BookshelfFragment : Fragment(), IView {
             forceRefresh()
         }
 
-        shouldForceRefresh = true
-
         presenter.attach(this)
     }
 
@@ -59,12 +56,7 @@ class BookshelfFragment : Fragment(), IView {
 
     override fun onStart() {
         super.onStart()
-        if (shouldForceRefresh && Settings.bookshelfAutoRefresh) {
-            forceRefresh()
-        } else {
-            refresh()
-        }
-        shouldForceRefresh = false
+        refresh()
     }
 
     fun refresh() {

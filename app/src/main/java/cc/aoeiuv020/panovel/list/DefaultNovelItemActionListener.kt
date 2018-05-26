@@ -5,9 +5,9 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
-import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ItemActionEnum
 import cc.aoeiuv020.panovel.settings.ItemActionEnum.*
+import cc.aoeiuv020.panovel.settings.ItemActionSettings
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import org.jetbrains.anko.*
 
@@ -52,31 +52,31 @@ open class DefaultNovelItemActionListener(
     }
 
     override fun onDotClick(vh: NovelViewHolder) {
-        on(ItemAction.onDotClick, vh)
+        on(ItemActionSettings.onDotClick, vh)
     }
 
     override fun onDotLongClick(vh: NovelViewHolder): Boolean {
-        return on(ItemAction.onDotLongClick, vh)
+        return on(ItemActionSettings.onDotLongClick, vh)
     }
 
     override fun onNameClick(vh: NovelViewHolder) {
-        on(ItemAction.onNameClick, vh)
+        on(ItemActionSettings.onNameClick, vh)
     }
 
     override fun onNameLongClick(vh: NovelViewHolder): Boolean {
-        return on(ItemAction.onNameLongClick, vh)
+        return on(ItemActionSettings.onNameLongClick, vh)
     }
 
     override fun onLastChapterClick(vh: NovelViewHolder) {
-        on(ItemAction.onLastChapterClick, vh)
+        on(ItemActionSettings.onLastChapterClick, vh)
     }
 
     override fun onItemClick(vh: NovelViewHolder) {
-        on(ItemAction.onItemClick, vh)
+        on(ItemActionSettings.onItemClick, vh)
     }
 
     override fun onItemLongClick(vh: NovelViewHolder): Boolean {
-        return on(ItemAction.onItemLongClick, vh)
+        return on(ItemActionSettings.onItemLongClick, vh)
     }
 
     override fun onStarChanged(vh: NovelViewHolder, star: Boolean) {

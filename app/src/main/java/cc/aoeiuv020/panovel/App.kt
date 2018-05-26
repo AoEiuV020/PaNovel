@@ -7,8 +7,8 @@ import android.support.v7.app.AppCompatDelegate
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.local.PrimarySettings
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.OtherSettings
 import cc.aoeiuv020.panovel.util.ignoreException
 import cn.jpush.android.api.JPushInterface
 import com.google.android.gms.ads.AdRequest
@@ -66,7 +66,7 @@ class App : MultiDexApplication(), AnkoLogger {
 
         initReporter()
 
-        if (Settings.subscribeNovelUpdate) {
+        if (OtherSettings.subscribeNovelUpdate) {
             initJpush()
         }
 

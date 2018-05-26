@@ -4,8 +4,8 @@ import android.content.Context
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.migration.impl.LoginMigration
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
-import cc.aoeiuv020.panovel.util.PrefDelegates
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.VersionUtil
 import org.jetbrains.anko.*
@@ -27,7 +27,7 @@ class MigrationPresenter(
      * key is "cachedVersion",
      * Delegate不受混淆影响，
      */
-    private var cachedVersion: String by PrefDelegates.string("0")
+    private var cachedVersion: String by Delegates.string("0")
     /**
      * 获取当前版本，
      */

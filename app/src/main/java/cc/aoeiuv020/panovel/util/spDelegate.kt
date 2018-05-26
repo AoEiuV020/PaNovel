@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.preference.PreferenceFragment
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
@@ -23,15 +24,32 @@ import kotlin.reflect.KProperty
  */
 interface Pref {
     val name: String
+    val sharedPreferencesName: String
+        get() = App.ctx.packageName + "_$name"
     val sharedPreferences: SharedPreferences
-        get() = App.ctx.getSharedPreferences(App.ctx.packageName + "_$name", Context.MODE_PRIVATE)
+        get() = App.ctx.getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE)
+}
+
+abstract class SubPref(
+        private val pref: Pref
+) : Pref {
+    override val sharedPreferencesName: String
+        get() = pref.sharedPreferencesName + "_$name"
+}
+
+/**
+ * 给这个设置页面绑定这个Pref,
+ * 但是默认值没法处理，两边都要写，
+ */
+fun PreferenceFragment.attach(pref: Pref) {
+    preferenceManager.sharedPreferencesName = pref.sharedPreferencesName
 }
 
 /**
  * 所有Delegate从这里获取，
  */
 @Suppress("unused")
-object PrefDelegates {
+object Delegates {
     fun string(default: kotlin.String, key: kotlin.String? = null) =
             PrefDelegate.String(default, key)
 
@@ -52,6 +70,50 @@ object PrefDelegates {
 
     inline fun <reified T : kotlin.Any> any(default: T, key: kotlin.String? = null) =
             PrefDelegate.Any.new(default, key)
+
+    fun uri(key: String? = null) = UriDelegate(key)
+
+    inline fun <reified T : SubPref> sub(subName: String? = null): T = TODO()
+}
+
+/**
+ * 文件相关的用这个，
+ * Uri可以从文件得到，也可以打开写入文件，
+ */
+class UriDelegate(
+        key: kotlin.String? = null
+) : ReadWriteProperty<Pref, android.net.Uri?> {
+    override fun getValue(thisRef: Pref, property: KProperty<*>): android.net.Uri? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+/*
+            return backingField ?: thisRef.openFile(property.name).takeIf { it.exists() }?.let { Uri.fromFile(it) }.also {
+                backingField = it
+                debug { "${property.name} > $it" }
+            }
+*/
+    }
+
+    override fun setValue(thisRef: Pref, property: KProperty<*>, value: android.net.Uri?) {
+        // 要读出来转成base64再写入sp的话，读出来不能转成Uri,
+        // 要使用缓存库存为文件么，
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        /*
+                 if (backingField != value) {
+                     backingField = null
+                     val file = thisRef.openFile(property.name)
+                     if (value == null) {
+                         if (!file.delete()) {
+                             error {
+                                 "$file delete failed,"
+                             }
+                         }
+                     } else {
+                         App.ctx.contentResolver.openInputStream(value).copyTo(file.outputStream())
+                         backingField = getValue(thisRef, property)
+                     }
+                 }
+     */
+    }
 }
 
 /**

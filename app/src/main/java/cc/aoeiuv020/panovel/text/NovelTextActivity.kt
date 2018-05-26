@@ -24,10 +24,10 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.local.Margins
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
+import cc.aoeiuv020.panovel.settings.Margins
+import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
@@ -156,7 +156,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     private fun initReader(novel: Novel) {
         reader = Readers.getReader(this, novel.name,
-                flContent, contentRequester, Settings.makeReaderConfig()).apply {
+                flContent, contentRequester, ReaderSettings.makeReaderConfig()).apply {
             menuListener = object : MenuListener {
                 override fun hide() {
                     this@NovelTextActivity.hide()
@@ -179,7 +179,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onBackPressed() {
-        if (Settings.backPressOutOfFullScreen && !mVisible) {
+        if (ReaderSettings.backPressOutOfFullScreen && !mVisible) {
             show()
         } else {
             super.onBackPressed()
@@ -269,7 +269,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun resetFont() {
-        Settings.font = null
+        ReaderSettings.font = null
         setFont(null)
     }
 
@@ -279,7 +279,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (requestCode) {
             0 -> data?.data?.let { uri ->
                 try {
-                    Settings.backgroundImage = uri
+                    ReaderSettings.backgroundImage = uri
                     setBackgroundImage(uri)
                 } catch (e: SecurityException) {
                     error("读取背景图失败", e)
@@ -293,8 +293,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
             1 -> data?.data?.let { uri ->
                 try {
-                    Settings.font = uri
-                    setFont(Settings.tfFont)
+                    ReaderSettings.font = uri
+                    setFont(ReaderSettings.tfFont)
                 } catch (e: SecurityException) {
                     error("读取字体失败", e)
                     cacheUri = uri
@@ -312,7 +312,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (requestCode) {
             0 -> cacheUri?.let { uri ->
                 try {
-                    Settings.backgroundImage = uri
+                    ReaderSettings.backgroundImage = uri
                     setBackgroundImage(uri)
                 } catch (e: SecurityException) {
                     error("读取背景图还是失败", e)
@@ -321,8 +321,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
             1 -> cacheUri?.let { uri ->
                 try {
-                    Settings.font = uri
-                    setFont(Settings.tfFont)
+                    ReaderSettings.font = uri
+                    setFont(ReaderSettings.tfFont)
                 } catch (e: SecurityException) {
                     error("读取字体还是失败", e)
                     cacheUri = null
@@ -542,7 +542,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (Settings.volumeKeyScroll) {
+        if (ReaderSettings.volumeKeyScroll) {
             when (keyCode) {
                 KeyEvent.KEYCODE_VOLUME_DOWN -> scrollNext()
                 KeyEvent.KEYCODE_VOLUME_UP -> scrollPrev()
@@ -554,7 +554,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (Settings.volumeKeyScroll) {
+        if (ReaderSettings.volumeKeyScroll) {
             return when (keyCode) {
                 KeyEvent.KEYCODE_VOLUME_DOWN -> true
                 KeyEvent.KEYCODE_VOLUME_UP -> true

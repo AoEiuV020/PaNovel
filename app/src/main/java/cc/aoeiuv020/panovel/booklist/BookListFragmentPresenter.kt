@@ -3,9 +3,9 @@ package cc.aoeiuv020.panovel.booklist
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.BookList
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.qrcode.QrCodeManager
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.OtherSettings
 import cc.aoeiuv020.panovel.share.Share
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
@@ -46,7 +46,7 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
                 view?.showError(message, e)
             }
         }) {
-            val url = Share.shareBookList(bookList, Settings.shareExpiration)
+            val url = Share.shareBookList(bookList, OtherSettings.shareExpiration)
             val qrCode = QrCodeManager.generate(url)
             uiThread {
                 view?.showSharedUrl(url, qrCode)

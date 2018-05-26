@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.report
 
 import android.annotation.SuppressLint
 import android.content.Context
-import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.settings.OtherSettings
 import com.tencent.bugly.crashreport.CrashReport
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -20,7 +20,7 @@ object Reporter : AnkoLogger {
         // 打开会导致开发机上报异常，
         CrashReport.initCrashReport(ctx, "be0d684a75", false)
         // 貌似设置了开发设备就不上报了，
-        CrashReport.setIsDevelopmentDevice(ctx, !Settings.reportCrash)
+        CrashReport.setIsDevelopmentDevice(ctx, !OtherSettings.reportCrash)
 
         val androidId = android.provider.Settings.Secure.getString(ctx.contentResolver, android.provider.Settings.Secure.ANDROID_ID)
         CrashReport.setUserId(androidId)
