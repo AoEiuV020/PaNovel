@@ -30,7 +30,7 @@ class RefreshingDotView : FrameLayout {
     /**
      * 是否显示那个表示有现金操作的三个小点，
      */
-    var showMoreActionIcon: Boolean = false
+    private var showMoreActionIcon: Boolean = false
 
     fun refreshing() {
         pbRefreshing.show()

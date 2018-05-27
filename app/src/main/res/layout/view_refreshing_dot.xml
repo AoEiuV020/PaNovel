@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:tint="#b0bec5"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_more_vert"
         tools:ignore="ContentDescription" />
 

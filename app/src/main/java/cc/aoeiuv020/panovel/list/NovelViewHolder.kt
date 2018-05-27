@@ -15,6 +15,8 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.novel_item_big.view.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,7 +25,7 @@ class NovelViewHolder(itemView: View,
                       initItem: (View) -> Unit = {},
                       dotColor: Int,
                       dotSize: Float)
-    : RecyclerView.ViewHolder(itemView) {
+    : RecyclerView.ViewHolder(itemView), AnkoLogger {
     companion object {
         // 用于格式化时间，可能有展示更新时间，
         private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
@@ -124,6 +126,7 @@ class NovelViewHolder(itemView: View,
     }
 
     private fun refreshing() {
+        debug { "refreshing ${name?.text}" }
         // 显示正在刷新，
         refreshingDot?.refreshing()
     }
@@ -133,18 +136,25 @@ class NovelViewHolder(itemView: View,
      * 可以在itemListener里调用以刷新这本小说，
      */
     fun refresh() {
+        debug { "refresh ${name?.text}" }
         refreshing()
-        if (itemView.tag == null || itemView.tag !== novel) {
-            itemView.tag = novel
-            itemListener.requireRefresh(this)
+        // 首次新结束时tag为null, 不能直接返回，
+        // 被复用时tag可能非空且不等于novel,
+        if (itemView.tag != null && itemView.tag !== novel) {
+            return
         }
+        itemView.tag = novel
+        itemListener.requireRefresh(this)
     }
 
     /**
      * 刷新结束时调用，
      */
     fun refreshed(novel: Novel) {
-        if (itemView.tag !== novel) {
+        debug { "refreshed ${novel.name}" }
+        // 首次新结束时tag为null, 不能直接返回，
+        // 被复用时tag可能非空且不等于novel,
+        if (itemView.tag != null && itemView.tag !== novel) {
             return
         }
         itemView.tag = null
