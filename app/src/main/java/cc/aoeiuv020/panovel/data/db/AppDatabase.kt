@@ -8,6 +8,7 @@ import android.content.Context
 import cc.aoeiuv020.panovel.data.dao.BookListDao
 import cc.aoeiuv020.panovel.data.dao.NovelDao
 import cc.aoeiuv020.panovel.data.dao.SiteDao
+import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.data.entity.BookListItem
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.data.entity.Site
@@ -17,7 +18,7 @@ import cc.aoeiuv020.panovel.data.entity.Site
  */
 // TODO: 加了张表，写写数据迁移， 也就网站是否启用，
 @Database(
-        entities = [Novel::class, Site::class, BookListItem::class],
+        entities = [Novel::class, Site::class, BookListItem::class, BookList::class],
         version = 2
 )
 @TypeConverters(value = [DateTypeConverter::class])
