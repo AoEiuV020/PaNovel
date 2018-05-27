@@ -11,7 +11,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 @Dao
 abstract class BookListDao {
 
-    @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id$1 and BookListItem.bookListId = :bookListId")
+    @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id and BookListItem.bookListId = :bookListId")
     abstract fun queryBookListLeftJoin(bookListId: Long): List<Novel>
 
     @Query("select 1 from BookListItem where bookListId = :bookListId and novelId = :novelId")

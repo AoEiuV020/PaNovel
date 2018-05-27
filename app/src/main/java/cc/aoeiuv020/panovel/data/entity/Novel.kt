@@ -17,7 +17,7 @@ import java.util.*
 @Entity(
         indices = [
             (Index(
-                    value = ["site", "author“， ”name"],
+                    value = ["site", "author", "name"],
                     unique = true
             )),
             (Index(
@@ -154,6 +154,6 @@ data class Novel(
 
     companion object {
         // 用作传参时的key,
-        const val id: String = "id"
+        const val KEY_ID: String = "id"
     }
 }

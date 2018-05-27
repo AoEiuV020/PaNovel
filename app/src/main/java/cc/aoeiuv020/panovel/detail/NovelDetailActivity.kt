@@ -34,7 +34,7 @@ import org.jetbrains.anko.startActivity
 class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     companion object {
         fun start(ctx: Context, novel: Novel) {
-            ctx.startActivity<NovelDetailActivity>(Novel.id to novel.nId)
+            ctx.startActivity<NovelDetailActivity>(Novel.KEY_ID to novel.nId)
         }
     }
 
@@ -53,7 +53,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val id = intent?.getLongExtra(Novel.id, -1L)
+        val id = intent?.getLongExtra(Novel.KEY_ID, -1L)
         debug { "receive id: $id" }
         if (id == null || id == -1L) {
             Reporter.unreachable()

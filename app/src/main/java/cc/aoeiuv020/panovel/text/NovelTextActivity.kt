@@ -49,12 +49,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
 
         fun start(ctx: Context, id: Long) {
-            ctx.startActivity<NovelTextActivity>(Novel.id to id)
+            ctx.startActivity<NovelTextActivity>(Novel.KEY_ID to id)
         }
 
         fun start(ctx: Context, novel: Novel, index: Int) {
             ctx.startActivity<NovelTextActivity>(
-                    Novel.id to novel.nId,
+                    Novel.KEY_ID to novel.nId,
                     "index" to index.toJson(App.gson)
             )
         }
@@ -94,7 +94,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         alertDialog = AlertDialog.Builder(this).create()
         progressDialog = ProgressDialog(this)
 
-        val id = intent?.getLongExtra(cc.aoeiuv020.panovel.data.entity.Novel.id, -1L)
+        val id = intent?.getLongExtra(cc.aoeiuv020.panovel.data.entity.Novel.KEY_ID, -1L)
         debug { "receive id: $id" }
         if (id == null || id == -1L) {
             Reporter.unreachable()
