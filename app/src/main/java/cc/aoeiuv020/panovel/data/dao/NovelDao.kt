@@ -26,8 +26,8 @@ abstract class NovelDao {
     @Query("select * from Novel where site = :site and author = :author and name = :name")
     abstract fun query(site: String, author: String, name: String): Novel?
 
-    @Query("update Novel set detail = :detail, image = :image, introduction = :introduction, updateTime = :updateTime where id = :id")
-    abstract fun updateNovelDetail(id: Long, detail: String, image: String, introduction: String, updateTime: Date)
+    @Query("update Novel set detail = :detail, image = :image, introduction = :introduction, updateTime = :updateTime, chapters = :chapters where id = :id")
+    abstract fun updateNovelDetail(id: Long, detail: String, image: String, introduction: String, updateTime: Date, chapters: String)
 
     @Query("update Novel set chaptersCount = :chaptersCount, readAtChapterName = :readAtChapterName, lastChapterName = :lastChapterName, updateTime = :updateTime, checkUpdateTime = :checkUpdateTime, receiveUpdateTime = :receiveUpdateTime where id = :id")
     abstract fun updateChapters(

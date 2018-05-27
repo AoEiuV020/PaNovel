@@ -13,6 +13,11 @@ import java.util.*
  * Created by AoEiuV020 on 2018.05.23-15:55:11.
  */
 class ApiManager(ctx: Context) {
+    init {
+        NovelContext.cache(ctx.cacheDir.resolve("api"))
+        NovelContext.files(ctx.filesDir.resolve("api"))
+    }
+
     // TODO: 动漫之家还是维护，等开放了，测试后再添加，
     @Suppress("RemoveExplicitTypeArguments")
     val contexts: List<NovelContext> by lazy {
@@ -47,9 +52,6 @@ class ApiManager(ctx: Context) {
 
     fun updateNovelDetail(novel: Novel) {
         val novelDetail = context(novel).getNovelDetail(novel.detail)
-        novel.site = novelDetail.novel.site
-        novel.author = novelDetail.novel.author
-        novel.name = novelDetail.novel.name
         novel.detail = novelDetail.novel.extra
         novel.image = novelDetail.image
         novel.introduction = novelDetail.introduction

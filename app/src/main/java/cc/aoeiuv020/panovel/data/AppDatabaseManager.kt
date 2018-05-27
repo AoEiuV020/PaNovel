@@ -40,9 +40,6 @@ class AppDatabaseManager(context: Context) {
     fun query(site: String, author: String, name: String): Novel? =
             db.novelDao().query(site, author, name)
 
-    fun updateNovelDetail(id: Long, detail: String, image: String, introduction: String, updateTime: Date) =
-            db.novelDao().updateNovelDetail(id, detail, image, introduction, updateTime)
-
     fun updateChapters(
             id: Long, chaptersCount: Int,
             readAtChapterName: String, lastChapterName: String,

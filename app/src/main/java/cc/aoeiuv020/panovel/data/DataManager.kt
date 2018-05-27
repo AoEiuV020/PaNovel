@@ -71,13 +71,16 @@ object DataManager : AnkoLogger {
     }
 
     private fun requireNovelDetail(novel: Novel) {
+        debug { "requireNovelDetail $novel" }
         // chapters非空表示已经获取过小说详情了，
         if (novel.chapters != null) {
             return
         }
         api.updateNovelDetail(novel)
         // 写入数据库，
-        app.updateNovelDetail(novel.nId, novel.detail, novel.image, novel.introduction, novel.updateTime)
+        // TODO: 多加点，
+        app.db.novelDao().updateNovelDetail(novel.nId, novel.detail,
+                novel.image, novel.introduction, novel.updateTime, novel.nChapters)
     }
 
     fun getNovel(id: Long): Novel = app.query(id)
