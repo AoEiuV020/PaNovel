@@ -57,8 +57,10 @@ class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity
             }
         }) {
             val novel = DataManager.getNovelDetail(id)
-            view?.showNovelDetail(novel)
             this@NovelDetailPresenter.novel = novel
+            uiThread {
+                view?.showNovelDetail(novel)
+            }
         }
     }
 
