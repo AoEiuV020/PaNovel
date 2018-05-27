@@ -12,8 +12,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import io.reactivex.internal.functions.Functions
-import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 
@@ -53,9 +51,6 @@ class App : MultiDexApplication(), AnkoLogger {
         // it's not a BUG, it's a FEATURE,
         // https://issuetracker.google.com/issues/37100284
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
-        // 无视RxJava抛的异常，也就是不被捕获调用onError的异常，
-        RxJavaPlugins.setErrorHandler(Functions.emptyConsumer())
 
         initAdmob()
 

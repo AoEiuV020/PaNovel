@@ -13,12 +13,10 @@ import cc.aoeiuv020.reader.ConfigChangedListener
 import cc.aoeiuv020.reader.ReaderConfigName
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import cc.aoeiuv020.reader.TextRequester
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  *
@@ -298,7 +296,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         }
     }
 
-    private val requestingList = mutableSetOf<Int>()
+    private val requestingList = Collections.newSetFromMap(ConcurrentHashMap<Int, Boolean>())
     private fun request(requestIndex: Int, refresh: Boolean = false) {
         if (requestingList.contains(requestIndex)) {
             // 已经在异步请求章节了，
@@ -306,27 +304,28 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         }
         requestingList.add(requestIndex)
         debug { "$this lazyRequest $requestIndex, refresh = $refresh" }
-        // TODO: 不要RxJava的东西，
-        Single.fromCallable {
-            val text = requester.request(requestIndex, refresh)
-            val pages = typesetting(reader.chapterList[requestIndex], text)
-            pagesCache.put(requestIndex, pages)
-            requestingList.remove(requestIndex)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            debug { "request result $requestIndex == $chapterIndex" }
-            if (requestIndex == chapterIndex) {
-                pager?.refresh()
-            }
-        }, {
+        doAsync({ e ->
             val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex]}"
-            error { message }
+            error(message, e)
             // 缓存空的页面，到时候显示本章空内容，
             pagesCache.put(requestIndex, listOf())
             requestingList.remove(requestIndex)
             if (requestIndex == chapterIndex) {
                 pager?.refresh()
             }
-        })
+        }) {
+            val text = requester.request(requestIndex, refresh)
+            val pages = typesetting(reader.chapterList[requestIndex], text)
+            pagesCache.put(requestIndex, pages)
+            requestingList.remove(requestIndex)
+            debug { "request result $requestIndex == $chapterIndex" }
+            uiThread {
+                // 如果还在这个章节就刷新，
+                if (requestIndex == chapterIndex) {
+                    pager?.refresh()
+                }
+            }
+        }
     }
 
     private fun typesetting(chapter: String, list: List<String>): List<Page> {
