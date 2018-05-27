@@ -3,7 +3,6 @@ package cc.aoeiuv020.panovel.data.dao
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.Update
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.util.*
 
@@ -29,12 +28,6 @@ abstract class NovelDao {
 
     @Query("update Novel set detail = :detail, image = :image, introduction = :introduction, updateTime = :updateTime where id = :id")
     abstract fun updateNovelDetail(id: Long, detail: String, image: String, introduction: String, updateTime: Date)
-
-    @Query("update Novel set detail = :detail where id = :id")
-    abstract fun updateDetail(id: Long, detail: String)
-
-    @Update
-    abstract fun update(novel: Novel)
 
     @Query("update Novel set chaptersCount = :chaptersCount, readAtChapterName = :readAtChapterName, lastChapterName = :lastChapterName, updateTime = :updateTime, checkUpdateTime = :checkUpdateTime, receiveUpdateTime = :receiveUpdateTime where id = :id")
     abstract fun updateChapters(
