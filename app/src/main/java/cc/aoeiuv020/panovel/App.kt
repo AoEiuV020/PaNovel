@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
+import android.util.Log
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
@@ -65,7 +66,7 @@ class App : MultiDexApplication(), AnkoLogger {
     }
 
     private fun initJpush() {
-        JPushInterface.setDebugMode(BuildConfig.DEBUG)
+        JPushInterface.setDebugMode(BuildConfig.DEBUG && Log.isLoggable("JPush", Log.DEBUG))
         JPushInterface.init(ctx)
     }
 
