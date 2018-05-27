@@ -87,6 +87,20 @@ class NovelViewHolder(itemView: View,
     }
 
     fun apply(novel: Novel, refreshTime: Date) {
+        apply(novel)
+        // 用tag防止复用vh导致异步冲突，
+        // 如果没开始刷新或者刷新结束，tag会是null,
+        // 如果刷新结束前vh被复用，tag就是非空且不等于当前novel,
+        // 如果刷新结束前vh被复用，且刷新了新小说且刷新没结束就被原来的小说复用，tag等于novel，不重复请求刷新，
+        when {
+            itemView.tag === novel -> refreshing()
+        // 手动刷新后需要联网更新，
+            refreshTime > novel.checkUpdateTime -> refresh()
+            else -> refreshed(novel)
+        }
+    }
+
+    private fun apply(novel: Novel) {
         this.novel = novel
         name?.text = novel.name
         author?.text = novel.author
@@ -113,16 +127,6 @@ class NovelViewHolder(itemView: View,
         star?.isChecked = novel.bookshelf
         checkUpdate?.text = sdf.format(novel.checkUpdateTime)
         readAt?.text = novel.readAtChapterName
-        // 用tag防止复用vh导致异步冲突，
-        // 如果没开始刷新或者刷新结束，tag会是null,
-        // 如果刷新结束前vh被复用，tag就是非空且不等于当前novel,
-        // 如果刷新结束前vh被复用，且刷新了新小说且刷新没结束就被原来的小说复用，tag等于novel，不重复请求刷新，
-        when {
-            itemView.tag === novel -> refreshing()
-        // 手动刷新后需要联网更新，
-            refreshTime > novel.checkUpdateTime -> refresh()
-            else -> refreshed(novel)
-        }
     }
 
     private fun refreshing() {
@@ -158,6 +162,8 @@ class NovelViewHolder(itemView: View,
             return
         }
         itemView.tag = null
+        // 刷新小说相关信息，
+        apply(novel)
         // 显示是否有更新，
         refreshingDot?.refreshed(this.novel.receiveUpdateTime > this.novel.readTime)
         // TODO: 根据是否刷出章节，移动item,
