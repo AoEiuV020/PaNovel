@@ -224,7 +224,7 @@ object DataManager : AnkoLogger {
      * 考虑到缓存可能对key进行了单向加密，
      * 只用于contains判断特定章节是否已经缓存，不用于读取章节信息，
      */
-    fun novelContentsCached(novel: Novel): Collection<String> = cache.novelContentCachedSet(novel)
+    fun novelContentsCached(novel: Novel): Collection<String> = cache.novelContentCached(novel)
 
     fun siteEnabledChange(site: Site) = app.siteEnabledChange(site)
 
