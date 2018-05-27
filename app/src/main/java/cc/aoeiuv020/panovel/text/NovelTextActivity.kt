@@ -109,7 +109,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         // intent传入的index，activity死了再开，应该会恢复这个intent, 不能让intent覆盖了死前的阅读进度，
         // 用getSerializableExtra读Int不需要默认值，
         index = savedInstanceState?.run { getString("index").toBean<Int>(App.gson) }
-                ?: intent.getStringExtra("index").toBean(App.gson)
+                ?: intent.getStringExtra("index")?.toBean(App.gson)
 
         presenter = NovelTextPresenter(id)
 
