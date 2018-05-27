@@ -77,9 +77,9 @@ object DataManager : AnkoLogger {
             return
         }
         api.updateNovelDetail(novel)
-        // 写入数据库，
-        // TODO: 多加点，
-        app.db.novelDao().updateNovelDetail(novel.nId, novel.detail,
+        // 写入数据库，包括名字作者和extra都以详情页返回结果为准，
+        app.db.novelDao().updateNovelDetail(novel.nId,
+                novel.name, novel.author, novel.detail,
                 novel.image, novel.introduction, novel.updateTime, novel.nChapters)
     }
 

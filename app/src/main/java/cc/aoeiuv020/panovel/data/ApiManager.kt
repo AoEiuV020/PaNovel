@@ -52,6 +52,8 @@ class ApiManager(ctx: Context) {
 
     fun updateNovelDetail(novel: Novel) {
         val novelDetail = context(novel).getNovelDetail(novel.detail)
+        novel.name = novelDetail.novel.name
+        novel.author = novelDetail.novel.author
         novel.detail = novelDetail.novel.extra
         novel.image = novelDetail.image
         novel.introduction = novelDetail.introduction
