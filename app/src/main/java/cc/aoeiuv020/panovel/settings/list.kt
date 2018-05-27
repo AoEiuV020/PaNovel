@@ -19,7 +19,7 @@ object ItemActionSettings : Pref {
     val onDotClick: ItemActionEnum by Delegates.enum(ItemActionEnum.Refresh)
     val onDotLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.Pinned)
     val onNameClick: ItemActionEnum by Delegates.enum(ItemActionEnum.OpenDetail)
-    val onNameLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.OpenDetail)
+    val onNameLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.RefineSearch)
     val onLastChapterClick: ItemActionEnum by Delegates.enum(ItemActionEnum.ReadLastChapter)
     val onItemClick: ItemActionEnum by Delegates.enum(ItemActionEnum.ReadContinue)
     val onItemLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.MoreAction)
