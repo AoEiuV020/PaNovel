@@ -13,11 +13,8 @@ class KeysContainer(
         base: File,
         private val keySerializer: KeySerializer
 ) : Collection<String> {
-    // 实际文件名列表，
-    private val nameSet = base.list { _, name ->
-        // 不包括包含的目录，
-        !name.endsWith(File.separatorChar)
-    }.toSet()
+    // 文件名列表，包括目录，也就是Database.sub方法产生的，
+    private val nameSet = base.list().toSet()
 
     override val size: Int = nameSet.size
 

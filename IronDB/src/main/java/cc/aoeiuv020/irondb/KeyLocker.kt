@@ -17,6 +17,7 @@ class KeyLocker {
     }
 
     fun release(key: String) {
+        // key不存在就什么都不做，
         semaphoreMap[key]?.release()
     }
 
