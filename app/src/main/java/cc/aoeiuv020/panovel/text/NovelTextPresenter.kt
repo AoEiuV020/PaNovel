@@ -36,7 +36,9 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             }
         }) {
             val novel = DataManager.getNovel(id)
-            view?.showNovel(novel)
+            uiThread {
+                view?.showNovel(novel)
+            }
         }
     }
 
@@ -111,7 +113,9 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                 Reporter.post(message, e)
             }
             error(message, e)
-            view?.showError(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
         }) {
             val list = DataManager.requestChapters(novel)
             uiThread {

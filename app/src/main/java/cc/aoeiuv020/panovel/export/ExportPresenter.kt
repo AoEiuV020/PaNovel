@@ -32,7 +32,9 @@ class ExportPresenter(
 
     fun start() {
         view?.doAsync({ e ->
-            view?.showError("寻找路径失败，", e)
+            view?.runOnUiThread {
+                view?.showError("寻找路径失败，", e)
+            }
         }) {
             val baseFile = ctx.getExternalFilesDir(null)
                     ?.resolve(NAME_FOLDER)
@@ -72,7 +74,9 @@ class ExportPresenter(
         view?.doAsync({ e ->
             val message = "导入失败，"
             error(message, e)
-            view?.showError(message, e)
+            view?.runOnUiThread {
+                view?.showError("寻找路径失败，", e)
+            }
         }) {
             val uri: Uri = view?.getSelectPath() ?: return@doAsync
             val options = view?.getCheckedOption() ?: return@doAsync
@@ -102,7 +106,9 @@ class ExportPresenter(
         view?.doAsync({ e ->
             val message = "导出失败，"
             error(message, e)
-            view?.showError(message, e)
+            view?.runOnUiThread {
+                view?.showError("寻找路径失败，", e)
+            }
         }) {
             val uri: Uri = view?.getSelectPath() ?: return@doAsync
             val options = view?.getCheckedOption() ?: return@doAsync
