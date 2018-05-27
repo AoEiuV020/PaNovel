@@ -31,7 +31,7 @@ class GeneralPreferenceFragment : BasePreferenceFragment(GeneralSettings, R.xml.
         super.onActivityCreated(savedInstanceState)
 
         // 实现广告启用时不能直接禁用，
-        val adEnabledPreference = findPreference("ad_enabled") as TwoStatePreference
+        val adEnabledPreference = findPreference("adEnabled") as TwoStatePreference
         adEnabledPreference.apply {
             isEnabled = !GeneralSettings.adEnabled
         }
