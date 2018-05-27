@@ -32,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     dbFile.path
-            ).build().also {
+            ).fallbackToDestructiveMigration().build().also {
                 sInstance = it
             }
         }
