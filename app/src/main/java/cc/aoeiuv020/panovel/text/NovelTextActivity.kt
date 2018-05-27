@@ -356,8 +356,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onDestroy() {
-        presenter.detach()
-        reader.onDestroy()
+        if (::presenter.isInitialized) {
+            presenter.detach()
+        }
+        if (::reader.isInitialized) {
+            reader.onDestroy()
+        }
         super.onDestroy()
     }
 
