@@ -1,23 +1,14 @@
 package cc.aoeiuv020.pager.test
 
-import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.widget.FrameLayout
-import cc.aoeiuv020.pager.Margins
-import cc.aoeiuv020.reader.AnimationMode
-import cc.aoeiuv020.reader.ReaderConfig
-import cc.aoeiuv020.reader.Readers
-import cc.aoeiuv020.reader.TextRequester
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.ctx
 
 class MainActivity : Activity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+/*
 
         val fl = FrameLayout(ctx)
         setContentView(fl)
@@ -48,5 +39,6 @@ class MainActivity : Activity(), AnkoLogger {
             "章节名$it"
         }
         reader.chapterList = chapters
+*/
     }
 }
