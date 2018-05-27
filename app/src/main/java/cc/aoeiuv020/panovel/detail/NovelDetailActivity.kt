@@ -130,6 +130,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     fun showNovelDetail(novel: Novel) {
+        srlRefresh.isRefreshing = false
         this.novel = novel
         title = novel.name
         // TODO: 调整上半部分展示内容，作者名网站名什么都加上，
