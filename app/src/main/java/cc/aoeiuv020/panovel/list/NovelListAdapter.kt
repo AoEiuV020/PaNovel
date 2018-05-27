@@ -26,9 +26,9 @@ open class NovelListAdapter(
             notifyDataSetChanged()
         }
 
-    // 打开时存个最小时间，手动刷新时更新这个时间，
+    // 打开时存个比最小时间大的，自动刷新没刷新过的，也就是刚搜索出来的，
     // 如果小说刷新时间checkUpdateTime小于这个时间就联网刷新章节列表，
-    private var refreshTime = Date(0)
+    private var refreshTime = Date(1)
 
     fun refresh() {
         refreshTime = Date()
