@@ -122,6 +122,10 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
         migratingDialog?.dismiss()
         migratingDialog = null
+
+        // 版本迁移数据结束了再加载控件，
+        // TODO: 专门开个Splash页面比较好，
+        initWidget()
     }
 
     override fun showMigrateError(from: VersionName, migration: Migration) {
@@ -144,25 +148,48 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (!BuildConfig.DEBUG) {
-            Check.asyncCheckSignature(this)
-        }
-
-        Check.asyncCheckVersion(this)
-        DevMessage.asyncShowMessage(this)
-
         setSupportActionBar(toolbar)
 
-        JPushTagReceiver.register(this, tagReceiver)
-
         progressDialog = ProgressDialog(this)
+        JPushTagReceiver.register(this, tagReceiver)
 
         migrationPresenter = MigrationPresenter(this).apply {
             attach(this@MainActivity)
             start()
         }
 
+        if (!BuildConfig.DEBUG) {
+            // 异步检查签名，
+            Check.asyncCheckSignature(this)
+        }
+
+        // 异步检查是否有更新，
+        Check.asyncCheckVersion(this)
+        // 异步获取可能存在的, 我放在网上想推给用户的消息，
+        DevMessage.asyncShowMessage(this)
+
+
+        ad_view.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                ad_view.show()
+            }
+        }
+
+        if (GeneralSettings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
+        }
+
+        if (isTaskRoot) {
+            // 只在第一个activity初始化这个负责上传更新的，
+            UpdateManager.create(this)
+        } else {
+            // 避免多开，
+            // 初始化完了再退出，否则可能崩溃，
+            finish()
+        }
+    }
+
+    private fun initWidget() {
         bookshelfFragment = BookshelfFragment()
         historyFragment = HistoryFragment()
         bookListFragment = BookListFragment()
@@ -193,28 +220,8 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
         })
 
-        fab.hide()
         fab.setOnClickListener { _ ->
             bookListFragment.newBookList()
-        }
-
-        ad_view.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                ad_view.show()
-            }
-        }
-
-        if (GeneralSettings.adEnabled) {
-            ad_view.loadAd(App.adRequest)
-        }
-
-        if (isTaskRoot) {
-            // 只在第一个activity初始化这个负责上传更新的，
-            UpdateManager.create(this)
-        } else {
-            // 避免多开，
-            // 初始化完了再退出，否则可能崩溃，
-            finish()
         }
     }
 

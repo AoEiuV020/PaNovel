@@ -49,11 +49,12 @@ class MigrationPresenter(
         val currentVersionName = VersionName(currentVersion)
         when {
             cachedVersionName == currentVersionName -> // 版本没变就直接返回，
-                return
+                view?.showMigrateComplete(from = currentVersionName, to = currentVersionName)
             cachedVersionName > currentVersionName -> {
                 // 降级就记录一下现在的版本，防止反复显示降级，同时下次升级时能正常迁移降级后生成的数据，
                 cachedVersion = currentVersion
                 view?.showDowngrade(from = cachedVersionName, to = currentVersionName)
+                view?.showMigrateComplete(from = cachedVersionName, to = currentVersionName)
             }
             cachedVersionName < currentVersionName -> {
                 debug {
