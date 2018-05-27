@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.data.dao
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
+import android.arch.persistence.room.Update
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.util.*
 
@@ -26,10 +27,16 @@ abstract class NovelDao {
     @Query("select * from Novel where site = :site and author = :author and name = :name")
     abstract fun query(site: String, author: String, name: String): Novel?
 
-    @Query("update Novel set detail = :detail and image = :image and introduction = :introduction and updateTime = :updateTime where id = :id")
+    @Query("update Novel set detail = :detail, image = :image, introduction = :introduction, updateTime = :updateTime where id = :id")
     abstract fun updateNovelDetail(id: Long, detail: String, image: String, introduction: String, updateTime: Date)
 
-    @Query("update Novel set chaptersCount = :chaptersCount and readAtChapterName = :readAtChapterName and lastChapterName = :lastChapterName and updateTime = :updateTime and checkUpdateTime = :checkUpdateTime and receiveUpdateTime = :receiveUpdateTime where id = :id")
+    @Query("update Novel set detail = :detail where id = :id")
+    abstract fun updateDetail(id: Long, detail: String)
+
+    @Update
+    abstract fun update(novel: Novel)
+
+    @Query("update Novel set chaptersCount = :chaptersCount, readAtChapterName = :readAtChapterName, lastChapterName = :lastChapterName, updateTime = :updateTime, checkUpdateTime = :checkUpdateTime, receiveUpdateTime = :receiveUpdateTime where id = :id")
     abstract fun updateChapters(
             id: Long, chaptersCount: Int,
             readAtChapterName: String, lastChapterName: String,
@@ -46,7 +53,7 @@ abstract class NovelDao {
     @Query("update Novel set pinnedTime = :pinnedTime where id = :id")
     abstract fun updatePinnedTime(id: Long, pinnedTime: Date)
 
-    @Query("update Novel set readAtChapterIndex = :readAtChapterIndex and readAtTextIndex = :readAtTextIndex and readAtChapterName = :readAtChapterName and readTime = :readTime where id = :id")
+    @Query("update Novel set readAtChapterIndex = :readAtChapterIndex, readAtTextIndex = :readAtTextIndex, readAtChapterName = :readAtChapterName, readTime = :readTime where id = :id")
     abstract fun updateReadStatus(id: Long, readAtChapterIndex: Int, readAtTextIndex: Int, readAtChapterName: String, readTime: Date)
 
     @Query("select * from Novel order by readTime desc limit :count")
