@@ -9,8 +9,9 @@ class YssmTest : BaseNovelContextText(Yssm::class) {
     @Test
     fun search() {
         search("都市")
-        search("斗破苍穹")
-        search("恐怖广播")
+        search("都市之超品狂兵", "痞子老妖", "298/298400")
+        search("斗破苍穹之最穿越系统", "优言", "273/273061")
+        search("恐怖广播", "纯洁滴小龙", "116/116459")
     }
 
     @Test

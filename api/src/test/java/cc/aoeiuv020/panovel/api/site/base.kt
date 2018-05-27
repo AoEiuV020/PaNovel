@@ -26,6 +26,15 @@ abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>)
         context = clazz.java.newInstance()
     }
 
+    protected fun search(name: String, author: String, extra: String, count: Int = 3) {
+        val list = context.searchNovelName(name)
+        println(list.size)
+        list.take(count).forEach {
+            println(it)
+        }
+        assertTrue(list.any { it.name == name && it.author == author && it.extra == extra })
+    }
+
     protected fun search(name: String, count: Int = 3): List<NovelItem> {
         val list = context.searchNovelName(name)
         println(list.size)

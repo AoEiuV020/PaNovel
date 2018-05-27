@@ -10,8 +10,8 @@ class SyxsTest : BaseNovelContextText(Syxs::class) {
     @Test
     fun search() {
         search("都市")
-        search("斗破苍穹")
-        search("恐怖广播")
+        search("一切从斗破苍穹开始", "千影残光", "7/7834")
+        search("恐怖广播", "纯洁滴小龙", "0/265")
     }
 
     @Test

@@ -9,8 +9,9 @@ class QlyxTest : BaseNovelContextText(Qlyx::class) {
     @Test
     fun search() {
         search("都市")
-        search("斗破苍穹")
-        search("恐怖广播")
+        search("都市大相医", "减肥哥", "11437")
+        search("斗破苍穹之万界商城", "梦回夕照", "7395")
+        search("恐怖广播", "纯洁滴小龙", "29")
     }
 
     @Test

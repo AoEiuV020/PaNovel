@@ -10,7 +10,7 @@ class LiudatxtTest : BaseNovelContextText(Liudatxt::class) {
     @Test
     fun search() {
         search("都市")
-        search("诸天万界反派聊天群")
+        search("诸天万界反派聊天群", "不要尬舞", "22921")
     }
 
     @Test

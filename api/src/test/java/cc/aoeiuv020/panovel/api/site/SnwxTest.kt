@@ -10,9 +10,12 @@ class SnwxTest : BaseNovelContextText(Snwx::class) {
     @Test
     fun search() {
         search("都市")
-        search("斗破苍穹")
-        search("恐怖广播")
-        search("祖魔")
+        search("恐怖广播", "纯洁滴小龙", "158/158904")
+        search("斗破苍穹之玄天帝尊", "唯物98", "301/301259")
+        search("修真妖孽战都市", "鲜衣怒马1", "281/281937")
+        search("祖魔", "一夜风云起", "66/66076")
+        // 这网站有不止一本修真聊天群，作者是一个人，但是显示的不一样，
+        search("修真聊天群", "圣骑士的传说", "216/216257")
     }
 
     @Test

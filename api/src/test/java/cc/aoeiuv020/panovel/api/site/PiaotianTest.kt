@@ -10,9 +10,9 @@ class PiaotianTest : BaseNovelContextText(Piaotian::class) {
     @Test
     fun search() {
         search("都市")
-        search("斗破苍穹")
-        search("从前有座灵剑山")
-        search("从前")
+        search("都市之位面旅行家", "书仙鱼", "8/8017")
+        search("斗破苍穹之无上之境", "夜雨闻铃0", "1/1767")
+        search("从前有座灵剑山", "国王陛下", "4/4316")
     }
 
     @Test

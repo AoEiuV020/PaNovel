@@ -10,7 +10,8 @@ class BiqugeTest : BaseNovelContextText(Biquge::class) {
     @Test
     fun search() {
         search("都市")
-        search("最大权限")
+        search("最大权限", "肥鱼马甲", "18156")
+        search("都市酒仙系统", "酒剑仙人", "19679")
     }
 
     @Test
