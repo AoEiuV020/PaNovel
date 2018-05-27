@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.settings
 
-import android.R
 import android.content.res.ColorStateList
 import cc.aoeiuv020.panovel.share.Expiration
 import cc.aoeiuv020.panovel.util.Delegates
@@ -18,7 +17,6 @@ object OtherSettings : Pref {
      */
     var shareExpiration: Expiration by Delegates.enum(Expiration.NONE)
     var reportCrash: Boolean by Delegates.boolean(true)
-    var subscribeNovelUpdate: Boolean by Delegates.boolean(true)
 
     val chapterColorDefault: Int by Delegates.int(0xff000000.toInt())
     // TODO: 这个默认颜色改暗些，
@@ -28,9 +26,9 @@ object OtherSettings : Pref {
         get() = ColorStateList(
                 arrayOf(
                         // isChecked代表阅读到的章节，
-                        intArrayOf(R.attr.state_checked),
+                        intArrayOf(android.R.attr.state_checked),
                         // isSelected代表已经缓存的章节，
-                        intArrayOf(-R.attr.state_checked, R.attr.state_selected),
+                        intArrayOf(-android.R.attr.state_checked, android.R.attr.state_selected),
                         intArrayOf()
                 ),
                 intArrayOf(
