@@ -27,6 +27,6 @@ data class BookList(
          */
         val createTime: Date = Date()
 ) {
-        // id的非空版本，实在是要经常用id, 而且是不可能为空的id,
-        val nId: Long get() = id.notNull()
+    // id的非空版本，实在是要经常用id, 而且是不可能为空的id,
+    val nId: Long get() = id.notNull()
 }

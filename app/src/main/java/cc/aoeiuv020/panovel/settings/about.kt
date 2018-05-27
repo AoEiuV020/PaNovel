@@ -18,8 +18,7 @@ import org.jetbrains.anko.yesButton
  * Created by AoEiuV020 on 2017.11.23-10:26:44.
  */
 class AboutFragment : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
-            = inflater.inflate(R.layout.content_about, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = inflater.inflate(R.layout.content_about, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         tvVersion.text = activity.run {

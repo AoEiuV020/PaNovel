@@ -4,8 +4,6 @@ import android.content.Context
 import android.view.View
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.BookList
-import cc.aoeiuv020.panovel.local.toBean
-import cc.aoeiuv020.panovel.local.toJson
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.dialog_shared.view.*
 import org.jetbrains.anko.alert
@@ -25,7 +23,9 @@ object Share {
 
     fun shareBookList(bookList: BookList, shareExpiration: Expiration): String {
         TODO("要从bookList查到小说再上传，")
+/*
         return paste.upload(PasteUbuntu.PasteUbuntuData(bookList.toJson(), expiration = shareExpiration))
+*/
     }
 
     /**
@@ -33,8 +33,10 @@ object Share {
      */
     fun receiveBookList(url: String): Int {
         TODO("要兼容旧版，")
+/*
         val text = paste.download(url)
         return text.toBean()
+*/
     }
 
     fun alert(context: Context, url: String, qrCode: String) {

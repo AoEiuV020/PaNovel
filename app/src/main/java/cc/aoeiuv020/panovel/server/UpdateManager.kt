@@ -142,9 +142,9 @@ object UpdateManager : AnkoLogger {
     }
 */
 
-/*
     fun create(context: Context) {
         debug { "create ${context.javaClass}" }
+/*
         novelService?.let { return }
         Observable.fromCallable {
             if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
@@ -165,8 +165,8 @@ object UpdateManager : AnkoLogger {
             error("获取服务器信息失败, 尝试默认，", e)
             novelService = NovelServiceImpl(ServerAddress())
         })
-    }
 */
+    }
 
     fun destroy(context: Context) {
         debug { "destroy ${context.javaClass}" }

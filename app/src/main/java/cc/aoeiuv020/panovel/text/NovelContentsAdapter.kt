@@ -24,6 +24,7 @@ class NovelContentsAdapter(
 ) : BaseAdapter() {
     // 颜色列表，只读一次设置，
     private val chapterColorList = OtherSettings.chapterColorList
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView
                 ?: LayoutInflater.from(context).inflate(R.layout.novel_chapter_item, parent, false).apply {

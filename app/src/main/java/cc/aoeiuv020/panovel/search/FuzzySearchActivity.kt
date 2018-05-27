@@ -10,12 +10,9 @@ import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelSite
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
 import cc.aoeiuv020.panovel.list.NovelMutableListAdapter
-import cc.aoeiuv020.panovel.local.toBean
-import cc.aoeiuv020.panovel.local.toJson
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
@@ -48,20 +45,13 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
             ctx.startActivity<FuzzySearchActivity>("name" to name, "author" to author)
         }
 
-        fun start(ctx: Context, site: NovelSite) {
-            ctx.startActivity<FuzzySearchActivity>("site" to site.toJson())
-        }
-
-        fun start(ctx: Context, site: NovelSite, name: String) {
-            ctx.startActivity<FuzzySearchActivity>("site" to site.toJson(), "name" to name)
-        }
     }
 
     private lateinit var presenter: FuzzySearchPresenter
     private val itemListener = DefaultNovelItemActionListener { message, e ->
         showError(message, e)
     }
-    private val mAdapter = NovelMutableListAdapter(R.layout.novel_item_big, itemListener)
+    private val mAdapter = NovelMutableListAdapter(itemListener)
 
     private var name: String? = null
     private var author: String? = null
@@ -90,7 +80,7 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
         name = getStringExtra("name", savedInstanceState)
         author = getStringExtra("author", savedInstanceState)
-        site = getStringExtra("site", savedInstanceState)?.toBean()
+        site = getStringExtra("site", savedInstanceState)
 
         site?.let {
             presenter.singleSite(it)

@@ -40,7 +40,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
 
     private lateinit var alertDialog: AlertDialog
     private lateinit var presenter: NovelDetailPresenter
-    private lateinit var chapterAdapter: NovelChaptersAdapter
     private var novel: Novel? = null
     private var isRefreshEnable = false
 
@@ -128,7 +127,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
 
     override fun onRestart() {
         super.onRestart()
-        chapterAdapter.refresh()
     }
 
     fun showNovelDetail(novel: Novel) {

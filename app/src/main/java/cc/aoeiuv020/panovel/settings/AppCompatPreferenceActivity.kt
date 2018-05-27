@@ -36,8 +36,7 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         delegate.setSupportActionBar(toolbar)
     }
 
-    override fun getMenuInflater(): MenuInflater
-            = delegate.menuInflater
+    override fun getMenuInflater(): MenuInflater = delegate.menuInflater
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
         delegate.setContentView(layoutResID)

@@ -101,7 +101,7 @@ object DataManager : AnkoLogger {
      * 列出所有网站，
      */
     fun listSites(): List<Site> = app.db.runInTransaction<List<Site>> {
-        // 每次都遍历网站有点傻，考虑写死site表，升级时直接写入新支持的网站，
+        // TODO: 每次都遍历网站有点傻，考虑写死site表，升级时直接写入新支持的网站，
         allNovelContexts().map {
             it.site.run {
                 app.queryOrNewSite(name, baseUrl, logo, enabled)

@@ -38,6 +38,7 @@ data class Novel(
         /**
          * 网站名，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
+         * 不外键到网站表，那张表不稳定，
          */
         val site: String,
         /**
