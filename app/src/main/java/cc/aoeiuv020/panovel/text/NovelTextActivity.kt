@@ -122,14 +122,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun showNovel(novel: Novel) {
         this.novel = novel
-        index?.let { chapterIndex ->
-            // 如果有传入章节索引，就修改novel里存的阅读进度，
-            novel.readAt(chapterIndex, chaptersAsc)
-            // 章节内进度改成本章开头，
-            novel.readAtTextIndex = 0
-            // 以防万一index再被使用，不知道是否必要，
-            index = null
-        }
         initReader(novel)
         navigation = NovelTextNavigation(this, novel, nav_view)
         try {
@@ -408,12 +400,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     fun showChaptersAsc(chaptersAsc: List<NovelChapter>) {
         debug { "chapters loaded ${chaptersAsc.size}" }
         this.chaptersAsc = chaptersAsc
-        if (novel.readAtChapterIndex == -1) {
-            // 支持跳到最后一章，
-            novel.readAt(chaptersAsc.lastIndex, chaptersAsc)
-        }
-        onChapterSelected(novel.readAtChapterIndex)
-        progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {
             // 真有小说空章节的，不知道怎么回事，
             // https://m.qidian.com/book/2346657
@@ -422,6 +408,22 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             show()
             return
         }
+        index?.let {
+            // 以防万一index再被使用，不知道是否必要，
+            index = null
+            // 支持跳到最后一章，
+            val chapterIndex = if (it == -1) {
+                chaptersAsc.lastIndex
+            } else {
+                it
+            }
+            // 如果有传入章节索引，就修改novel里存的阅读进度，
+            novel.readAt(chapterIndex, chaptersAsc)
+            // 章节内进度改成本章开头，
+            novel.readAtTextIndex = 0
+        }
+        onChapterSelected(novel.readAtChapterIndex)
+        progressDialog.dismiss()
         doAsync({ e ->
             val message = "处理小说章节列表失败，"
             Reporter.post(message, e)

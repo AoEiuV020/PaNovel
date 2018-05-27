@@ -61,17 +61,18 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             var errors = 0
             val left = AtomicInteger(size - fromIndex)
             val nextIndex = AtomicInteger(fromIndex)
+            val threadsLimit = GeneralSettings.downloadThreadsLimit
             debug {
-                "download start <$fromIndex/$size>"
+                "download start <$fromIndex/$size> * $threadsLimit"
             }
             // 同时启动多个线程下载，
-            repeat(GeneralSettings.downloadThreadsLimit) {
+            repeat(threadsLimit) {
                 view?.doAsync {
                     // 每次循环最后再获取，
                     var index = nextIndex.getAndIncrement()
                     // 如果presenter已经detach说明离开了这个页面，不继续下载，
                     // 正在下载的章节不中断，
-                    while (index < size && view == null) {
+                    while (index < size && view != null) {
                         debug { "${Thread.currentThread().name} downloading $index" }
                         val chapter = chapters[index]
                         if (cachedList.contains(chapter.extra)) {
