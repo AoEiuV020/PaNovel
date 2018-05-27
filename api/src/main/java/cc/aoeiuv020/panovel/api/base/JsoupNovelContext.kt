@@ -280,4 +280,6 @@ abstract class JsoupNovelContext : NovelContext() {
      * URLEncode with gbk file encoding,
      */
     protected fun gbk(value: String): String = URLEncoder.encode(value, "GBK")
+
+    protected fun utf8(value: String): String = URLEncoder.encode(value, "UTF-8")
 }

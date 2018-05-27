@@ -12,9 +12,12 @@ class SfacgTest : BaseNovelContextText(Sfacg::class) {
         search("都市")
         search("黑猫变成少女才不奇怪呢", "青衣流苏", "123589")
         search("重生之都市少女", "雁落荆南", "71095")
-/* TODO: 搜索暂不支持空格，考虑用okhttp代替jsoup请求页面后再改，
-        search("学战都市 开阳", "帝国之钻", "49506")
-*/
+        search("学战都市").first {
+            // 不支持搜索空格，
+            "学战都市 开阳" == it.name
+                    && "帝国之钻" == it.author
+                    && "49506" == it.extra
+        }
     }
 
     @Test

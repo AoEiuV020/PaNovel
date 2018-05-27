@@ -17,7 +17,7 @@ class Sfacg : DslJsoupNovelContext() { init {
     }
     search {
         get {
-            url = "http://s.sfacg.com/?Key=$it&S=1&SS=0"
+            url = "http://s.sfacg.com/?Key=${utf8(it)}&S=1&SS=0"
         }
         document {
             /*
