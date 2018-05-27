@@ -47,8 +47,13 @@ class ApiManager(ctx: Context) {
 
     fun updateNovelDetail(novel: Novel) {
         val novelDetail = context(novel).getNovelDetail(novel.detail)
+        novel.site = novelDetail.novel.site
+        novel.author = novelDetail.novel.author
+        novel.name = novelDetail.novel.name
+        novel.detail = novelDetail.novel.extra
         novel.image = novelDetail.image
         novel.introduction = novelDetail.introduction
+        novel.chapters = novelDetail.extra
         if (novelDetail.update != null) {
             novel.updateTime = requireNotNull(novelDetail.update)
         }

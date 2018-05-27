@@ -40,23 +40,23 @@ data class Novel(
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
          * 不外键到网站表，那张表不稳定，
          */
-        val site: String,
+        var site: String,
         /**
          * 作者名，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
          */
-        val author: String,
+        var author: String,
         /**
          * 小说名，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
          */
-        val name: String,
+        var name: String,
         /**
          * 用于请求小说详情页的额外信息，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
          * [cc.aoeiuv020.panovel.api.NovelItem.extra]
          */
-        val detail: String,
+        var detail: String,
 
         // 下面的有默认值，每次阅读后改变，
 
