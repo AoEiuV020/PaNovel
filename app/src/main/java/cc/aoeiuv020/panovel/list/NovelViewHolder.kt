@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.text.CheckableImageView
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.novel_item_big.view.*
 import org.jetbrains.anko.AnkoLogger
@@ -109,6 +111,9 @@ class NovelViewHolder(itemView: View,
         image?.let { imageView ->
             Glide.with(imageView)
                     .load(novel.image)
+                    .apply(RequestOptions().apply {
+                        placeholder(R.drawable.ic_read)
+                    })
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
                             // TODO: 考虑在特定某些异常出现时直接改数据库里的小说图片地址，
