@@ -145,7 +145,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         init {
             // 默认直接将详情页的extra传给目录页，
             // 通常双方都是只需要一个bookId,
-            _novelDetail.extra = detailExtra
+            _novelDetail.extra = findBookId(detailExtra)
         }
 
         var novel: NovelItem?
@@ -156,8 +156,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
         fun novel(init: _NovelItemParser.() -> Unit) {
             novel = _NovelItemParser(root).run {
-                // 自己的extra本来就是能用来请求详情页的extra,
-                extra = this@_NovelDetailParser.detailExtra
+                // 默认流程，findBookId(detailExtra) -> _novelDetail.extra -> novel.extra,
+                extra = this@_NovelDetailParser._novelDetail.extra
                 init()
                 parse()
             }
@@ -276,6 +276,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             extra = findChapterId(root.path())
         }) {
             novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {
+                // 解析不通过的章节直接无视，不抛异常，
                 tryOrNul {
                     _NovelChapterParser(it).run {
                         init()
