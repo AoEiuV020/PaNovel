@@ -53,9 +53,9 @@
                 </android.support.design.widget.CollapsingToolbarLayout>
             </android.support.design.widget.AppBarLayout>
 
-            <LinearLayout
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="16dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     tools:text="小说简介，" />
 
-            </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fabRead"
