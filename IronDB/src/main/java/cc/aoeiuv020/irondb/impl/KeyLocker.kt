@@ -1,4 +1,4 @@
-package cc.aoeiuv020.irondb
+package cc.aoeiuv020.irondb.impl
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Semaphore
@@ -21,10 +21,11 @@ class KeyLocker {
         semaphoreMap[key]?.release()
     }
 
-    fun <T> runInAcquire(key: String, block: () -> T?): T? {
+    fun <T> runInAcquire(key: String, block: () -> T?): T? = try {
         acquire(key)
-        val ret = block()
+        block()
+    } finally {
+        // 放在finally以防万一io异常时也要释放锁，
         release(key)
-        return ret
     }
 }

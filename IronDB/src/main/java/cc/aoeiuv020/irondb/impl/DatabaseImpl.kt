@@ -2,7 +2,6 @@ package cc.aoeiuv020.irondb.impl
 
 import cc.aoeiuv020.irondb.DataSerializer
 import cc.aoeiuv020.irondb.Database
-import cc.aoeiuv020.irondb.KeyLocker
 import cc.aoeiuv020.irondb.KeySerializer
 import java.io.File
 import java.io.IOException
