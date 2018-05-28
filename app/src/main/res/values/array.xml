@@ -30,4 +30,41 @@
         <item>YEAR</item>
     </string-array>
 
+    <!--
+        OpenDetail, ReadLastChapter, ReadContinue,
+        RefineSearch, Refresh, MoreAction,
+        Export, RemoveBookshelf, AddBookshelf,
+        // 置顶，
+        Pinned,
+        CancelPinned,
+        // 什么都不做，
+        None,
+    -->
+    <string-array name="item_action_name">
+        <item>@string/open_detail</item>
+        <item>@string/read_last_chapter</item>
+        <item>@string/read_continue</item>
+        <item>@string/refine_search</item>
+        <item>@string/refresh</item>
+        <item>@string/more_action</item>
+        <item>@string/export</item>
+        <item>@string/pinned_bookshelf</item>
+        <item>@string/none</item>
+    </string-array>
+    <string-array name="item_action_values">
+        <item>OpenDetail</item>
+        <item>ReadLastChapter</item>
+        <item>ReadContinue</item>
+
+        <item>RefineSearch</item>
+        <item>Refresh</item>
+        <item>MoreAction</item>
+
+        <item>Export</item>
+
+        <item>Pinned</item>
+        <item>CancelPinned</item>
+        <item>None</item>
+    </string-array>
+
 </resources>

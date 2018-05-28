@@ -9,24 +9,23 @@ import cc.aoeiuv020.panovel.util.Pref
 object ListSettings : Pref {
     override val name: String
         get() = "List"
+
+    // 书架的小红点设置，
     val dotColor: Int by Delegates.int(0xffff0000.toInt())
     val dotSize: Float by Delegates.float(24f)
 
+    // 点击事件设置，
+    val onDotClick: ItemAction by Delegates.enum(ItemAction.Refresh)
+    val onDotLongClick: ItemAction by Delegates.enum(ItemAction.Pinned)
+    val onCheckUpdateClick: ItemAction by Delegates.enum(ItemAction.Refresh)
+    val onNameClick: ItemAction by Delegates.enum(ItemAction.OpenDetail)
+    val onNameLongClick: ItemAction by Delegates.enum(ItemAction.RefineSearch)
+    val onLastChapterClick: ItemAction by Delegates.enum(ItemAction.ReadLastChapter)
+    val onItemClick: ItemAction by Delegates.enum(ItemAction.ReadContinue)
+    val onItemLongClick: ItemAction by Delegates.enum(ItemAction.MoreAction)
 }
 
-object ItemActionSettings : Pref {
-    override val name: String = "ClickAction"
-    val onDotClick: ItemActionEnum by Delegates.enum(ItemActionEnum.Refresh)
-    val onDotLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.Pinned)
-    val onCheckUpdateClick: ItemActionEnum by Delegates.enum(ItemActionEnum.Refresh)
-    val onNameClick: ItemActionEnum by Delegates.enum(ItemActionEnum.OpenDetail)
-    val onNameLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.RefineSearch)
-    val onLastChapterClick: ItemActionEnum by Delegates.enum(ItemActionEnum.ReadLastChapter)
-    val onItemClick: ItemActionEnum by Delegates.enum(ItemActionEnum.ReadContinue)
-    val onItemLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.MoreAction)
-}
-
-enum class ItemActionEnum {
+enum class ItemAction {
     OpenDetail, ReadLastChapter, ReadContinue,
     RefineSearch, Refresh, MoreAction,
     Export, RemoveBookshelf, AddBookshelf,

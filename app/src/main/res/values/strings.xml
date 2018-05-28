@@ -56,6 +56,7 @@
 
     <string name="pref_header_general">全局设置</string>
     <string name="pref_header_bookshelf">书架设置</string>
+    <string name="pref_header_list">列表设置</string>
     <string name="pref_header_read">阅读设置</string>
     <string name="pref_others">杂项</string>
     <string name="pref_cache_clear">清除缓存</string>
@@ -186,6 +187,19 @@
     <string name="auto_refresh_interval">自动刷新间隔(s)</string>
     <string name="check_update_time">检查更新</string>
     <string name="last_refresh_time">上次刷新</string>
+    <string name="open_detail">打开详情页</string>
+    <string name="more_action">更多操作</string>
+    <string name="pinned_bookshelf">书架置顶</string>
+    <string name="settings_red_dot">书架小红点设置</string>
+    <string name="settings_click_action">点击事件设置</string>
+    <string name="settings_click_red_dot">点击小红点</string>
+    <string name="settings_long_click_red_dot">长按小红点</string>
+    <string name="settings_click_refresh_time">点击刷新时间</string>
+    <string name="settings_click_name">点击小说名</string>
+    <string name="settings_long_click_name">长按小说名</string>
+    <string name="settings_click_last_chapter">点击最新章节</string>
+    <string name="settings_click_whole_item">点击整体</string>
+    <string name="settings_long_click_whole_item">长按整体</string>
     <string-array name="content_more_action">
         <!--
                 ReadContinue,

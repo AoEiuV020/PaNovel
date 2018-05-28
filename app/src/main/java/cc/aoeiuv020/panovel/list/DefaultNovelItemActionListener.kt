@@ -5,9 +5,9 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
-import cc.aoeiuv020.panovel.settings.ItemActionEnum
-import cc.aoeiuv020.panovel.settings.ItemActionEnum.*
-import cc.aoeiuv020.panovel.settings.ItemActionSettings
+import cc.aoeiuv020.panovel.settings.ItemAction
+import cc.aoeiuv020.panovel.settings.ItemAction.*
+import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import org.jetbrains.anko.*
 
@@ -17,7 +17,7 @@ import org.jetbrains.anko.*
 open class DefaultNovelItemActionListener(
         private val onError: (String, Throwable) -> Unit
 ) : NovelItemActionListener, AnkoLogger {
-    fun on(enum: ItemActionEnum, vh: NovelViewHolder): Boolean {
+    fun on(enum: ItemAction, vh: NovelViewHolder): Boolean {
         when (enum) {
             ReadLastChapter -> NovelTextActivity.start(vh.ctx, vh.novel, -1)
             ReadContinue -> NovelTextActivity.start(vh.ctx, vh.novel)
@@ -52,35 +52,35 @@ open class DefaultNovelItemActionListener(
     }
 
     override fun onDotClick(vh: NovelViewHolder) {
-        on(ItemActionSettings.onDotClick, vh)
+        on(ListSettings.onDotClick, vh)
     }
 
     override fun onDotLongClick(vh: NovelViewHolder): Boolean {
-        return on(ItemActionSettings.onDotLongClick, vh)
+        return on(ListSettings.onDotLongClick, vh)
     }
 
     override fun onCheckUpdateClick(vh: NovelViewHolder) {
-        on(ItemActionSettings.onCheckUpdateClick, vh)
+        on(ListSettings.onCheckUpdateClick, vh)
     }
 
     override fun onNameClick(vh: NovelViewHolder) {
-        on(ItemActionSettings.onNameClick, vh)
+        on(ListSettings.onNameClick, vh)
     }
 
     override fun onNameLongClick(vh: NovelViewHolder): Boolean {
-        return on(ItemActionSettings.onNameLongClick, vh)
+        return on(ListSettings.onNameLongClick, vh)
     }
 
     override fun onLastChapterClick(vh: NovelViewHolder) {
-        on(ItemActionSettings.onLastChapterClick, vh)
+        on(ListSettings.onLastChapterClick, vh)
     }
 
     override fun onItemClick(vh: NovelViewHolder) {
-        on(ItemActionSettings.onItemClick, vh)
+        on(ListSettings.onItemClick, vh)
     }
 
     override fun onItemLongClick(vh: NovelViewHolder): Boolean {
-        return on(ItemActionSettings.onItemLongClick, vh)
+        return on(ListSettings.onItemLongClick, vh)
     }
 
     override fun onStarChanged(vh: NovelViewHolder, star: Boolean) {
