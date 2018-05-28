@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
@@ -20,15 +21,13 @@ import cc.aoeiuv020.panovel.list.NovelMutableListAdapter
 import cc.aoeiuv020.panovel.list.NovelViewHolder
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_book_list.*
 import kotlinx.android.synthetic.main.novel_item_list.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.selector
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 /**
  *
@@ -88,7 +87,11 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
             return
         }
 
-        rvNovel.layoutManager = LinearLayoutManager(this)
+        rvNovel.layoutManager = if (ListSettings.gridView) {
+            GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
+        } else {
+            LinearLayoutManager(ctx)
+        }
         presenter = BookListActivityPresenter(bookListId)
         rvNovel.adapter = mAdapter
         srlRefresh.setOnRefreshListener {

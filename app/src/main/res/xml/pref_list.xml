@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/settings_view">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="gridView"
+            android:title="@string/grid_view" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="largeView"
+            android:title="@string/large_view" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/settings_red_dot">
 
         <cc.aoeiuv020.panovel.settings.FloatEditTextPreference

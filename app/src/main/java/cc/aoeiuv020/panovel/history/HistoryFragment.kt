@@ -3,16 +3,19 @@ package cc.aoeiuv020.panovel.history
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import cc.aoeiuv020.panovel.App.Companion.ctx
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.settings.ListSettings
 import kotlinx.android.synthetic.main.novel_item_list.*
 
 
@@ -33,7 +36,11 @@ class HistoryFragment : Fragment(), IView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        rvNovel.layoutManager = LinearLayoutManager(context)
+        rvNovel.layoutManager = if (ListSettings.gridView) {
+            GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
+        } else {
+            LinearLayoutManager(ctx)
+        }
         rvNovel.adapter = mAdapter
         srlRefresh.setOnRefreshListener {
             forceRefresh()

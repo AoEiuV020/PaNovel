@@ -42,7 +42,13 @@ open class NovelListAdapter(
 
     // TODO: 要支持多种视图，
     @LayoutRes
-    private val layout: Int = R.layout.novel_item_big
+    private val layout: Int = when {
+        ListSettings.gridView && ListSettings.largeView -> R.layout.novel_item_grid_big
+        ListSettings.gridView && !ListSettings.largeView -> R.layout.novel_item_grid_small
+        !ListSettings.gridView && ListSettings.largeView -> R.layout.novel_item_big
+        !ListSettings.gridView && !ListSettings.largeView -> R.layout.novel_item_small
+        else -> R.layout.novel_item_big
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NovelViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(layout, parent, false)

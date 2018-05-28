@@ -208,5 +208,8 @@
     <string name="adding_bookshelf">正在加入书架</string>
     <string name="remove_bookshelf_complete">移出书架成功</string>
     <string name="add_bookshelf_complete">加入书架成功</string>
+    <string name="settings_view">视图设置</string>
+    <string name="grid_view">格子视图</string>
+    <string name="large_view">大型视图</string>
 
 </resources>

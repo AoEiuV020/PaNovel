@@ -110,6 +110,7 @@ class BookListFragment : Fragment(), IView, AnkoLogger {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         progressDialog = ProgressDialog(context)
+        // Note: 这里不是小说列表，固定用LinearLayoutManager，
         rvNovel.layoutManager = LinearLayoutManager(context)
         rvNovel.adapter = mAdapter
         srlRefresh.setOnRefreshListener {

@@ -38,6 +38,7 @@ class SiteChooseActivity : AppCompatActivity(), IView {
         setContentView(R.layout.activity_site_choose)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // Note: 这里不是小说列表，固定用LinearLayoutManager，
         rvSiteList.layoutManager = LinearLayoutManager(this)
 
         presenter = SiteChoosePresenter()

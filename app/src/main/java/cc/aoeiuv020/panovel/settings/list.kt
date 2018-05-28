@@ -9,6 +9,8 @@ import cc.aoeiuv020.panovel.util.Pref
 object ListSettings : Pref {
     override val name: String
         get() = "List"
+    val gridView: Boolean by Delegates.boolean(false)
+    val largeView: Boolean  by Delegates.boolean(true)
 
     // 书架的小红点设置，
     val dotColor: Int by Delegates.int(0xffff0000.toInt())

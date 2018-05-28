@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
@@ -14,6 +15,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
 import cc.aoeiuv020.panovel.list.NovelMutableListAdapter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
@@ -21,6 +23,7 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_fuzzy_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.ctx
 import org.jetbrains.anko.startActivity
 
 
@@ -73,7 +76,11 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
             override fun onQueryTextChange(newText: String?): Boolean = false
         })
 
-        rvNovel.layoutManager = LinearLayoutManager(this)
+        rvNovel.layoutManager = if (ListSettings.gridView) {
+            GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
+        } else {
+            LinearLayoutManager(ctx)
+        }
         presenter = FuzzySearchPresenter()
         presenter.attach(this)
         rvNovel.adapter = mAdapter

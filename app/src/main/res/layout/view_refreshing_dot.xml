@@ -18,21 +18,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/ivDot"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
+            android:scaleType="fitEnd"
             android:tint="#f00"
             android:visibility="gone"
             app:srcCompat="@drawable/circle_dot"
             tools:ignore="ContentDescription" />
-    </LinearLayout>
+    </FrameLayout>
 
 </merge>
