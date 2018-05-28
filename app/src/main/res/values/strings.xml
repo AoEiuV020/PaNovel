@@ -82,6 +82,7 @@
     <string name="export_exists_chapter_to_text_file">导出已有章节到.txt</string>
     <string name="exporting_placeholder">导出中 已导出%d章 跳过%d章 剩余%d章</string>
     <string name="export_complete_placeholder">导出完成 已导出%d章 跳过%d章</string>
+    <string name="export_complete_big_placeholder">已导出至：%s</string>
     <string name="export_error_placeholder">导出失败 已导出%d章 跳过%d章 剩余%d章</string>
     <string name="typesetting">排版</string>
     <string name="margin_value_placeholder">%d%%</string>

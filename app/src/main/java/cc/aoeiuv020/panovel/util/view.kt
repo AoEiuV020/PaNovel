@@ -102,7 +102,7 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.show()
 
-fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
+fun Context.notify(id: Int, text: String? = null, bigText: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
     val intent = intentFor<MainActivity>()
     val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
     val nb = NotificationCompat.Builder(this)
@@ -110,6 +110,9 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
             .setContentText(text)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
+    bigText?.let {
+        nb.setStyle(NotificationCompat.BigTextStyle().bigText(it))
+    }
     time?.let {
         nb.setWhen(it)
     }

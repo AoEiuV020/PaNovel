@@ -227,6 +227,12 @@ object DataManager : AnkoLogger {
 
     fun removeNovelContextCookies(site: String) = api.removeCookies(getNovelContextByName(site))
 
+    /**
+     * 从缓存中读小说正文，没有就返回空，用于导入小说，
+     */
+    fun getContent(novel: Novel, chapter: NovelChapter): List<String>? =
+            cache.loadContent(novel, chapter)
+
     fun requestContent(novel: Novel, chapter: NovelChapter, refresh: Boolean): List<String> {
         // 指定刷新的话就不读缓存，
         if (!refresh) {

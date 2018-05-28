@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.list
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
+import cc.aoeiuv020.panovel.export.TextExporter
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.settings.ItemAction
@@ -23,7 +24,7 @@ open class DefaultNovelItemActionListener(
             ReadContinue -> NovelTextActivity.start(vh.ctx, vh.novel)
             OpenDetail -> NovelDetailActivity.start(vh.ctx, vh.novel)
             RefineSearch -> FuzzySearchActivity.start(vh.ctx, vh.novel)
-            Export -> TODO("导出已有章节，")
+            Export -> TextExporter.export(vh.ctx, vh.novel)
             AddBookshelf -> vh.addBookshelf() // vh里再反过来调用onStarChanged，
             RemoveBookshelf -> vh.removeBookshelf() // vh里再反过来调用onStarChanged，
             Refresh -> vh.refresh()

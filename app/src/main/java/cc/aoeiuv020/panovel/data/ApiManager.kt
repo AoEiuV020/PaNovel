@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.site.*
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.util.notNull
 import java.net.URL
 import java.util.*
 
@@ -59,7 +60,7 @@ class ApiManager(ctx: Context) {
         novel.introduction = novelDetail.introduction
         novel.chapters = novelDetail.extra
         if (novelDetail.update != null) {
-            novel.updateTime = requireNotNull(novelDetail.update)
+            novel.updateTime = novelDetail.update.notNull()
         }
     }
 

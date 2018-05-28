@@ -480,7 +480,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         val index = reader.currentChapter
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
                 , novel.name
-                , R.drawable.ic_file_download)
+                , icon = R.drawable.ic_file_download)
         presenter.download(novel, index)
     }
 
@@ -531,7 +531,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         override fun run() {
             notify(1, getString(R.string.downloading_placeholder, exists, downloads, errors, left)
                     , novel.name
-                    , R.drawable.ic_file_download)
+                    , icon = R.drawable.ic_file_download)
         }
     }
 

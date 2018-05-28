@@ -145,7 +145,7 @@ data class Novel(
     // id的非空版本，实在是要经常用id, 而且是不可能为空的id,
     val nId: Long get() = id.notNull()
     // chapters的非空版本，用的不多，
-    val nChapters: String get() = requireNotNull(chapters)
+    val nChapters: String get() = chapters.notNull()
 
     fun readAt(index: Int, chapters: List<NovelChapter>) {
         readAtChapterIndex = index
