@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.list
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
+import android.text.format.DateUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,8 +20,8 @@ import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.novel_item_big.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class NovelViewHolder(itemView: View,
                       private val itemListener: NovelItemActionListener,
@@ -28,10 +29,6 @@ class NovelViewHolder(itemView: View,
                       dotColor: Int,
                       dotSize: Float)
     : RecyclerView.ViewHolder(itemView), AnkoLogger {
-    companion object {
-        // 用于格式化时间，可能有展示更新时间，
-        private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
-    }
 
     // 所有View可空，准备支持不同布局，小的布局可能大部分View都没有，
     private val name: TextView? = itemView.tvName
@@ -130,7 +127,8 @@ class NovelViewHolder(itemView: View,
                     .into(imageView)
         }
         star?.isChecked = novel.bookshelf
-        checkUpdate?.text = sdf.format(novel.checkUpdateTime)
+        // 显示“x分钟前”
+        checkUpdate?.text = DateUtils.getRelativeTimeSpanString(novel.checkUpdateTime.time, System.currentTimeMillis(), TimeUnit.SECONDS.toMillis(1))
         readAt?.text = novel.readAtChapterName
     }
 
