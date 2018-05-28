@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.ListSettings
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 open class NovelListAdapter(
         private val itemListener: NovelItemActionListener = NovelItemActionAdapter(),
@@ -27,8 +28,9 @@ open class NovelListAdapter(
         }
 
     // 打开时存个比最小时间大的，自动刷新没刷新过的，也就是刚搜索出来的，
+    // 设置一天，以防万一时区问题，
     // 如果小说刷新时间checkUpdateTime小于这个时间就联网刷新章节列表，
-    private var refreshTime = Date(1)
+    private var refreshTime = Date(TimeUnit.DAYS.toMillis(1))
 
     fun refresh() {
         refreshTime = Date()
