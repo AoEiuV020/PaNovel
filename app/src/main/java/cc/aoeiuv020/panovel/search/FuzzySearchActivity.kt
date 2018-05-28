@@ -143,7 +143,13 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     private fun refresh() {
-        mAdapter.notifyDataSetChanged()
+        // 重新搜索就是刷新了，
+        // 没搜索就刷新也是不禁止的，所以要判断下，
+        name?.let {
+            search(it, author)
+        } ?: run {
+            srlRefresh.isRefreshing = false
+        }
     }
 
     /**
@@ -151,7 +157,6 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
      * 为了方便从书架过来，找一本小说的所有源的最新章节，
      */
     private fun forceRefresh() {
-        mAdapter.clear()
         mAdapter.refresh()
         refresh()
     }
