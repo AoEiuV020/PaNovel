@@ -66,5 +66,34 @@
         <item>CancelPinned</item>
         <item>None</item>
     </string-array>
+    <string-array name="content_more_action">
+        <!--
+                        ReadContinue,
+                        ReadLastChapter,
+                        OpenDetail,
+                        RefineSearch,
 
+                        Export,
+                        AddBookshelf,
+                        RemoveBookshelf,
+                        Pinned,
+
+                        CancelPinned,
+                        Refresh
+        -->
+        <item>@string/read_continue</item>
+        <item>@string/read_last_chapter</item>
+        <item>@string/detail</item>
+        <item>@string/refine_search</item>
+
+        <item>@string/export_exists_chapter_to_text_file</item>
+        <item>@string/add_bookshelf</item>
+        <item>@string/remove_bookshelf</item>
+        <item>@string/pinned_bookshelf</item>
+
+        <item>@string/cancelPinned</item>
+        <item>@string/refresh_chapters</item>
+    </string-array>
+
+    <string name="cancelPinned">取消置顶</string>
 </resources>

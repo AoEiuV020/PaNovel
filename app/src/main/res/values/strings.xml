@@ -203,25 +203,5 @@
     <string name="settings_click_whole_item">点击整体</string>
     <string name="settings_long_click_whole_item">长按整体</string>
     <string name="feedback">反馈：</string>
-    <string-array name="content_more_action">
-        <!--
-                ReadContinue,
-                ReadLastChapter,
-                OpenDetail,
-                RefineSearch,
-                Export,
-                AddBookshelf,
-                RemoveBookshelf,
-                Refresh
-        -->
-        <item>@string/read_continue</item>
-        <item>@string/read_last_chapter</item>
-        <item>@string/detail</item>
-        <item>@string/refine_search</item>
-        <item>@string/export_exists_chapter_to_text_file</item>
-        <item>@string/remove_bookshelf</item>
-        <item>@string/add_bookshelf</item>
-        <item>@string/refresh_chapters</item>
-    </string-array>
 
 </resources>

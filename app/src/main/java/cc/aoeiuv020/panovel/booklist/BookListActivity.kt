@@ -48,7 +48,8 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
     private lateinit var presenter: BookListActivityPresenter
 
     // 不指定对象类型的话，下面的adapter传参会报类型检查出错，
-    private val itemListener: DefaultNovelItemActionListener = object : DefaultNovelItemActionListener({ message, e ->
+    private val itemListener: DefaultNovelItemActionListener = object : DefaultNovelItemActionListener({ _, _ ->
+    }, { message, e ->
         showError(message, e)
     }) {
         override fun onItemLongClick(vh: NovelViewHolder): Boolean {

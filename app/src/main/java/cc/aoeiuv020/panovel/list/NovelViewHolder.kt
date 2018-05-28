@@ -187,6 +187,6 @@ class NovelViewHolder(itemView: View,
 
     fun addBookshelf() {
         star?.isChecked = true
-        itemListener.onStarChanged(this, false)
+        itemListener.onStarChanged(this, true)
     }
 }

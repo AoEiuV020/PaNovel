@@ -16,15 +16,17 @@ import org.jetbrains.anko.*
  * Created by AoEiuV020 on 2018.05.23-12:49:51.
  */
 open class DefaultNovelItemActionListener(
+        private val actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
         private val onError: (String, Throwable) -> Unit
 ) : NovelItemActionListener, AnkoLogger {
-    fun on(enum: ItemAction, vh: NovelViewHolder): Boolean {
-        when (enum) {
+    fun on(action: ItemAction, vh: NovelViewHolder): Boolean {
+        when (action) {
             ReadLastChapter -> NovelTextActivity.start(vh.ctx, vh.novel, -1)
             ReadContinue -> NovelTextActivity.start(vh.ctx, vh.novel)
             OpenDetail -> NovelDetailActivity.start(vh.ctx, vh.novel)
             RefineSearch -> FuzzySearchActivity.start(vh.ctx, vh.novel)
             Export -> TextExporter.export(vh.ctx, vh.novel)
+        // TODO: 有点混乱不统一，改支之前考虑清楚，主要是有的操作需要更新vh界面，
             AddBookshelf -> vh.addBookshelf() // vh里再反过来调用onStarChanged，
             RemoveBookshelf -> vh.removeBookshelf() // vh里再反过来调用onStarChanged，
             Refresh -> vh.refresh()
@@ -40,6 +42,8 @@ open class DefaultNovelItemActionListener(
                         Export,
                         AddBookshelf,
                         RemoveBookshelf,
+                        Pinned,
+                        CancelPinned,
                         Refresh
                 )
                 vh.ctx.selector(vh.ctx.getString(R.string.title_more_action), list) { _, i ->
@@ -49,6 +53,7 @@ open class DefaultNovelItemActionListener(
         // 返回false不消费长按事件，
             None -> return false
         }
+        actionDoneListener(action, vh)
         return true
     }
 
@@ -129,7 +134,6 @@ open class DefaultNovelItemActionListener(
             }
         }) {
             DataManager.pinned(vh.novel)
-            // TODO: 置顶后刷新列表， 移到开头,
         }
     }
 
@@ -143,7 +147,6 @@ open class DefaultNovelItemActionListener(
             }
         }) {
             DataManager.cancelPinned(vh.novel)
-            // TODO: 取消置顶后刷新列表，
         }
     }
 }
