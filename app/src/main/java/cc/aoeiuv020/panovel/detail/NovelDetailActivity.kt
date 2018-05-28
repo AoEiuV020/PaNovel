@@ -125,10 +125,6 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         super.onDestroy()
     }
 
-    override fun onRestart() {
-        super.onRestart()
-    }
-
     fun showNovelDetail(novel: Novel) {
         srlRefresh.isRefreshing = false
         this.novel = novel
@@ -136,7 +132,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         // TODO: 调整上半部分展示内容，作者名网站名什么都加上，
         // TODO: 下面考虑用viewPager两页实现简介和目录，
         tvIntroduction.text = novel.introduction
-        Glide.with(this).load(novel.image).into(toolbar_layout.image)
+        Glide.with(this.applicationContext).load(novel.image).into(toolbar_layout.image)
         fabRead.setOnClickListener {
             NovelTextActivity.start(this, novel)
         }

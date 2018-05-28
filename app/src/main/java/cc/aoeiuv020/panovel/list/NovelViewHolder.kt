@@ -111,7 +111,7 @@ class NovelViewHolder(itemView: View,
         site?.text = novel.site
         last?.text = novel.lastChapterName
         image?.let { imageView ->
-            Glide.with(imageView)
+            Glide.with(ctx.applicationContext)
                     .load(novel.image)
                     .apply(RequestOptions().apply {
                         placeholder(R.drawable.ic_read)
