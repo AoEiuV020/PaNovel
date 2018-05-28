@@ -288,5 +288,7 @@ object DataManager : AnkoLogger {
     }
 
     fun importBookList(name: String, list: List<NovelMinimal>) = app.importBookList(name, list)
+    fun addBookshelf(bookList: BookList) = app.addBookshelf(bookList)
+    fun removeBookshelf(bookList: BookList) = app.removeBookshelf(bookList)
 
 }

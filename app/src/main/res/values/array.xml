@@ -94,6 +94,4 @@
         <item>@string/cancelPinned</item>
         <item>@string/refresh_chapters</item>
     </string-array>
-
-    <string name="cancelPinned">取消置顶</string>
 </resources>

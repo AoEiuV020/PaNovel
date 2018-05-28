@@ -103,4 +103,8 @@ class AppDatabaseManager(context: Context) {
         }
     }
 
+    fun removeBookshelf(bookList: BookList) = db.bookListDao().removeBookshelf(bookList.nId)
+
+    fun addBookshelf(bookList: BookList) = db.bookListDao().addBookshelf(bookList.nId)
+
 }

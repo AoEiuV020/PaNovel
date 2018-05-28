@@ -14,6 +14,12 @@ abstract class BookListDao {
     @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId")
     abstract fun queryBook(bookListId: Long): List<Novel>
 
+    @Query("update Novel set bookshelf = 0 where id in (select novelId from BookListItem where bookListId = :bookListId)")
+    abstract fun removeBookshelf(bookListId: Long)
+
+    @Query("update Novel set bookshelf = 1 where id in (select novelId from BookListItem where bookListId = :bookListId)")
+    abstract fun addBookshelf(bookListId: Long)
+
     @Query("select 1 from BookListItem where bookListId = :bookListId and novelId = :novelId")
     abstract fun contains(bookListId: Long, novelId: Long): Boolean
 
@@ -50,4 +56,5 @@ abstract class BookListDao {
 
     @Query("update BookList set name = :name where id = :id")
     abstract fun updateBookListName(id: Long, name: String)
+
 }

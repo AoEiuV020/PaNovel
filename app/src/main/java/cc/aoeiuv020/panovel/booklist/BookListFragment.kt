@@ -19,6 +19,7 @@ import cc.aoeiuv020.panovel.util.notNull
 import cc.aoeiuv020.panovel.util.showKeyboard
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import kotlinx.android.synthetic.main.novel_item_list.*
+import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.yesButton
@@ -27,7 +28,7 @@ import org.jetbrains.anko.yesButton
  *
  * Created by AoEiuV020 on 2017.11.22-14:07:56.
  */
-class BookListFragment : Fragment(), IView {
+class BookListFragment : Fragment(), IView, AnkoLogger {
     private lateinit var progressDialog: ProgressDialog
     private val itemListener: BookListFragmentAdapter.ItemListener = object : BookListFragmentAdapter.ItemListener {
         override fun onClick(vh: BookListFragmentAdapter.ViewHolder) {
@@ -37,7 +38,9 @@ class BookListFragment : Fragment(), IView {
         override fun onLongClick(vh: BookListFragmentAdapter.ViewHolder): Boolean {
             val list = listOf(R.string.remove to { remove(vh) },
                     R.string.rename to { rename(vh.bookList) },
-                    R.string.share to { shareBookList(vh.bookList) })
+                    R.string.share to { shareBookList(vh.bookList) },
+                    R.string.add_bookshelf to { addBookshelf(vh.bookList) },
+                    R.string.remove_bookshelf to { removeBookshelf(vh.bookList) })
             requireContext().selector(requireContext().getString(R.string.action), list.unzip().first.map {
                 requireContext().getString(it)
             }) { _, i ->
@@ -46,13 +49,38 @@ class BookListFragment : Fragment(), IView {
             return true
         }
     }
+
+    fun showRemoveBookshelfComplete() {
+        showComplete(requireContext().getString(R.string.remove_bookshelf_complete))
+    }
+
+    fun showRemoving() {
+        requireContext().loading(progressDialog, R.string.removing_bookshelf)
+    }
+
+    private fun removeBookshelf(bookList: BookList) {
+        presenter.removeBookshelf(bookList)
+    }
+
+    fun showAddBookshelfComplete() {
+        showComplete(requireContext().getString(R.string.add_bookshelf_complete))
+    }
+
+    fun showAdding() {
+        requireContext().loading(progressDialog, R.string.removing_bookshelf)
+    }
+
+    private fun addBookshelf(bookList: BookList) {
+        presenter.addBookshelf(bookList)
+    }
+
     private val mAdapter = BookListFragmentAdapter(itemListener)
 
-    fun remove(vh: BookListFragmentAdapter.ViewHolder) {
+    private fun remove(vh: BookListFragmentAdapter.ViewHolder) {
         presenter.remove(vh.bookList)
     }
 
-    fun rename(bookList: BookList) {
+    private fun rename(bookList: BookList) {
         requireContext().alert {
             titleResource = R.string.rename
             val layout = View.inflate(context, R.layout.dialog_editor, null)
@@ -113,7 +141,7 @@ class BookListFragment : Fragment(), IView {
     }
 
     fun showUploading() {
-        context?.loading(progressDialog, getString(R.string.uploading))
+        requireContext().loading(progressDialog, getString(R.string.uploading))
     }
 
     fun showSharedUrl(url: String, qrCode: String) {
@@ -135,6 +163,12 @@ class BookListFragment : Fragment(), IView {
             }
             etName.post { etName.showKeyboard() }
         }.show()
+    }
+
+    fun showComplete(message: String) {
+        srlRefresh.isRefreshing = false
+        progressDialog.dismiss()
+        (activity as? MainActivity)?.showMessage(message)
     }
 
     fun showError(message: String, e: Throwable) {

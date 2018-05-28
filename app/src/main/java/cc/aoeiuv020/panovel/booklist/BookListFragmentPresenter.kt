@@ -105,4 +105,38 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
         }
     }
 
+    fun removeBookshelf(bookList: BookList) {
+        view?.showRemoving()
+        doAsync({ e ->
+            val message = "从书架移出书单中的小说失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.activity?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.removeBookshelf(bookList)
+            uiThread {
+                view?.showRemoveBookshelfComplete()
+            }
+        }
+    }
+
+    fun addBookshelf(bookList: BookList) {
+        view?.showAdding()
+        doAsync({ e ->
+            val message = "加入书单中的小说到书架失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.activity?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.addBookshelf(bookList)
+            uiThread {
+                view?.showAddBookshelfComplete()
+            }
+        }
+    }
+
 }
