@@ -201,6 +201,7 @@
     <string name="settings_click_last_chapter">点击最新章节</string>
     <string name="settings_click_whole_item">点击整体</string>
     <string name="settings_long_click_whole_item">长按整体</string>
+    <string name="feedback">反馈：</string>
     <string-array name="content_more_action">
         <!--
                 ReadContinue,
