@@ -6,6 +6,5 @@
 [slf4j](https://github.com/qos-ch/slf4j)
 [gson](https://github.com/google/gson)
 [colorpicker](https://github.com/QuadFlask/colorpicker)
-[RefreshRecyclerView](https://github.com/llxdaxia/RecyclerView)
 [MagicIndicator](https://github.com/hackware1993/MagicIndicator)
 [NovelReader](https://github.com/newbiechen1024/NovelReader)
