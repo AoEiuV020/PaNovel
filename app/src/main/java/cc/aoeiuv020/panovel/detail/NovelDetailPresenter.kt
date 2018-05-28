@@ -56,7 +56,11 @@ class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity
                 view?.showError(message, e)
             }
         }) {
-            val novel = DataManager.getNovelDetail(id)
+            val novel = if (refresh) {
+                DataManager.requestDetail(id)
+            } else {
+                DataManager.getNovelDetail(id)
+            }
             this@NovelDetailPresenter.novel = novel
             uiThread {
                 view?.showNovelDetail(novel)

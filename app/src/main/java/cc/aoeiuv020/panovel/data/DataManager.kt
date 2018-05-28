@@ -78,6 +78,10 @@ object DataManager : AnkoLogger {
         if (novel.chapters != null) {
             return
         }
+        requestDetail(novel)
+    }
+
+    private fun requestDetail(novel: Novel) {
         api.updateNovelDetail(novel)
         // 写入数据库，包括名字作者和extra都以详情页返回结果为准，
         app.db.novelDao().updateNovelDetail(novel.nId,
@@ -86,6 +90,12 @@ object DataManager : AnkoLogger {
     }
 
     fun getNovel(id: Long): Novel = app.query(id)
+
+    fun requestDetail(id: Long): Novel {
+        val novel = app.query(id)
+        requestDetail(novel)
+        return novel
+    }
 
     fun getNovelDetail(id: Long): Novel {
         val novel = app.query(id)
