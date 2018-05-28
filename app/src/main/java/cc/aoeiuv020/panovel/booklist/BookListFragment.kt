@@ -17,8 +17,8 @@ import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.notNull
 import cc.aoeiuv020.panovel.util.showKeyboard
-import kotlinx.android.synthetic.main.content_book_list.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
+import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.yesButton
@@ -84,6 +84,9 @@ class BookListFragment : Fragment(), IView {
         progressDialog = ProgressDialog(context)
         rvNovel.layoutManager = LinearLayoutManager(context)
         rvNovel.adapter = mAdapter
+        srlRefresh.setOnRefreshListener {
+            refresh()
+        }
         presenter.attach(this)
     }
 
@@ -100,10 +103,12 @@ class BookListFragment : Fragment(), IView {
     }
 
     fun refresh() {
+        srlRefresh.isRefreshing = true
         presenter.refresh()
     }
 
     fun showBookListList(list: List<BookList>) {
+        srlRefresh.isRefreshing = false
         mAdapter.data = list
     }
 
@@ -133,6 +138,7 @@ class BookListFragment : Fragment(), IView {
     }
 
     fun showError(message: String, e: Throwable) {
+        srlRefresh.isRefreshing = false
         progressDialog.dismiss()
         (activity as? MainActivity)?.showError(message, e)
     }
