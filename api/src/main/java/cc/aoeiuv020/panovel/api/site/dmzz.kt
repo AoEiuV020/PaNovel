@@ -67,7 +67,7 @@ class Dmzz : JsoupNovelContext() {
                 URL(url).host == "s.acg.dmzj.com"
     }
 
-    override val detailTemplate: String
+    override val detailPageTemplate: String
         get() = "/%s/index.shtml"
 
     @SuppressWarnings("SimpleDateFormat")

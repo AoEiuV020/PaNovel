@@ -53,7 +53,7 @@ class Liudatxt : DslJsoupNovelContext() { init {
         }
     }
     // http://www.liudatxt.com/2034/
-    detailTemplate = "/%s/"
+    detailPageTemplate = "/%s/"
     detail {
         /*
         <div class="bookright">
@@ -92,7 +92,7 @@ class Liudatxt : DslJsoupNovelContext() { init {
         }
     }
     // http://www.liudatxt.com/so/2034/
-    chapterTemplate = "/so/%s/"
+    chaptersPageTemplate = "/so/%s/"
     chapters {
         /*
         <li><a href="/so/2034/529879.html" title="正文_第十四章 前往山望镇" target="_blank">正文_第十四章 前往山望镇</a></li>
@@ -103,7 +103,7 @@ class Liudatxt : DslJsoupNovelContext() { init {
         }
     }
     // http://www.liudatxt.com/so/2034/529879.html
-    contentTemplate = "/so/%s.html"
+    contentPageTemplate = "/so/%s.html"
     content {
         /*
         <div id="content" style="font-size: 24px; font-family: 华文楷体;">

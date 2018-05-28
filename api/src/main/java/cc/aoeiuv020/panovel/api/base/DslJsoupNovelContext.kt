@@ -18,19 +18,18 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     /*
     *************** member ***************
      */
-    override var detailTemplate: String? = null
+    override var detailPageTemplate: String? = null
         /**
          * 详情页地址模板默认同时赋值给目录页，
          */
         set(value) {
-            if (chapterTemplate == null) {
-                chapterTemplate = value
+            if (chaptersPageTemplate == null) {
+                chaptersPageTemplate = value
             }
             field = value
         }
-    // TODO: 改名contents,
-    override var chapterTemplate: String? = null
-    override var contentTemplate: String? = null
+    override var chaptersPageTemplate: String? = null
+    override var contentPageTemplate: String? = null
     override var bookIdRegex: Pattern = firstIntPattern
     override var chapterIdRegex: Pattern = firstTwoIntPattern
 

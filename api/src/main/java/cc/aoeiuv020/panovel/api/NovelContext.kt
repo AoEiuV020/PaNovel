@@ -180,28 +180,29 @@ abstract class NovelContext {
      * 要快，要能在ui线程使用，不能有网络请求，
      */
     open fun getNovelDetailUrl(extra: String): String =
-            absUrl(detailTemplate?.format(findBookId(extra)) ?: extra)
+            absUrl(detailPageTemplate?.format(findBookId(extra)) ?: extra)
 
     /**
      * 详情页地址模板，String.format形式，"/book/%s/"
      */
-    protected open val detailTemplate: String? get() = null
+    protected open val detailPageTemplate: String? get() = null
 
     protected open fun getNovelChapterUrl(extra: String): String =
-            absUrl(chapterTemplate?.format(findBookId(extra)) ?: extra)
+            absUrl(chaptersPageTemplate?.format(findBookId(extra)) ?: extra)
 
     /**
      * 目录页地址模板，String.format形式，"/book/%s/"
+     * 目录英文是contents，但是和正文content接近，干脆用chapters,
      */
-    protected open val chapterTemplate: String? get() = detailTemplate
+    protected open val chaptersPageTemplate: String? get() = detailPageTemplate
 
     open fun getNovelContentUrl(extra: String): String =
-            absUrl(contentTemplate?.format(findChapterId(extra)) ?: extra)
+            absUrl(contentPageTemplate?.format(findChapterId(extra)) ?: extra)
 
     /**
      * 正文页地址模板，String.format形式，"/book/%s/"
      */
-    protected open val contentTemplate: String? get() = null
+    protected open val contentPageTemplate: String? get() = null
 
     /**
      * 尝试从extra获取真实地址，

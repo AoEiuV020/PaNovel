@@ -25,7 +25,7 @@ class Biquge : DslJsoupNovelContext() {init {
             }
         }
     }
-    detailTemplate = "/book/%s/"
+    detailPageTemplate = "/book/%s/"
     detail {
         document {
             novel {
@@ -46,7 +46,7 @@ class Biquge : DslJsoupNovelContext() {init {
             lastUpdate("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
         }
     }
-    contentTemplate = "/book/%s.html"
+    contentPageTemplate = "/book/%s.html"
     content {
         document {
             items("#content")

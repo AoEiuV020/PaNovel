@@ -36,7 +36,7 @@ class Sfacg : DslJsoupNovelContext() { init {
             }
         }
     }
-    detailTemplate = "/Novel/%s/"
+    detailPageTemplate = "/Novel/%s/"
     detail {
         document {
             val div = element("div.wrap > div.d-summary > div.summary-content")
@@ -58,7 +58,7 @@ class Sfacg : DslJsoupNovelContext() { init {
             }
         }
     }
-    chapterTemplate = "/Novel/%s/MainIndex/"
+    chaptersPageTemplate = "/Novel/%s/MainIndex/"
     chapters {
         /*
         <li>

@@ -30,7 +30,7 @@ class Yssm : DslJsoupNovelContext() {init {
     }
     bookIdRegex = firstTwoIntPattern
     // https://www.yssm.org/uctxt/227/227934/
-    detailTemplate = "/uctxt/%s/"
+    detailPageTemplate = "/uctxt/%s/"
     detail {
         document {
             val div = root.requireElement("#container > div.bookinfo")
@@ -67,7 +67,7 @@ class Yssm : DslJsoupNovelContext() {init {
     }
     chapterIdRegex = firstThreeIntPattern
     // https://www.yssm.org/uctxt/227/227934/1301112.html
-    contentTemplate = "/uctxt/%s.html"
+    contentPageTemplate = "/uctxt/%s.html"
     content {
         document {
             items("#content")

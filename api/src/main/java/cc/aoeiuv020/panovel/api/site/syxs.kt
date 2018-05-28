@@ -35,7 +35,7 @@ class Syxs : DslJsoupNovelContext() {init {
     }
     bookIdRegex = firstTwoIntPattern
     // http://www.31xs.net/13/13011/
-    detailTemplate = "/%s/"
+    detailPageTemplate = "/%s/"
     detail {
         document {
             val div = root.requireElement("#info")
@@ -71,7 +71,7 @@ class Syxs : DslJsoupNovelContext() {init {
     }
     chapterIdRegex = firstThreeIntPattern
     // http://www.31xs.net/13/13011/8981866.html
-    contentTemplate = "/%s.html"
+    contentPageTemplate = "/%s.html"
     content {
         document {
             items("#content > p")

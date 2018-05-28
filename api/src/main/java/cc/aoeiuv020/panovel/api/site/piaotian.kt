@@ -62,7 +62,7 @@ class Piaotian : DslJsoupNovelContext() {init {
         }
     }
     bookIdRegex = firstTwoIntPattern
-    detailTemplate = "/bookinfo/%s.html"
+    detailPageTemplate = "/bookinfo/%s.html"
     detail {
         document {
             val tbody1 = element("#content > table > tbody")
@@ -101,7 +101,7 @@ class Piaotian : DslJsoupNovelContext() {init {
             }
         }
     }
-    chapterTemplate = "/html/%s/index.html"
+    chaptersPageTemplate = "/html/%s/index.html"
     chapters {
         /* https://www.piaotian.com/html/4/4316/index.html
         <ul>
@@ -131,7 +131,7 @@ class Piaotian : DslJsoupNovelContext() {init {
         }
     }
     chapterIdRegex = firstThreeIntPattern
-    contentTemplate = "/html/%s.html"
+    contentPageTemplate = "/html/%s.html"
     content {
         document {
             items("html > body") {

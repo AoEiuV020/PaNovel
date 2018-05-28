@@ -29,7 +29,7 @@ class Snwx : DslJsoupNovelContext() {init {
     }
     bookIdRegex = firstTwoIntPattern
     // https://www.snwx8.com/book/66/66076/
-    detailTemplate = "/book/%s/"
+    detailPageTemplate = "/book/%s/"
     detail {
         document {
             val div = element("#info")
@@ -59,7 +59,7 @@ class Snwx : DslJsoupNovelContext() {init {
         }
     }
     chapterIdRegex = firstThreeIntPattern
-    contentTemplate = "/book/%s.html"
+    contentPageTemplate = "/book/%s.html"
     content {
         document {
             items("#BookText")

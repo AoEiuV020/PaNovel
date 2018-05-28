@@ -38,7 +38,7 @@ class Qidian : DslJsoupNovelContext() {init {
         }
     }
     // 详情页域名和首页不一样，
-    detailTemplate = "//book.qidian.com/info/%s"
+    detailPageTemplate = "//book.qidian.com/info/%s"
     detail {
         document {
             val detail = root.requireElement("body > div.wrap > div.book-detail-wrap.center990")
@@ -58,7 +58,7 @@ class Qidian : DslJsoupNovelContext() {init {
             }
         }
     }
-    chapterTemplate = "$detailTemplate#Catalog"
+    chaptersPageTemplate = "$detailPageTemplate#Catalog"
     chapters {
         val bookId = findBookId(it)
         // 用到的接口需要cookies中的_csrfToken参数，
@@ -128,7 +128,7 @@ class Qidian : DslJsoupNovelContext() {init {
         }
     }
     // https://m.qidian.com/book/1010136878/381295976
-    contentTemplate = "//m.qidian.com/book/%s"
+    contentPageTemplate = "//m.qidian.com/book/%s"
     content {
         val bookIdAndChapterId = findChapterId(it)
         val args = bookIdAndChapterId.split('/')

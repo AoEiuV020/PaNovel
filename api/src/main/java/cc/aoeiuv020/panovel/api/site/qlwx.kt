@@ -33,7 +33,7 @@ class Qlyx : DslJsoupNovelContext() { init {
             }
         }
     }
-    detailTemplate = "/book/%s/"
+    detailPageTemplate = "/book/%s/"
     detail {
         document {
             val eInfo = element(query = "#maininfo #info")
@@ -64,7 +64,7 @@ class Qlyx : DslJsoupNovelContext() { init {
         }
     }
     // http://www.76wx.com/book/161/892418.html
-    contentTemplate = "/book/%s.html"
+    contentPageTemplate = "/book/%s.html"
     content {
         document {
             items("#content")
