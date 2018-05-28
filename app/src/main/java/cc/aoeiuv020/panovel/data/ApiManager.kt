@@ -27,7 +27,7 @@ class ApiManager(ctx: Context) {
                 Yssm(), Qlyx()
         )
     }
-    // 缓存host对应网站上下文的映射，正常来说主页的host
+    // 缓存host对应网站上下文的映射，
     private val hostMap: MutableMap<String, NovelContext> by lazy {
         contexts.associateByTo(mutableMapOf()) { URL(it.site.baseUrl).host }
     }

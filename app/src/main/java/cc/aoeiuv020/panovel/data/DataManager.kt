@@ -61,7 +61,6 @@ object DataManager : AnkoLogger {
         return list
     }
 
-    // TODO: NovelChapter也不要暴露，
     fun requestChapters(novel: Novel): List<NovelChapter> {
         // 先读取缓存，
         cache.loadChapters(novel)?.also {
@@ -103,8 +102,12 @@ object DataManager : AnkoLogger {
     /**
      * 列出所有网站，
      */
-    fun listSites(): List<Site> = app.db.runInTransaction<List<Site>> {
-        // TODO: 每次都遍历网站有点傻，考虑写死site表，升级时直接写入新支持的网站，
+    fun listSites(): List<Site> = app.db.siteDao().list()
+
+    /**
+     * 同步所有网站到数据库，app升级时调用一次就好，
+     */
+    fun syncSites(): List<Site> = app.db.runInTransaction<List<Site>> {
         allNovelContexts().map {
             it.site.run {
                 app.queryOrNewSite(name, baseUrl, logo, enabled)
@@ -176,7 +179,6 @@ object DataManager : AnkoLogger {
      */
     @MainThread
     fun pullCookiesFromWebView(context: NovelContext) {
-        val cookieManager = android.webkit.CookieManager.getInstance()
         val cookiesMap = mutableMapOf<String, String>()
         context.cookieDomainList().forEach { domain ->
             cookie.getCookies(domain)

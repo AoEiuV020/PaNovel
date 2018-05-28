@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.migration
 import android.content.Context
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.migration.impl.LoginMigration
+import cc.aoeiuv020.panovel.migration.impl.SitesMigration
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
@@ -76,6 +77,9 @@ class MigrationPresenter(
                         }
                     }
                 }) {
+                    // 网站列表的迁移单独处理不影响版本号，直接同步最新支持的所有网站到数据库，
+                    // 由于操作了数据库，同时会触发room版本迁移，
+                    SitesMigration().migrate(ctx, cachedVersionName)
                     // 缓存一开始的版本，迁移完成后展示，
                     val beginVersionName = cachedVersionName
                     migrations.dropWhile { migration ->
@@ -91,7 +95,11 @@ class MigrationPresenter(
                         try {
                             migration.migrate(ctx, cachedVersionName)
                         } catch (e: Exception) {
-                            throw MigrateException(migration = migration, cause = e)
+                            if (e is MigrateException) {
+                                throw e
+                            } else {
+                                throw MigrateException(migration = migration, cause = e)
+                            }
                         }
                         // 每个阶段分别保存升级后的版本，
                         cachedVersionName = migration.to

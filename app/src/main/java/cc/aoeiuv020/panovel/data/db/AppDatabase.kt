@@ -16,7 +16,6 @@ import cc.aoeiuv020.panovel.data.entity.Site
 /**
  * Created by AoEiuV020 on 2018.05.13-18:00:33.
  */
-// TODO: 加了张表，写写数据迁移， 也就网站是否启用，
 @Database(
         entities = [Novel::class, Site::class, BookListItem::class, BookList::class],
         version = 2
@@ -31,10 +30,12 @@ abstract class AppDatabase : RoomDatabase() {
             return sInstance ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    dbFile.path
-            ).fallbackToDestructiveMigration().build().also {
-                sInstance = it
-            }
+                    dbFile.path)
+                    // 版本1的数据库只有网站启用设置，不迁移，略麻烦，
+                    .fallbackToDestructiveMigrationFrom(1)
+                    .build().also {
+                        sInstance = it
+                    }
         }
     }
 
