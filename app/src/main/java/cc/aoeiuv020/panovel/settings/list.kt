@@ -18,6 +18,7 @@ object ItemActionSettings : Pref {
     override val name: String = "ClickAction"
     val onDotClick: ItemActionEnum by Delegates.enum(ItemActionEnum.Refresh)
     val onDotLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.Pinned)
+    val onCheckUpdateClick: ItemActionEnum by Delegates.enum(ItemActionEnum.Refresh)
     val onNameClick: ItemActionEnum by Delegates.enum(ItemActionEnum.OpenDetail)
     val onNameLongClick: ItemActionEnum by Delegates.enum(ItemActionEnum.RefineSearch)
     val onLastChapterClick: ItemActionEnum by Delegates.enum(ItemActionEnum.ReadLastChapter)

@@ -6,7 +6,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
  * Created by AoEiuV020 on 2018.05.23-18:03:36.
  */
 class NovelMutableListAdapter(
-        itemListener: NovelItemActionListener = NovelItemActionAdapter()
+        itemListener: NovelItemActionListener
 ) : NovelListAdapter(itemListener) {
     fun addAll(list: List<Novel>) {
         _data.addAll(list)

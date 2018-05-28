@@ -36,7 +36,7 @@ class NovelViewHolder(itemView: View,
     private val site: TextView? = itemView.tvSite
     private val image: ImageView? = itemView.ivImage
     private val last: TextView? = itemView.tvLast
-    private val checkUpdate: TextView? = itemView.tvUpdate
+    private val checkUpdate: TextView? = itemView.tvCheckUpdate
     private val readAt: TextView? = itemView.tvReadAt
     private val star: CheckableImageView? = itemView.ivStar
     private val refreshingDot: RefreshingDotView? = itemView.rdRefreshing
@@ -53,6 +53,11 @@ class NovelViewHolder(itemView: View,
         refreshingDot?.setOnLongClickListener {
             itemListener.onDotLongClick(this)
         }
+
+        checkUpdate?.setOnClickListener {
+            itemListener.onCheckUpdateClick(this)
+        }
+
         name?.setOnClickListener {
             itemListener.onNameClick(this)
         }
@@ -127,7 +132,7 @@ class NovelViewHolder(itemView: View,
                     .into(imageView)
         }
         star?.isChecked = novel.bookshelf
-        // 显示“x分钟前”
+        // 显示“x分钟前”，
         checkUpdate?.text = DateUtils.getRelativeTimeSpanString(novel.checkUpdateTime.time, System.currentTimeMillis(), TimeUnit.SECONDS.toMillis(1))
         readAt?.text = novel.readAtChapterName
     }

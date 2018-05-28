@@ -184,6 +184,8 @@
     <string name="add_bookshelf">加入书架</string>
     <string name="refresh_chapters">刷新章节</string>
     <string name="auto_refresh_interval">自动刷新间隔(s)</string>
+    <string name="check_update_time">检查更新</string>
+    <string name="last_refresh_time">上次刷新</string>
     <string-array name="content_more_action">
         <!--
                 ReadContinue,

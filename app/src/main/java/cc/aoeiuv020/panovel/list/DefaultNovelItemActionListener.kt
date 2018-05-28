@@ -59,6 +59,10 @@ open class DefaultNovelItemActionListener(
         return on(ItemActionSettings.onDotLongClick, vh)
     }
 
+    override fun onCheckUpdateClick(vh: NovelViewHolder) {
+        on(ItemActionSettings.onCheckUpdateClick, vh)
+    }
+
     override fun onNameClick(vh: NovelViewHolder) {
         on(ItemActionSettings.onNameClick, vh)
     }

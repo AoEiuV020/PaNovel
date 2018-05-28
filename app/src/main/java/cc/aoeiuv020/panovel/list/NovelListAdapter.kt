@@ -12,7 +12,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 open class NovelListAdapter(
-        private val itemListener: NovelItemActionListener = NovelItemActionAdapter(),
+        private val itemListener: NovelItemActionListener,
         /**
          * 初始化小说item时调用，用于书架列表隐藏添加书架按钮，
          */
