@@ -256,7 +256,7 @@ object DataManager : AnkoLogger {
     fun addToBookList(bookListId: Long, novel: Novel) = app.addToBookList(bookListId, novel)
     fun removeFromBookList(bookListId: Long, novel: Novel) = app.removeFromBookList(bookListId, novel)
 
-    fun getNovelFromBookShelf(bookListId: Long): List<Novel> = app.getNovelFromBookShelf(bookListId)
+    fun getNovelFromBookList(bookListId: Long): List<Novel> = app.getNovelFromBookList(bookListId)
     fun allBookList() = app.allBookList()
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)
     fun removeBookList(bookList: BookList) = app.removeBookList(bookList)
@@ -269,4 +269,7 @@ object DataManager : AnkoLogger {
         // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
         app.queryOrNewNovel(it.site, it.author, it.name, it.extra)
     }
+
+    fun importBookList(name: String, list: List<Novel>) = app.importBookList(name, list)
+
 }

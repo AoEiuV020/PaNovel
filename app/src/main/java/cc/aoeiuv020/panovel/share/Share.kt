@@ -2,9 +2,16 @@ package cc.aoeiuv020.panovel.share
 
 import android.content.Context
 import android.view.View
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.base.jar.type
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.BookList
+import cc.aoeiuv020.panovel.data.entity.Novel
 import com.bumptech.glide.Glide
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.dialog_shared.view.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.browse
@@ -16,27 +23,45 @@ import org.jetbrains.anko.yesButton
  */
 object Share {
     private val paste = PasteUbuntu()
+    /**
+     * 对不同版本的分享结果进行支持，
+     * 当前第二版，
+     * 第一版的没有版本号，
+     */
+    private const val VERSION: Int = 2
 
     fun check(url: String): Boolean {
         return paste.check(url)
     }
 
     fun shareBookList(bookList: BookList, shareExpiration: Expiration): String {
-        TODO("要从bookList查到小说再上传，")
-/*
-        return paste.upload(PasteUbuntu.PasteUbuntuData(bookList.toJson(), expiration = shareExpiration))
-*/
+        val novelList = DataManager.getNovelFromBookList(bookList.nId)
+        val bookListBean = BookListBean(bookList.name, novelList, VERSION)
+        return paste.upload(PasteUbuntu.PasteUbuntuData(bookListBean.toJson(App.gson), expiration = shareExpiration))
     }
 
     /**
      * @return 返回导入的书单中的小说数量，
      */
     fun receiveBookList(url: String): Int {
-        TODO("要兼容旧版，")
-/*
         val text = paste.download(url)
-        return text.toBean()
-*/
+        val bookListJson = text.toBean<JsonObject>(App.gson)
+        val version = bookListJson.get("version")?.asJsonPrimitive?.asInt
+        val bookListBean: BookListBean = when (version) {
+            2 -> {
+                App.gson.fromJson(bookListJson, type<BookListBean>())
+            }
+            else -> {
+                // 旧版version为null,
+                val oldBookListBean: OldBookListBean = App.gson.fromJson(bookListJson, type<OldBookListBean>())
+                BookListBean(oldBookListBean.name, oldBookListBean.list.map {
+                    // 旧版的extra为完整地址，直接拿来，就算写进数据库了，刷新详情页后也会被新版的bookId覆盖，
+                    Novel(site = it.site, author = it.author, name = it.name, detail = it.requester.extra)
+                }, VERSION)
+            }
+        }
+        DataManager.importBookList(bookListBean.name, bookListBean.list)
+        return bookListBean.list.size
     }
 
     fun alert(context: Context, url: String, qrCode: String) {

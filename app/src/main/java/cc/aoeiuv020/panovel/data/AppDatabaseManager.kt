@@ -75,8 +75,8 @@ class AppDatabaseManager(context: Context) {
     fun removeFromBookList(bookListId: Long, novel: Novel) =
             db.bookListDao().deleteItem(BookListItem(bookListId = bookListId, novelId = novel.nId))
 
-    fun getNovelFromBookShelf(bookListId: Long): List<Novel> =
-            db.bookListDao().queryBookListLeftJoin(bookListId)
+    fun getNovelFromBookList(bookListId: Long): List<Novel> =
+            db.bookListDao().queryBook(bookListId)
 
     fun allBookList(): List<BookList> = db.bookListDao().list()
     fun renameBookList(bookList: BookList, name: String) =
@@ -84,7 +84,23 @@ class AppDatabaseManager(context: Context) {
 
     fun removeBookList(bookList: BookList) = db.bookListDao().deleteList(bookList)
 
+    /**
+     * 书单直接插入，名字可以重复，
+     */
     fun newBookList(name: String) =
             db.bookListDao().insert(BookList(id = null, name = name, createTime = Date()))
+
+    /**
+     * 导入书单，先新建个书单，再一本本插入，
+     */
+    fun importBookList(name: String, list: List<Novel>) = db.runInTransaction {
+        val bookListId = newBookList(name)
+        list.forEach {
+            // 导入书单里的小说对象没有id, 要查一下，不存在就插入小说，
+            val novel = queryOrNewNovel(site = it.site, author = it.author, name = it.name, extra = it.detail)
+            // 然后再把这小说加入这书单，
+            addToBookList(bookListId, novel)
+        }
+    }
 
 }

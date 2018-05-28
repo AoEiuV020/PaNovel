@@ -11,8 +11,8 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 @Dao
 abstract class BookListDao {
 
-    @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id and BookListItem.bookListId = :bookListId")
-    abstract fun queryBookListLeftJoin(bookListId: Long): List<Novel>
+    @Query("select Novel.* from BookListItem inner join Novel on BookListItem.novelId = Novel.id and BookListItem.bookListId = :bookListId")
+    abstract fun queryBook(bookListId: Long): List<Novel>
 
     @Query("select 1 from BookListItem where bookListId = :bookListId and novelId = :novelId")
     abstract fun contains(bookListId: Long, novelId: Long): Boolean
@@ -31,9 +31,10 @@ abstract class BookListDao {
 
     /**
      * 插入的只能是不带有主键id的，不可能重复，
+     * 返回插入的书单id,
      */
     @Insert
-    abstract fun insert(bookList: BookList)
+    abstract fun insert(bookList: BookList): Long
 
     @Delete
     abstract fun deleteItem(bookListItem: BookListItem)

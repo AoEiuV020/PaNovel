@@ -63,6 +63,9 @@ object Reporter : AnkoLogger {
     }
 
     private fun postException(e: Throwable) {
-        CrashReport.postCatchedException(e)
+        // 开发过程不要上报，
+        if (!BuildConfig.DEBUG) {
+            CrashReport.postCatchedException(e)
+        }
     }
 }

@@ -16,7 +16,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
 
     fun start() {
         view?.doAsync({ e ->
-            val message = "查找书单失败，"
+            val message = "查找书单<$bookListId>失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
@@ -32,14 +32,14 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
 
     fun refresh() {
         view?.doAsync({ e ->
-            val message = "读取书单中的小说列表失败，"
+            val message = "读取书单<$bookListId>中的小说列表失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
                 view?.showError(message, e)
             }
         }) {
-            val list = DataManager.getNovelFromBookShelf(bookListId)
+            val list = DataManager.getNovelFromBookList(bookListId)
             uiThread {
                 view?.showNovelList(list)
             }
@@ -48,7 +48,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
 
     fun add(novel: Novel) {
         view?.doAsync({ e ->
-            val message = "添加小说到书单失败，"
+            val message = "添加小说到书单<$bookListId>失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
@@ -61,7 +61,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
 
     fun remove(novel: Novel) {
         view?.doAsync({ e ->
-            val message = "删除小说到书单失败，"
+            val message = "从书单<$bookListId>删除小说失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
@@ -74,7 +74,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
 
     fun addFromHistory() {
         view?.doAsync({ e ->
-            val message = "查询历史记录中的小说在书单中的包含情况失败，"
+            val message = "查询历史记录中的小说在书单<$bookListId>中的包含情况失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
@@ -96,7 +96,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
 
     fun addFromBookshelf() {
         view?.doAsync({ e ->
-            val message = "查询书架中的小说在书单中的包含情况失败，"
+            val message = "查询书架中的小说在书单<$bookListId>中的包含情况失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {

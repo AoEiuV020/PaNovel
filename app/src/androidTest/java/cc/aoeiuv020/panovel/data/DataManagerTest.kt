@@ -21,4 +21,11 @@ class DataManagerTest {
             println(it)
         }
     }
+
+    @Test
+    fun getNovelFromBookList() {
+        DataManager.getNovelFromBookList(2).forEach {
+            println(it)
+        }
+    }
 }

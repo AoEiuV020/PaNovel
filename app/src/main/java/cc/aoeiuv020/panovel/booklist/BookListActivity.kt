@@ -37,7 +37,9 @@ import org.jetbrains.anko.toast
 class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
     companion object {
         fun start(context: Context, bookListId: Long) {
-            context.startActivity<BookListActivity>("bookListId" to bookListId)
+            // 统一转成json字符串，拿的时候不需要给默认值，
+            // 拿不到就直接退出，
+            context.startActivity<BookListActivity>("bookListId" to bookListId.toJson(App.gson))
         }
     }
 
@@ -105,8 +107,6 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.attach(this)
         // 查询书单名，只用来改title, 没什么大用，
         presenter.start()
-        // 要查询书单中的小说列表，
-        refresh()
     }
 
     override fun onPause() {
@@ -120,7 +120,9 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     override fun onDestroy() {
-        presenter.detach()
+        if (::presenter.isInitialized) {
+            presenter.detach()
+        }
         ad_view.destroy()
         super.onDestroy()
     }
@@ -128,6 +130,14 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
     fun showBookList(bookList: BookList) {
         // 书单对象只有这个用了，不需要存起来，
         title = bookList.name
+        // 确实找到书单了再刷新列表，
+        refresh()
+    }
+
+    fun showBookListNotFound(message: String, e: Throwable) {
+        // 不应该出现书单找不到的问题，
+        showError(message, e)
+        finish()
     }
 
     private fun refresh() {
@@ -182,12 +192,6 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
 
     private val snack: Snackbar by lazy {
         Snackbar.make(rvNovel, "", Snackbar.LENGTH_SHORT)
-    }
-
-    fun showBookListNotFound(message: String, e: Throwable) {
-        // 不应该出现书单找不到的问题，
-        finish()
-        showError(message, e)
     }
 
     fun showError(message: String, e: Throwable) {
