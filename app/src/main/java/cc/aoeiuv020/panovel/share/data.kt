@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.share
 
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -13,7 +13,7 @@ class BookListBean(
         @SerializedName("name")
         val name: String,
         @SerializedName("list")
-        val list: List<Novel>,
+        val list: List<NovelMinimal>,
         @SerializedName("version")
         val version: Int
 )

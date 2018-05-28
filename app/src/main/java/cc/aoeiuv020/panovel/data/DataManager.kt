@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.Site
 import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.AnkoLogger
@@ -143,7 +144,7 @@ object DataManager : AnkoLogger {
         val novelList = app.db.runInTransaction<List<Novel>> {
             resultList.map {
                 // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
-                app.queryOrNewNovel(it.site, it.author, it.name, it.extra)
+                app.queryOrNewNovel(NovelMinimal(it))
             }
         }
         return novelList.filter {
@@ -208,7 +209,7 @@ object DataManager : AnkoLogger {
     fun getNovelFromUrl(site: String, url: String): Novel {
         return api.getNovelFromUrl(getNovelContextByName(site), url).let {
             // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
-            app.queryOrNewNovel(it.site, it.author, it.name, it.extra)
+            app.queryOrNewNovel(NovelMinimal(it))
         }
     }
 
@@ -267,9 +268,9 @@ object DataManager : AnkoLogger {
      */
     fun getNovelFromUrl(url: String): Novel = api.getNovelFromUrl(api.getNovelContextByUrl(url), url).let {
         // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
-        app.queryOrNewNovel(it.site, it.author, it.name, it.extra)
+        app.queryOrNewNovel(NovelMinimal(it))
     }
 
-    fun importBookList(name: String, list: List<Novel>) = app.importBookList(name, list)
+    fun importBookList(name: String, list: List<NovelMinimal>) = app.importBookList(name, list)
 
 }

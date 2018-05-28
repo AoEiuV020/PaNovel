@@ -3,10 +3,7 @@ package cc.aoeiuv020.panovel.data
 import android.content.Context
 import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.panovel.data.db.AppDatabase
-import cc.aoeiuv020.panovel.data.entity.BookList
-import cc.aoeiuv020.panovel.data.entity.BookListItem
-import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.data.entity.Site
+import cc.aoeiuv020.panovel.data.entity.*
 import java.util.*
 
 /**
@@ -18,9 +15,12 @@ class AppDatabaseManager(context: Context) {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val db: AppDatabase = AppDatabase.getInstance(context)
 
-    fun queryOrNewNovel(site: String, author: String, name: String, extra: String): Novel = db.runInTransaction<Novel> {
+    fun queryOrNewNovel(novelMinimal: NovelMinimal) = queryOrNewNovel(site = novelMinimal.site,
+            author = novelMinimal.author, name = novelMinimal.name, detail = novelMinimal.detail)
+
+    private fun queryOrNewNovel(site: String, author: String, name: String, detail: String): Novel = db.runInTransaction<Novel> {
         db.novelDao().query(site, author, name)
-                ?: Novel(id = null, site = site, author = author, name = name, detail = extra).also {
+                ?: Novel(id = null, site = site, author = author, name = name, detail = detail).also {
                     // 数据库里没有，需要插入，
                     // 插入后确保novel要有这个id,
                     it.id = db.novelDao().insert(it)
@@ -93,11 +93,11 @@ class AppDatabaseManager(context: Context) {
     /**
      * 导入书单，先新建个书单，再一本本插入，
      */
-    fun importBookList(name: String, list: List<Novel>) = db.runInTransaction {
+    fun importBookList(name: String, list: List<NovelMinimal>) = db.runInTransaction {
         val bookListId = newBookList(name)
         list.forEach {
             // 导入书单里的小说对象没有id, 要查一下，不存在就插入小说，
-            val novel = queryOrNewNovel(site = it.site, author = it.author, name = it.name, extra = it.detail)
+            val novel = queryOrNewNovel(it)
             // 然后再把这小说加入这书单，
             addToBookList(bookListId, novel)
         }

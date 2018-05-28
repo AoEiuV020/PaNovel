@@ -9,7 +9,7 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.BookList
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.dialog_shared.view.*
@@ -35,7 +35,9 @@ object Share {
     }
 
     fun shareBookList(bookList: BookList, shareExpiration: Expiration): String {
-        val novelList = DataManager.getNovelFromBookList(bookList.nId)
+        val novelList = DataManager.getNovelFromBookList(bookList.nId).map {
+            NovelMinimal(it)
+        }
         val bookListBean = BookListBean(bookList.name, novelList, VERSION)
         return paste.upload(PasteUbuntu.PasteUbuntuData(bookListBean.toJson(App.gson), expiration = shareExpiration))
     }
@@ -56,7 +58,7 @@ object Share {
                 val oldBookListBean: OldBookListBean = App.gson.fromJson(bookListJson, type<OldBookListBean>())
                 BookListBean(oldBookListBean.name, oldBookListBean.list.map {
                     // 旧版的extra为完整地址，直接拿来，就算写进数据库了，刷新详情页后也会被新版的bookId覆盖，
-                    Novel(site = it.site, author = it.author, name = it.name, detail = it.requester.extra)
+                    NovelMinimal(site = it.site, author = it.author, name = it.name, detail = it.requester.extra)
                 }, VERSION)
             }
         }
