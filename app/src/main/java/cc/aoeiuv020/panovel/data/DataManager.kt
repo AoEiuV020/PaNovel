@@ -62,6 +62,8 @@ object DataManager : AnkoLogger {
     }
 
     fun requestChapters(novel: Novel): List<NovelChapter> {
+        // 确保存在详情页信息，
+        requireNovelDetail(novel)
         // 先读取缓存，
         cache.loadChapters(novel)?.also {
             return it
