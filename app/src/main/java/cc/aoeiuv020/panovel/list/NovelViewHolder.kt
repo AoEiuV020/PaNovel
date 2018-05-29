@@ -20,7 +20,6 @@ import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.novel_item_big.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.find
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -35,7 +34,7 @@ class NovelViewHolder(itemView: View,
     private val name: TextView? = itemView.tvName
     private val author: TextView? = itemView.tvAuthor
     private val site: TextView? = itemView.tvSite
-    private val image: ImageView? = itemView.find(R.id.ivImage)
+    private val image: ImageView? = itemView.ivImage
     private val last: TextView? = itemView.tvLast
     private val checkUpdate: TextView? = itemView.tvCheckUpdate
     private val readAt: TextView? = itemView.tvReadAt
