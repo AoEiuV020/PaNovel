@@ -22,11 +22,7 @@ data class NovelSite(
          * http://host
          */
         val baseUrl: String,
-        val logo: String,
-        /**
-         * 这个网站是否启用，
-         */
-        var enabled: Boolean = true
+        val logo: String
 ) : Data()
 
 /**

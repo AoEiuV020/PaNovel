@@ -55,12 +55,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         lateinit var name: String
         lateinit var baseUrl: String
         lateinit var logo: String
-        var enabled: Boolean = true
         fun createNovelSite(): NovelSite = NovelSite(
                 name = name,
                 baseUrl = baseUrl,
-                logo = logo,
-                enabled = enabled
+                logo = logo
         )
     }
 

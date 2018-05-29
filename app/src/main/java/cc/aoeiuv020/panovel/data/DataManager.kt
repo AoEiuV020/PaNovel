@@ -123,7 +123,7 @@ object DataManager : AnkoLogger {
     fun syncSites(): List<Site> = app.db.runInTransaction<List<Site>> {
         allNovelContexts().map {
             it.site.run {
-                app.queryOrNewSite(name, baseUrl, logo, enabled)
+                app.queryOrNewSite(name, baseUrl, logo, it.enabled)
             }
         }
     }

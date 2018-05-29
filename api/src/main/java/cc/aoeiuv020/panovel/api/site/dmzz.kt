@@ -21,11 +21,12 @@ import java.text.SimpleDateFormat
  * Created by AoEiuV020 on 2017.11.30-17:49:36.
  */
 class Dmzz : JsoupNovelContext() {
+    override val enabled: Boolean
+        get() = false
     override val site = NovelSite(
             name = "动漫之家",
             baseUrl = "http://q.dmzj.com",
-            logo = "http://m.dmzj.com/images/head_logo.gif",
-            enabled = false
+            logo = "http://m.dmzj.com/images/head_logo.gif"
     )
 
     override fun connectByNovelName(name: String): Connection {

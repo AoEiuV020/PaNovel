@@ -117,6 +117,12 @@ abstract class NovelContext {
         return host.substring(index2)
     }
 
+
+    /**
+     * 这个网站是否启用，
+     */
+    open val enabled: Boolean = true
+
     abstract val site: NovelSite
 
     /**
