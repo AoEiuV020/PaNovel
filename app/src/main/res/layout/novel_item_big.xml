@@ -140,7 +140,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvAuthor" />
 
     <FrameLayout
-        android:id="@+id/frameLayout"
+        android:id="@+id/flDot"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginEnd="8dp"
@@ -150,8 +150,8 @@
 
         <cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
             android:id="@+id/rdRefreshing"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackground"

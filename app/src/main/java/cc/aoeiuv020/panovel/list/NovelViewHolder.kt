@@ -11,6 +11,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.text.CheckableImageView
+import cc.aoeiuv020.panovel.util.setSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -20,6 +21,7 @@ import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.novel_item_big.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.dip
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -40,6 +42,8 @@ class NovelViewHolder(itemView: View,
     private val readAt: TextView? = itemView.tvReadAt
     private val star: CheckableImageView? = itemView.ivStar
     private val refreshingDot: RefreshingDotView? = itemView.rdRefreshing
+    // 包括刷新小红点和加入书架的爱心的FrameLayout,
+    private val flDot: View? = itemView.flDot
     // 提供外面的加调方法使用，
     lateinit var novel: Novel
         private set
@@ -85,7 +89,7 @@ class NovelViewHolder(itemView: View,
             itemListener.onStarChanged(this, it.isChecked)
         }
         refreshingDot?.setDotColor(dotColor)
-        refreshingDot?.setDotSize(dotSize)
+        flDot?.setSize(ctx.dip(dotSize))
 
         initItem(itemView)
     }

@@ -86,9 +86,9 @@
         app:layout_constraintStart_toEndOf="@+id/ivImage" />
 
     <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:id="@+id/flDot"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -96,8 +96,8 @@
 
         <cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
             android:id="@+id/rdRefreshing"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackground"

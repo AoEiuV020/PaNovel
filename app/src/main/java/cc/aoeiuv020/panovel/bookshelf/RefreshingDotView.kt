@@ -7,10 +7,8 @@ import android.view.View
 import android.widget.FrameLayout
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.util.hide
-import cc.aoeiuv020.panovel.util.setHeight
 import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.view_refreshing_dot.view.*
-import org.jetbrains.anko.dip
 
 /**
  * Created by AoEiuV020 on 2018.05.23-11:48:08.
@@ -49,9 +47,5 @@ class RefreshingDotView : FrameLayout {
 
     fun setDotColor(dotColor: Int) {
         ivDot.setColorFilter(dotColor)
-    }
-
-    fun setDotSize(dotSize: Float) {
-        ivDot.setHeight(context.dip(dotSize))
     }
 }

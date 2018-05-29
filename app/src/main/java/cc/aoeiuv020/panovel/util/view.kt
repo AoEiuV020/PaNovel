@@ -66,6 +66,13 @@ fun View.show() {
     visibility = View.VISIBLE
 }
 
+fun View.setSize(size: Int) {
+    layoutParams = layoutParams.also {
+        it.height = size
+        it.width = size
+    }
+}
+
 fun View.setHeight(height: Int) {
     layoutParams = layoutParams.also { it.height = height }
 }
