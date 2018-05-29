@@ -20,6 +20,7 @@ kotlin + mvp + room
 [Bugly](https://github.com/BuglyDevTeam/Bugly-Android)
 [JPush](https://github.com/jpush)
 [Zip4j](https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j)
+[AspectRatioImageView](https://github.com/santalu/aspect-ratio-imageview)
 
 ![img](screenshots/bookshelf.jpg)
 ![img](screenshots/genre.jpg)

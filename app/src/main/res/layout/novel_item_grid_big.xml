@@ -6,17 +6,16 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground">
 
-    <ImageView
+    <com.santalu.aspectratioimageview.AspectRatioImageView
         android:id="@+id/ivImage"
-        android:layout_width="90dp"
-        android:layout_height="120dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        app:ari_aspect="height"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:scaleType="fitEnd"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:ari_ratio="1.334"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_read"
