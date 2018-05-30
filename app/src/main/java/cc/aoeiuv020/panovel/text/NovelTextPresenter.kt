@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.*
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -36,6 +37,10 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             }
         }) {
             val novel = DataManager.getNovel(id)
+            novel.readTime = Date()
+            // 进来就更新一次阅读时间，确保退到书架页查询时这本小说的阅读时间是最新，
+            // 退出时还有更新一次，
+            DataManager.updateReadStatus(novel)
             uiThread {
                 view?.showNovel(novel)
             }
@@ -137,6 +142,24 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
         }) {
             DataManager.updateBookshelf(novel)
         }
+    }
+
+    fun saveReadStatus(novel: Novel) {
+        view?.doAsync({ e ->
+            val message = "保存阅读进度失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            // 这里更新阅读时间，
+            // 考虑到异步顺序不定，如果只有这一处更新阅读时间，可能来不及反应到书架上，
+            // 因此得到打开小说时也更新一次阅读时间，
+            novel.readTime = Date()
+            DataManager.updateReadStatus(novel)
+        }
+
     }
 
 }

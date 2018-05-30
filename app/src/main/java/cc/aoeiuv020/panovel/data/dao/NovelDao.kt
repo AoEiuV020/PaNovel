@@ -11,7 +11,7 @@ import java.util.*
  */
 @Dao
 abstract class NovelDao {
-    @Query("select * from Novel where bookshelf = 1 order by pinnedTime desc")
+    @Query("select * from Novel where bookshelf = 1 order by pinnedTime desc, max(receiveUpdateTime, readTime) desc")
     abstract fun listBookshelf(): List<Novel>
 
     @Query("update Novel set bookshelf = :bookshelf where id = :id")

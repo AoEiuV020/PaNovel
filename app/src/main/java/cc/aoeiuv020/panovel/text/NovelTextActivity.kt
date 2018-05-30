@@ -35,7 +35,6 @@ import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
-import java.util.*
 
 
 /**
@@ -447,18 +446,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         _novel ?: return
         // 得到小说novel对象后，进度始终保存在其中，
         // 这里刷一下数据库就好，
-        doAsync({ e ->
-            val message = "保存阅读进度失败，"
-            Reporter.post(message, e)
-            error(message, e)
-            runOnUiThread {
-                showError(message, e)
-            }
-        }) {
-            // 这里更新阅读时间，
-            novel.readTime = Date()
-            DataManager.updateReadStatus(novel)
-        }
+        presenter.saveReadStatus(novel)
     }
 
     private fun refineSearch() {

@@ -308,7 +308,7 @@ object DataManager : AnkoLogger {
             novel.bookshelf = true
             updateBookshelf(novel)
             // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
-            app.updateReadStatus(novel)
+            updateReadStatus(novel)
         }
     }
 }
