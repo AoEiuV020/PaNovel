@@ -19,7 +19,6 @@ import cc.aoeiuv020.panovel.util.loading
 import kotlinx.android.synthetic.main.activity_export.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.ctx
 import org.jetbrains.anko.startActivity
 
 class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
@@ -38,7 +37,7 @@ class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
 
         initWidget()
 
-        presenter = ExportPresenter(ctx)
+        presenter = ExportPresenter()
         presenter.attach(this)
         presenter.start()
     }

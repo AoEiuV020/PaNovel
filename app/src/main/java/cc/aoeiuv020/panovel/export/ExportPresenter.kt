@@ -1,10 +1,11 @@
 package cc.aoeiuv020.panovel.export
 
-import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.Presenter
+import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
 import java.io.FilenameFilter
@@ -14,9 +15,7 @@ import java.util.*
 /**
  * Created by AoEiuV020 on 2018.05.11-12:39:10.
  */
-class ExportPresenter(
-        private val ctx: Context
-) : Presenter<ExportActivity>(), AnkoLogger {
+class ExportPresenter : Presenter<ExportActivity>(), AnkoLogger {
     companion object {
         const val NAME_FOLDER = "Export"
         const val NAME_TEMPLATE = "PaNovel-Backup-##.zip"
@@ -28,12 +27,16 @@ class ExportPresenter(
         }
     }
 
-    private val exporterManager = ExportManager(ctx)
+    private val ctx = App.ctx
+
+    private val exporterManager = ExportManager()
 
     fun start() {
         view?.doAsync({ e ->
+            val message = "寻找路径失败，"
+            Reporter.post(message, e)
             view?.runOnUiThread {
-                view?.showError("寻找路径失败，", e)
+                view?.showError(message, e)
             }
         }) {
             val baseFile = ctx.getExternalFilesDir(null)
@@ -74,6 +77,7 @@ class ExportPresenter(
         view?.doAsync({ e ->
             val message = "导入失败，"
             error(message, e)
+            Reporter.post(message, e)
             view?.runOnUiThread {
                 view?.showError("寻找路径失败，", e)
             }

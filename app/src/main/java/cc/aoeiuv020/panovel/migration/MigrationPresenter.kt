@@ -114,6 +114,7 @@ class MigrationPresenter(
                         cachedVersionName = VersionName(versionName)
                         cachedVersion = cachedVersionName.name
                     }
+                    debug { "migrated $currentVersionName" }
                     // 最后缓存当前版本，
                     cachedVersionName = currentVersionName
                     cachedVersion = cachedVersionName.name

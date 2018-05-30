@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.export.impl
 
-import android.content.Context
 import cc.aoeiuv020.base.jar.get
 import cc.aoeiuv020.base.jar.jsonPath
 import cc.aoeiuv020.base.jar.toBean
@@ -17,21 +16,18 @@ import com.google.gson.JsonElement
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.File
 
 /**
  * Created by AoEiuV020 on 2018.05.11-18:52:50.
  */
-class ExporterV1(ctx: Context) : SingleFileExporter(ctx), AnkoLogger {
-    override fun import(input: InputStream, option: ExportOption): Int {
-        debug {
-            "import $option"
-        }
+class ExporterV1 : DefaultExporter(), AnkoLogger {
+    override fun import(file: File, option: ExportOption): Int {
+        debug { "import $option" }
 
         return when (option) {
             ExportOption.Bookshelf -> {
-                val list = input.jsonPath.get<JsonArray>().map {
+                val list = file.readText().jsonPath.get<JsonArray>().map {
                     it.jsonPath.run {
                         Novel(site = get("$.item.site"),
                                 author = get("$.item.author"),
@@ -45,7 +41,7 @@ class ExporterV1(ctx: Context) : SingleFileExporter(ctx), AnkoLogger {
                 list.size
             }
             ExportOption.BookList -> {
-                input.jsonPath.get<JsonArray>().onEach {
+                file.readText().jsonPath.get<JsonArray>().onEach {
                     it.jsonPath.run {
                         val name = get<String>("$.name")
                         val list = get<JsonArray>("$.list").map {
@@ -96,7 +92,7 @@ class ExporterV1(ctx: Context) : SingleFileExporter(ctx), AnkoLogger {
                         "batteryMargins" to { value -> ReaderSettings.batteryMargins.import(value.asString) }
                 )
                 var count = 0
-                input.jsonPath.get<Map<String, JsonElement>>().entries.forEach { (key, value) ->
+                file.readText().jsonPath.get<Map<String, JsonElement>>().entries.forEach { (key, value) ->
                     try {
                         map[key]?.let {
                             it(value)
@@ -110,70 +106,5 @@ class ExporterV1(ctx: Context) : SingleFileExporter(ctx), AnkoLogger {
                 count
             }
         }
-    }
-
-    override fun export(output: OutputStream, option: ExportOption): Int {
-        debug {
-            "export $option"
-        }
-/*
-        return when (option) {
-            ExportOption.Bookshelf -> {
-                Bookshelf.list().map {
-                    NovelItemWithProgress(it, Progress.load(it))
-                }.toJson(output)
-                        .size
-            }
-            ExportOption.BookList -> {
-                BookList.list().toJson(output)
-                        .size
-            }
-        // 备份设置不包括字体和背景图片，
-            ExportOption.Settings -> {
-                JsonObject().apply {
-                    addProperty("bookshelfRedDotNotifyNotReadOrNewChapter", Settings.bookshelfRedDotNotifyNotReadOrNewChapter)
-                    addProperty("bookshelfRedDotSize", Settings.bookshelfRedDotSize)
-                    addProperty("bookshelfRedDotColor", Settings.bookshelfRedDotColor)
-                    addProperty("bookshelfShowMoreActionDot", Settings.bookshelfShowMoreActionDot)
-                    addProperty("bookshelfAutoRefresh", Settings.bookshelfAutoRefresh)
-                    addProperty("fullScreenDelay", Settings.fullScreenDelay)
-                    addProperty("backPressOutOfFullScreen", Settings.backPressOutOfFullScreen)
-                    addProperty("textSize", Settings.textSize)
-                    addProperty("lineSpacing", Settings.lineSpacing)
-                    addProperty("paragraphSpacing", Settings.paragraphSpacing)
-                    addProperty("contentMargins", Settings.contentMargins.export(gson))
-                    addProperty("paginationMargins", Settings.paginationMargins.export(gson))
-                    addProperty("bookNameMargins", Settings.bookNameMargins.export(gson))
-                    addProperty("chapterNameMargins", Settings.chapterNameMargins.export(gson))
-                    addProperty("timeMargins", Settings.timeMargins.export(gson))
-                    addProperty("batteryMargins", Settings.batteryMargins.export(gson))
-                    addProperty("messageSize", Settings.messageSize)
-                    addProperty("autoRefreshInterval", Settings.autoRefreshInterval)
-                    addProperty("dateFormat", Settings.dateFormat)
-                    addProperty("textColor", Settings.textColor)
-                    addProperty("backgroundColor", Settings.backgroundColor)
-                    addProperty("historyCount", Settings.historyCount)
-                    addProperty("asyncThreadCount", Settings.asyncThreadCount)
-                    addProperty("downloadThreadCount", Settings.downloadThreadCount)
-                    addProperty("adEnabled", Settings.adEnabled)
-                    addProperty("BookSmallLayout", Settings.BookSmallLayout)
-                    addProperty("bookListAutoSave", Settings.bookListAutoSave)
-                    addProperty("chapterColorDefault", Settings.chapterColorDefault)
-                    addProperty("chapterColorCached", Settings.chapterColorCached)
-                    addProperty("chapterColorReadAt", Settings.chapterColorReadAt)
-                    addProperty("animationMode", Settings.animationMode.toJson())
-                    addProperty("animationSpeed", Settings.animationSpeed)
-                    addProperty("fullScreenClickNextPage", Settings.fullScreenClickNextPage)
-                    addProperty("volumeKeyScroll", Settings.volumeKeyScroll)
-                    addProperty("centerPercent", Settings.centerPercent)
-                    addProperty("shareExpiration", Settings.shareExpiration.toJson())
-                    addProperty("reportCrash", Settings.reportCrash)
-                    addProperty("subscribeNovelUpdate", Settings.subscribeNovelUpdate)
-                }.toJson(output)
-                        .size()
-            }
-        }
-*/
-        TODO("导出，")
     }
 }

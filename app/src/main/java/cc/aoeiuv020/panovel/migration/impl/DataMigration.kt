@@ -101,7 +101,7 @@ class DataMigration : Migration(), AnkoLogger {
     private fun importBookshelf(base: File) {
         val progress = base.resolve("Progress")
         val list = base.resolve("Bookshelf").listFiles()?.map {
-            val novel = it.inputStream().jsonPath.run {
+            val novel = it.readText().jsonPath.run {
                 Novel(site = get("$.site"),
                         author = get("$.author"),
                         name = get("$.name"),
@@ -110,7 +110,7 @@ class DataMigration : Migration(), AnkoLogger {
             try {
                 progress.resolve(novel.run { "$name.$author.$site" })
                         .takeIf { it.exists() }
-                        ?.inputStream()?.jsonPath?.run {
+                        ?.readText()?.jsonPath?.run {
                     novel.readAtChapterIndex = get("chapter")
                     novel.readAtTextIndex = get("text")
                 }
@@ -125,7 +125,7 @@ class DataMigration : Migration(), AnkoLogger {
 
     private fun importBookList(base: File) {
         base.resolve("BookList").listFiles()?.forEach {
-            it.inputStream().jsonPath.run {
+            it.readText().jsonPath.run {
                 val name = get<String>("$.name")
                 val list = get<JsonArray>("$.list").map {
                     it.jsonPath.run {
