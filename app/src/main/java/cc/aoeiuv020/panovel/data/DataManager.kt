@@ -291,9 +291,10 @@ object DataManager : AnkoLogger {
     fun addBookshelf(bookList: BookList) = app.addBookshelf(bookList)
     fun removeBookshelf(bookList: BookList) = app.removeBookshelf(bookList)
     /**
-     * 导入小说进度，
+     * 小说导入书架，包含进度，
      */
-    fun importProgress(list: List<Novel>) = app.db.runInTransaction {
+    fun importBookshelfWithProgress(list: List<Novel>) = app.db.runInTransaction {
+        debug { "$list" }
         list.forEach {
             // 查询或插入，得到小说对象，再更新进度，
             val novel = app.queryOrNewNovel(NovelMinimal(it))
@@ -303,6 +304,9 @@ object DataManager : AnkoLogger {
             if (novel.chapters != null) {
                 novel.readAtChapterName = cache.loadChapters(novel)?.get(novel.readAtChapterIndex)?.name ?: ""
             }
+            // 加入书架，
+            novel.bookshelf = true
+            updateBookshelf(novel)
             // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
             app.updateReadStatus(novel)
         }

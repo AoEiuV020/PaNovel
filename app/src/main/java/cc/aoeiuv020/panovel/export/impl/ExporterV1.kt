@@ -41,7 +41,7 @@ class ExporterV1(ctx: Context) : SingleFileExporter(ctx), AnkoLogger {
                                 readAtTextIndex = get("$.progress.text"))
                     }
                 }
-                DataManager.importProgress(list)
+                DataManager.importBookshelfWithProgress(list)
                 list.size
             }
             ExportOption.BookList -> {
