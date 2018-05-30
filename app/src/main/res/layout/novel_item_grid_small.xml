@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground">
+    android:layout_height="wrap_content">
 
     <com.santalu.aspectratioimageview.AspectRatioImageView
         android:id="@+id/ivImage"
@@ -45,7 +44,6 @@
         android:id="@+id/tvLast"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
         android:paddingLeft="1dp"
         android:paddingRight="1dp"
         android:singleLine="true"
@@ -68,7 +66,6 @@
             android:id="@+id/rdRefreshing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackground"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvName" />

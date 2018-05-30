@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -26,6 +27,7 @@ import org.jetbrains.anko.debug
 import org.jetbrains.anko.dip
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class NovelViewHolder(itemView: View,
                       dotColor: Int,
@@ -54,52 +56,68 @@ class NovelViewHolder(itemView: View,
     val ctx: Context = itemView.context
 
     init {
+        // 这里的引用的设置修改后不会马上生效，因为ViewHolder会被复用，
+        // 无所谓了，要是从外面传进来的话就太烦了，
+
+        val typedValue = TypedValue()
+        ctx.theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
+        // 长按时波纹背景，
+        val selectableItemBackground = typedValue.resourceId
+
         if (ListSettings.onDotClick != ItemAction.None) {
             refreshingDot?.setOnClickListener {
                 itemListener.onDotClick(this)
             }
+            refreshingDot?.setBackgroundResource(selectableItemBackground)
         }
 
         if (ListSettings.onDotLongClick != ItemAction.None) {
             refreshingDot?.setOnLongClickListener {
                 itemListener.onDotLongClick(this)
             }
+            refreshingDot?.setBackgroundResource(selectableItemBackground)
         }
 
         if (ListSettings.onCheckUpdateClick != ItemAction.None) {
             checkUpdate?.setOnClickListener {
                 itemListener.onCheckUpdateClick(this)
             }
+            checkUpdate?.setBackgroundResource(selectableItemBackground)
         }
 
         if (ListSettings.onNameClick != ItemAction.None) {
             name?.setOnClickListener {
                 itemListener.onNameClick(this)
             }
+            // 格子视图小说名的背景是渐变黑，不能改成波纹，
         }
 
         if (ListSettings.onNameLongClick != ItemAction.None) {
             name?.setOnLongClickListener {
                 itemListener.onNameLongClick(this)
             }
+            // 格子视图小说名的背景是渐变黑，不能改成波纹，
         }
 
         if (ListSettings.onLastChapterClick != ItemAction.None) {
             last?.setOnClickListener {
                 itemListener.onLastChapterClick(this)
             }
+            last?.setBackgroundResource(selectableItemBackground)
         }
 
         if (ListSettings.onItemClick != ItemAction.None) {
             itemView.setOnClickListener {
                 itemListener.onItemClick(this)
             }
+            itemView.setBackgroundResource(selectableItemBackground)
         }
 
         if (ListSettings.onItemLongClick != ItemAction.None) {
             itemView.setOnLongClickListener {
                 itemListener.onItemLongClick(this)
             }
+            itemView.setBackgroundResource(selectableItemBackground)
         }
 
         // TODO: star控件改成支持onCheckChanged，这样的话，要试试外部调用移出书架指定isChecked会不会调用click事件，
