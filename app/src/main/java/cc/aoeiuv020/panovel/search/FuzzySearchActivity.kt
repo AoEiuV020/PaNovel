@@ -12,8 +12,7 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
-import cc.aoeiuv020.panovel.list.NovelMutableListAdapter
+import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
@@ -51,10 +50,9 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     private lateinit var presenter: FuzzySearchPresenter
-    private val itemListener = DefaultNovelItemActionListener { message, e ->
-        showError(message, e)
+    private val novelListAdapter by lazy {
+        NovelListAdapter(onError = ::showError)
     }
-    private val mAdapter = NovelMutableListAdapter(itemListener)
 
     private var name: String? = null
     private var author: String? = null
@@ -83,7 +81,7 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
         }
         presenter = FuzzySearchPresenter()
         presenter.attach(this)
-        rvNovel.adapter = mAdapter
+        rvNovel.adapter = novelListAdapter
 
         name = getStringExtra("name", savedInstanceState)
         author = getStringExtra("author", savedInstanceState)
@@ -145,7 +143,7 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
         title = name
         this.name = name
         this.author = author
-        mAdapter.clear()
+        novelListAdapter.clear()
         presenter.search(name, author)
     }
 
@@ -164,14 +162,14 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
      * 为了方便从书架过来，找一本小说的所有源的最新章节，
      */
     private fun forceRefresh() {
-        mAdapter.refresh()
+        novelListAdapter.refresh()
         refresh()
     }
 
     fun addResult(list: List<Novel>) {
         // 插入有时会导致下滑，原因不明，保存状态解决，
         val state = rvNovel.layoutManager.onSaveInstanceState()
-        mAdapter.addAll(list)
+        novelListAdapter.addAll(list)
         rvNovel.layoutManager.onRestoreInstanceState(state)
     }
 

@@ -12,7 +12,6 @@ import cc.aoeiuv020.panovel.App.Companion.ctx
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.settings.ListSettings
@@ -24,10 +23,9 @@ import kotlinx.android.synthetic.main.novel_item_list.*
  * Created by AoEiuV020 on 2017.10.15-18:07:39.
  */
 class HistoryFragment : Fragment(), IView {
-    private val itemListener = DefaultNovelItemActionListener { message, e ->
-        showError(message, e)
+    private val novelListAdapter by lazy {
+        NovelListAdapter(onError = ::showError)
     }
-    private val mAdapter = NovelListAdapter(itemListener)
     private val presenter: HistoryPresenter = HistoryPresenter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +39,7 @@ class HistoryFragment : Fragment(), IView {
         } else {
             LinearLayoutManager(ctx)
         }
-        rvNovel.adapter = mAdapter
+        rvNovel.adapter = novelListAdapter
         srlRefresh.setOnRefreshListener {
             forceRefresh()
         }
@@ -68,12 +66,12 @@ class HistoryFragment : Fragment(), IView {
      * 强行刷新，重新下载小说详情，主要是看最新章，
      */
     private fun forceRefresh() {
-        mAdapter.refresh()
+        novelListAdapter.refresh()
         refresh()
     }
 
     fun showNovelList(list: List<Novel>) {
-        mAdapter.data = list
+        novelListAdapter.data = list
         srlRefresh.isRefreshing = false
     }
 

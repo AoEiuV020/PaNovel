@@ -16,8 +16,7 @@ import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.list.DefaultNovelItemActionListener
-import cc.aoeiuv020.panovel.list.NovelMutableListAdapter
+import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.list.NovelViewHolder
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
@@ -46,25 +45,27 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
     private var bookListId: Long = -1
     private lateinit var presenter: BookListActivityPresenter
 
-    // 不指定对象类型的话，下面的adapter传参会报类型检查出错，
-    private val itemListener: DefaultNovelItemActionListener = object : DefaultNovelItemActionListener({ _, _ ->
-    }, { message, e ->
-        showError(message, e)
-    }) {
-        override fun onItemLongClick(vh: NovelViewHolder): Boolean {
+    private val novelListAdapter by lazy {
+        NovelListAdapter(initItem = { vh ->
             // 长按弹出删除菜单，只要这个就够了，
-            // TODO: 改成支持滑动删除感觉更好，
-            val list = listOf(R.string.remove to {
-                presenter.remove(vh.novel)
-                mAdapter.remove(vh.layoutPosition)
-            })
-            selector(getString(R.string.action), list.unzip().first.map { getString(it) }) { _, i ->
-                list[i].second.invoke()
+            vh.itemView.setOnLongClickListener {
+                onItemLongClick(vh)
             }
-            return true
-        }
+        }, onError = ::showError)
     }
-    private val mAdapter = NovelMutableListAdapter(itemListener)
+
+    private fun onItemLongClick(vh: NovelViewHolder): Boolean {
+        // 长按弹出删除菜单，只要这个就够了，
+        // TODO: 改成支持滑动删除感觉更好，
+        val list = listOf(R.string.remove to {
+            presenter.remove(vh.novel)
+            this@BookListActivity.novelListAdapter.remove(vh.layoutPosition)
+        })
+        selector(getString(R.string.action), list.unzip().first.map { getString(it) }) { _, i ->
+            list[i].second.invoke()
+        }
+        return true
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -93,7 +94,7 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
             LinearLayoutManager(ctx)
         }
         presenter = BookListActivityPresenter(bookListId)
-        rvNovel.adapter = mAdapter
+        rvNovel.adapter = novelListAdapter
         srlRefresh.setOnRefreshListener {
             forceRefresh()
         }
@@ -153,12 +154,12 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
      * 强行刷新，重新下载小说详情，主要是看最新章，
      */
     private fun forceRefresh() {
-        mAdapter.refresh()
+        novelListAdapter.refresh()
         refresh()
     }
 
     fun showNovelList(list: List<Novel>) {
-        mAdapter.data = list
+        novelListAdapter.data = list
         srlRefresh.isRefreshing = false
     }
 

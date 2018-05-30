@@ -10,6 +10,8 @@ import android.widget.TextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.settings.ItemAction
+import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.text.CheckableImageView
 import cc.aoeiuv020.panovel.util.setSize
 import com.bumptech.glide.Glide
@@ -26,60 +28,78 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class NovelViewHolder(itemView: View,
-                      private val itemListener: NovelItemActionListener,
-                      initItem: (View) -> Unit = {},
                       dotColor: Int,
-                      dotSize: Float)
-    : RecyclerView.ViewHolder(itemView), AnkoLogger {
+                      dotSize: Float,
+                      initItem: (NovelViewHolder) -> Unit = {},
+                      actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
+                      onError: (String, Throwable) -> Unit
+) : RecyclerView.ViewHolder(itemView), AnkoLogger {
+    private val itemListener = DefaultNovelItemActionListener(actionDoneListener, onError)
 
     // 所有View可空，准备支持不同布局，小的布局可能大部分View都没有，
-    private val name: TextView? = itemView.tvName
-    private val author: TextView? = itemView.tvAuthor
-    private val site: TextView? = itemView.tvSite
-    private val image: ImageView? = itemView.ivImage
-    private val last: TextView? = itemView.tvLast
-    private val checkUpdate: TextView? = itemView.tvCheckUpdate
-    private val readAt: TextView? = itemView.tvReadAt
-    private val star: CheckableImageView? = itemView.ivStar
-    private val refreshingDot: RefreshingDotView? = itemView.rdRefreshing
+    val name: TextView? = itemView.tvName
+    val author: TextView? = itemView.tvAuthor
+    val site: TextView? = itemView.tvSite
+    val image: ImageView? = itemView.ivImage
+    val last: TextView? = itemView.tvLast
+    val checkUpdate: TextView? = itemView.tvCheckUpdate
+    val readAt: TextView? = itemView.tvReadAt
+    val star: CheckableImageView? = itemView.ivStar
+    val refreshingDot: RefreshingDotView? = itemView.rdRefreshing
     // 包括刷新小红点和加入书架的爱心的FrameLayout,
-    private val flDot: View? = itemView.flDot
+    val flDot: View? = itemView.flDot
     // 提供外面的加调方法使用，
     lateinit var novel: Novel
         private set
     val ctx: Context = itemView.context
 
     init {
-        refreshingDot?.setOnClickListener {
-            itemListener.onDotClick(this)
+        if (ListSettings.onDotClick != ItemAction.None) {
+            refreshingDot?.setOnClickListener {
+                itemListener.onDotClick(this)
+            }
         }
 
-        refreshingDot?.setOnLongClickListener {
-            itemListener.onDotLongClick(this)
+        if (ListSettings.onDotLongClick != ItemAction.None) {
+            refreshingDot?.setOnLongClickListener {
+                itemListener.onDotLongClick(this)
+            }
         }
 
-        checkUpdate?.setOnClickListener {
-            itemListener.onCheckUpdateClick(this)
+        if (ListSettings.onCheckUpdateClick != ItemAction.None) {
+            checkUpdate?.setOnClickListener {
+                itemListener.onCheckUpdateClick(this)
+            }
         }
 
-        name?.setOnClickListener {
-            itemListener.onNameClick(this)
+        if (ListSettings.onNameClick != ItemAction.None) {
+            name?.setOnClickListener {
+                itemListener.onNameClick(this)
+            }
         }
 
-        name?.setOnLongClickListener {
-            itemListener.onNameLongClick(this)
+        if (ListSettings.onNameLongClick != ItemAction.None) {
+            name?.setOnLongClickListener {
+                itemListener.onNameLongClick(this)
+            }
         }
 
-        last?.setOnClickListener {
-            itemListener.onLastChapterClick(this)
+        if (ListSettings.onLastChapterClick != ItemAction.None) {
+            last?.setOnClickListener {
+                itemListener.onLastChapterClick(this)
+            }
         }
 
-        itemView.setOnClickListener {
-            itemListener.onItemClick(this)
+        if (ListSettings.onItemClick != ItemAction.None) {
+            itemView.setOnClickListener {
+                itemListener.onItemClick(this)
+            }
         }
 
-        itemView.setOnLongClickListener {
-            itemListener.onItemLongClick(this)
+        if (ListSettings.onItemLongClick != ItemAction.None) {
+            itemView.setOnLongClickListener {
+                itemListener.onItemLongClick(this)
+            }
         }
 
         // TODO: star控件改成支持onCheckChanged，这样的话，要试试外部调用移出书架指定isChecked会不会调用click事件，
@@ -91,7 +111,7 @@ class NovelViewHolder(itemView: View,
         refreshingDot?.setDotColor(dotColor)
         flDot?.setSize(ctx.dip(dotSize))
 
-        initItem(itemView)
+        initItem(this)
     }
 
     fun apply(novel: Novel, refreshTime: Date) {

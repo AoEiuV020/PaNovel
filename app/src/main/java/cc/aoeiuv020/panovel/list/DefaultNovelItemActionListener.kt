@@ -15,11 +15,14 @@ import org.jetbrains.anko.*
 /**
  * Created by AoEiuV020 on 2018.05.23-12:49:51.
  */
-open class DefaultNovelItemActionListener(
+class DefaultNovelItemActionListener(
         private val actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
         private val onError: (String, Throwable) -> Unit
 ) : NovelItemActionListener, AnkoLogger {
+    override val loggerTag: String
+        get() = "ItemActionListener"
     fun on(action: ItemAction, vh: NovelViewHolder): Boolean {
+        debug { "doing $action at ${vh.novel.name}" }
         when (action) {
             ReadLastChapter -> NovelTextActivity.start(vh.ctx, vh.novel, -1)
             ReadContinue -> NovelTextActivity.start(vh.ctx, vh.novel)
