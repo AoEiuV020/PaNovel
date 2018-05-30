@@ -10,6 +10,10 @@ import cc.aoeiuv020.panovel.util.VersionName
  * Created by AoEiuV020 on 2018.05.28-11:31:31.
  */
 class SitesMigration : Migration() {
+    /**
+     * 网站数据直接按最新的处理就好，版本号直接最新，
+     * 不包含在其他小版本迁移中，
+     */
     override val to: VersionName = VersionName(BuildConfig.VERSION_NAME)
     override val message: String = "刷新支持的网站列表，"
 

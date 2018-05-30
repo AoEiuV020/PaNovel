@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.migration
 
 import android.content.Context
 import cc.aoeiuv020.panovel.Presenter
+import cc.aoeiuv020.panovel.migration.impl.DataMigration
 import cc.aoeiuv020.panovel.migration.impl.LoginMigration
 import cc.aoeiuv020.panovel.migration.impl.SitesMigration
 import cc.aoeiuv020.panovel.report.Reporter
@@ -10,6 +11,7 @@ import cc.aoeiuv020.panovel.util.Pref
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.VersionUtil
 import org.jetbrains.anko.*
+import kotlin.reflect.KClass
 
 /**
  * mvp模式，
@@ -34,18 +36,19 @@ class MigrationPresenter(
      */
     private val currentVersion: String = VersionUtil.getAppVersionName(ctx)
 
+    private fun list(vararg list: KClass<out Migration>): List<KClass<out Migration>> = list.toList()
+
     /**
      * 所有数据迁移封装的Migration,
      * 要保持按版本名排序，
      */
-    private val migrations: List<Migration> = listOf<Migration>(
-            LoginMigration()
-    ).sortedBy { it.to }
+    val list: List<Pair<String, List<KClass<out Migration>>>> = listOf(
+            // listOf嵌套时智能识别类型有点问题，这里不用，
+            "2.2.2" to list(DataMigration::class, LoginMigration::class)
+    )
 
     fun start() {
-        debug {
-            "start,"
-        }
+        debug { "start," }
         var cachedVersionName = VersionName(cachedVersion)
         val currentVersionName = VersionName(currentVersion)
         when {
@@ -82,27 +85,33 @@ class MigrationPresenter(
                     SitesMigration().migrate(ctx, cachedVersionName)
                     // 缓存一开始的版本，迁移完成后展示，
                     val beginVersionName = cachedVersionName
-                    migrations.dropWhile { migration ->
+                    list.dropWhile { (versionName, _) ->
                         // 缓存的版本如果大于等于这个Migration的版本，就跳过这个Migration,
-                        cachedVersionName >= migration.to
-                    }.forEach { migration ->
+                        cachedVersionName >= VersionName(versionName)
+                    }.forEach { (versionName, migrations) ->
                         // 遍历所有剩下的Migration分段升级，
                         // ui线程拿到这个cachedVersionName时可能已经变了，所以来个临时变量，虽然无所谓，
                         val from = cachedVersionName
-                        uiThread {
-                            view?.showUpgrading(from = from, migration = migration)
-                        }
-                        try {
-                            migration.migrate(ctx, cachedVersionName)
-                        } catch (e: Exception) {
-                            if (e is MigrateException) {
-                                throw e
-                            } else {
-                                throw MigrateException(migration = migration, cause = e)
+                        migrations.forEach { clazz ->
+                            // 反射拿对象，免得加载不需要的migration,
+                            val migration = clazz.java.newInstance()
+                            uiThread {
+                                view?.showUpgrading(from = from, migration = migration)
                             }
+                            debug { "migrate $cachedVersionName to ${migration.to}" }
+                            try {
+                                migration.migrate(ctx, cachedVersionName)
+                            } catch (e: Exception) {
+                                if (e is MigrateException) {
+                                    throw e
+                                } else {
+                                    throw MigrateException(migration = migration, cause = e)
+                                }
+                            }
+
                         }
                         // 每个阶段分别保存升级后的版本，
-                        cachedVersionName = migration.to
+                        cachedVersionName = VersionName(versionName)
                         cachedVersion = cachedVersionName.name
                     }
                     // 最后缓存当前版本，
