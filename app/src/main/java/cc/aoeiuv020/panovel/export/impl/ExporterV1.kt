@@ -7,7 +7,6 @@ import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
-import cc.aoeiuv020.panovel.export.DefaultExporter
 import cc.aoeiuv020.panovel.export.ExportOption
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
@@ -24,7 +23,7 @@ import java.io.OutputStream
 /**
  * Created by AoEiuV020 on 2018.05.11-18:52:50.
  */
-class ExporterV1(ctx: Context) : DefaultExporter(ctx), AnkoLogger {
+class ExporterV1(ctx: Context) : SingleFileExporter(ctx), AnkoLogger {
     override fun import(input: InputStream, option: ExportOption): Int {
         debug {
             "import $option"

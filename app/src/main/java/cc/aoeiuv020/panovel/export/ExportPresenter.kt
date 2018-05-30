@@ -90,7 +90,7 @@ class ExportPresenter(
                     view?.requestPermissions()
                     throw IllegalStateException("没有权限，", e)
                 } else {
-                    throw IOException("文件不可读", e)
+                    throw IOException("文件不存在或不可读", e)
                 }
             }.use { input ->
                 debug { "开始导入，" }

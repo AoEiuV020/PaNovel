@@ -28,7 +28,7 @@ class ExportManager(
 
     private fun getExporter(version: Int): IExporter = when (version) {
         1 -> ExporterV1(ctx)
-        else -> throw IllegalStateException("该版本不存在<$version>,")
+        else -> throw IllegalStateException("版本<$version>不存在,")
     }
 
     /**
@@ -59,7 +59,12 @@ class ExportManager(
 
         // 根据不同版本选择不同的Exporter,
         val exporter = getExporter(version)
-        return exporter.import(zipFile, options)
+        val ret = exporter.import(zipFile, options)
+
+        // 用完删除临时文件，
+        tempFile.delete()
+
+        return ret
     }
 
     /**
@@ -88,6 +93,9 @@ class ExportManager(
             input.copyTo(output)
             output.flush()
         }
+
+        // 用完删除临时文件，
+        tempFile.delete()
 
         return result
     }
