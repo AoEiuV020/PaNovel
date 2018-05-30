@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.preference.PreferenceFragment
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
@@ -10,6 +11,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import java.io.File
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -81,39 +83,49 @@ object Delegates {
  * Uri可以从文件得到，也可以打开写入文件，
  */
 class UriDelegate(
-        key: kotlin.String? = null
+        private val key: kotlin.String? = null
 ) : ReadWriteProperty<Pref, android.net.Uri?> {
+    companion object {
+        private const val KEY_URI_DELEGATE = "UriDelegate"
+    }
+
+    private fun getFile(thisRef: Pref, property: KProperty<*>): File {
+        return App.ctx.filesDir.resolve(KEY_URI_DELEGATE)
+                .resolve(thisRef.name)
+                .apply { mkdirs() }
+                .resolve(key ?: property.name)
+    }
+
+    private var backField: Uri? = null
     override fun getValue(thisRef: Pref, property: KProperty<*>): android.net.Uri? {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        return null
-/*
-            return backingField ?: thisRef.openFile(property.name).takeIf { it.exists() }?.let { Uri.fromFile(it) }.also {
-                backingField = it
-                debug { "${property.name} > $it" }
-            }
-*/
+        if (backField != null) {
+            return backField
+        }
+        val file = getFile(thisRef, property)
+        if (!file.exists()) {
+            return null
+        }
+        backField = Uri.fromFile(file)
+        return backField
     }
 
     override fun setValue(thisRef: Pref, property: KProperty<*>, value: android.net.Uri?) {
-        // 要读出来转成base64再写入sp的话，读出来不能转成Uri,
-        // 要使用缓存库存为文件么，
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        /*
-                 if (backingField != value) {
-                     backingField = null
-                     val file = thisRef.openFile(property.name)
-                     if (value == null) {
-                         if (!file.delete()) {
-                             error {
-                                 "$file delete failed,"
-                             }
-                         }
-                     } else {
-                         App.ctx.contentResolver.openInputStream(value).copyTo(file.outputStream())
-                         backingField = getValue(thisRef, property)
-                     }
-                 }
-     */
+        if (backField == value) {
+            return
+        }
+        // 先赋值为空，之后通过getValue拿uri, 因为有个判断，这个不为空就拿不到文件，
+        backField = null
+        val file = getFile(thisRef, property)
+        if (value == null) {
+            file.delete()
+        } else {
+            file.outputStream().use {
+                App.ctx.contentResolver.openInputStream(value).copyTo(it)
+                it.flush()
+            }
+
+            backField = getValue(thisRef, property)
+        }
     }
 }
 
