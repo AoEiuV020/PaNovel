@@ -9,22 +9,22 @@ import cc.aoeiuv020.panovel.util.Pref
 object ListSettings : Pref {
     override val name: String
         get() = "List"
-    val gridView: Boolean by Delegates.boolean(false)
-    val largeView: Boolean  by Delegates.boolean(true)
+    var gridView: Boolean by Delegates.boolean(false)
+    var largeView: Boolean  by Delegates.boolean(true)
 
     // 书架的小红点设置，
-    val dotColor: Int by Delegates.int(0xffff0000.toInt())
-    val dotSize: Float by Delegates.float(24f)
+    var dotColor: Int by Delegates.int(0xffff0000.toInt())
+    var dotSize: Float by Delegates.float(24f)
 
     // 点击事件设置，
-    val onDotClick: ItemAction by Delegates.enum(ItemAction.Refresh)
-    val onDotLongClick: ItemAction by Delegates.enum(ItemAction.Pinned)
-    val onCheckUpdateClick: ItemAction by Delegates.enum(ItemAction.Refresh)
-    val onNameClick: ItemAction by Delegates.enum(ItemAction.OpenDetail)
-    val onNameLongClick: ItemAction by Delegates.enum(ItemAction.RefineSearch)
-    val onLastChapterClick: ItemAction by Delegates.enum(ItemAction.ReadLastChapter)
-    val onItemClick: ItemAction by Delegates.enum(ItemAction.ReadContinue)
-    val onItemLongClick: ItemAction by Delegates.enum(ItemAction.MoreAction)
+    var onDotClick: ItemAction by Delegates.enum(ItemAction.Refresh)
+    var onDotLongClick: ItemAction by Delegates.enum(ItemAction.Pinned)
+    var onCheckUpdateClick: ItemAction by Delegates.enum(ItemAction.Refresh)
+    var onNameClick: ItemAction by Delegates.enum(ItemAction.OpenDetail)
+    var onNameLongClick: ItemAction by Delegates.enum(ItemAction.RefineSearch)
+    var onLastChapterClick: ItemAction by Delegates.enum(ItemAction.ReadLastChapter)
+    var onItemClick: ItemAction by Delegates.enum(ItemAction.ReadContinue)
+    var onItemLongClick: ItemAction by Delegates.enum(ItemAction.MoreAction)
 }
 
 enum class ItemAction {

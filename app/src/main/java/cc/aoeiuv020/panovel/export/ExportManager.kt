@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.export
 
 import android.content.Context
+import cc.aoeiuv020.panovel.export.impl.ExporterV1
 import net.lingala.zip4j.core.ZipFile
 import net.lingala.zip4j.exception.ZipException
 import net.lingala.zip4j.model.ZipParameters
@@ -16,7 +17,7 @@ class ExportManager(
     companion object {
         const val NAME_TEMP = "PaNovel-Backup-00.zip"
         const val NAME_VERSION = "version"
-        const val CURRENT_VERSION = 1
+        const val CURRENT_VERSION = 2
     }
 
     private fun getTempFile() =

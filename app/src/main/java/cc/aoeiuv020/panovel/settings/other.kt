@@ -18,10 +18,10 @@ object OtherSettings : Pref {
     var shareExpiration: Expiration by Delegates.enum(Expiration.NONE)
     var reportCrash: Boolean by Delegates.boolean(true)
 
-    val chapterColorDefault: Int by Delegates.int(0xff000000.toInt())
+    var chapterColorDefault: Int by Delegates.int(0xff000000.toInt())
     // TODO: 这个默认颜色改暗些，
-    val chapterColorCached: Int by Delegates.int(0xff00ff00.toInt())
-    val chapterColorReadAt: Int by Delegates.int(0xffff0000.toInt())
+    var chapterColorCached: Int by Delegates.int(0xff00ff00.toInt())
+    var chapterColorReadAt: Int by Delegates.int(0xffff0000.toInt())
     val chapterColorList
         get() = ColorStateList(
                 arrayOf(

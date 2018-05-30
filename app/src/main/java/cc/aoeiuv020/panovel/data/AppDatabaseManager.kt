@@ -20,7 +20,7 @@ class AppDatabaseManager(context: Context) {
 
     private fun queryOrNewNovel(site: String, author: String, name: String, detail: String): Novel = db.runInTransaction<Novel> {
         db.novelDao().query(site, author, name)
-                ?: Novel(id = null, site = site, author = author, name = name, detail = detail).also {
+                ?: Novel(site = site, author = author, name = name, detail = detail).also {
                     // 数据库里没有，需要插入，
                     // 插入后确保novel要有这个id,
                     it.id = db.novelDao().insert(it)
@@ -106,5 +106,4 @@ class AppDatabaseManager(context: Context) {
     fun removeBookshelf(bookList: BookList) = db.bookListDao().removeBookshelf(bookList.nId)
 
     fun addBookshelf(bookList: BookList) = db.bookListDao().addBookshelf(bookList.nId)
-
 }

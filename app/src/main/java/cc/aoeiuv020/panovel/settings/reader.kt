@@ -15,9 +15,9 @@ object ReaderSettings : Pref {
     override val name: String
         get() = "Reader"
 
-    val fullScreenClickNextPage: Boolean by Delegates.boolean(false)
-    val volumeKeyScroll: Boolean by Delegates.boolean(true)
-    val centerPercent: Float by Delegates.float(0.5f)
+    var fullScreenClickNextPage: Boolean by Delegates.boolean(false)
+    var volumeKeyScroll: Boolean by Delegates.boolean(true)
+    var centerPercent: Float by Delegates.float(0.5f)
     /**
      * 阅读界面点击退出全屏的延迟，
      * 有点延迟看着顺眼点，

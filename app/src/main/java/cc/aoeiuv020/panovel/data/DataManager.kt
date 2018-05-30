@@ -290,5 +290,21 @@ object DataManager : AnkoLogger {
     fun importBookList(name: String, list: List<NovelMinimal>) = app.importBookList(name, list)
     fun addBookshelf(bookList: BookList) = app.addBookshelf(bookList)
     fun removeBookshelf(bookList: BookList) = app.removeBookshelf(bookList)
-
+    /**
+     * 导入小说进度，
+     */
+    fun importProgress(list: List<Novel>) = app.db.runInTransaction {
+        list.forEach {
+            // 查询或插入，得到小说对象，再更新进度，
+            val novel = app.queryOrNewNovel(NovelMinimal(it))
+            novel.readAtChapterIndex = it.readAtChapterIndex
+            novel.readAtTextIndex = it.readAtTextIndex
+            // 顺便更新下阅读至的章节名，
+            if (novel.chapters != null) {
+                novel.readAtChapterName = cache.loadChapters(novel)?.get(novel.readAtChapterIndex)?.name ?: ""
+            }
+            // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
+            app.updateReadStatus(novel)
+        }
+    }
 }

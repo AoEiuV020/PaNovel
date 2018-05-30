@@ -9,8 +9,8 @@ import cc.aoeiuv020.panovel.util.Pref
 object GeneralSettings : Pref {
     override val name: String
         get() = "General"
-    val downloadThreadsLimit: Int by Delegates.int(4)
+    var downloadThreadsLimit: Int by Delegates.int(4)
     // 提供彩蛋，满足条件就关闭广告，要在代码中改这个值，所以可变，var,
     var adEnabled: Boolean by Delegates.boolean(true)
-    val historyCount: Int by Delegates.int(30)
+    var historyCount: Int by Delegates.int(30)
 }
