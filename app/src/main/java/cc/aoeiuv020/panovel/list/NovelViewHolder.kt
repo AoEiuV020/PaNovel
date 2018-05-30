@@ -14,7 +14,6 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.text.CheckableImageView
-import cc.aoeiuv020.panovel.util.setSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -127,7 +126,7 @@ class NovelViewHolder(itemView: View,
             itemListener.onStarChanged(this, it.isChecked)
         }
         refreshingDot?.setDotColor(dotColor)
-        flDot?.setSize(ctx.dip(dotSize))
+        refreshingDot?.setDotSize(ctx.dip(dotSize))
 
         initItem(this)
     }
