@@ -33,10 +33,10 @@ interface Pref {
 }
 
 abstract class SubPref(
-        private val pref: Pref
+        pref: Pref,
+        subName: String
 ) : Pref {
-    override val sharedPreferencesName: String
-        get() = pref.sharedPreferencesName + "_$name"
+    override val name: String = pref.name + "_$subName"
 }
 
 /**
@@ -119,9 +119,11 @@ class UriDelegate(
         if (value == null) {
             file.delete()
         } else {
-            file.outputStream().use {
-                App.ctx.contentResolver.openInputStream(value).copyTo(it)
-                it.flush()
+            file.outputStream().use { output ->
+                App.ctx.contentResolver.openInputStream(value).use { input ->
+                    input.copyTo(output)
+                }
+                output.flush()
             }
 
             backField = getValue(thisRef, property)

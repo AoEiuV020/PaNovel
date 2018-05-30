@@ -8,9 +8,9 @@ import cc.aoeiuv020.panovel.util.SubPref
  * Created by AoEiuV020 on 2018.05.26-20:36:04.
  */
 
-class Margins(override val name: String, enabled: Boolean,
+class Margins(subName: String, enabled: Boolean,
               left: Int, top: Int, right: Int, bottom: Int
-) : SubPref(ReaderSettings), IMargins {
+) : SubPref(ReaderSettings, subName), IMargins {
     // 保存在App.ctx.packageName + "_ReaderSettings" + "_$name"
     /**
      * 对应的东西是否显示，
