@@ -107,12 +107,10 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         debug {
             "showUpgrading <${from.name} to ${to.name}>"
         }
-        ProgressDialog(ctx).apply {
+        (migratingDialog ?: ProgressDialog(ctx).also { migratingDialog = it }).apply {
             setTitle(getString(R.string.migrating_title))
             setMessage(getString(R.string.migrating_message_placeholder, from.name, to.name, migration.message))
             show()
-        }.also {
-            migratingDialog = it
         }
     }
 

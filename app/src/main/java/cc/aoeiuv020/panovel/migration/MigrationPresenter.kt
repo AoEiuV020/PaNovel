@@ -82,7 +82,11 @@ class MigrationPresenter(
                 }) {
                     // 网站列表的迁移单独处理不影响版本号，直接同步最新支持的所有网站到数据库，
                     // 由于操作了数据库，同时会触发room版本迁移，
-                    SitesMigration().migrate(ctx, cachedVersionName)
+                    val sitesMigration = SitesMigration()
+                    uiThread {
+                        view?.showUpgrading(from = cachedVersionName, migration = sitesMigration)
+                    }
+                    sitesMigration.migrate(ctx, cachedVersionName)
                     // 缓存一开始的版本，迁移完成后展示，
                     val beginVersionName = cachedVersionName
                     list.dropWhile { (versionName, _) ->
@@ -114,7 +118,6 @@ class MigrationPresenter(
                         cachedVersionName = VersionName(versionName)
                         cachedVersion = cachedVersionName.name
                     }
-                    debug { "migrated $currentVersionName" }
                     // 最后缓存当前版本，
                     cachedVersionName = currentVersionName
                     cachedVersion = cachedVersionName.name
