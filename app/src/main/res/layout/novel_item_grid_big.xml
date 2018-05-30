@@ -31,7 +31,7 @@
         android:paddingLeft="1dp"
         android:paddingRight="1dp"
         android:singleLine="true"
-        android:textColor="@android:color/primary_text_dark"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/ivImage"
         app:layout_constraintEnd_toEndOf="@+id/ivImage"
         app:layout_constraintHorizontal_bias="0.0"
