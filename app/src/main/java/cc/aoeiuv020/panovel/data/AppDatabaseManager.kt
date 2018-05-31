@@ -101,6 +101,11 @@ class AppDatabaseManager(context: Context) {
         list.forEach {
             // 导入书单里的小说对象没有id, 要查一下，不存在就插入小说，
             val novel = queryOrNewNovel(it)
+            if (!checkSiteSupport(novel)) {
+                // 网站不在支持列表就不添加，
+                // 基本信息已经写入数据库也无所谓了，
+                return@forEach
+            }
             // 然后再把这小说加入这书单，
             addToBookList(bookListId, novel)
         }
@@ -109,4 +114,6 @@ class AppDatabaseManager(context: Context) {
     fun removeBookshelf(bookList: BookList) = db.bookListDao().removeBookshelf(bookList.nId)
 
     fun addBookshelf(bookList: BookList) = db.bookListDao().addBookshelf(bookList.nId)
+
+    fun checkSiteSupport(novel: Novel) = db.siteDao().checkSiteSupport(novel.site)
 }

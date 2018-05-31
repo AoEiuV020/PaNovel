@@ -24,4 +24,7 @@ abstract class SiteDao {
 
     @Query("select * from Site where name = :name")
     abstract fun query(name: String): Site?
+
+    @Query("select count(*) from Site where name = :name")
+    abstract fun checkSiteSupport(name: String): Boolean
 }

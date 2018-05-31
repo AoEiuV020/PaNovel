@@ -290,13 +290,17 @@ object DataManager : AnkoLogger {
     fun removeBookshelf(bookList: BookList) = app.removeBookshelf(bookList)
     /**
      * 小说导入书架，包含进度，
-     * TODO: 过滤不支持的网站，
      */
     fun importBookshelfWithProgress(list: List<NovelWithProgress>) = app.db.runInTransaction {
         debug { "$list" }
         list.forEach {
             // 查询或插入，得到小说对象，再更新进度，
             val novel = app.queryOrNewNovel(NovelMinimal(it))
+            if (!app.checkSiteSupport(novel)) {
+                // 网站不在支持列表就不添加，
+                // 基本信息已经写入数据库也无所谓了，
+                return@forEach
+            }
             novel.readAtChapterIndex = it.readAtChapterIndex
             novel.readAtTextIndex = it.readAtTextIndex
             // 顺便更新下阅读至的章节名，
