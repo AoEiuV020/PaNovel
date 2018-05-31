@@ -116,4 +116,10 @@ class AppDatabaseManager(context: Context) {
     fun addBookshelf(bookList: BookList) = db.bookListDao().addBookshelf(bookList.nId)
 
     fun checkSiteSupport(novel: Novel) = db.siteDao().checkSiteSupport(novel.site)
+
+    fun cleanBookshelf() = db.novelDao().cleanBookshelf()
+
+    fun cleanBookList() = db.bookListDao().cleanBookList()
+
+    fun cleanHistory() = db.novelDao().cleanHistory()
 }

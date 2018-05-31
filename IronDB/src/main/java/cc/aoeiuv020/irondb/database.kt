@@ -18,6 +18,8 @@ interface Database {
      */
     fun <T> read(key: String, type: Type): T?
 
+    fun drop()
+
     /**
      * @return 返回用于判断指定key是否存在的集合，不可用于读出key,
      */

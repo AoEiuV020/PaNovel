@@ -33,6 +33,10 @@ abstract class NovelContext {
             this.sCacheDir = cacheDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
         }
 
+        fun cleanCache() {
+            sCacheDir?.deleteRecursively()
+        }
+
         /**
          * 非缓存，不会随时被删除，不要放太大的东西，
          */

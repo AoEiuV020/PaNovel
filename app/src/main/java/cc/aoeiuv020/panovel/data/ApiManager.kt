@@ -114,4 +114,8 @@ class ApiManager(ctx: Context) {
     fun getContentUrl(novel: Novel, chapter: NovelChapter): String {
         return context(novel).getNovelContentUrl(chapter.extra)
     }
+
+    fun cleanCache() {
+        NovelContext.cleanCache()
+    }
 }

@@ -61,4 +61,7 @@ abstract class BookListDao {
     @Query("update BookList set name = :name where id = :id")
     abstract fun updateBookListName(id: Long, name: String)
 
+    @Query("delete from BookList")
+    abstract fun cleanBookList()
+
 }

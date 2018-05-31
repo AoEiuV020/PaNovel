@@ -33,6 +33,7 @@ abstract class DefaultExporter : IExporter, AnkoLogger {
                 val count = import(base.resolve(option.name), option)
                 sb.appendln("成功导入$name: <$count>条，")
             } catch (e: Exception) {
+                // 其中一项出异常时继续其他项，
                 error("读取[$name]失败，", e)
             }
         }
@@ -53,6 +54,7 @@ abstract class DefaultExporter : IExporter, AnkoLogger {
                 val count = export(base.resolve(option.name), option)
                 sb.appendln("成功导出$name: <$count>条，")
             } catch (e: Exception) {
+                // 其中一项出异常时继续其他项，
                 error("写入[$name]失败，", e)
             }
         }

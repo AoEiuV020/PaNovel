@@ -52,4 +52,10 @@ abstract class NovelDao {
     // 筛阅读时间，不能是最小值，考虑到时区，无论怎么处理，给个一天的限制没问题，
     @Query("select * from Novel where readTime > 86400000 order by readTime desc limit :count")
     abstract fun history(count: Int): List<Novel>
+
+    @Query("update Novel set bookshelf = 0")
+    abstract fun cleanBookshelf()
+
+    @Query("update Novel set readTime = 0")
+    abstract fun cleanHistory()
 }

@@ -32,6 +32,10 @@ internal class DatabaseImpl(
 
     override fun <T> write(key: String, value: T?, type: Type) {
         val serializedKey = keySerializer.serialize(key)
+        // 以防万一，写入前确保文件夹存在，
+        base.run {
+            exists() || mkdirs()
+        }
         val file = base.resolve(serializedKey)
         // 锁住key,
         keyLocker.runInAcquire(serializedKey) {
@@ -61,6 +65,10 @@ internal class DatabaseImpl(
                 dataSerializer.deserialize(string, type)
             }
         }
+    }
+
+    override fun drop() {
+        base.deleteRecursively()
     }
 
     /**

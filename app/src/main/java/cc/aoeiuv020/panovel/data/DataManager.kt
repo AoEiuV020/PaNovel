@@ -314,4 +314,15 @@ object DataManager : AnkoLogger {
             updateReadStatus(novel)
         }
     }
+
+    fun cleanAllCache() {
+        cache.cleanAll()
+        api.cleanCache()
+    }
+
+    fun cleanBookshelf() = app.cleanBookshelf()
+
+    fun cleanBookList() = app.cleanBookList()
+
+    fun cleanHistory() = app.cleanHistory()
 }

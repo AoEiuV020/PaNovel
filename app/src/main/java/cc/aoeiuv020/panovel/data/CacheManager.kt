@@ -47,6 +47,10 @@ class CacheManager(ctx: Context) {
         return getContentDB(novel).keysContainer()
     }
 
+    fun cleanAll() {
+        root
+    }
+
     companion object {
         const val KEY_NOVEL = "novel"
         const val KEY_CHAPTERS = "chapters"
