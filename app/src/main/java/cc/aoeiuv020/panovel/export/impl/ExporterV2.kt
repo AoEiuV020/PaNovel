@@ -106,14 +106,11 @@ class ExporterV2 : DefaultExporter() {
         return count
     }
 
-    private fun importBookList(folder: File): Int {
-        val list = folder.listFiles()
-        list.forEach { file ->
-            val name = file.name.divide('|').second
-            val novelList = file.readText().toBean<List<NovelMinimal>>()
-            DataManager.importBookList(name, novelList)
-        }
-        return list.size
+    private fun importBookList(folder: File): Int = folder.listFiles().sumBy { file ->
+        val name = file.name.divide('|').second
+        val novelList = file.readText().toBean<List<NovelMinimal>>()
+        DataManager.importBookList(name, novelList)
+        novelList.size
     }
 
     private fun importBookshelf(file: File): Int {
@@ -143,16 +140,14 @@ class ExporterV2 : DefaultExporter() {
     // 书单分多个文件导出，一个书单一个文件，
     private fun exportBookList(folder: File): Int {
         folder.mkdirs()
-        val list = DataManager.allBookList()
-        list.forEach { bookList ->
+        return DataManager.allBookList().sumBy { bookList ->
             // 书单名允许重复，所以拼接上id，
             val fileName = "${bookList.id}|${bookList.name}"
             // 只取小说必须的几个参数，相关数据类不能被混淆，
             val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
             folder.resolve(fileName).writeText(novelList.toJson())
+            novelList.size
         }
-        // TODO: 改成小说数，
-        return list.size
     }
 
     // 设置分多个文件导出，

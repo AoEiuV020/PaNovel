@@ -41,7 +41,7 @@ open class NovelListAdapter(
     private val dotColor = ListSettings.dotColor
     private val dotSize = ListSettings.dotSize
 
-    // TODO: 要支持多种视图，
+    // TODO: 改了视图设置后viewHolder复用会出问题，比如格式视图结果itemView还是列表的，
     @LayoutRes
     private val layout: Int = when {
         ListSettings.gridView && ListSettings.largeView -> R.layout.novel_item_grid_big
