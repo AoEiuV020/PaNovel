@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.export.impl
 
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.export.ExportOption
 import cc.aoeiuv020.panovel.export.ExportOption.*
 import cc.aoeiuv020.panovel.settings.GeneralSettings
@@ -26,9 +27,23 @@ class ExporterV2 : DefaultExporter() {
         debug { "export $option to $file" }
         return when (option) {
             Bookshelf -> TODO()
-            BookList -> TODO()
+            BookList -> exportBookList(file)
             Settings -> exportSettings(file)
         }
+    }
+
+    // 书单分多个文件导出，一个书单一个文件，
+    private fun exportBookList(folder: File): Int {
+        folder.mkdirs()
+        val list = DataManager.allBookList()
+        list.forEach { bookList ->
+            // 书单名允许重复，所以拼接上id，
+            val fileName = "${bookList.id}|${bookList.name}"
+            // 只取小说必须的几个参数，相关数据类不能被混淆，
+            val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
+            folder.resolve(fileName).writeText(novelList.toJson())
+        }
+        return list.size
     }
 
     // 设置分多个文件导出，
@@ -44,6 +59,7 @@ class ExporterV2 : DefaultExporter() {
                 ReaderSettings.paginationMargins,
                 ReaderSettings.timeMargins
         ).sumBy { pref ->
+            // 直接从sp读map, 不受几个Settings混淆影响，
             pref.sharedPreferences.all.also {
                 folder.resolve(pref.name).writeText(it.toJson())
             }.size

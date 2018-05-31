@@ -76,7 +76,10 @@ class AppDatabaseManager(context: Context) {
             db.bookListDao().deleteItem(BookListItem(bookListId = bookListId, novelId = novel.nId))
 
     fun getNovelFromBookList(bookListId: Long): List<Novel> =
-            db.bookListDao().queryBook(bookListId)
+            db.bookListDao().queryNovel(bookListId)
+
+    fun getNovelMinimalFromBookList(bookListId: Long): List<NovelMinimal> =
+            db.bookListDao().queryNovelMinimal(bookListId)
 
     fun allBookList(): List<BookList> = db.bookListDao().list()
     fun renameBookList(bookList: BookList, name: String) =

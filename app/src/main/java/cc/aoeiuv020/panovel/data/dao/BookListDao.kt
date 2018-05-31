@@ -4,6 +4,7 @@ import android.arch.persistence.room.*
 import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.data.entity.BookListItem
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 
 /**
  * Created by AoEiuV020 on 2018.05.24-16:27:43.
@@ -12,7 +13,10 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 abstract class BookListDao {
 
     @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId")
-    abstract fun queryBook(bookListId: Long): List<Novel>
+    abstract fun queryNovel(bookListId: Long): List<Novel>
+
+    @Query("select Novel.site, Novel.author, Novel.name, Novel.detail  from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId")
+    abstract fun queryNovelMinimal(bookListId: Long): List<NovelMinimal>
 
     @Query("update Novel set bookshelf = 0 where id in (select novelId from BookListItem where bookListId = :bookListId)")
     abstract fun removeBookshelf(bookListId: Long)

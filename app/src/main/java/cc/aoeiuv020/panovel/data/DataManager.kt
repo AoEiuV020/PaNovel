@@ -274,6 +274,7 @@ object DataManager : AnkoLogger {
     fun removeFromBookList(bookListId: Long, novel: Novel) = app.removeFromBookList(bookListId, novel)
 
     fun getNovelFromBookList(bookListId: Long): List<Novel> = app.getNovelFromBookList(bookListId)
+    fun getNovelMinimalFromBookList(bookListId: Long): List<NovelMinimal> = app.getNovelMinimalFromBookList(bookListId)
     fun allBookList() = app.allBookList()
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)
     fun removeBookList(bookList: BookList) = app.removeBookList(bookList)
