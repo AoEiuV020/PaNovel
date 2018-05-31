@@ -41,7 +41,7 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
     }
 
     override fun uploadUpdate(novel: Novel): Boolean {
-        logger.debug { "uploadUpdate ${novel.requesterExtra}: ${novel.updateTime}" }
+        logger.debug { "uploadUpdate <${novel.run { "$site.$author.$name" }}>" }
         return post(serverAddress.updateUploadUrl, novel)
     }
 
