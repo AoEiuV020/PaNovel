@@ -22,6 +22,8 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
     init {
         // 初始化这个负责上传更新的，
         UpdateManager.create(ctx)
+        // 初始化，其中有用到Handler，要在主线程初始化，
+        TagAliasOperatorHelper.getInstance()
     }
 
     private val subscriptBookshelfReceiver = JPushTagReceiver()
@@ -34,8 +36,6 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
             JPushTagReceiver.unregister(App.ctx, subscriptBookshelfReceiver)
         }
         JPushTagReceiver.register(App.ctx, subscriptBookshelfReceiver)
-        // 初始化，其中有用到Handler，要在主线程初始化，
-        TagAliasOperatorHelper.getInstance()
         doAsync {
             val bean = TagAliasBean()
             bean.action = TagAliasOperatorHelper.ACTION_SET

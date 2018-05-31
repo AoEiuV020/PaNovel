@@ -13,6 +13,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
+import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 
 /**
  * 封装多个数据库的联用，
@@ -70,6 +71,9 @@ object DataManager : AnkoLogger {
         return list
     }
 
+    /**
+     * 询问服务器是否有更新，
+     */
     fun askUpdate(novel: Novel) {
         debug { "askUpdate: <${novel.run { "$site.$author.$name.$receiveUpdateTime.$checkUpdateTime" }}>" }
         val result = server.askUpdate(novel) ?: return
@@ -86,6 +90,25 @@ object DataManager : AnkoLogger {
                 receiveUpdateTime = maxOf(receiveUpdateTime, result.receiveUpdateTime)
                 checkUpdateTime = maxOf(checkUpdateTime, result.checkUpdateTime)
             }
+        }
+    }
+
+    /**
+     * 收到更新推送, 主动更新一下看看是不是真的有更新，
+     *
+     * @return 返回小说对象，以及是否真的刷出了更新，
+     */
+    fun receiveUpdate(novel: ServerNovel): Pair<Novel, Boolean> {
+        val localNovel = app.queryOrNewNovel(NovelMinimal(novel))
+        return localNovel to if (localNovel.chaptersCount < novel.chaptersCount) {
+            // 章节数更多了表示确实有更新，
+            // 不能太相信推送的数据，一切以本地自己刷新的为准，
+            val oldCount = localNovel.chaptersCount
+            refreshChapters(localNovel)
+            val newCount = localNovel.chaptersCount
+            newCount > oldCount
+        } else {
+            false
         }
     }
 
@@ -356,6 +379,11 @@ object DataManager : AnkoLogger {
 
     fun cleanHistory() = app.cleanHistory()
 
+    /**
+     * 向极光订阅书架上的小说，
+     * 只能异步，所以传入回调，
+     * 回调是收到极光的广播时调用，在ui线程的，
+     */
     fun subscriptBookshelf(callback: (Int) -> Unit) =
             server.subscriptBookshelf(listBookshelf(), callback)
 }

@@ -34,10 +34,9 @@ import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.migration.MigrationPresenter
 import cc.aoeiuv020.panovel.migration.MigrationView
 import cc.aoeiuv020.panovel.open.OpenManager
+import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.server.UpdateManager
-import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
-import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.VersionName
@@ -321,28 +320,18 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     }
 
     private fun subscript() {
-        DataManager.subscriptBookshelf { count ->
-            val message = "成功订阅当前书架<$count>本，"
-            info { message }
-            showMessage(message)
-        }
-        // 初始化，其中有用到Handler，要在主线程初始化，
-        TagAliasOperatorHelper.getInstance()
-        doAsync {
-            val bean = TagAliasBean()
-            bean.action = TagAliasOperatorHelper.ACTION_SET
-            TODO("改成添加书架时就订阅极光，手动订阅时覆盖，")
-/*
-            bean.tags = Bookshelf.list().map {
-                it.requester.run {
-                    Novel().apply {
-                        requesterType = type
-                        requesterExtra = extra
-                    }.md5()
-                }
-            }.toSet()
-            TagAliasOperatorHelper.getInstance().handleAction(this, sequence.getAndIncrement(), bean)
-*/
+        doAsync({ e ->
+            val message = "订阅书架的小说失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            showError(message, e)
+        }) {
+            // 有检索书架列表，所以必须异步，
+            DataManager.subscriptBookshelf { count ->
+                val message = "成功订阅当前书架<$count>本，"
+                info { message }
+                showMessage(message)
+            }
         }
     }
 

@@ -170,5 +170,6 @@
     <string name="follow_system">跟随系统</string>
     <string name="automatic">自动</string>
     <string name="keep_screen_on">保持屏幕长亮</string>
+    <string name="notify_has_update_title_placeholder">《%s》有更新</string>
 
 </resources>

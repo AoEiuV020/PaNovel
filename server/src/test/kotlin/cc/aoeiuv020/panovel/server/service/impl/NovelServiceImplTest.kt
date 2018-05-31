@@ -40,8 +40,21 @@ class NovelServiceImplTest {
     }
 
     @Test
+    fun notifyTest() {
+        val novel = Novel().apply {
+            site = "起点中文"
+            author = "圣骑士的传说"
+            name = "修真聊天群"
+            detail = "3602691"
+            chaptersCount = 22222
+            receiveUpdateTime = Date()
+        }
+        assertTrue(service.uploadUpdate(novel))
+    }
+
+    @Test
     fun needRefreshNovelList() {
-        service.needRefreshNovelList(3).forEach { novel ->
+        service.needRefreshNovelList(0).forEach { novel ->
             println("<${novel.run { "$site.$author.$name" }}>")
         }
     }
