@@ -22,6 +22,7 @@ import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
@@ -35,7 +36,6 @@ import cc.aoeiuv020.panovel.migration.MigrationView
 import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.server.UpdateManager
-import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
 import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
 import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
 import cc.aoeiuv020.panovel.settings.GeneralSettings
@@ -54,7 +54,6 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTit
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
 import org.jetbrains.anko.*
-import java.util.concurrent.atomic.AtomicInteger
 
 
 /**
@@ -149,7 +148,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         setSupportActionBar(toolbar)
 
         progressDialog = ProgressDialog(this)
-        JPushTagReceiver.register(this, tagReceiver)
 
         migrationPresenter = MigrationPresenter(this).apply {
             attach(this@MainActivity)
@@ -284,7 +282,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     }
 
     override fun onDestroy() {
-        JPushTagReceiver.unregister(this, tagReceiver)
         ad_view.destroy()
         if (isTaskRoot) {
             UpdateManager.destroy(this)
@@ -325,14 +322,12 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }.show()
     }
 
-    private val sequence: AtomicInteger = AtomicInteger()
-    private val tagReceiver: JPushTagReceiver = JPushTagReceiver.create { jPushMessage, _ ->
-        val message = "成功订阅当前书架<${jPushMessage.tags.size}>本，"
-        info { message }
-        toast(message)
-    }
-
     private fun subscript() {
+        DataManager.subscriptBookshelf { count ->
+            val message = "成功订阅当前书架<$count>本，"
+            info { message }
+            showMessage(message)
+        }
         // 初始化，其中有用到Handler，要在主线程初始化，
         TagAliasOperatorHelper.getInstance()
         doAsync {

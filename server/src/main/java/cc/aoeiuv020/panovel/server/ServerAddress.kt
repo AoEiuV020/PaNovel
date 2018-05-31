@@ -17,7 +17,7 @@ class ServerAddress(
         private const val CONFIG_TEMPLATE = """
 {
     "data": {
-        "updateUploadUrl": "http://#host#/update/upload",
+        "updateUploadUrl": "http://#host#/novel/update",
         "needRefreshNovelListUrl": "http://#host#/novel/needRefreshNovelList",
         "queryUrl": "http://#host#/novel/query",
         "touchUrl": "http://#host#/novel/touch"

@@ -25,6 +25,7 @@ object DataManager : AnkoLogger {
     @SuppressLint("StaticFieldLeak")
     lateinit var cookie: CookieManager
     lateinit var cache: CacheManager
+    lateinit var server: ServerManager
     @Synchronized
     fun init(ctx: Context) {
         if (!::app.isInitialized) {
@@ -38,6 +39,9 @@ object DataManager : AnkoLogger {
         }
         if (!::cache.isInitialized) {
             cache = CacheManager(ctx)
+        }
+        if (!::server.isInitialized) {
+            server = ServerManager(ctx)
         }
     }
 
@@ -325,4 +329,7 @@ object DataManager : AnkoLogger {
     fun cleanBookList() = app.cleanBookList()
 
     fun cleanHistory() = app.cleanHistory()
+
+    fun subscriptBookshelf(callback: (Int) -> Unit) =
+            server.subscriptBookshelf(listBookshelf(), callback)
 }

@@ -41,7 +41,7 @@ class NovelServiceImplTest {
 
     @Test
     fun needRefreshNovelList() {
-        service.needRefreshNovelList(0).forEach { novel ->
+        service.needRefreshNovelList(3).forEach { novel ->
             println("<${novel.run { "$site.$author.$name" }}>")
         }
     }

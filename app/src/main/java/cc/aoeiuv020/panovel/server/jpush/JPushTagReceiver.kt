@@ -5,8 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.support.v4.content.LocalBroadcastManager
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.base.jar.toJson
 import cn.jpush.android.api.JPushMessage
-import com.google.gson.GsonBuilder
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
@@ -14,18 +15,15 @@ import org.jetbrains.anko.error
 /**
  * Created by AoEiuV020 on 2018.04.17-12:17:54.
  */
-class JPushTagReceiver(
-        private val callback: (JPushMessage, TagAliasBean) -> Unit
-) : BroadcastReceiver(), AnkoLogger {
+class JPushTagReceiver : BroadcastReceiver(), AnkoLogger {
     companion object {
         private const val EXTRA_TAG_ALIAS_BEAN = "tagAliasBean"
         private const val EXTRA_MESSAGE = "jPushMessage"
         private const val ACTION_TAG = "actionTag"
-        private val gson = GsonBuilder().create()
         fun send(context: Context, jPushMessage: JPushMessage, tagAliasBean: TagAliasBean) {
             val intent = Intent(ACTION_TAG).apply {
-                val tagAliasBeanString = gson.toJson(tagAliasBean)
-                val jPushMessageString = gson.toJson(jPushMessage)
+                val tagAliasBeanString = tagAliasBean.toJson()
+                val jPushMessageString = jPushMessage.toJson()
                 putExtra(EXTRA_TAG_ALIAS_BEAN, tagAliasBeanString)
                 putExtra(EXTRA_MESSAGE, jPushMessageString)
             }
@@ -44,19 +42,25 @@ class JPushTagReceiver(
         }
 
         fun create(callback: (JPushMessage, TagAliasBean) -> Unit): JPushTagReceiver {
-            return JPushTagReceiver(callback)
+            return JPushTagReceiver().also {
+                it.callback = callback
+            }
         }
     }
+
+    lateinit var callback: (JPushMessage, TagAliasBean) -> Unit
 
     override fun onReceive(context: Context, intent: Intent) {
         val tagAliasBeanString = intent.getStringExtra(EXTRA_TAG_ALIAS_BEAN) ?: return
         val messageString = intent.getStringExtra(EXTRA_MESSAGE) ?: return
         try {
-            val tagAliasBean = gson.fromJson(tagAliasBeanString, TagAliasBean::class.java)
-            val jPushMessage = gson.fromJson(messageString, JPushMessage::class.java)
+            val tagAliasBean = tagAliasBeanString.toBean<TagAliasBean>()
+            val jPushMessage = messageString.toBean<JPushMessage>()
             debug { "receive: $tagAliasBean" }
             debug { "message: $jPushMessage" }
-            callback(jPushMessage, tagAliasBean)
+            if (::callback.isInitialized) {
+                callback(jPushMessage, tagAliasBean)
+            }
         } catch (e: Exception) {
             error("解析失败，", e)
             return
