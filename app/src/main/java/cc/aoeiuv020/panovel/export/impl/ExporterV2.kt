@@ -48,6 +48,7 @@ class ExporterV2 : DefaultExporter() {
                 folder.resolve(pref.name).writeText(it.toJson())
             }.size
         }
+        // 导出背景图片，
         val backgroundImage = ReaderSettings.backgroundImage
         if (backgroundImage != null) {
             folder.resolve("backgroundImage").outputStream().use { output ->
@@ -58,6 +59,7 @@ class ExporterV2 : DefaultExporter() {
             }
             count++
         }
+        // 导出字体，
         val font = ReaderSettings.font
         if (font != null) {
             folder.resolve("font").outputStream().use { output ->
