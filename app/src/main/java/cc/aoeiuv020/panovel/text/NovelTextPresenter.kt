@@ -74,7 +74,14 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             }
             // 同时启动多个线程下载，
             repeat(threadsLimit) {
-                view?.doAsync {
+                view?.doAsync({ e ->
+                    val message = "线程下载失败，"
+                    Reporter.post(message, e)
+                    error(message, e)
+                    view?.runOnUiThread {
+                        view?.showError(message, e)
+                    }
+                }) {
                     // 每次循环最后再获取，
                     var index = nextIndex.getAndIncrement()
                     // 如果presenter已经detach说明离开了这个页面，不继续下载，
