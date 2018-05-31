@@ -133,6 +133,7 @@ class NovelViewHolder(itemView: View,
 
     fun apply(novel: Novel, refreshTime: Date) {
         apply(novel)
+
         // 用tag防止复用vh导致异步冲突，
         // 如果没开始刷新或者刷新结束，tag会是null,
         // 如果刷新结束前vh被复用，tag就是非空且不等于当前novel,
@@ -141,7 +142,8 @@ class NovelViewHolder(itemView: View,
             itemView.tag === novel -> refreshing()
         // 手动刷新后需要联网更新，
             refreshTime > novel.checkUpdateTime -> refresh()
-            else -> refreshed(novel)
+        // 询问服务器是否有更新，
+            else -> askUpdate()
         }
     }
 
@@ -198,6 +200,16 @@ class NovelViewHolder(itemView: View,
         }
         itemView.tag = novel
         itemListener.requireRefresh(this)
+    }
+
+    /**
+     * 询问服务器是否有更新，
+     */
+    private fun askUpdate() {
+        debug { "askUpdate ${name?.text}" }
+        refreshing()
+        itemView.tag = novel
+        itemListener.askUpdate(this)
     }
 
     /**

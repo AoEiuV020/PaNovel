@@ -176,8 +176,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
 
         if (isTaskRoot) {
-            // 只在第一个activity初始化这个负责上传更新的，
-            UpdateManager.create(this)
         } else {
             // 避免多开，
             // 初始化完了再退出，否则可能崩溃，

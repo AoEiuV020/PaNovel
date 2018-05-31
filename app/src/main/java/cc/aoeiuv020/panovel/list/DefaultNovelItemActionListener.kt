@@ -127,6 +127,24 @@ class DefaultNovelItemActionListener(
         }
     }
 
+    override fun askUpdate(vh: NovelViewHolder) {
+        doAsync({ e ->
+            val message = "询问服务器是否有更新小说《${vh.novel.name}》失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            vh.ctx.runOnUiThread {
+                // 失败也停止显示正在刷新，
+                vh.refreshed(vh.novel)
+                onError(message, e)
+            }
+        }) {
+            DataManager.askUpdate(vh.novel)
+            uiThread {
+                vh.refreshed(vh.novel)
+            }
+        }
+    }
+
     private fun pinned(vh: NovelViewHolder) {
         doAsync({ e ->
             val message = "置顶小说《${vh.novel.name}》失败，"

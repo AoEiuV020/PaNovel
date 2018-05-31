@@ -10,6 +10,7 @@ fun Novel.toServer() = ServerNovel().also { sn ->
     sn.site = site
     sn.author = author
     sn.name = name
+    sn.detail = detail
     sn.chaptersCount = chaptersCount
     sn.receiveUpdateTime = receiveUpdateTime
     sn.checkUpdateTime = checkUpdateTime

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
+import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
@@ -61,6 +62,25 @@ object DataManager : AnkoLogger {
         )
         cache.saveChapters(novel, list)
         return list
+    }
+
+    fun askUpdate(novel: Novel) {
+        debug { "askUpdate: <${novel.run { "$site.$author.$name.$receiveUpdateTime.$checkUpdateTime" }}>" }
+        val result = server.askUpdate(novel) ?: return
+        debug { "result: <${result.toJson()}}>" }
+        if (result.chaptersCount ?: 0 > novel.chaptersCount) {
+            debug { "has update ${result.chaptersCount} > ${novel.chaptersCount}" }
+            // 如果有更新，也就是章节数比本地的多，就刷新章节列表，
+            requestChapters(novel)
+        } else {
+            debug { "no update ${result.chaptersCount} <= ${novel.chaptersCount}" }
+            // 如果没更新，就保存服务器上的更新时间，如果更大的话，
+            novel.apply {
+                // 确实收到更新的时间也改了，如果是有更新但不是新章节更新，也一样刷新这个时间，
+                receiveUpdateTime = maxOf(receiveUpdateTime, result.receiveUpdateTime)
+                checkUpdateTime = maxOf(checkUpdateTime, result.checkUpdateTime)
+            }
+        }
     }
 
     fun requestChapters(novel: Novel): List<NovelChapter> {

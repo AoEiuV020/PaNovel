@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.data
 import android.content.Context
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.server.UpdateManager
 import cc.aoeiuv020.panovel.server.common.md5
 import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
 import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
@@ -17,6 +18,11 @@ import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
  */
 class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
     private val sequence: AtomicInteger = AtomicInteger()
+
+    init {
+        // 初始化这个负责上传更新的，
+        UpdateManager.create(ctx)
+    }
 
     private val subscriptBookshelfReceiver = JPushTagReceiver()
     fun subscriptBookshelf(list: List<Novel>, callback: (Int) -> Unit) {
@@ -40,4 +46,6 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
         }
 
     }
+
+    fun askUpdate(novel: Novel): ServerNovel? = UpdateManager.query(novel.toServer())
 }

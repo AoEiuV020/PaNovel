@@ -1,12 +1,15 @@
 package cc.aoeiuv020.panovel.server
 
 import android.content.Context
+import android.util.Log
+import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.error
+import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
+import cc.aoeiuv020.panovel.util.VersionName
+import cc.aoeiuv020.panovel.util.VersionUtil
+import org.jetbrains.anko.*
 
 /**
  *
@@ -75,23 +78,19 @@ object UpdateManager : AnkoLogger {
 */
     }
 
-/*
-    fun query(requester: Requester): Novel? {
-        debug { "query ：${requester.extra}" }
+    fun query(novel: Novel): Novel? {
+        debug { "query ：<${novel.run { "$site.$author.$name" }}>" }
         val service = novelService ?: return null
         return try {
-            val novel = Novel().also {
-                it.requesterType = requester.type
-                it.requesterExtra = requester.extra
-            }
             service.query(novel)
         } catch (e: Exception) {
-            error("查询失败，", e)
+            val message = "查询小说<${novel.run { "$site.$author.$name" }}>失败，"
+            error(message, e)
+            Reporter.post(message, e)
             null
         }
 
     }
-*/
 
 /*
     fun touch(requester: Requester, chaptersCount: Int, updateTime: Date? = null) {
@@ -144,30 +143,35 @@ object UpdateManager : AnkoLogger {
 
     fun create(context: Context) {
         debug { "create ${context.javaClass}" }
-/*
+        // 如果已经初始化过就直接返回，
         novelService?.let { return }
-        Observable.fromCallable {
-            if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
-                debug { "debug mode," }
-                ServerAddress.getAndroidTest()
-            } else {
-                ServerAddress.getOnline()
-            }
-        }.async().subscribe({
-            debug { "ServerAddress ${it.minVersion}: ${it.data}" }
-            val currentVersionName = VersionUtil.getAppVersionName(context)
-            if (VersionUtil.compare(it.minVersion, currentVersionName) > 0) {
-                warn { "minVersion(${it.minVersion}) > currentVersion($currentVersionName)" }
-            } else {
-                novelService = NovelServiceImpl(it)
-            }
-        }, { e ->
-            error("获取服务器信息失败, 尝试默认，", e)
+        // 调试模式直接初始化，
+        if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
+            debug { "debug mode," }
+            novelService = NovelServiceImpl(ServerAddress.getAndroidTest())
+            return
+        }
+        doAsync({ e ->
+            val message = "获取服务器信息失败, 尝试默认，"
+            Reporter.post(message, e)
+            error(message, e)
             novelService = NovelServiceImpl(ServerAddress())
-        })
-*/
+        }) {
+            // 从github拿服务器地址，这样可以随时改，至少最低版本需要修改，以达到让用户手中的app过期，不连接服务器，
+            val address = ServerAddress.getOnline()
+            debug { "ServerAddress ${address.minVersion}: ${address.data}" }
+            val currentVersionName = VersionUtil.getAppVersionName(context)
+            if (VersionName(address.minVersion) > VersionName(currentVersionName)) {
+                // 版本低于要求的，就直接返回，不初始化novelService, 也就拒绝所有服务器请求，
+                warn { "minVersion(${address.minVersion}) > currentVersion($currentVersionName)" }
+            } else {
+                novelService = NovelServiceImpl(address)
+            }
+        }
     }
 
+    // 回收novelService以便下次重新获取，否则可能这个UpdateManager一直留在内存，唔，真的有必要么，
+    // 不用了，
     fun destroy(context: Context) {
         debug { "destroy ${context.javaClass}" }
         novelService = null
