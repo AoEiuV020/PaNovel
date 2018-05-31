@@ -48,4 +48,5 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
     }
 
     fun askUpdate(novel: Novel): ServerNovel? = UpdateManager.query(novel.toServer())
+    fun touchUpdate(novel: Novel) = UpdateManager.touch(novel.toServer())
 }

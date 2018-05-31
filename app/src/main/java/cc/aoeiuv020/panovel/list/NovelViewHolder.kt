@@ -132,6 +132,7 @@ class NovelViewHolder(itemView: View,
     }
 
     fun apply(novel: Novel, refreshTime: Date) {
+        debug { "apply <${novel.run { "$site.$author.$name.$checkUpdateTime" }}>, refreshTime = $refreshTime" }
         apply(novel)
 
         // 用tag防止复用vh导致异步冲突，

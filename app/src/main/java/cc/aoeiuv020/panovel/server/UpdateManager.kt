@@ -92,34 +92,18 @@ object UpdateManager : AnkoLogger {
 
     }
 
-/*
-    fun touch(requester: Requester, chaptersCount: Int, updateTime: Date? = null) {
-        debug { "touch ：${requester.extra}" }
+    fun touch(novel: Novel) {
+        debug { "touch ：<${novel.run { "$site.$author.$name" }}>" }
         novelService ?: return
-        ctx.doAsync({ e ->
-            val message = "更新通知解析失败,"
+        doAsync({ e ->
+            val message = "上传无更新失败,"
             Reporter.post(message, e)
             error(message, e)
         }) {
-
+            val result = novelService?.touch(novel)
+            debug { "上传<${novel.run { "$site.$author.$name" }}>更新返回: $result" }
         }
-        Observable.fromCallable {
-            val novel = Novel().also {
-                it.requesterType = requester.type
-                it.requesterExtra = requester.extra
-                it.chaptersCount = chaptersCount
-                it.updateTime = updateTime
-                it.modifyTime = Date()
-            }
-            novelService?.touch(novel) ?: false
-        }.async().subscribe({
-            debug { "上传无更新返回 $it: ${requester.extra}" }
-        }, { e ->
-            error("上传无更新失败，", e)
-        })
-
     }
-*/
 
 /*
     fun uploadUpdate(requester: Requester, chaptersCount: Int, updateTime: Date? = null) {

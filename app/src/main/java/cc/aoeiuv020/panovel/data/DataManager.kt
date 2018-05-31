@@ -54,6 +54,11 @@ object DataManager : AnkoLogger {
         // 确保存在详情页信息，
         requireNovelDetail(novel)
         val list = api.requestNovelChapters(novel)
+        if (novel.readAtChapterName.isBlank()) {
+            // 如果数据库中没有阅读进度章节，说明没阅读过，直接存第一章名字，
+            // 也可能是导入的进度，所以不能直接写0, 要用readAtChapterIndex，
+            novel.readAtChapterName = list.getOrNull(novel.readAtChapterIndex)?.name ?: ""
+        }
         // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
         app.updateChapters(
                 novel.nId, novel.chaptersCount,
@@ -61,6 +66,7 @@ object DataManager : AnkoLogger {
                 novel.updateTime, novel.checkUpdateTime, novel.receiveUpdateTime
         )
         cache.saveChapters(novel, list)
+        server.touchUpdate(novel)
         return list
     }
 
@@ -71,7 +77,7 @@ object DataManager : AnkoLogger {
         if (result.chaptersCount ?: 0 > novel.chaptersCount) {
             debug { "has update ${result.chaptersCount} > ${novel.chaptersCount}" }
             // 如果有更新，也就是章节数比本地的多，就刷新章节列表，
-            requestChapters(novel)
+            refreshChapters(novel)
         } else {
             debug { "no update ${result.chaptersCount} <= ${novel.chaptersCount}" }
             // 如果没更新，就保存服务器上的更新时间，如果更大的话，
