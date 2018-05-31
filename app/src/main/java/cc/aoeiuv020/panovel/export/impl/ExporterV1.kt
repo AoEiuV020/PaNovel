@@ -4,8 +4,8 @@ import cc.aoeiuv020.base.jar.get
 import cc.aoeiuv020.base.jar.jsonPath
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
+import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.export.ExportOption
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
@@ -29,7 +29,7 @@ class ExporterV1 : DefaultExporter(), AnkoLogger {
             ExportOption.Bookshelf -> {
                 val list = file.readText().jsonPath.get<JsonArray>().map {
                     it.jsonPath.run {
-                        Novel(site = get("$.item.site"),
+                        NovelWithProgress(site = get("$.item.site"),
                                 author = get("$.item.author"),
                                 name = get("$.item.name"),
                                 detail = get("$.item.requester.extra"),

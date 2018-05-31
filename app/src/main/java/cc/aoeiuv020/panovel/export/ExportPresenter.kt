@@ -79,7 +79,7 @@ class ExportPresenter : Presenter<ExportActivity>(), AnkoLogger {
             error(message, e)
             Reporter.post(message, e)
             view?.runOnUiThread {
-                view?.showError("寻找路径失败，", e)
+                view?.showError(message, e)
             }
         }) {
             val uri: Uri = view?.getSelectPath() ?: return@doAsync
@@ -111,7 +111,7 @@ class ExportPresenter : Presenter<ExportActivity>(), AnkoLogger {
             val message = "导出失败，"
             error(message, e)
             view?.runOnUiThread {
-                view?.showError("寻找路径失败，", e)
+                view?.showError(message, e)
             }
         }) {
             val uri: Uri = view?.getSelectPath() ?: return@doAsync

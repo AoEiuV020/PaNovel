@@ -12,7 +12,7 @@ package cc.aoeiuv020.base.jar
 fun String.divide(ch: Char): Pair<String, String> {
     val dividerIndex = this.indexOf(ch).also {
         if (it == -1) {
-            throw IllegalStateException("Requester不合法，没有分隔符'|'，")
+            throw IllegalStateException("Requester不合法，没有分隔符'$ch'，")
         }
     }
     val first = this.substring(0, dividerIndex)

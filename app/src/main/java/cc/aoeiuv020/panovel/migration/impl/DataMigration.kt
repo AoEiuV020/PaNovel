@@ -5,8 +5,8 @@ import cc.aoeiuv020.base.jar.get
 import cc.aoeiuv020.base.jar.jsonPath
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
+import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.settings.*
 import cc.aoeiuv020.panovel.util.VersionName
@@ -102,7 +102,7 @@ class DataMigration : Migration(), AnkoLogger {
         val progress = base.resolve("Progress")
         val list = base.resolve("Bookshelf").listFiles()?.map {
             val novel = it.readText().jsonPath.run {
-                Novel(site = get("$.site"),
+                NovelWithProgress(site = get("$.site"),
                         author = get("$.author"),
                         name = get("$.name"),
                         detail = get("$.requester.extra"))

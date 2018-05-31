@@ -6,10 +6,7 @@ import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.data.entity.BookList
-import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.data.entity.NovelMinimal
-import cc.aoeiuv020.panovel.data.entity.Site
+import cc.aoeiuv020.panovel.data.entity.*
 import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -293,8 +290,9 @@ object DataManager : AnkoLogger {
     fun removeBookshelf(bookList: BookList) = app.removeBookshelf(bookList)
     /**
      * 小说导入书架，包含进度，
+     * TODO: 过滤不支持的网站，
      */
-    fun importBookshelfWithProgress(list: List<Novel>) = app.db.runInTransaction {
+    fun importBookshelfWithProgress(list: List<NovelWithProgress>) = app.db.runInTransaction {
         debug { "$list" }
         list.forEach {
             // 查询或插入，得到小说对象，再更新进度，

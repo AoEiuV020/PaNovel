@@ -1,8 +1,12 @@
 package cc.aoeiuv020.panovel.export.impl
 
+import android.net.Uri
+import cc.aoeiuv020.base.jar.divide
+import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.export.ExportOption
 import cc.aoeiuv020.panovel.export.ExportOption.*
@@ -11,6 +15,7 @@ import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.settings.OtherSettings
 import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.util.Pref
+import com.google.gson.JsonElement
 import org.jetbrains.anko.debug
 import java.io.File
 
@@ -20,8 +25,101 @@ import java.io.File
 class ExporterV2 : DefaultExporter() {
     override fun import(file: File, option: ExportOption): Int {
         debug { "import $option from $file" }
-        return 0
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return when (option) {
+            Bookshelf -> importBookshelf(file)
+            BookList -> importBookList(file)
+            Settings -> importSettings(file)
+        }
+    }
+
+    private fun importSettings(folder: File): Int {
+        val list = folder.listFiles()
+        return list.sumBy { file ->
+            when (file.name) {
+                "General" -> importPref(GeneralSettings, file)
+                "List" -> importPref(ListSettings, file)
+                "Other" -> importPref(OtherSettings, file)
+                "Reader" -> importPref(ReaderSettings, file)
+                "Reader_BatteryMargins" -> importPref(ReaderSettings.batteryMargins, file)
+                "Reader_BookNameMargins" -> importPref(ReaderSettings.bookNameMargins, file)
+                "Reader_ChapterNameMargins" -> importPref(ReaderSettings.chapterNameMargins, file)
+                "Reader_ContentMargins" -> importPref(ReaderSettings.contentMargins, file)
+                "Reader_PaginationMargins" -> importPref(ReaderSettings.paginationMargins, file)
+                "Reader_TimeMargins" -> importPref(ReaderSettings.timeMargins, file)
+                "backgroundImage" -> 1.also { ReaderSettings.backgroundImage = Uri.fromFile(file) }
+                "font" -> 1.also { ReaderSettings.font = Uri.fromFile(file) }
+                else -> 0
+            }
+        }
+    }
+
+    private fun importPref(pref: Pref, file: File): Int {
+        val editor = pref.sharedPreferences.edit()
+        var count = 0
+        file.readText().toBean<Map<String, JsonElement>>().forEach { (key, value) ->
+            when (key) {
+                "animationMode" -> editor.putString(key, value.asString)
+                "shareExpiration" -> editor.putString(key, value.asString)
+                "onCheckUpdateClick" -> editor.putString(key, value.asString)
+                "onDotClick" -> editor.putString(key, value.asString)
+                "onDotLongClick" -> editor.putString(key, value.asString)
+                "onItemClick" -> editor.putString(key, value.asString)
+                "onItemLongClick" -> editor.putString(key, value.asString)
+                "onLastChapterClick" -> editor.putString(key, value.asString)
+                "onNameClick" -> editor.putString(key, value.asString)
+                "onNameLongClick" -> editor.putString(key, value.asString)
+                "adEnabled" -> editor.putBoolean(key, value.asBoolean)
+                "backPressOutOfFullScreen" -> editor.putBoolean(key, value.asBoolean)
+                "fullScreenClickNextPage" -> editor.putBoolean(key, value.asBoolean)
+                "gridView" -> editor.putBoolean(key, value.asBoolean)
+                "largeView" -> editor.putBoolean(key, value.asBoolean)
+                "reportCrash" -> editor.putBoolean(key, value.asBoolean)
+                "volumeKeyScroll" -> editor.putBoolean(key, value.asBoolean)
+                "animationSpeed" -> editor.putFloat(key, value.asFloat)
+                "centerPercent" -> editor.putFloat(key, value.asFloat)
+                "dotSize" -> editor.putFloat(key, value.asFloat)
+                "autoRefreshInterval" -> editor.putInt(key, value.asInt)
+                "backgroundColor" -> editor.putInt(key, value.asInt)
+                "chapterColorCached" -> editor.putInt(key, value.asInt)
+                "chapterColorDefault" -> editor.putInt(key, value.asInt)
+                "chapterColorReadAt" -> editor.putInt(key, value.asInt)
+                "dotColor" -> editor.putInt(key, value.asInt)
+                "downloadThreadsLimit" -> editor.putInt(key, value.asInt)
+                "fullScreenDelay" -> editor.putInt(key, value.asInt)
+                "historyCount" -> editor.putInt(key, value.asInt)
+                "lineSpacing" -> editor.putInt(key, value.asInt)
+                "messageSize" -> editor.putInt(key, value.asInt)
+                "paragraphSpacing" -> editor.putInt(key, value.asInt)
+                "textColor" -> editor.putInt(key, value.asInt)
+                "textSize" -> editor.putInt(key, value.asInt)
+                "dateFormat" -> editor.putString(key, value.asString)
+                "enabled" -> editor.putBoolean(key, value.asBoolean)
+                "bottom" -> editor.putInt(key, value.asInt)
+                "left" -> editor.putInt(key, value.asInt)
+                "right" -> editor.putInt(key, value.asInt)
+                "top" -> editor.putInt(key, value.asInt)
+                else -> --count
+            }
+            ++count
+        }
+        editor.apply()
+        return count
+    }
+
+    private fun importBookList(folder: File): Int {
+        val list = folder.listFiles()
+        list.forEach { file ->
+            val name = file.name.divide('|').second
+            val novelList = file.readText().toBean<List<NovelMinimal>>()
+            DataManager.importBookList(name, novelList)
+        }
+        return list.size
+    }
+
+    private fun importBookshelf(file: File): Int {
+        val list = file.readText().toBean<List<NovelWithProgress>>()
+        DataManager.importBookshelfWithProgress(list)
+        return list.size
     }
 
     override fun export(file: File, option: ExportOption): Int {
@@ -53,6 +151,7 @@ class ExporterV2 : DefaultExporter() {
             val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
             folder.resolve(fileName).writeText(novelList.toJson())
         }
+        // TODO: 改成小说数，
         return list.size
     }
 
