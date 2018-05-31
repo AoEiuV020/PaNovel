@@ -7,12 +7,10 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.export.ExportOption
-import cc.aoeiuv020.panovel.settings.GeneralSettings
-import cc.aoeiuv020.panovel.settings.ListSettings
-import cc.aoeiuv020.panovel.settings.OtherSettings
-import cc.aoeiuv020.panovel.settings.ReaderSettings
+import cc.aoeiuv020.panovel.settings.*
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
@@ -105,6 +103,19 @@ class ExporterV1 : DefaultExporter(), AnkoLogger {
                 }
                 count
             }
+        }
+    }
+
+    fun Margins.import(json: String) {
+        val map = mapOf<String, (JsonElement) -> Unit>(
+                "enabled" to { value -> enabled = value.asBoolean },
+                "left" to { value -> left = value.asInt },
+                "top" to { value -> top = value.asInt },
+                "right" to { value -> right = value.asInt },
+                "bottom" to { value -> bottom = value.asInt }
+        )
+        json.toBean<JsonObject>().entrySet().forEach { (key, value) ->
+            map[key]?.invoke(value)
         }
     }
 }
