@@ -4,6 +4,16 @@
 
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
+        android:defaultValue="-1"
+        android:inputType="number"
+        android:key="brightness"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/brightness" />
+
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
         android:inputType="number"
         android:defaultValue="300"
         android:key="fullScreenDelay"

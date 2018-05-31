@@ -18,6 +18,8 @@ object ReaderSettings : Pref {
     var fullScreenClickNextPage: Boolean by Delegates.boolean(false)
     var volumeKeyScroll: Boolean by Delegates.boolean(true)
     var centerPercent: Float by Delegates.float(0.5f)
+    // 亮度，0-255, 负数代表亮度跟随系统，
+    var brightness: Int by Delegates.int(-1)
     /**
      * 阅读界面点击退出全屏的延迟，
      * 有点延迟看着顺眼点，

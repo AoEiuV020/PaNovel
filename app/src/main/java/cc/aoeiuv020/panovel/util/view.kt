@@ -106,6 +106,7 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
         // 因为取消前可能已经选了颜色，所以要设置一次初始的颜色，
         .setNegativeButton(android.R.string.cancel) { _, _ -> callback(initial) }
         .build().apply {
+            // 去除对话框的灰背景，
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.show()
 
@@ -169,3 +170,19 @@ fun Bundle.toMap(): Map<String, Any?> = BaseBundle::class.java.getDeclaredField(
 // 从保存的状态或者传入的intent中拿String,
 fun Activity.getStringExtra(key: String, savedInstanceState: Bundle? = null): String? = savedInstanceState?.run { getString(key) }
         ?: intent.getStringExtra(key)
+
+fun Activity.setBrightness(brightness: Int) {
+    if (brightness < 0) {
+        setBrightnessFollowSystem()
+    } else {
+        window.attributes = window.attributes.apply {
+            screenBrightness = minOf(255, brightness) / 255f
+        }
+    }
+}
+
+fun Activity.setBrightnessFollowSystem() {
+    window.attributes = window.attributes.apply {
+        screenBrightness = -1f
+    }
+}

@@ -1,6 +1,9 @@
 package cc.aoeiuv020.panovel.text
 
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
 import android.view.View
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
@@ -9,11 +12,10 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.Margins
 import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.text.NovelTextNavigation.Direction.*
-import cc.aoeiuv020.panovel.util.changeColor
-import cc.aoeiuv020.panovel.util.hide
-import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName
+import kotlinx.android.synthetic.main.dialog_seekbar.view.*
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_animation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_default.view.*
@@ -140,7 +142,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
             })
 
             // 设置字体，
-            llFont.setOnClickListener {
+            tvFont.setOnClickListener {
                 view.alert(R.string.select_font) {
                     positiveButton(android.R.string.yes) {
                         view.requestFont()
@@ -152,7 +154,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
             }
 
             // 设置背景图，
-            lBackgroundImage.setOnClickListener {
+            tvBackgroundImage.setOnClickListener {
                 view.requestBackgroundImage()
             }
 
@@ -185,6 +187,47 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
 
             tvAnimation.setOnClickListener {
                 showLayout(mPanelAnimation)
+            }
+
+            // 设置亮度，
+            view.setBrightness(ReaderSettings.brightness)
+            tvBrightness.setOnClickListener {
+                AlertDialog.Builder(view).apply {
+                    setTitle(R.string.brightness)
+                    val layout = View.inflate(view, R.layout.dialog_seekbar, null)
+                    setView(layout)
+                    layout.seekBar.apply {
+                        progress = ReaderSettings.brightness
+                        setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                                // progress 0-255,
+                                view.setBrightness(progress)
+                            }
+
+                            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                            }
+
+                            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                                ReaderSettings.brightness = seekBar.progress
+                            }
+                        })
+                    }
+                    setNeutralButton(R.string.follow_system) { _, _ ->
+                        view.setBrightnessFollowSystem()
+                        // 负数代表亮度跟随系统，
+                        ReaderSettings.brightness = -1
+                    }
+                    // 鬼知道发生了什么，这里简写成lambda就会编译报错，上面的就没问题，
+                    @Suppress("ObjectLiteralToLambda")
+                    val emptyListener = object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                        }
+                    }
+                    setPositiveButton(android.R.string.yes, emptyListener)
+                }.create().apply {
+                    // 去除对话框的灰背景，
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                }.show()
             }
 
         }
