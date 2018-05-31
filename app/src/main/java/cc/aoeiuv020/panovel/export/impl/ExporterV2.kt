@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.export.impl
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.export.ExportOption
 import cc.aoeiuv020.panovel.export.ExportOption.*
 import cc.aoeiuv020.panovel.settings.GeneralSettings
@@ -26,10 +27,19 @@ class ExporterV2 : DefaultExporter() {
     override fun export(file: File, option: ExportOption): Int {
         debug { "export $option to $file" }
         return when (option) {
-            Bookshelf -> TODO()
+            Bookshelf -> exportBookshelf(file)
             BookList -> exportBookList(file)
             Settings -> exportSettings(file)
         }
+    }
+
+    // 书架只导出一个文件，
+    private fun exportBookshelf(file: File): Int {
+        val list = DataManager.listBookshelf().map {
+            NovelWithProgress(it)
+        }
+        file.writeText(list.toJson())
+        return list.size
     }
 
     // 书单分多个文件导出，一个书单一个文件，
