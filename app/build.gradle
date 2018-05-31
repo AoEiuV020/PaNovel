@@ -16,8 +16,8 @@ android {
         setProperty("archivesBaseName", "$rootProject.name-$versionName")
         vectorDrawables.useSupportLibrary = true
         ndk {
-            //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'
+            // 极光只支持这些，
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
         javaCompileOptions {
             annotationProcessorOptions {
@@ -70,6 +70,7 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
     implementation "com.android.support:design:$support_version"
     implementation "com.android.support:cardview-v7:$support_version"
+    implementation "com.android.support:preference-v7:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support:support-v4:$support_version"
     implementation "com.android.support:support-vector-drawable:$support_version"
@@ -81,8 +82,6 @@ dependencies {
     })
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     debugRuntimeOnly "org.slf4j:slf4j-android:$slf4j_version"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
-    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
@@ -90,7 +89,6 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.8.47'
     implementation "com.google.code.gson:gson:$gson_version"
     implementation 'com.github.QuadFlask:colorpicker:0.0.13'
-    implementation project(':RefreshRecyclerView')
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
     implementation project(':api')
     implementation project(':reader')
@@ -103,6 +101,9 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
     implementation 'com.android.support:multidex:1.0.3'
+    implementation project(':IronDB')
+    implementation 'com.github.santalu:aspect-ratio-imageview:1.0.4'
+    implementation "com.jayway.jsonpath:json-path:$json_path_version"
 }
 
 

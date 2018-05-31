@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.santalu.aspectratioimageview.AspectRatioImageView
+        android:id="@+id/ivImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="fitEnd"
+        app:ari_aspect="height"
+        app:ari_ratio="1.334"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_read"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/novel_name_background_dark"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
+        android:singleLine="true"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivImage"
+        app:layout_constraintEnd_toEndOf="@+id/ivImage"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ivImage"
+        tools:ignore="SmallSp"
+        tools:text="小说名" />
+
+    <TextView
+        android:id="@+id/tvLast"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
+        android:singleLine="true"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="@+id/ivImage"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ivImage"
+        app:layout_constraintTop_toBottomOf="@+id/ivImage"
+        tools:ignore="SmallSp"
+        tools:text="最新章节" />
+
+    <FrameLayout
+        android:id="@+id/flDot"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/ivImage"
+        app:layout_constraintTop_toTopOf="@+id/ivImage">
+
+        <cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
+            android:id="@+id/rdRefreshing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvName" />
+
+        <cc.aoeiuv020.panovel.text.CheckableImageView
+            android:id="@+id/ivStar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:tint="@color/colorFavorite"
+            app:srcCompat="@drawable/ic_favorite_selector" />
+    </FrameLayout>
+
+
+</android.support.constraint.ConstraintLayout>

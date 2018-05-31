@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 public final class VersionUtil {
     /**
      * https://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
+     * TODO: 突然发现，直接BuildConfig就可以，
      */
     public static String getAppVersionName(Context context) {
         try {

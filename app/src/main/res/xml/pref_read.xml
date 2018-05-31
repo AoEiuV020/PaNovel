@@ -2,31 +2,36 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:inputType="number"
-        android:key="full_screen_delay"
+        android:defaultValue="300"
+        android:key="fullScreenDelay"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/full_screen_delay" />
 
-    <cc.aoeiuv020.panovel.settings.SwitchPreference
-        android:key="back_press_out_of_fullScreen"
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="backPressOutOfFullScreen"
         android:title="@string/back_press_out_of_fullScreen" />
 
-    <cc.aoeiuv020.panovel.settings.SwitchPreference
-        android:key="volume_key_scroll"
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="volumeKeyScroll"
         android:title="@string/volume_key_scroll" />
 
-    <cc.aoeiuv020.panovel.settings.SwitchPreference
-        android:key="full_screen_click_next_page"
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="fullScreenClickNextPage"
         android:title="@string/full_screen_click_next_page" />
 
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
+    <cc.aoeiuv020.panovel.settings.FloatEditTextPreference
         android:capitalize="words"
-        android:inputType="numberDecimal|numberSigned"
-        android:key="center_percent"
+        android:defaultValue="0.5"
+        android:inputType="numberDecimal"
+        android:key="centerPercent"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -34,25 +39,38 @@
 
     <cc.aoeiuv020.panovel.settings.EditTextPreference
         android:inputType="text"
-        android:key="date_format"
+        android:defaultValue="HH:mm"
+        android:key="dateFormat"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/date_format" />
 
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
+        android:defaultValue="60"
         android:inputType="number"
-        android:key="auto_refresh_interval"
+        android:key="autoRefreshInterval"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="自动刷新间隔(s)" />
+        android:title="@string/auto_refresh_interval" />
 
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
+        android:defaultValue="26"
+        android:inputType="number"
+        android:key="textSize"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/text_size" />
+
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:inputType="number"
-        android:key="message_size"
+        android:defaultValue="12"
+        android:key="messageSize"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -60,55 +78,52 @@
 
     <cc.aoeiuv020.panovel.settings.ListPreference
         android:entries="@array/animation_names"
+        android:defaultValue="SIMULATION"
         android:entryValues="@array/animation_values"
-        android:key="animation_mode"
+        android:key="animationMode"
         android:title="@string/animation" />
 
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
+    <cc.aoeiuv020.panovel.settings.FloatEditTextPreference
         android:capitalize="words"
-        android:inputType="numberDecimal|numberSigned"
-        android:key="animation_speed"
+        android:defaultValue="0.8"
+        android:inputType="numberDecimal"
+        android:key="animationSpeed"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/animation_speed" />
 
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:inputType="number"
-        android:key="text_size"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/text_size" />
-
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
-        android:capitalize="words"
-        android:inputType="number"
-        android:key="line_spacing"
+        android:defaultValue="13"
+        android:key="lineSpacing"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/line_spacing" />
 
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
+        android:defaultValue="0"
         android:inputType="number"
-        android:key="paragraph_spacing"
+        android:key="paragraphSpacing"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/paragraph_spacing" />
 
     <cc.aoeiuv020.panovel.settings.ColorPickerPreference
-        android:key="background_color"
+        android:defaultValue="0xffffe3aa"
         android:title="@string/background_color"
+        android:key="backgroundColor"
         app:alphaSlider="true"
         app:lightnessSlider="true"
         app:wheelType="CIRCLE" />
 
     <cc.aoeiuv020.panovel.settings.ColorPickerPreference
-        android:key="text_color"
+        android:defaultValue="0xff000000"
+        android:key="textColor"
         android:title="@string/text_color"
         app:alphaSlider="true"
         app:lightnessSlider="true"

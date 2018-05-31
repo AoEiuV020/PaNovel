@@ -15,14 +15,19 @@ import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelDetail
-import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
+import cc.aoeiuv020.panovel.settings.Margins
+import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
@@ -38,31 +43,46 @@ import java.io.FileNotFoundException
  */
 class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     companion object {
-        fun start(context: Context, novelItem: NovelItem) {
-            context.startActivity<NovelTextActivity>("novelItem" to novelItem.toJson())
+        fun start(ctx: Context, novel: Novel) {
+            start(ctx, novel.nId)
         }
 
-        fun start(context: Context, novelItem: NovelItem, index: Int) {
-            context.startActivity<NovelTextActivity>("novelItem" to novelItem.toJson(), "index" to index)
+        fun start(ctx: Context, id: Long) {
+            ctx.startActivity<NovelTextActivity>(Novel.KEY_ID to id)
+        }
+
+        fun start(ctx: Context, novel: Novel, index: Int) {
+            ctx.startActivity<NovelTextActivity>(
+                    Novel.KEY_ID to novel.nId,
+                    "index" to index.toJson(App.gson)
+            )
         }
     }
 
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
-    private lateinit var presenter: NovelTextPresenter
-    private lateinit var novelName: String
+    lateinit var presenter: NovelTextPresenter
     private var chaptersAsc: List<NovelChapter> = listOf()
-    private var novelDetail: NovelDetail? = null
-    private lateinit var novelItem: NovelItem
-    private lateinit var progress: NovelProgress
-    private lateinit var navigation: NovelTextNavigation
+    private var navigation: NovelTextNavigation? = null
     private lateinit var reader: INovelReader
+    // 缓存传入的索引，阅读器准备好后跳到这一章，-1表示最后一章，
+    private var index: Int? = null
+    private var _novel: Novel? = null
+    private var novel: Novel
+        get() = _novel.notNull()
+        set(value) {
+            _novel = value
+        }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        _novel ?: return
         outState.apply {
-            putString("novelItem", novelItem.toJson())
-            putString("progress", progress.toJson())
+            // pause时有本地持久化阅读进度，
+            // 不是很清楚要否必要存在state里，
+            // 防止的是android恢复了intent的数据，初始化阅读器时就跳到intent持有的index章节了，
+            // onCreate先读取state里的index，存在就无视intent,
+            putString("index", novel.readAtChapterIndex.toJson(App.gson))
         }
     }
 
@@ -73,38 +93,61 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         alertDialog = AlertDialog.Builder(this).create()
         progressDialog = ProgressDialog(this)
 
-        novelItem = getStringExtra("novelItem", savedInstanceState)?.toBean() ?: run {
-            // 不应该会到这里，
-            // TODO: 这种不应该到的地方都加上bugly上报，
-            toast("奇怪，重新打开试试，")
+        val id = intent?.getLongExtra(cc.aoeiuv020.panovel.data.entity.Novel.KEY_ID, -1L)
+        debug { "receive id: $id" }
+        if (id == null || id == -1L) {
+            Reporter.unreachable()
             finish()
             return
         }
-        // 进度，读取顺序， savedInstanceState > intent > ReadProgress
-        progress = savedInstanceState?.run { getString("progress").toBean<NovelProgress>() }
-                ?: (intent.getSerializableExtra("index") as? Int)?.let { NovelProgress(it) } ?: Progress.load(novelItem)
-        debug { "receive $novelItem, $progress" }
-        val requester = novelItem.requester
-        novelName = novelItem.name
+        title = id.toString()
 
-        urlTextView.text = requester.url
-        urlBar.setOnClickListener {
-            browse(urlTextView.text.toString())
-        }
+        // TODO: 进来时就取消有新章节的通知，cancel notify,
 
-        presenter = NovelTextPresenter(novelItem)
+        // 进度，读取顺序， savedInstanceState > intent > DataManager
+        // intent传入的index，activity死了再开，应该会恢复这个intent, 不能让intent覆盖了死前的阅读进度，
+        // 用getSerializableExtra读Int不需要默认值，
+        index = savedInstanceState?.run { getString("index").toBean<Int>(App.gson) }
+                ?: intent.getStringExtra("index")?.toBean(App.gson)
 
-        initReader()
-
-        navigation = NovelTextNavigation(this, novelItem, nav_view)
+        presenter = NovelTextPresenter(id)
 
         loading(progressDialog, R.string.novel_chapters)
         presenter.attach(this)
+        // 进去后根据id得到小说对象，
+        // 只查询数据库，认为很快，所以不考虑没有小说对象时的用户操作，
         presenter.start()
     }
 
-    private fun initReader() {
-        reader = Readers.getReader(this, Novel(novelItem.name, novelItem.author), flContent, presenter.getRequester(), Settings.makeReaderConfig()).apply {
+    fun showNovel(novel: Novel) {
+        this.novel = novel
+        initReader(novel)
+        navigation = NovelTextNavigation(this, novel, nav_view)
+        try {
+            urlTextView.text = DataManager.getDetailUrl(novel)
+        } catch (e: Exception) {
+            val message = "获取小说《${novel.name}》<${novel.site}, ${novel.detail}>详情页地址失败，"
+            // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
+            Reporter.post(message, e)
+            error(message, e)
+            showError(message, e)
+        }
+        urlBar.setOnClickListener {
+            // urlTextView只显示完整地址，以便点击打开，
+            browse(urlTextView.text.toString())
+        }
+        presenter.requestChapters(novel)
+    }
+
+    private val contentRequester: TextRequester = object : TextRequester {
+        override fun request(index: Int, refresh: Boolean): List<String> {
+            return presenter.requestContent(novel, chaptersAsc[index], refresh)
+        }
+    }
+
+    private fun initReader(novel: Novel) {
+        reader = Readers.getReader(this, novel.name,
+                flContent, contentRequester, ReaderSettings.makeReaderConfig()).apply {
             menuListener = object : MenuListener {
                 override fun hide() {
                     this@NovelTextActivity.hide()
@@ -127,7 +170,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onBackPressed() {
-        if (Settings.backPressOutOfFullScreen && !mVisible) {
+        if (ReaderSettings.backPressOutOfFullScreen && !mVisible) {
             show()
         } else {
             super.onBackPressed()
@@ -136,7 +179,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     override fun show() {
         super.show()
-        navigation.reset(reader.maxTextProgress, reader.textProgress)
+        navigation?.reset(reader.maxTextProgress, reader.textProgress)
     }
 
     fun previousChapter() {
@@ -155,10 +198,14 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         reader.refreshCurrentChapter()
     }
 
+    /**
+     * 切换动画时调用,
+     * 重置阅读器，
+     */
     private fun resetReader() {
         reader.onDestroy()
         flContent.removeAllViews() // 多余，上面已经移除，
-        initReader()
+        initReader(novel)
         showChaptersAsc(chaptersAsc)
     }
 
@@ -213,7 +260,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun resetFont() {
-        Settings.font = null
+        ReaderSettings.font = null
         setFont(null)
     }
 
@@ -223,7 +270,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (requestCode) {
             0 -> data?.data?.let { uri ->
                 try {
-                    Settings.backgroundImage = uri
+                    ReaderSettings.backgroundImage = uri
                     setBackgroundImage(uri)
                 } catch (e: SecurityException) {
                     error("读取背景图失败", e)
@@ -237,8 +284,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
             1 -> data?.data?.let { uri ->
                 try {
-                    Settings.font = uri
-                    setFont(Settings.tfFont)
+                    ReaderSettings.font = uri
+                    setFont(ReaderSettings.tfFont)
                 } catch (e: SecurityException) {
                     error("读取字体失败", e)
                     cacheUri = uri
@@ -256,7 +303,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (requestCode) {
             0 -> cacheUri?.let { uri ->
                 try {
-                    Settings.backgroundImage = uri
+                    ReaderSettings.backgroundImage = uri
                     setBackgroundImage(uri)
                 } catch (e: SecurityException) {
                     error("读取背景图还是失败", e)
@@ -265,8 +312,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
             1 -> cacheUri?.let { uri ->
                 try {
-                    Settings.font = uri
-                    setFont(Settings.tfFont)
+                    ReaderSettings.font = uri
+                    setFont(ReaderSettings.tfFont)
                 } catch (e: SecurityException) {
                     error("读取字体还是失败", e)
                     cacheUri = null
@@ -300,8 +347,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onDestroy() {
-        presenter.detach()
-        reader.onDestroy()
+        if (::presenter.isInitialized) {
+            presenter.detach()
+        }
+        if (::reader.isInitialized) {
+            reader.onDestroy()
+        }
         super.onDestroy()
     }
 
@@ -319,13 +370,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     /**
      * 这个无论是用户翻页切换章节还是其他跳章节都要调用，
+     * 改变界面上显示的内容，
      */
     private fun onChapterSelected(index: Int) {
         debug { "onChapterSelected $index" }
-        progress.chapter = index
+        // 可能重复赋值，但是无所谓了，
+        novel.readAt(index, chaptersAsc)
         val chapter = chaptersAsc[index]
-        title = "$novelName - ${chapter.name}"
-        urlTextView.text = chapter.requester.url
+        title = "${novel.name} - ${chapter.name}"
+        urlTextView.text = DataManager.getContentUrl(novel, chapter)
     }
 
     fun showError(message: String, e: Throwable) {
@@ -334,76 +387,116 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         show()
     }
 
-    fun showDetail(detail: NovelDetail) {
-        this.novelDetail = detail
-        History.add(detail.novel)
-        presenter.requestChapters(detail.requester)
+    /**
+     * 给定id找不到小说也就不用继续了，
+     */
+    fun showNovelNotFound(message: String, e: Throwable) {
+        // 两个参数已经打过日志了，这里就不重复了，
+        toast("小说不存在，")
+        finish()
     }
 
     fun showChaptersAsc(chaptersAsc: List<NovelChapter>) {
         debug { "chapters loaded ${chaptersAsc.size}" }
         this.chaptersAsc = chaptersAsc
-        // 支持跳到倒数第一章，
-        if (progress.chapter == -1) {
-            progress.chapter = chaptersAsc.lastIndex
-        }
-        onChapterSelected(progress.chapter)
-        progressDialog.dismiss()
         if (chaptersAsc.isEmpty()) {
+            // 真有小说空章节的，不知道怎么回事，
+            // https://m.qidian.com/book/2346657
             alert(alertDialog, R.string.novel_not_support)
             // 无法浏览的情况显示状态栏标题栏导航栏，方便离开，
             show()
             return
         }
-        reader.chapterList = chaptersAsc.map { Chapter(it.name) }
-        reader.currentChapter = progress.chapter
-        reader.textProgress = progress.text
+        index?.let {
+            // 以防万一index再被使用，不知道是否必要，
+            index = null
+            // 支持跳到最后一章，
+            val chapterIndex = if (it == -1) {
+                chaptersAsc.lastIndex
+            } else {
+                it
+            }
+            // 如果有传入章节索引，就修改novel里存的阅读进度，
+            novel.readAt(chapterIndex, chaptersAsc)
+            // 章节内进度改成本章开头，
+            novel.readAtTextIndex = 0
+        }
+        onChapterSelected(novel.readAtChapterIndex)
+        progressDialog.dismiss()
+        doAsync({ e ->
+            val message = "处理小说章节列表失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            runOnUiThread {
+                showError(message, e)
+            }
+        }) {
+            val chapterList = chaptersAsc.map { it.name }
+            uiThread {
+                reader.chapterList = chapterList
+                reader.currentChapter = novel.readAtChapterIndex
+                reader.textProgress = novel.readAtTextIndex
+            }
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        // 比如断网，如果没有展示出章节，就直接保存持有的进度，
-        reader.textProgress.let { progress.text = it }
-        debug {
-            "save progress $progress"
-        }
-        Progress.save(novelItem, progress)
+        // 要是没得到小说对象，避免进入后面的保存进度，
+        _novel ?: return
+        // 得到小说novel对象后，进度始终保存在其中，
+        // 这里刷一下数据库就好，
+        presenter.saveReadStatus(novel)
     }
 
     private fun refineSearch() {
-        FuzzySearchActivity.start(this, novelItem)
+        FuzzySearchActivity.start(this, novel)
     }
 
     fun refreshChapterList() {
         loading(progressDialog, R.string.novel_chapters)
         // 保存一下的进度，
-        reader.textProgress.let { progress.text = it }
+        reader.textProgress.let { novel.readAtTextIndex = it }
         presenter.refreshChapterList()
     }
 
     fun detail() {
-        NovelDetailActivity.start(this, novelItem)
+        NovelDetailActivity.start(this, novel)
     }
 
     fun download() {
         val index = reader.currentChapter
         notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
-                , novelItem.name
-                , R.drawable.ic_file_download)
-        presenter.download(index)
+                , novel.name
+                , icon = R.drawable.ic_file_download)
+        presenter.download(novel, index)
     }
 
     fun showContents() {
-        AlertDialog.Builder(this)
-                .setTitle(R.string.contents)
-                .setAdapter(NovelContentsAdapter(this, novelItem, chaptersAsc, progress.chapter)) { _, index ->
-                    selectChapter(index)
-                }.create().apply {
-                    listView.isFastScrollEnabled = true
-                    listView.post {
-                        listView.setSelection(progress.chapter)
-                    }
-                }.show()
+        doAsync({ e ->
+            val message = "加载小说正文缓存列表失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            runOnUiThread {
+                showError(message, e)
+            }
+        }) {
+            // 虽然给了异步，但还是要快，因为没给任何提示，
+            // 查询小说已经缓存的章节列表，
+            val cachedList = DataManager.novelContentsCached(novel)
+            uiThread {
+                AlertDialog.Builder(it)
+                        .setTitle(R.string.contents)
+                        .setAdapter(NovelContentsAdapter(it, novel, chaptersAsc, cachedList)) { _, index ->
+                            selectChapter(index)
+                        }.create().apply {
+                            listView.isFastScrollEnabled = true
+                            listView.post {
+                                listView.setSelection(novel.readAtChapterIndex)
+                            }
+                        }.show()
+            }
+        }
     }
 
     private val handler: Handler = Handler()
@@ -425,8 +518,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
         override fun run() {
             notify(1, getString(R.string.downloading_placeholder, exists, downloads, errors, left)
-                    , novelItem.name
-                    , R.drawable.ic_file_download)
+                    , novel.name
+                    , icon = R.drawable.ic_file_download)
         }
     }
 
@@ -439,11 +532,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     fun showDownloadComplete(exists: Int, downloads: Int, errors: Int) {
         handler.removeCallbacks(downloadingRunnable)
         notify(1, getString(R.string.download_complete_placeholder, exists, downloads, errors)
-                , novelItem.name)
+                , novel.name)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (Settings.volumeKeyScroll) {
+        if (ReaderSettings.volumeKeyScroll) {
             when (keyCode) {
                 KeyEvent.KEYCODE_VOLUME_DOWN -> scrollNext()
                 KeyEvent.KEYCODE_VOLUME_UP -> scrollPrev()
@@ -455,7 +548,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (Settings.volumeKeyScroll) {
+        if (ReaderSettings.volumeKeyScroll) {
             return when (keyCode) {
                 KeyEvent.KEYCODE_VOLUME_DOWN -> true
                 KeyEvent.KEYCODE_VOLUME_UP -> true

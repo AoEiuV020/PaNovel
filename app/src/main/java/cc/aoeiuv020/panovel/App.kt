@@ -4,21 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
+import android.util.Log
+import cc.aoeiuv020.base.jar.gsonJsonPathInit
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.local.PrimarySettings
-import cc.aoeiuv020.panovel.local.Settings
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.util.ignoreException
 import cn.jpush.android.api.JPushInterface
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import io.reactivex.internal.functions.Functions
-import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 
@@ -32,11 +27,13 @@ class App : MultiDexApplication(), AnkoLogger {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var ctx: Context
-        val gsonBuilder: GsonBuilder = GsonBuilder()
+        /**
+         * 用于app不同页面传递数据时的序列化，
+         */
+        val gson: Gson = GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
-                .paNovel()
-        val gson: Gson = gsonBuilder.create()
+                .create()
 
         lateinit var adRequest: AdRequest
     }
@@ -45,9 +42,10 @@ class App : MultiDexApplication(), AnkoLogger {
         super.onCreate()
         ctx = applicationContext
 
-        initDatabase()
+        // 初始化要放在用到JsonPath之前
+        gsonJsonPathInit()
 
-        checkBaseFile()
+        initDataSources()
 
         // android4连接https可能抛SSLHandshakeException，
         // 是tls1.2没有启用，
@@ -59,42 +57,21 @@ class App : MultiDexApplication(), AnkoLogger {
         // https://issuetracker.google.com/issues/37100284
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
-        // 无视RxJava抛的异常，也就是不被捕获调用onError的异常，
-        RxJavaPlugins.setErrorHandler(Functions.emptyConsumer())
-
         initAdmob()
 
         initReporter()
 
-        if (Settings.subscribeNovelUpdate) {
-            initJpush()
-        }
+        initJpush()
 
-        initPaNovel()
     }
 
-    private fun initDatabase() {
+    private fun initDataSources() {
         DataManager.init(ctx)
     }
 
-    private fun initPaNovel() {
-        NovelContext.apply {
-            files(filesDir.resolve("api"))
-            cache(cacheDir.resolve("api"))
-        }
-    }
-
     private fun initJpush() {
-        JPushInterface.setDebugMode(BuildConfig.DEBUG)
+        JPushInterface.setDebugMode(BuildConfig.DEBUG && Log.isLoggable("JPush", Log.DEBUG))
         JPushInterface.init(ctx)
-    }
-
-    private fun checkBaseFile() {
-        PrimarySettings.baseFilePath = ctx.getExternalFilesDir(null)?.takeIf { base ->
-            val test = base.resolve("test")
-            test.exists() || ignoreException { test.writeText("true") }
-        }?.path
-                ?: ctx.filesDir.path
     }
 
     private fun initAdmob() {
@@ -119,5 +96,4 @@ class App : MultiDexApplication(), AnkoLogger {
     private fun initReporter() {
         Reporter.init(ctx)
     }
-
 }

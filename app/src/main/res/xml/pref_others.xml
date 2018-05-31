@@ -4,40 +4,41 @@
 
     <cc.aoeiuv020.panovel.settings.ListPreference
         android:entries="@array/expiration_names"
+        android:defaultValue="NONE"
         android:entryValues="@array/expiration_values"
-        android:key="book_list_share_expiration"
+        android:key="shareExpiration"
         android:title="@string/book_list_share_expiration" />
 
     <!--
-        <cc.aoeiuv020.panovel.settings.SwitchPreference
+        <SwitchPreference
             android:key="subscribe_novel_update"
             android:title="@string/subscribe_novel_update" />
     -->
 
-    <cc.aoeiuv020.panovel.settings.SwitchPreference
-        android:key="report_crash"
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="reportCrash"
         android:title="@string/report_crash" />
 
-    <cc.aoeiuv020.panovel.settings.SwitchPreference
-        android:key="auto_save"
-        android:title="@string/book_list_auto_save" />
-
     <cc.aoeiuv020.panovel.settings.ColorPickerPreference
-        android:key="chapter_color_default"
+        android:defaultValue="0xff000000"
+        android:key="chapterColorDefault"
         android:title="@string/chapter_color_default"
         app:alphaSlider="true"
         app:lightnessSlider="true"
         app:wheelType="CIRCLE" />
 
     <cc.aoeiuv020.panovel.settings.ColorPickerPreference
-        android:key="chapter_color_cached"
+        android:defaultValue="0xff00ff00"
+        android:key="chapterColorCached"
         android:title="@string/chapter_color_cached"
         app:alphaSlider="true"
         app:lightnessSlider="true"
         app:wheelType="CIRCLE" />
 
     <cc.aoeiuv020.panovel.settings.ColorPickerPreference
-        android:key="chapter_color_read_at"
+        android:defaultValue="0xffff0000"
+        android:key="chapterColorReadAt"
         android:title="@string/chapter_color_read_at"
         app:alphaSlider="true"
         app:lightnessSlider="true"

@@ -1,103 +1,100 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.*
-import org.jsoup.nodes.Element
-import org.jsoup.nodes.TextNode
-import java.net.URLEncoder
-import java.text.SimpleDateFormat
-import java.util.*
+import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.panovel.api.firstIntPattern
+import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 
 /**
  *
  * Created by AoEiuV020 on 2018.03.06-18:10:46.
  */
-class Sfacg : JsoupNovelContext() {
-    companion object {
-        private val SEARCH_PAGE_URL = "http://s.sfacg.com/"
+class Sfacg : DslJsoupNovelContext() { init {
+    site {
+        name = "SF轻小说"
+        baseUrl = "http://book.sfacg.com"
+        logo = "http://rs.sfacg.com/images/sflogo.gif"
     }
-
-    override val site = NovelSite(
-            name = "SF轻小说",
-            baseUrl = "http://book.sfacg.com/",
-            logo = "http://rs.sfacg.com/images/sflogo.gif"
-    )
-
-    override fun searchNovelName(name: String): NovelGenre {
-        val key = URLEncoder.encode(name, "UTF-8")
-        val url = "${SEARCH_PAGE_URL}?Key=$key&S=1&SS=0"
-        return NovelGenre(name, url)
-    }
-
-    private fun isSearchResult(url: String): Boolean {
-        return url.startsWith(SEARCH_PAGE_URL)
-    }
-
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: Requester): List<NovelListItem> {
-        val root = request(requester)
-        return root.requireElements("#form1 > table.comic_cover.Height_px22.font_gray.space10px > tbody > tr > td > ul").map {
-            val a = it.requireElement("li > strong > a", name = TAG_NOVEL_LINK)
-            val name = a.text()
-            val url = a.absHref()
-            val li = it.requireElement("> li:nth-child(2)")
-            val size = li.childNodeSize()
-            val all = (li.childNode(size - 3) as TextNode).wholeText.trim()
-            val (author, update) = all.pick("综合信息： ([^/]*)/(.*)")
-            val about = (li.childNode(size - 1) as TextNode).wholeText.trim()
-            val info = "更新时间: $update 简介: $about"
-            NovelListItem(NovelItem(this, name, author, url), info)
+    search {
+        get {
+            url = "http://s.sfacg.com/?Key=${utf8(it)}&S=1&SS=0"
         }
-    }
-
-    override fun check(url: String): Boolean {
-        return super.check(url)
-                || (isSearchResult(url) && url.contains("S=1"))
-    }
-
-    override fun getNovelItem(url: String): NovelItem {
-        val bookId = findBookId(url)
-        val detailUrl = "${site.baseUrl}Novel/$bookId/"
-        return super.getNovelItem(detailUrl)
-    }
-
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: Requester): NovelDetail {
-        val root = request(requester)
-        val img = root.requireElement("#hasTicket > div.left-part > div > div.pic > a > img", TAG_IMAGE) { it.src() }
-        val div = root.requireElement("div.wrap > div.d-summary > div.summary-content")
-        val name = div.requireElement("> h1 > span.text", TAG_NOVEL_NAME) { it.text() }
-        val author = div.requireElement("> div.count-info.clearfix > div.author-info > div.author-name > span", TAG_AUTHOR_NAME) { it.text() }
-        val intro = div.getElement("> p") {
-            it.textList().joinToString("\n")
-        }.toString()
-
-        val update = div.getElements("> div.count-info.clearfix > div.count-detail span") {
-            val (updateString) = it[3].text().pick("更新：(.*)")
-            val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-            sdf.parse(updateString)
-        } ?: Date(0)
-
-        val chapterPageUrl = requester.url + "/MainIndex/"
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
-    }
-
-    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
-        val root = request(requester)
-        return root.requireElements("div.story-catalog > div.catalog-list > ul > li > a", TAG_CHAPTER_LINK).map { a ->
-            NovelChapter(a.title(), a.absHref())
-        }
-    }
-
-    override fun getNovelText(requester: Requester): NovelText {
-        val root = request(requester)
-        val list = root.requireElement("#ChapterBody", TAG_CONTENT).childNodes().mapNotNull {
-            when {
-                it is Element && it.tagName() == "p" -> it.text()
-                it is TextNode && !it.isBlank -> it.text().trim()
-                else -> null
+        document {
+            /*
+            <ul style="width:100%">
+                <li class="Conjunction">
+                    <img src="http://rs.sfacg.com/web/novel/images/NovelCover/Small/2016/07/5fe29c4c-d774-4e12-b4e3-578814f51fec.jpg" id="SearchResultList1___ResultList_Cover_0" border="0" alt="吸血萝莉在都市" width="80" height="100"></li>
+                <li><strong class="F14PX"><a href="http://book.sfacg.com/Novel/44856" id="SearchResultList1___ResultList_LinkInfo_0" class="orange_link2">吸血萝莉在都市</a></strong>
+                    <br> 综合信息： 那一片宁静/2018/5/9 20:11:26
+                    <br> 　一个高中毕业的公子哥因通宵玩电脑而猝死，醒来时却发现自己成了萝莉...... 　　但是这个萝莉有什么不可告人的秘密？结局将会如何？ 　　本萝莉又软又萌，喜欢软妹子的读者老爷千万别错过。 　　－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－顺便带着点小傲娇哟～～ PS：不会上架的QWQ
+                </li>
+            </ul>
+             */
+            items("#form1 > table.comic_cover.Height_px22.font_gray.space10px > tbody > tr > td > ul") {
+                name("li > strong > a")
+                author("> li:nth-child(2)", block = pickString("综合信息： ([^/]*)/"))
             }
         }
-        return NovelText(list)
+    }
+    detailPageTemplate = "/Novel/%s/"
+    detail {
+        document {
+            val div = element("div.wrap > div.d-summary > div.summary-content")
+            novel {
+                name("> h1 > span.text", parent = div)
+                author("> div.count-info.clearfix > div.author-info > div.author-name > span", div)
+            }
+            image("#hasTicket > div.left-part > div > div.pic > a > img")
+            introduction("> p", parent = div)
+            // 排版有两种，重要的是更新时间的位置不同，
+            // http://book.sfacg.com/Novel/123589/
+            update("> div.count-info.clearfix > div.count-detail span:nth-child(4)", parent = div,
+                    format = "yyyy/MM/dd HH:mm:ss", block = pickString("更新：(.*)"))
+            if (update == null) {
+                // http://book.sfacg.com/Novel/114367/
+                update("body > div.container > div.d-banner > div > div > div.summary-content" +
+                        " > div.count-info.clearfix > div.count-detail > div:nth-child(2) > span",
+                        format = "yyyy/MM/dd HH:mm:ss", block = pickString("更新：(.*)"))
+            }
+        }
+    }
+    chaptersPageTemplate = "/Novel/%s/MainIndex/"
+    chapters {
+        /*
+        <li>
+            <a href="/vip/c/1892767/" title="第四十一章" class="">
+                <span class="icn_vip">VIP</span> 第四十一章
+            </a>
+        </li>
+         */
+        document {
+            items("div.story-catalog > div.catalog-list > ul > li > a") {
+                // vip章节这里包含一个小标签，写着VIP,
+                name = root.ownText()
+                // vip章节和普通章节规则不一致，统一拿全路径，
+                extra = root.path()
+            }
+        }
+    }
+    getNovelContentUrl {
+        // vip章节和普通章节规则不一致，不统一处理，
+        try {
+            // http://book.sfacg.com/Novel/123589/204084/1887037/
+            val bookId = it.pick(firstThreeIntPattern).first()
+            "/Novel/$bookId/"
+        } catch (e: Exception) {
+            // http://book.sfacg.com/vip/c/1725750/
+            val bookId = it.pick(firstIntPattern).first()
+            "/vip/c/$bookId/"
+        }
+    }
+    content {
+        document {
+            // vip章节仅有的一行没有包在p里，
+            // 普通章节有"#ChapterBody > p",
+            items("#ChapterBody")
+        }
     }
 }
+}
+

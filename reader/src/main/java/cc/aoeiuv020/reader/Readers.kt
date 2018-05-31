@@ -11,7 +11,7 @@ import cc.aoeiuv020.reader.simple.SimpleReader
  */
 object Readers {
 
-    fun getReader(ctx: Context, novel: Novel, parent: ViewGroup, requester: TextRequester, config: ReaderConfig)
+    fun getReader(ctx: Context, novel: String, parent: ViewGroup, requester: TextRequester, config: ReaderConfig)
             : INovelReader = if (config.animationMode == AnimationMode.SIMPLE) {
         SimpleReader(ctx, novel, parent, requester, config)
     } else {

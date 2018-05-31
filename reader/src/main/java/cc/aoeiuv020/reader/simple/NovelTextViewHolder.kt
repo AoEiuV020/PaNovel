@@ -6,17 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import cc.aoeiuv020.reader.R
-import cc.aoeiuv020.reader.Text
 import cc.aoeiuv020.reader.hide
 import cc.aoeiuv020.reader.show
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.simple_view_pager_item.view.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.error
+import org.jetbrains.anko.*
 import kotlin.properties.Delegates
 
 internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogger {
@@ -30,7 +23,6 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
     private val progressBar: ProgressBar = itemView.progressBar
     val ntrAdapter = NovelTextRecyclerAdapter(reader)
     private var textProgress: Int? = null
-    private var disposable: Disposable? = null
     private var index: Int by Delegates.notNull()
 
     init {
@@ -53,31 +45,29 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
         val chapter = reader.chapterList[index]
         progressBar.show()
         ntrAdapter.clear()
-        ntrAdapter.setChapterName(chapter.name)
-        disposable?.dispose()
-        disposable = Single.fromCallable {
-            requester.request(index, refresh)
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe({ novelText ->
-            showText(novelText)
-        }, { e ->
+        ntrAdapter.setChapterName(chapter)
+        // TODO: 重复刷新要忽略先刷新的，但不能直接中断线程，可能导致数据异常，
+        doAsync({ e ->
             val message = "获取小说文本失败，"
             error(message, e)
             showError(message, e)
-        })
+        }) {
+            val novelText = requester.request(index, refresh)
+            uiThread {
+                showText(novelText)
+            }
+        }
     }
 
     fun destroy() {
-        disposable?.dispose()
-        disposable = null
     }
 
     fun refresh() {
         request(index, true)
     }
 
-    private fun showText(text: Text) {
-        ntrAdapter.data = text.list
+    private fun showText(text: List<String>) {
+        ntrAdapter.data = text
         textProgress?.let {
             textRecyclerView.run {
                 post { scrollToPosition(it) }

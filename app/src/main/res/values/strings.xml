@@ -22,7 +22,7 @@
     <string name="browse">浏览</string>
     <string name="info">简介</string>
     <string name="search_result">搜索结果</string>
-    <string name="novel_not_support">浏览失败或者不支持该小说</string>
+    <string name="novel_not_support">阅读失败或者不支持该小说</string>
     <string name="no_previous_issue">没有上一话了</string>
     <string name="no_next_issue">没有下一话了</string>
     <string name="now_loading_previous_issue">正在加载上一话</string>
@@ -56,10 +56,12 @@
 
     <string name="pref_header_general">全局设置</string>
     <string name="pref_header_bookshelf">书架设置</string>
+    <string name="pref_header_list">列表设置</string>
     <string name="pref_header_read">阅读设置</string>
     <string name="pref_others">杂项</string>
     <string name="pref_cache_clear">清除缓存</string>
     <string name="pref_header_about">关于</string>
+    <string name="pref_header_change_log">更新日志</string>
     <string name="pref_header_disclaimer">免责声明</string>
 
     <string name="chapters_cache_timeout">章节缓存超时</string>
@@ -80,6 +82,7 @@
     <string name="export_exists_chapter_to_text_file">导出已有章节到.txt</string>
     <string name="exporting_placeholder">导出中 已导出%d章 跳过%d章 剩余%d章</string>
     <string name="export_complete_placeholder">导出完成 已导出%d章 跳过%d章</string>
+    <string name="export_complete_big_placeholder">已导出至：%s</string>
     <string name="export_error_placeholder">导出失败 已导出%d章 跳过%d章 剩余%d章</string>
     <string name="typesetting">排版</string>
     <string name="margin_value_placeholder">%d%%</string>
@@ -101,7 +104,7 @@
     <string name="library">库</string>
     <string name="book_list_auto_save">书单修改自动保存</string>
     <string name="ad_enabled">展示广告</string>
-    <string name="full_screen_delay">全屏延迟</string>
+    <string name="full_screen_delay">全屏延迟(ms)</string>
     <string name="back_press_out_of_fullScreen">返回键退出全屏</string>
     <string name="donate">捐赠</string>
     <string name="paypal">Paypal</string>
@@ -179,6 +182,35 @@
     <string name="migrating_message_placeholder">从"%s"到"%s",\n迁移内容：%s</string>
     <string name="migrate_error_message_placeholder">@string/migrating_message_placeholder</string>
     <string name="ignore">忽略</string>
-
+    <string name="title_more_action">选择操作</string>
+    <string name="remove_bookshelf">移出书架</string>
+    <string name="add_bookshelf">加入书架</string>
+    <string name="refresh_chapters">刷新章节</string>
+    <string name="auto_refresh_interval">自动刷新间隔(s)</string>
+    <string name="check_update_time">检查更新</string>
+    <string name="last_refresh_time">上次刷新</string>
+    <string name="open_detail">打开详情页</string>
+    <string name="more_action">更多操作</string>
+    <string name="pinned_bookshelf">书架置顶</string>
+    <string name="cancel_pinned">取消置顶</string>
+    <string name="settings_red_dot">书架小红点设置</string>
+    <string name="settings_click_action">点击事件设置</string>
+    <string name="settings_click_red_dot">点击小红点</string>
+    <string name="settings_long_click_red_dot">长按小红点</string>
+    <string name="settings_click_refresh_time">点击刷新时间</string>
+    <string name="settings_click_name">点击小说名</string>
+    <string name="settings_long_click_name">长按小说名</string>
+    <string name="settings_click_last_chapter">点击最新章节</string>
+    <string name="settings_click_whole_item">点击整体</string>
+    <string name="settings_long_click_whole_item">长按整体</string>
+    <string name="feedback">反馈：</string>
+    <string name="removing_bookshelf">正在从书架移除</string>
+    <string name="adding_bookshelf">正在加入书架</string>
+    <string name="remove_bookshelf_complete">移出书架成功</string>
+    <string name="add_bookshelf_complete">加入书架成功</string>
+    <string name="settings_view">视图设置</string>
+    <string name="grid_view">格子视图</string>
+    <string name="large_view">大型视图</string>
+    <string name="novel_out_of_bookshelf">书架外的小说信息</string>
 
 </resources>

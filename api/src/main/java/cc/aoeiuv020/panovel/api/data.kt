@@ -17,96 +17,64 @@ abstract class Data
  */
 data class NovelSite(
         val name: String,
-        val baseUrl: String,
-        val logo: String,
         /**
-         * 这个网站是否启用，
+         * 由于要用来拼接path, 这个[baseUrl]不能斜杆/结尾，
+         * http://host
          */
-        var enabled: Boolean = true
+        val baseUrl: String,
+        val logo: String
 ) : Data()
 
 /**
- * 小说分类页面，
- * 该分类第一页地址，
- */
-data class NovelGenre(
-        val name: String,
-        val requester: Requester
-) : Data() {
-    constructor(name: String, url: String)
-            : this(name, Requester(url))
-}
-
-/**
  * 代表一本小说，由网站名，小说名和作者唯一决定，
- * 自带详情页的请求类，
+ *
+ * @param extra 只要网站Context能用这个请求到详情页就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
  */
 data class NovelItem(
         val site: String,
         val name: String,
         val author: String,
-        val requester: Requester
+        val extra: String
 ) : Data() {
-    constructor(context: NovelContext, name: String, author: String, requester: Requester)
-            : this(context.getNovelSite().name, name, author, requester)
-
-    constructor(context: NovelContext, name: String, author: String, url: String)
-            : this(context.getNovelSite().name, name, author, Requester(url))
-
-    constructor(site: String, name: String, author: String, url: String)
-            : this(site, name, author, Requester(url))
+    constructor(context: NovelContext, name: String, author: String, extra: String)
+            : this(context.site.name, name, author, extra)
 }
-
-/**
- * 小说列表中的一本小说，
- */
-data class NovelListItem(
-        val novel: NovelItem,
-        // 简介，最新章，或者其他任何有用的信息，
-        val info: String = ""
-) : Data()
 
 /**
  * 小说详情页，
+ * @param extra 只要网站Context能用这个请求到章节列表就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
+ * @param update 本小说最后更新时间，没有就null,
  */
 data class NovelDetail(
         val novel: NovelItem,
-        val bigImg: String,
+        val image: String,
         // 最后更新的时间，
-        val update: Date,
+        val update: Date?,
         // 简介，
         val introduction: String,
-        val requester: Requester
-) : Data() {
-    constructor(novel: NovelItem, bigImg: String, update: Date, info: String, url: String)
-            : this(novel, bigImg, update, info, Requester(url))
-}
+        val extra: String
+) : Data()
 
 /**
  * 小说目录，
+ * @param extra 只要网站Context能用这个请求到本章节正文就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
+ * @param update 本章节更新时间，没有就null，
  */
 data class NovelChapter(
         /**
          * 章节名不包括小说名，
          */
         val name: String,
-        val requester: Requester,
+        val extra: String,
         /**
          * 本章节更新时间，没有就没有，
+         * 为了可以只修改列表中最后一章的更新时间，这个变量要可变，
+         * 因为有的网站目录页和详情页是一样的，可以拿到最后更新时间，
          */
-        val update: Date? = null
-) : Data() {
-    constructor(name: String, url: String)
-            : this(name, Requester(url))
-
-    constructor(name: String, url: String, update: Date)
-            : this(name, Requester(url), update)
-}
-
-/**
- * 小说文本，由一个个段落构成，
- */
-data class NovelText(
-        val textList: List<String>
+        /*
+         * 为了可以只修改列表中最后一章的更新时间，这个变量要可变，
+         * 因为有的网站目录页和详情页是一样的，可以拿到最后更新时间，
+         */
+        var update: Date? = null
 ) : Data()
 

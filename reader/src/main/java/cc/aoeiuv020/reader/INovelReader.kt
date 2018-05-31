@@ -9,13 +9,13 @@ import android.content.Context
 interface INovelReader {
     val ctx: Context
 
-    var novel: Novel
+    var novel: String
 
     var chapterChangeListener: ChapterChangeListener?
     var menuListener: MenuListener?
 
     var requester: TextRequester
-    var chapterList: List<Chapter>
+    var chapterList: List<String>
 
     var currentChapter: Int
     var textProgress: Int
@@ -31,10 +31,10 @@ interface INovelReader {
     fun onDestroy()
 }
 
-abstract class BaseNovelReader(override var novel: Novel, override var requester: TextRequester) : INovelReader {
+abstract class BaseNovelReader(override var novel: String, override var requester: TextRequester) : INovelReader {
     override var chapterChangeListener: ChapterChangeListener? = null
     override var menuListener: MenuListener? = null
-    override var chapterList: List<Chapter> = emptyList()
+    override var chapterList: List<String> = emptyList()
     override fun scrollNext(): Boolean = false
     override fun scrollPrev(): Boolean = false
 }

@@ -1,23 +1,12 @@
 package cc.aoeiuv020.panovel.refresher
 
-import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.error
-import cc.aoeiuv020.base.jar.info
-import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.Requester
-import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
-import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
-import cc.aoeiuv020.panovel.share.PasteUbuntu
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.slf4j.LoggerFactory
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 class Refresher {
     private val logger = LoggerFactory.getLogger(Refresher::class.java.simpleName)
@@ -25,6 +14,7 @@ class Refresher {
     private var isRunning = false
     private val vipNovelList = mutableSetOf<Novel>()
     fun start(address: ServerAddress, config: Config = Config(), bookshelfList: MutableSet<String>) {
+/*
         logger.info {
             "start address: ${address.data}"
         }
@@ -88,16 +78,17 @@ class Refresher {
                 isRunning = false
             }
         }
+*/
     }
 
     /**
      * 用于解析书架，要支持新版的requester,
      */
     private val gson: Gson = GsonBuilder()
-            .paNovel()
             .create()
 
     private fun getBookshelf(bookshelfList: MutableSet<String>, requireBookshelf: Boolean) {
+/*
         val paste = PasteUbuntu()
         bookshelfList.forEach { url ->
             logger.debug {
@@ -127,9 +118,11 @@ class Refresher {
                 }
             }
         }
+*/
     }
 
     private fun refresh(novel: Novel) {
+/*
         logger.info {
             "refresh ${novel.requesterExtra}"
         }
@@ -163,6 +156,7 @@ class Refresher {
                 "刷新失败，${novel.requesterExtra}"
             }
         }
+*/
     }
 
     fun stop() {

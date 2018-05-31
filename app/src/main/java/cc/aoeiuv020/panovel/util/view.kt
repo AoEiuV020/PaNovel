@@ -66,6 +66,13 @@ fun View.show() {
     visibility = View.VISIBLE
 }
 
+fun View.setSize(size: Int) {
+    layoutParams = layoutParams.also {
+        it.height = size
+        it.width = size
+    }
+}
+
 fun View.setHeight(height: Int) {
     layoutParams = layoutParams.also { it.height = height }
 }
@@ -102,7 +109,7 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.show()
 
-fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
+fun Context.notify(id: Int, text: String? = null, bigText: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
     val intent = intentFor<MainActivity>()
     val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
     val nb = NotificationCompat.Builder(this)
@@ -110,6 +117,9 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
             .setContentText(text)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
+    bigText?.let {
+        nb.setStyle(NotificationCompat.BigTextStyle().bigText(it))
+    }
     time?.let {
         nb.setWhen(it)
     }
@@ -157,5 +167,5 @@ fun Bundle.toMap(): Map<String, Any?> = BaseBundle::class.java.getDeclaredField(
         .get(this) as Map<String, *>
 
 // 从保存的状态或者传入的intent中拿String,
-fun Activity.getStringExtra(key: String, savedInstanceState: Bundle?): String? = savedInstanceState?.run { getString(key) }
+fun Activity.getStringExtra(key: String, savedInstanceState: Bundle? = null): String? = savedInstanceState?.run { getString(key) }
         ?: intent.getStringExtra(key)

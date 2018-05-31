@@ -1,101 +1,78 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.*
-import java.net.URL
-import java.net.URLEncoder
-import java.text.SimpleDateFormat
-import java.util.*
+import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.panovel.api.firstThreeIntPattern
+import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 
 /**
  * Created by AoEiuV020 on 2018.05.10-16:48:32.
  */
-class Yssm : JsoupNovelContext() {
-    companion object {
-        private val SEARCH_PAGE_URL = "https://www.yssm.org/SearchBook.php"
+class Yssm : DslJsoupNovelContext() {init {
+    site {
+        name = "幼狮书盟"
+        baseUrl = "https://www.yssm.org"
+        logo = "https://www.yssm.org/images/logo.png"
     }
-
-    override val site = NovelSite(
-            name = "幼狮书盟",
-            baseUrl = "https://www.yssm.org/",
-            logo = "https://www.yssm.org/images/logo.png"
-    )
-
-    override fun getNovelItem(url: String): NovelItem {
-        val path = URL(url).path.removePrefix("/")
-        val detailUrl = "${site.baseUrl}$path"
-        return super.getNovelItem(detailUrl)
-    }
-
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: Requester): List<NovelListItem> {
+    search {
+        get {
+            url = "/SearchBook.php?keyword=$it"
+        }
         // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
         // 这里限制一下，20K大概小几十个结果，
-        val root = response(connect(requester).maxBodySize(1000 * 20)).parse()
-        // 由于被截断，可能处理最后一个元素会出异常，无视，
-        return root.requireElements("#container > div.details.list-type > ul > li").mapIgnoreException {
-            val a = it.requireElement(query = "> span.s2 > a", name = TAG_NOVEL_LINK)
-            val name = a.text()
-            val url = a.absHref()
-            val author = it.requireElement(query = "> span.s3", name = TAG_AUTHOR_NAME) { it.text() }
-            val last = it.getElement(query = "> span.s2 > i > a") {
-                it.text()
+        requireNotNull(connection).maxBodySize(1000 * 20)
+        document {
+            // 由于被截断，可能处理最后一个元素会出异常，无视，
+            items("#container > div.details.list-type > ul > li") {
+                name("> span.s2 > a")
+                author("> span.s3")
             }
-            val genre = it.getElement(query = "> span.s1") { it.text() }
-            val updateTime = it.getElement(query = "> span.s4") { it.text() }
-            val status = it.getElement(query = "> span.s5") { it.text() }
-            val info = "最新章节: $last 类别: $genre 更新时间: $updateTime 状态: $status"
-            NovelListItem(NovelItem(this, name, author, url), info)
         }
     }
-
-    override fun searchNovelName(name: String): NovelGenre {
-        val key = URLEncoder.encode(name, "UTF-8")
-        val url = "${SEARCH_PAGE_URL}?keyword=$key"
-        return NovelGenre(name, url)
-    }
-
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: Requester): NovelDetail {
-        val root = request(requester)
-        // 这网站小说没有封面，
-        val img = "https://www.snwx8.com/modules/article/images/nocover.jpg"
-        val div = root.requireElement("#container > div.bookinfo")
-        val name = div.requireElement("> div > span > h1") { it.text() }
-        val author = div.requireElement("> div > span > em") {
-            val (author) = it.text().pick("作者：(\\S*)")
-            author
+    bookIdRegex = firstTwoIntPattern
+    // https://www.yssm.org/uctxt/227/227934/
+    detailPageTemplate = "/uctxt/%s/"
+    detail {
+        document {
+            val div = root.requireElement("#container > div.bookinfo")
+            novel {
+                name("> div > span > h1", parent = div)
+                author("> div > span > em", parent = div, block = pickString("作者：(\\S*)"))
+            }
+            // 这网站小说没有封面，
+            image = "https://www.snwx8.com/modules/article/images/nocover.jpg"
+            introduction("> p.intro", parent = div) {
+                it.ownTextList().joinToString("\n")
+            }
+            update("> p.stats > span.fr > i:nth-child(2)", parent = div, format = "yyyy/MM/dd HH:mm:ss")
         }
-        val introduction = div.getElement("> p.intro") {
-            it.textNodes().joinToString("\n")
-        }.toString()
-
-        val update = div.getElement("> p.stats > span.fr > i:nth-child(2)") {
-            val updateString = it.text()
-            val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-            sdf.parse(updateString)
-        } ?: Date(0)
-
-        val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, introduction, chapterPageUrl)
     }
-
-    override fun getNovelChaptersAsc(requester: Requester): List<NovelChapter> {
-        val root = request(requester)
+    chapters {
         // 章节数太少的话，没有开头的叫最新章节的12章，
         // 这里判断是大于12认为有那12章，扔掉，
         // 并不知道有没有例外，
-        return root.requireElements("#main > div > dl > dd > a", TAG_CHAPTER_LINK)
-                .let {
-                    if (it.size > 12) it.drop(12) else it
-                }.map { a ->
-                    NovelChapter(a.text(), a.absHref())
-                }
+        // 倒序删除，
+        // TODO: 这种情况还真不少，再来一次就抽象出来，
+        val list = document {
+            items("#main > div > dl > dd > a")
+        }
+        var index = 0
+        // 以防万一，
+        if (list.size == 1) return@chapters list
+        // 倒序列表判断是否重复章节，
+        val reversedList = list.asReversed()
+        list.dropWhile {
+            (it == reversedList[index]
+                    || it.extra.isBlank()).also { ++index }
+        }
     }
-
-    override fun getNovelText(requester: Requester): NovelText {
-        val root = request(requester)
-        val textList = root.requireElements("#content", TAG_CONTENT).first().textList()
-        return NovelText(textList)
+    chapterIdRegex = firstThreeIntPattern
+    // https://www.yssm.org/uctxt/227/227934/1301112.html
+    contentPageTemplate = "/uctxt/%s.html"
+    content {
+        document {
+            items("#content")
+        }
     }
 }
+}
+

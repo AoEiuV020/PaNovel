@@ -2,24 +2,41 @@
 
 package cc.aoeiuv020.panovel.api
 
-import com.google.gson.GsonBuilder
+import cc.aoeiuv020.base.jar.compilePattern
+import cc.aoeiuv020.base.jar.pick
+import java.net.MalformedURLException
 import java.net.URL
+import java.util.regex.Pattern
 
 /**
  * Created by AoEiuV020 on 2017.10.02-16:01:09.
  */
 
-fun GsonBuilder.paNovel(): GsonBuilder = apply {
-    Requester.attach(this)
+/**
+ * 结尾不要斜杆/，因为有的地址可能整数后面接文件后缀.html,
+ * 开头要有斜杆/，因为有的网站可能host有整数，
+ */
+val firstIntPattern: Pattern = compilePattern("/(\\d+)")
+
+fun findFirstOneInt(url: String): String = path(url).pick(firstIntPattern).first()
+
+val firstTwoIntPattern: Pattern = compilePattern("/(\\d+/\\d+)")
+fun findFirstTwoInt(url: String): String = url.pick(firstTwoIntPattern).first()
+
+val firstThreeIntPattern: Pattern = compilePattern("/(\\d+/\\d+/\\d+)")
+fun findThreeTwoInt(url: String): String = url.pick(firstTwoIntPattern).first()
+
+/**
+ * 地址仅路径，斜杆/开头，
+ */
+fun path(url: String): String = try {
+    URL(url).path
+} catch (e: MalformedURLException) {
+    url
 }
 
-fun findBookId(url: String): String {
-    return URL(url).path.split("/").first {
-        try {
-            it.toInt()
-            true
-        } catch (e: NumberFormatException) {
-            false
-        }
-    }
+inline fun <T> tryOrNul(block: () -> T?): T? = try {
+    block()
+} catch (e: Exception) {
+    null
 }

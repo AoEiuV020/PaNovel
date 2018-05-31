@@ -1,145 +1,44 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.NovelGenre
-import cc.aoeiuv020.panovel.api.Requester
-import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.02-16:07:05.
  */
-class PiaotianTest {
-    init {
-        System.setProperty("org.slf4j.simpleLogger.log.Piaotian", "trace")
-    }
-
-    private lateinit var context: Piaotian
-    @Before
-    fun setUp() {
-        context = Piaotian()
+class PiaotianTest : BaseNovelContextText(Piaotian::class) {
+    @Test
+    fun search() {
+        search("都市")
+        search("都市之位面旅行家", "书仙鱼", "8/8017")
+        search("斗破苍穹之无上之境", "夜雨闻铃0", "1/1767")
+        search("从前有座灵剑山", "国王陛下", "4/4316")
     }
 
     @Test
-    fun getNextPage() {
-        context.getNextPage(NovelGenre("玄幻魔法", "http://www.piaotian.com/booksort1/0/1.html")).let {
-            assertEquals("https://www.piaotian.com/booksort1/0/2.html", it!!.requester.url)
-        }
-        context.getNextPage(NovelGenre("玄幻魔法", "http://www.piaotian.com/booksort1/0/2.html")).let {
-            assertEquals("https://www.piaotian.com/booksort1/0/3.html", it!!.requester.url)
-        }
-        context.getNextPage(NovelGenre("玄幻魔法", "http://www.piaotian.com/booksort1/0/83.html")).let {
-            assertNull(it)
-        }
-        context.getNextPage(NovelGenre("全本小说", "http://www.piaotian.com/quanben/index.html")).let {
-            assertEquals("https://www.piaotian.com/quanben/index.html?page=2", it!!.requester.url)
-        }
+    fun detail() {
+        detail("8/8605", "8/8605", "剑灵同居日记", "国王陛下",
+                "https://www.piaotian.com/files/article/image/8/8605/8605s.jpg",
+                "“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”\n一个无敌的随身剑灵与天才美少女（们）的同居故事。",
+                "2018-05-21 17:30:00")
     }
 
     @Test
-    fun getNovelList() {
-        context.getNovelList(Requester("http://www.piaotian.com/booksort1/0/1.html")).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertEquals(30, it.size)
-        }
+    fun chapters() {
+        chapters("4/4316", "序幕：天外飞仙+第一章：客栈柴房温暖如春", "4/4316/2216316", null,
+                "第七十七章：再见", "4/4316/4260402", null,
+                852)
+        chapters("8/8912",
+                "第001章 狂暴系统", "8/8912/5786830", null,
+                "第3568章 大道无门？（补一）", "8/8912/6442359", null,
+                3564)
     }
 
     @Test
-    fun searchNovelName() {
-        context.getNovelList(context.searchNovelName("斗破苍穹").requester).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "斗破苍穹"
-            })
-        }
-        // 有小说搜索后直接跳到详情页，
-        context.getNovelList(context.searchNovelName("从前").requester).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "从前有座灵剑山"
-            })
-        }
-    }
-
-    @Test
-    fun searchNovelAuthor() {
-        context.getNovelList(context.searchNovelAuthor("国王陛下").requester).let {
-            it.forEach { novelItem ->
-                println(novelItem)
-            }
-            assertTrue(it.any { novelItem ->
-                novelItem.novel.name == "从前有座灵剑山"
-            })
-        }
-    }
-
-    @Test
-    fun getNovelDetail() {
-        context.getNovelDetail(Requester("https://www.piaotian.com/bookinfo/8/8605.html")).let {
-            assertEquals("剑灵同居日记", it.novel.name)
-            assertEquals("国王陛下", it.novel.author)
-            assertEquals("“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”\n一个无敌的随身剑灵与天才美少女（们）的同居故事。", it.introduction)
-            println(it.bigImg)
-            println(it.update)
-        }
-    }
-
-    @Test
-    fun getNovelChapters() {
-        context.getNovelChaptersAsc(Requester("https://www.piaotian.com/html/4/4316/index.html")).let { list ->
-            list.forEach {
-                println(it)
-            }
-            assertEquals("序幕：天外飞仙+第一章：客栈柴房温暖如春", list.first().name)
-        }
-        context.getNovelChaptersAsc(Requester("https://www.piaotian.com/html/8/8912/index.html")).let { list ->
-            list.forEach {
-                println(it)
-            }
-            assertEquals("第001章 狂暴系统", list.first().name)
-            assertTrue(list.last().name.isNotEmpty())
-        }
-    }
-
-    @Test
-    fun getNovelText() {
-        context.getNovelText(Requester("https://www.piaotian.com/html/8/8605/5582838.html")).textList.let {
-            assertEquals(21, it.size)
-            assertEquals("6月1日凌晨0点，本书正式上架。", it.first())
-            assertEquals("请各位绅士们量力而行，不必强求逆天。", it.last())
-        }
-    }
-
-    @Test
-    fun regexText() {
-        val novelDetail = """剑灵同居日记
-类    别：武侠修真	作    者：国王陛下	管 理 员：	全文长度：1041337字
-最后更新：2017-10-01	文章状态：连载中	授权级别：暂未授权	首发状态：他站首发
-收 藏 数：168	总推荐数：300	本月推荐：1	收到鲜花：1"""
-        val pattern = "" +
-                "(\\S*)\\s" +
-                "类    别：(\\S*)\\s" +
-                "作    者：(\\S*)\\s" +
-                "管 理 员：(\\S*)\\s" +
-                "全文长度：(\\S*)\\s" +
-                "最后更新：(\\S*)\\s" +
-                "文章状态：(\\S*)\\s" +
-                "授权级别：(\\S*)\\s" +
-                "首发状态：(\\S*)\\s" +
-                "收 藏 数：(\\S*)\\s" +
-                "总推荐数：(\\S*)\\s" +
-                "本月推荐：(\\S*)\\s" +
-                "收到鲜花：(\\S*)" +
-                ""
-        val list = novelDetail.pick(pattern)
-        println(list)
+    fun content() {
+        content("8/8605/5582838",
+                "6月1日凌晨0点，本书正式上架。",
+                "请各位绅士们量力而行，不必强求逆天。",
+                21)
     }
 }

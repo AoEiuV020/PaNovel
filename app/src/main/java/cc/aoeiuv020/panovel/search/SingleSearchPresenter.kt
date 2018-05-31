@@ -1,147 +1,90 @@
 @file:Suppress("DEPRECATION")
 
-// 用到Cookies相关的不少过时方法，兼容低版本需要，
 
 package cc.aoeiuv020.panovel.search
 
-import android.os.Build
-import android.webkit.CookieManager
-import android.webkit.CookieSyncManager
 import cc.aoeiuv020.panovel.Presenter
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelSite
+import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.*
 
 /**
  * Created by AoEiuV020 on 2018.05.13-21:59:40.
  */
 class SingleSearchPresenter(
-        private val site: NovelSite
+        private val site: String
 ) : Presenter<SingleSearchActivity>(), AnkoLogger {
     fun start() {
-        debug {
-            "start,"
-        }
+        debug { "start," }
     }
 
     fun pushCookies() {
-        debug {
-            "pushCookies,"
-        }
-        val cookieManager = CookieManager.getInstance()
-        cookieManager.setAcceptCookie(true)
-        val context = NovelContext.getNovelContextBySite(site)
-        val cookies = context.cookies
-        // 高版本的设置cookie的回调乱七八糟的，用不上，
-        cookies.forEach { (key, value) ->
-            val cookie = "$key=$value"
-            debug {
-                "push cookie: <$cookie>"
-            }
-            context.cookieDomainList().forEach { domain ->
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    cookieManager.setCookie(domain, cookie) {
-                        debug {
-                            "cookie has been set $it, <$$cookie>"
-                        }
-                    }
-                } else {
-                    cookieManager.setCookie(domain, cookie)
-                    debug {
-                        "cookie has been set, <$$cookie>"
-                    }
-                }
-            }
-        }
-        view?.doAsync {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                cookieManager.flush()
-            } else {
-                val syncManager = CookieSyncManager.createInstance(view)
-                syncManager.sync()
-            }
-            uiThread {
-                if (view?.getCurrentUrl() == null) {
-                    debug {
-                        "open home page ${site.baseUrl}"
-                    }
-                    view?.openPage(site.baseUrl)
-                }
-            }
-        }
-    }
-
-    fun pullCookies() {
-        debug {
-            "pullCookies,"
-        }
-        val context = NovelContext.getNovelContextBySite(site)
-        val cookieManager = CookieManager.getInstance()
-        val cookiesMap = mutableMapOf<String, String>()
-        context.cookieDomainList().forEach { domain ->
-            cookieManager.getCookie(domain)?.split(';')?.map {
-                it.trim()
-            }?.mapNotNull { cookie ->
-                debug {
-                    "pull cookie: <$cookie>"
-                }
-                try {
-                    val index = cookie.indexOf('=')
-                    val key = cookie.substring(0, index)
-                    val value = cookie.substring(index + 1)
-                    key to value
-                } catch (e: Exception) {
-                    // 一个cookie处理错误直接无视，
-                    error("cookie不合法，<$cookie>,", e)
-                    null
-                }
-            }?.toMap(cookiesMap)
-        }
-        context.putCookies(cookiesMap)
-    }
-
-    fun open(currentUrl: String) {
-        debug {
-            "open <$currentUrl>,"
-        }
+        debug { "pushCookies," }
+        val context = DataManager.getNovelContextByName(site)
+        DataManager.pushCookiesToWebView(context)
         view?.doAsync({ e ->
-            val message = "打开地址<$currentUrl>失败，"
+            val message = "传递cookies给浏览器失败，"
+            Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
                 view?.showError(message, e)
             }
         }) {
-            val novelItem = try {
-                NovelContext.getNovelContextBySite(site).getNovelItem(currentUrl)
+            DataManager.syncCookies(view)
+            uiThread {
+                if (view?.getCurrentUrl() == null) {
+                    debug {
+                        "open home page ${context.homePage}"
+                    }
+                    view?.openPage(context.homePage)
+                }
+
+            }
+        }
+    }
+
+    fun pullCookies() {
+        debug { "pullCookies," }
+        val context = DataManager.getNovelContextByName(site)
+        DataManager.pullCookiesFromWebView(context)
+    }
+
+    fun open(currentUrl: String) {
+        debug { "open <$currentUrl>," }
+        view?.doAsync({ e ->
+            val message = "打开地址<$currentUrl>失败，"
+            if (e !is IllegalArgumentException) {
+                Reporter.post(message, e)
+            }
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            val novel = try {
+                DataManager.getNovelFromUrl(site, currentUrl)
             } catch (e: Exception) {
                 throw IllegalArgumentException("不支持的地址，", e)
             }
             uiThread {
-                view?.openNovelDetail(novelItem)
+                view?.openNovelDetail(novel)
             }
         }
     }
 
     fun removeCookies() {
-        debug {
-            "removeCookies,"
-        }
-        val cookieManager = CookieManager.getInstance()
-        cookieManager.setAcceptCookie(true)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.removeAllCookies(null)
-        } else {
-            cookieManager.removeAllCookie()
-        }
-        view?.doAsync {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                cookieManager.flush()
-            } else {
-                val syncManager = CookieSyncManager.createInstance(view)
-                syncManager.sync()
+        debug { "removeCookies," }
+        DataManager.removeWebViewCookies()
+        view?.doAsync({ e ->
+            val message = "删除cookies失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
             }
-            val context = NovelContext.getNovelContextBySite(site)
-            context.removeCookies()
+        }) {
+            DataManager.syncCookies(view)
+            DataManager.removeNovelContextCookies(site)
             uiThread {
                 view?.showRemoveCookiesDone()
             }

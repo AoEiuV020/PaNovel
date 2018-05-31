@@ -8,7 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.activity_novel_text.*
@@ -27,11 +27,11 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
     private val mHidePart2Runnable = Runnable {
         flContent.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                        View.SYSTEM_UI_FLAG_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
     private val mShowPart2Runnable = Runnable {
         app_bar.show()
@@ -101,7 +101,7 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         debug { "show" }
         flContent.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         mVisible = true
         mHideHandler.removeCallbacks(mHidePart2Runnable)
         mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY.toLong())
@@ -115,6 +115,6 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
     companion object {
         private val AUTO_HIDE = true
         private val AUTO_HIDE_DELAY_MILLIS = 3000
-        private val UI_ANIMATION_DELAY get() = Settings.fullScreenDelay
+        private val UI_ANIMATION_DELAY get() = ReaderSettings.fullScreenDelay
     }
 }
