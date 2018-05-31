@@ -230,6 +230,10 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
                 }.show()
             }
 
+            // 设置保持亮屏，
+            if (ReaderSettings.keepScreenOn) {
+                view.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
 
         mPanelTypesetting.apply {

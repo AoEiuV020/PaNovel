@@ -12,6 +12,11 @@
         android:singleLine="true"
         android:title="@string/brightness" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="keepScreenOn"
+        android:title="@string/keep_screen_on" />
+
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:inputType="number"

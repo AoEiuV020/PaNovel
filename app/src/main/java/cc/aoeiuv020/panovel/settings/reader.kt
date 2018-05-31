@@ -20,6 +20,8 @@ object ReaderSettings : Pref {
     var centerPercent: Float by Delegates.float(0.5f)
     // 亮度，0-255, 负数代表亮度跟随系统，
     var brightness: Int by Delegates.int(-1)
+    // 保持屏幕长亮，
+    val keepScreenOn: Boolean by Delegates.boolean(false)
     /**
      * 阅读界面点击退出全屏的延迟，
      * 有点延迟看着顺眼点，
@@ -61,6 +63,7 @@ object ReaderSettings : Pref {
     var backgroundImage: Uri? by Delegates.uri()
     var animationMode: AnimationMode by Delegates.enum(AnimationMode.SIMULATION)
     var animationSpeed: Float by Delegates.float(0.8f)
+
     fun makeReaderConfig() = ReaderConfig(
             textSize,
             lineSpacing,
