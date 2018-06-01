@@ -379,15 +379,18 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         val prevPageIndex = pageIndex - 1
         if (pages != null && prevPageIndex in pages.indices) {
             pageIndex--
+            reader.readingListener?.onReading(chapterIndex, pageIndex)
             return true
         }
         val prevChapterIndex = chapterIndex - 1
         if (prevChapterIndex in reader.chapterList.indices) {
             chapterIndex--
             pageIndex = -1
-            reader.chapterChangeListener?.onChapterChange()
+            // -1存起来应该也没关系，
+            reader.readingListener?.onReading(chapterIndex, pageIndex)
             return true
         }
+        reader.readingListener?.onReading(chapterIndex, pageIndex)
         return false
     }
 
@@ -401,14 +404,16 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 // 提前缓存一章，
                 request(nextChapterIndex)
             }
+            reader.readingListener?.onReading(chapterIndex, pageIndex)
             return true
         }
         if (nextChapterIndex in reader.chapterList.indices) {
             chapterIndex++
             pageIndex = 0
-            reader.chapterChangeListener?.onChapterChange()
+            reader.readingListener?.onReading(chapterIndex, pageIndex)
             return true
         }
+        reader.readingListener?.onReading(chapterIndex, pageIndex)
         return false
     }
 

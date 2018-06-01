@@ -10,12 +10,14 @@ interface TextRequester {
 }
 
 /**
- * 监听章节切换，
+ * 阅读进度监听器，
+ * 进度改变时调用，
  */
-interface ChapterChangeListener {
-    fun onChapterChange()
+interface ReadingListener {
+    fun onReading(chapter: Int, text: Int)
 }
 
+// 这东西有点多余，换成点中心的回调就可以了，
 interface MenuListener {
     fun hide()
     fun show()

@@ -181,9 +181,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     this@NovelTextActivity.toggle()
                 }
             }
-            chapterChangeListener = object : ChapterChangeListener {
-                override fun onChapterChange() {
-                    onChapterSelected(reader.currentChapter)
+            readingListener = object : ReadingListener {
+                override fun onReading(chapter: Int, text: Int) {
+                    // 阅读时退出全屏，
+                    hide()
+                    onChapterSelected(chapter)
+                    novel.readAtTextIndex = text
                 }
             }
         }

@@ -2,6 +2,7 @@ package cc.aoeiuv020.reader.simple
 
 import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -37,6 +38,11 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
                         rightMargin,
                         reader.config.contentMargins.bottom.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() })
             }
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                    reader.readingListener?.onReading(reader.currentChapter, getTextProgress())
+                }
+            })
         }
     }
 

@@ -51,8 +51,9 @@ internal class SimpleReader(override var ctx: Context, novel: String, private va
             }
 
             override fun onPageSelected(position: Int) {
+                // TODO: 这个保存好像多余了，能用就不改了，
                 currentChapter = position
-                chapterChangeListener?.onChapterChange()
+                readingListener?.onReading(position, 0)
             }
         })
         dtfRoot.reader = this

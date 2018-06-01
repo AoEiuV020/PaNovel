@@ -11,7 +11,7 @@ interface INovelReader {
 
     var novel: String
 
-    var chapterChangeListener: ChapterChangeListener?
+    var readingListener: ReadingListener?
     var menuListener: MenuListener?
 
     var requester: TextRequester
@@ -32,7 +32,7 @@ interface INovelReader {
 }
 
 abstract class BaseNovelReader(override var novel: String, override var requester: TextRequester) : INovelReader {
-    override var chapterChangeListener: ChapterChangeListener? = null
+    override var readingListener: ReadingListener? = null
     override var menuListener: MenuListener? = null
     override var chapterList: List<String> = emptyList()
     override fun scrollNext(): Boolean = false
