@@ -1,6 +1,8 @@
 package cc.aoeiuv020.reader
 
 import android.content.Context
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  *
@@ -35,6 +37,9 @@ abstract class BaseNovelReader(override var novel: String, override var requeste
     override var readingListener: ReadingListener? = null
     override var menuListener: MenuListener? = null
     override var chapterList: List<String> = emptyList()
+    // 独立的线程池用于请求小说章节，不要用anko-common自带的以免导致阻塞，
+    val ioExecutorService: ExecutorService = Executors.newCachedThreadPool()
+
     override fun scrollNext(): Boolean = false
     override fun scrollPrev(): Boolean = false
 }

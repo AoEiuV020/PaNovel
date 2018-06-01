@@ -313,7 +313,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
             if (requestIndex == chapterIndex) {
                 pager?.refresh()
             }
-        }) {
+        }, reader.ioExecutorService) {
             val text = requester.request(requestIndex, refresh)
             val pages = typesetting(reader.chapterList[requestIndex], text)
             pagesCache.put(requestIndex, pages)

@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.search
 
+import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
@@ -37,7 +38,7 @@ class FuzzySearchPresenter : Presenter<FuzzySearchActivity>() {
                 view?.showError(message, e)
                 // 失败时不需要通知Complete，反正没做什么，
             }
-        }) {
+        }, ioExecutorService) {
             site?.let {
                 DataManager.search(it, name, author).let { list ->
                     uiThread {

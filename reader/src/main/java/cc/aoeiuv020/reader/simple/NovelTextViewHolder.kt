@@ -57,7 +57,7 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
             val message = "获取小说文本失败，"
             error(message, e)
             showError(message, e)
-        }) {
+        }, reader.ioExecutorService) {
             val novelText = requester.request(index, refresh)
             uiThread {
                 showText(novelText)

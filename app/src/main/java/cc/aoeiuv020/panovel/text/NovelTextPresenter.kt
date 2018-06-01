@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.text
 
+import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.DataManager
@@ -35,7 +36,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             view?.runOnUiThread {
                 view?.showNovelNotFound(message, e)
             }
-        }) {
+        }, ioExecutorService) {
             val novel = DataManager.getNovel(id)
             uiThread {
                 view?.showNovel(novel)
@@ -77,7 +78,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                     view?.runOnUiThread {
                         view?.showError(message, e)
                     }
-                }) {
+                }, ioExecutorService) {
                     // 每次循环最后再获取，
                     var index = nextIndex.getAndIncrement()
                     // 如果presenter已经detach说明离开了这个页面，不继续下载，

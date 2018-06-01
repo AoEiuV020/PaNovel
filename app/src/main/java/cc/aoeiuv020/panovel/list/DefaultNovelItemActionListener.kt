@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.list
 
+import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
@@ -119,7 +120,7 @@ class DefaultNovelItemActionListener(
                 vh.refreshed(vh.novel)
                 onError(message, e)
             }
-        }) {
+        }, ioExecutorService) {
             DataManager.refreshChapters(vh.novel)
             uiThread {
                 vh.refreshed(vh.novel)
@@ -137,7 +138,7 @@ class DefaultNovelItemActionListener(
                 vh.refreshed(vh.novel)
                 onError(message, e)
             }
-        }) {
+        }, ioExecutorService) {
             DataManager.askUpdate(vh.novel)
             uiThread {
                 vh.refreshed(vh.novel)
