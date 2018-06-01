@@ -3,14 +3,18 @@
 package cc.aoeiuv020.panovel.text
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.Menu
@@ -24,6 +28,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
+import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.settings.Margins
@@ -546,11 +551,37 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             this.left = left
         }
 
+        // 太早了Intent不能用，
+        val nb: NotificationCompat.Builder by lazy {
+            val intent = intentFor<MainActivity>()
+            val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
+            val notificationBuilder = NotificationCompat.Builder(ctx)
+                    .setOnlyAlertOnce(true)
+                    .setAutoCancel(true)
+                    .setContentTitle(novel.name)
+                    .setContentIntent(pendingIntent)
+            notificationBuilder.apply {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    setLargeIcon(getBitmapFromVectorDrawable(R.drawable.ic_file_download))
+                    setSmallIcon(R.mipmap.ic_launcher_round)
+                } else {
+                    setSmallIcon(R.drawable.ic_file_download)
+                }
+            }
+            notificationBuilder
+        }
+        // System services not available to Activities before onCreate()
+        val manager by lazy { NotificationManagerCompat.from(ctx) }
+
         override fun run() {
-            notify(1, text = getString(R.string.downloading_placeholder, exists, downloads, errors, left)
-                    , title = novel.name
-                    , icon = R.drawable.ic_file_download)
-            if (left != 0) {
+            if (left == 0) {
+                nb.setContentText(getString(R.string.download_complete_placeholder, exists, downloads, errors))
+                        .setProgress(0, 0, false)
+                manager.notify(1, nb.build())
+            } else {
+                nb.setContentText(getString(R.string.downloading_placeholder, exists, downloads, errors, left))
+                        .setProgress(100, ((exists + downloads + errors).toFloat() / left * 100).toInt(), false)
+                manager.notify(1, nb.build())
                 // 100ms通知一次，避免过快，
                 handler.postDelayed(this, 100)
             }
@@ -560,7 +591,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     fun showDownloadStart(left: Int) {
         downloadingRunnable.left = left
         // 开始通知循环，
-        handler.postDelayed(downloadingRunnable, 100)
+        handler.post(downloadingRunnable)
     }
 
     fun showDownloadError() {
@@ -574,10 +605,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun showDownloadComplete(exists: Int, downloads: Int, errors: Int) {
-        // 下载成功直接停止通知循环，
-        handler.removeCallbacks(downloadingRunnable)
-        notify(1, text = getString(R.string.download_complete_placeholder, exists, downloads, errors)
-                , title = novel.name)
+        downloadingRunnable.set(exists, downloads, errors, 0)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

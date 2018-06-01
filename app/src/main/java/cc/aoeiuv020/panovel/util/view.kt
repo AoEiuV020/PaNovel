@@ -3,7 +3,6 @@
 package cc.aoeiuv020.panovel.util
 
 import android.app.Activity
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
@@ -13,6 +12,7 @@ import android.os.BaseBundle
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
@@ -117,6 +117,7 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
             .setContentTitle(title)
             .setContentText(text)
             .setAutoCancel(true)
+            .setOnlyAlertOnce(true)
             .setContentIntent(pendingIntent)
     bigText?.let {
         nb.setStyle(NotificationCompat.BigTextStyle().bigText(it))
@@ -132,7 +133,7 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
             setSmallIcon(icon)
         }
     }
-    val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+    val manager = NotificationManagerCompat.from(this)
     manager.notify(id, nb.build())
 }
 
