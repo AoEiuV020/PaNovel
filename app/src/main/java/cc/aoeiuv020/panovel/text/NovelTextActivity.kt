@@ -550,16 +550,31 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             notify(1, text = getString(R.string.downloading_placeholder, exists, downloads, errors, left)
                     , title = novel.name
                     , icon = R.drawable.ic_file_download)
+            if (left != 0) {
+                // 100ms通知一次，避免过快，
+                handler.postDelayed(this, 100)
+            }
         }
     }
 
-    fun showDownloading(exists: Int, downloads: Int, errors: Int, left: Int) {
-        handler.removeCallbacks(downloadingRunnable)
-        downloadingRunnable.set(exists, downloads, errors, left)
+    fun showDownloadStart(left: Int) {
+        downloadingRunnable.left = left
+        // 开始通知循环，
         handler.postDelayed(downloadingRunnable, 100)
     }
 
+    fun showDownloadError() {
+        // 下载失败直接停止通知循环，
+        handler.removeCallbacks(downloadingRunnable)
+    }
+
+    fun showDownloading(exists: Int, downloads: Int, errors: Int, left: Int) {
+        // 更新数据，下次通知自己读取，
+        downloadingRunnable.set(exists, downloads, errors, left)
+    }
+
     fun showDownloadComplete(exists: Int, downloads: Int, errors: Int) {
+        // 下载成功直接停止通知循环，
         handler.removeCallbacks(downloadingRunnable)
         notify(1, text = getString(R.string.download_complete_placeholder, exists, downloads, errors)
                 , title = novel.name)

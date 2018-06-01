@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.export
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
@@ -35,30 +36,38 @@ class TextExporter(
             var export = 0
             var skip = 0
             var left = 0
-            var error = false
             fun set(export: Int, skip: Int, left: Int) {
                 this.export = export
                 this.skip = skip
                 this.left = left
-                // 设置个延迟，以防过快，
-                handler.postDelayed(this, 100)
+            }
+
+            fun start() {
+                // 以防万一，先删除可能存在的自己，其实不会存在，
+                handler.removeCallbacks(this)
+                handler.post(this)
             }
 
             fun error() {
-                error = true
-                handler.postDelayed(this, 100)
+                // 导出失败结束通知循环，
+                handler.removeCallbacks(this)
+                ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.export_error_placeholder, export, skip, left), title = novel.name)
             }
 
             lateinit var file: File
 
             override fun run() {
                 debug { "exporting <$export, $skip, $left>" }
-                when {
-                    error -> ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.export_error_placeholder, export, skip, left), title = novel.name)
-                    left == 0 -> ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.export_complete_placeholder, export, skip),
+                if (left == 0) {
+                    // 导出完成结束通知循环，
+                    handler.removeCallbacks(this)
+                    ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.export_complete_placeholder, export, skip),
                             bigText = ctx.getString(R.string.export_complete_big_placeholder, file.path),
                             title = novel.name)
-                    else -> ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.exporting_placeholder, export, skip, left), title = novel.name)
+                } else {
+                    ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.exporting_placeholder, export, skip, left), title = novel.name)
+                    // 100ms循环一次通知，
+                    handler.postDelayed(this, 100)
                 }
             }
         }
@@ -67,7 +76,7 @@ class TextExporter(
             Reporter.post(message, e)
             error(message, e)
             exportingRunnable.error()
-        }) {
+        }, ioExecutorService) {
             // 尝试导出到sd卡，没有就导出到私有目录，虽然这样的导出好像没什么意义，
             val baseFile = ctx.getExternalFilesDir(null)
                     ?.resolve(NAME_FOLDER)
@@ -88,6 +97,7 @@ class TextExporter(
                 var left = size
                 // 开始导出，
                 exportingRunnable.set(export, skip, left)
+                exportingRunnable.start()
 
                 val container = DataManager.novelContentsCached(novel)
                 chapters.forEach { chapter ->

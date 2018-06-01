@@ -69,6 +69,9 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             debug {
                 "download start <$fromIndex/$size> * $threadsLimit"
             }
+            uiThread {
+                view?.showDownloadStart(left.get())
+            }
             // 同时启动多个线程下载，
             repeat(threadsLimit) {
                 view?.doAsync({ e ->
@@ -76,6 +79,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                     Reporter.post(message, e)
                     error(message, e)
                     view?.runOnUiThread {
+                        view?.showDownloadError()
                         view?.showError(message, e)
                     }
                 }, ioExecutorService) {
