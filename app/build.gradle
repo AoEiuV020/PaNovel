@@ -9,8 +9,8 @@ android {
         applicationId "cc.aoeiuv020.panovel"
         minSdkVersion min_version
         targetSdkVersion target_version
-        versionCode 50
-        versionName "2.2.2"
+        versionCode 51
+        versionName "3.0.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "$rootProject.name-$versionName")
