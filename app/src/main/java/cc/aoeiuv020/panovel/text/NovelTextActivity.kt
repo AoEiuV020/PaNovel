@@ -555,6 +555,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         val nb: NotificationCompat.Builder by lazy {
             val intent = intentFor<MainActivity>()
             val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
+            @Suppress("DEPRECATION")
+            // 用过时的通知，可以兼容api26,
             val notificationBuilder = NotificationCompat.Builder(ctx)
                     .setOnlyAlertOnce(true)
                     .setAutoCancel(true)
@@ -579,8 +581,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                         .setProgress(0, 0, false)
                 manager.notify(1, nb.build())
             } else {
+                val progress = ((exists + downloads + errors).toFloat() / ((exists + downloads + errors) + left) * 100).toInt()
                 nb.setContentText(getString(R.string.downloading_placeholder, exists, downloads, errors, left))
-                        .setProgress(100, ((exists + downloads + errors).toFloat() / left * 100).toInt(), false)
+                        .setProgress(100, progress, false)
                 manager.notify(1, nb.build())
                 // 100ms通知一次，避免过快，
                 handler.postDelayed(this, 100)
