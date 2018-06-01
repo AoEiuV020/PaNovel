@@ -18,7 +18,7 @@
 
         <cc.aoeiuv020.panovel.settings.FloatEditTextPreference
             android:capitalize="words"
-            android:defaultValue="24"
+            android:defaultValue="16"
             android:inputType="numberDecimal"
             android:key="dotSize"
             android:maxLines="1"

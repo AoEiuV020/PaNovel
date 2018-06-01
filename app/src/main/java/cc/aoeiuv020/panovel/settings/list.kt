@@ -14,7 +14,7 @@ object ListSettings : Pref {
 
     // 书架的小红点设置，
     var dotColor: Int by Delegates.int(0xffff0000.toInt())
-    var dotSize: Float by Delegates.float(24f)
+    var dotSize: Float by Delegates.float(16f)
 
     // 点击事件设置，
     var onDotClick: ItemAction by Delegates.enum(ItemAction.Refresh)
