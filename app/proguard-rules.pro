@@ -13,6 +13,8 @@
 
 
 # 需要用gson序列化的枚举不混淆，
+## NovelChapter有在缓存库中保存章节列表，是直接gson序列化的，混淆的话，改了混淆结果会读出空，
+-keepclassmembers class cc.aoeiuv020.panovel.api.NovelChapter { <fields>; }
 -keepclassmembers class cc.aoeiuv020.reader.AnimationMode { <fields>; }
 -keepclassmembers class cc.aoeiuv020.panovel.share.Expiration { <fields>; }
 
