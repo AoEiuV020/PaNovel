@@ -492,8 +492,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun download() {
         val index = reader.currentChapter
-        notify(1, getString(R.string.downloading_from_current_chapter_placeholder, index)
-                , novel.name
+        notify(1, text = getString(R.string.downloading_from_current_chapter_placeholder, index)
+                , title = novel.name
                 , icon = R.drawable.ic_file_download)
         presenter.download(novel, index)
     }
@@ -547,8 +547,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
 
         override fun run() {
-            notify(1, getString(R.string.downloading_placeholder, exists, downloads, errors, left)
-                    , novel.name
+            notify(1, text = getString(R.string.downloading_placeholder, exists, downloads, errors, left)
+                    , title = novel.name
                     , icon = R.drawable.ic_file_download)
         }
     }
@@ -561,8 +561,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun showDownloadComplete(exists: Int, downloads: Int, errors: Int) {
         handler.removeCallbacks(downloadingRunnable)
-        notify(1, getString(R.string.download_complete_placeholder, exists, downloads, errors)
-                , novel.name)
+        notify(1, text = getString(R.string.download_complete_placeholder, exists, downloads, errors)
+                , title = novel.name)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

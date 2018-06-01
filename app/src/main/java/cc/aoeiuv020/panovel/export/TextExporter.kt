@@ -54,11 +54,11 @@ class TextExporter(
             override fun run() {
                 debug { "exporting <$export, $skip, $left>" }
                 when {
-                    error -> ctx.notify(10000 + novel.nId.toInt(), ctx.getString(R.string.export_error_placeholder, export, skip, left), title = novel.name)
-                    left == 0 -> ctx.notify(10000 + novel.nId.toInt(), ctx.getString(R.string.export_complete_placeholder, export, skip),
+                    error -> ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.export_error_placeholder, export, skip, left), title = novel.name)
+                    left == 0 -> ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.export_complete_placeholder, export, skip),
                             bigText = ctx.getString(R.string.export_complete_big_placeholder, file.path),
                             title = novel.name)
-                    else -> ctx.notify(10000 + novel.nId.toInt(), ctx.getString(R.string.exporting_placeholder, export, skip, left), novel.name)
+                    else -> ctx.notify(10000 + novel.nId.toInt(), text = ctx.getString(R.string.exporting_placeholder, export, skip, left), title = novel.name)
                 }
             }
         }
