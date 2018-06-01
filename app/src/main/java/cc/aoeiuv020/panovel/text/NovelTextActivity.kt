@@ -35,6 +35,7 @@ import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -119,6 +120,16 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         presenter.start()
     }
 
+    // 不能lambda， lambda不能this调用Runnable自己，
+    private val autoSaveReadStatusRunnable = object : Runnable {
+        override fun run() {
+            // 查询到小说对象才会开始线程，所以这里novel对象必然存在，
+            presenter.saveReadStatus(novel)
+            // 循环调用自己，
+            handler.postDelayed(this, TimeUnit.SECONDS.toMillis(1) * ReaderSettings.autoSaveReadStatus)
+        }
+    }
+
     fun showNovel(novel: Novel) {
         this.novel = novel
         initReader(novel)
@@ -136,6 +147,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             // urlTextView只显示完整地址，以便点击打开，
             browse(urlTextView.text.toString())
         }
+        if (ReaderSettings.autoSaveReadStatus > 0) {
+            // 启动自动保存阅读进度循环，
+            handler.post(autoSaveReadStatusRunnable)
+        } else {
+            // 进来就至少更新一次阅读时间，确保退到书架页查询时这本小说的阅读时间是最新，
+            // 退出时还有更新一次，
+            presenter.saveReadStatus(novel)
+        }
+
         presenter.requestChapters(novel)
     }
 
@@ -347,6 +367,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     override fun onDestroy() {
+        // 删除循环自动保存阅读自动的回调，
+        handler.removeCallbacks(autoSaveReadStatusRunnable)
         if (::presenter.isInitialized) {
             presenter.detach()
         }
@@ -390,6 +412,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     /**
      * 给定id找不到小说也就不用继续了，
      */
+    @Suppress("UNUSED_PARAMETER")
     fun showNovelNotFound(message: String, e: Throwable) {
         // 两个参数已经打过日志了，这里就不重复了，
         toast("小说不存在，")
@@ -499,6 +522,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
     }
 
+    /**
+     * 用于延迟通知下载过程，
+     * 以及循环通知保存阅读进度，
+     */
     private val handler: Handler = Handler()
 
     /**

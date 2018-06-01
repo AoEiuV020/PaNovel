@@ -15,6 +15,10 @@ object ReaderSettings : Pref {
     override val name: String
         get() = "Reader"
 
+    /**
+     * 自动保存阅读进度的间隔，单位秒，
+     */
+    var autoSaveReadStatus: Int by Delegates.int(60)
     var fullScreenClickNextPage: Boolean by Delegates.boolean(false)
     var volumeKeyScroll: Boolean by Delegates.boolean(true)
     var centerPercent: Float by Delegates.float(0.5f)

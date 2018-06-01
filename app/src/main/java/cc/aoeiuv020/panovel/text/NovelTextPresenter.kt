@@ -37,10 +37,6 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             }
         }) {
             val novel = DataManager.getNovel(id)
-            novel.readTime = Date()
-            // 进来就更新一次阅读时间，确保退到书架页查询时这本小说的阅读时间是最新，
-            // 退出时还有更新一次，
-            DataManager.updateReadStatus(novel)
             uiThread {
                 view?.showNovel(novel)
             }

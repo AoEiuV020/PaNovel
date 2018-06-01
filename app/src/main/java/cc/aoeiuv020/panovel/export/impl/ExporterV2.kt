@@ -79,6 +79,7 @@ class ExporterV2 : DefaultExporter() {
                 "animationSpeed" -> editor.putFloat(key, value.asFloat)
                 "centerPercent" -> editor.putFloat(key, value.asFloat)
                 "dotSize" -> editor.putFloat(key, value.asFloat)
+                "autoSaveReadStatus" -> editor.putInt(key, value.asInt)
                 "brightness" -> editor.putInt(key, value.asInt)
                 "autoRefreshInterval" -> editor.putInt(key, value.asInt)
                 "backgroundColor" -> editor.putInt(key, value.asInt)

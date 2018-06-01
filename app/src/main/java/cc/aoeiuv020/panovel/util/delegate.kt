@@ -58,6 +58,7 @@ object Delegates {
     fun int(default: Int, key: String? = null) =
             PrefDelegate.Int(default, key)
 
+    // 尽量用int，没什么必要long,
     fun long(default: Long, key: String? = null) =
             PrefDelegate.Long(default, key)
 
@@ -74,8 +75,6 @@ object Delegates {
             PrefDelegate.Any.new(default, key)
 
     fun uri(key: String? = null) = UriDelegate(key)
-
-    inline fun <reified T : SubPref> sub(subName: String? = null): T = TODO()
 }
 
 /**

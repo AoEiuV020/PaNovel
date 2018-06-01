@@ -26,6 +26,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
                 view?.showError(message, e)
             }
         }) {
+            // TODO: 异步顺序不定，可能在退出阅读页面时的保存进度还没开始就先开始列出书架，导致内容不正确，
             val list = DataManager.listBookshelf()
             uiThread {
                 view?.showNovelList(list)

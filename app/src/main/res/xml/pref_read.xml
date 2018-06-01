@@ -20,7 +20,17 @@
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:inputType="number"
+        android:defaultValue="60"
+        android:key="autoSaveReadStatus"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/auto_save_read_status_second" />
+
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
         android:defaultValue="300"
+        android:inputType="number"
         android:key="fullScreenDelay"
         android:maxLines="1"
         android:selectAllOnFocus="true"
