@@ -48,7 +48,7 @@ class CacheManager(ctx: Context) {
     }
 
     fun cleanAll() {
-        root
+        root.drop()
     }
 
     companion object {
