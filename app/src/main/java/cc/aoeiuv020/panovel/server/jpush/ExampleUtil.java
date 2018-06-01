@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cc.aoeiuv020.panovel.report.Reporter;
 import cn.jpush.android.api.JPushInterface;
 
 @SuppressWarnings("all")
@@ -96,6 +97,11 @@ public class ExampleUtil {
                 Looper.loop();
             }
         }).start();
+    }
+
+    // 有问题直接上报，该方法是从官方示例中的showToast改来的，本该showToast的都是些异常情况，
+    public static void post(final String toast, final Context context) {
+        Reporter.INSTANCE.post(toast);
     }
 
     public static boolean isConnected(Context context) {

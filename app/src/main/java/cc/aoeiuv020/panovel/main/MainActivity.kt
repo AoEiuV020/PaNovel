@@ -327,11 +327,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             showError(message, e)
         }) {
             // 有检索书架列表，所以必须异步，
-            DataManager.subscriptBookshelf { count ->
-                val message = "成功订阅当前书架<$count>本，"
-                info { message }
-                showMessage(message)
-            }
+            DataManager.resetSubscript()
         }
     }
 

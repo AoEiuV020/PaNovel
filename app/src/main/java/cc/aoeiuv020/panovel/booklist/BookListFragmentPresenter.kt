@@ -115,7 +115,7 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
                 view?.showError(message, e)
             }
         }) {
-            DataManager.removeBookshelf(bookList)
+            DataManager.removeFromBookshelf(bookList)
             uiThread {
                 view?.showRemoveBookshelfComplete()
             }
@@ -132,7 +132,7 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
                 view?.showError(message, e)
             }
         }) {
-            DataManager.addBookshelf(bookList)
+            DataManager.addToBookshelf(bookList)
             uiThread {
                 view?.showAddBookshelfComplete()
             }

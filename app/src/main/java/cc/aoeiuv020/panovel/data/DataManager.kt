@@ -49,7 +49,15 @@ object DataManager : AnkoLogger {
 
     fun listBookshelf(): List<Novel> = app.listBookshelf()
 
-    fun updateBookshelf(novel: Novel) = app.updateBookshelf(novel.nId, novel.bookshelf)
+    fun updateBookshelf(novel: Novel) {
+        app.updateBookshelf(novel.nId, novel.bookshelf)
+        // 向极光订阅/取消对应tag,
+        if (novel.bookshelf) {
+            server.addTags(listOf(novel))
+        } else {
+            server.removeTags(listOf(novel))
+        }
+    }
 
     fun refreshChapters(novel: Novel): List<NovelChapter> {
         // 确保存在详情页信息，
@@ -339,20 +347,29 @@ object DataManager : AnkoLogger {
     }
 
     fun importBookList(name: String, list: List<NovelMinimal>) = app.importBookList(name, list)
-    fun addBookshelf(bookList: BookList) = app.addBookshelf(bookList)
-    fun removeBookshelf(bookList: BookList) = app.removeBookshelf(bookList)
+    fun addToBookshelf(bookList: BookList) {
+        app.addBookshelf(bookList)
+        // 向极光订阅对应tag,
+        server.addTags(getNovelFromBookList(bookList.nId))
+    }
+
+    fun removeFromBookshelf(bookList: BookList) {
+        app.removeBookshelf(bookList)
+        // 向极光取消订阅对应tag,
+        server.removeTags(getNovelFromBookList(bookList.nId))
+    }
     /**
      * 小说导入书架，包含进度，
      */
     fun importBookshelfWithProgress(list: List<NovelWithProgress>) = app.db.runInTransaction {
         debug { "$list" }
-        list.forEach {
+        val novelList = list.mapNotNull {
             // 查询或插入，得到小说对象，再更新进度，
             val novel = app.queryOrNewNovel(NovelMinimal(it))
             if (!app.checkSiteSupport(novel)) {
                 // 网站不在支持列表就不添加，
                 // 基本信息已经写入数据库也无所谓了，
-                return@forEach
+                return@mapNotNull null
             }
             novel.readAtChapterIndex = it.readAtChapterIndex
             novel.readAtTextIndex = it.readAtTextIndex
@@ -362,10 +379,14 @@ object DataManager : AnkoLogger {
             }
             // 加入书架，
             novel.bookshelf = true
-            updateBookshelf(novel)
+            // 不调用方法updateBookshelf，因为这个方法包含订阅更新推送，
+            app.updateBookshelf(novel.nId, novel.bookshelf)
             // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
             updateReadStatus(novel)
+            novel
         }
+        // 向极光订阅/取消对应tag,
+        server.addTags(novelList)
     }
 
     fun cleanAllCache() {
@@ -380,10 +401,11 @@ object DataManager : AnkoLogger {
     fun cleanHistory() = app.cleanHistory()
 
     /**
+     * 重置书架订阅情况，覆盖此前的所有tags,
      * 向极光订阅书架上的小说，
      * 只能异步，所以传入回调，
      * 回调是收到极光的广播时调用，在ui线程的，
      */
-    fun subscriptBookshelf(callback: (Int) -> Unit) =
-            server.subscriptBookshelf(listBookshelf(), callback)
+    fun resetSubscript() =
+            server.setTags(listBookshelf())
 }

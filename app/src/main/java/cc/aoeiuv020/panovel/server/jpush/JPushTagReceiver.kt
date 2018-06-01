@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.support.v4.content.LocalBroadcastManager
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.panovel.report.Reporter
 import cn.jpush.android.api.JPushMessage
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -20,6 +21,7 @@ class JPushTagReceiver : BroadcastReceiver(), AnkoLogger {
         private const val EXTRA_TAG_ALIAS_BEAN = "tagAliasBean"
         private const val EXTRA_MESSAGE = "jPushMessage"
         private const val ACTION_TAG = "actionTag"
+        // 收到极光tag消息时调用，通知所有注册了的receiver,
         fun send(context: Context, jPushMessage: JPushMessage, tagAliasBean: TagAliasBean) {
             val intent = Intent(ACTION_TAG).apply {
                 val tagAliasBeanString = tagAliasBean.toJson()
@@ -40,12 +42,6 @@ class JPushTagReceiver : BroadcastReceiver(), AnkoLogger {
         fun unregister(context: Context, receiver: JPushTagReceiver) {
             LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
         }
-
-        fun create(callback: (JPushMessage, TagAliasBean) -> Unit): JPushTagReceiver {
-            return JPushTagReceiver().also {
-                it.callback = callback
-            }
-        }
     }
 
     lateinit var callback: (JPushMessage, TagAliasBean) -> Unit
@@ -59,10 +55,14 @@ class JPushTagReceiver : BroadcastReceiver(), AnkoLogger {
             debug { "receive: $tagAliasBean" }
             debug { "message: $jPushMessage" }
             if (::callback.isInitialized) {
+                // tagAliasBean是自己生成并被TagAliasOperatorHelper缓存的，
+                // jPushMessage是极光返回的当前情况，
                 callback(jPushMessage, tagAliasBean)
             }
         } catch (e: Exception) {
-            error("解析失败，", e)
+            val message = "解析失败，"
+            error(message, e)
+            Reporter.post(message, e)
             return
         }
     }
