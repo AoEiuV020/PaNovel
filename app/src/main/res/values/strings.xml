@@ -172,5 +172,7 @@
     <string name="keep_screen_on">保持屏幕长亮</string>
     <string name="notify_has_update_title_placeholder">《%s》有更新</string>
     <string name="auto_save_read_status_second">自动保存阅读进度(s)</string>
+    <string name="download_chapters_count">下载章节数</string>
+    <string name="all">全部</string>
 
 </resources>

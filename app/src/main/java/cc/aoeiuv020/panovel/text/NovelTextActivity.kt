@@ -16,9 +16,11 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AlertDialog
+import android.text.InputType
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
@@ -38,6 +40,7 @@ import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
+import kotlinx.android.synthetic.main.dialog_editor.view.*
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
@@ -495,14 +498,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         NovelDetailActivity.start(this, novel)
     }
 
-    fun download() {
-        val index = reader.currentChapter
-        notify(1, text = getString(R.string.downloading_from_current_chapter_placeholder, index)
-                , title = novel.name
-                , icon = R.drawable.ic_file_download)
-        presenter.download(novel, index)
-    }
-
     fun showContents() {
         doAsync({ e ->
             val message = "加载小说正文缓存列表失败，"
@@ -575,20 +570,47 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         // System services not available to Activities before onCreate()
         val manager by lazy { NotificationManagerCompat.from(ctx) }
 
-        override fun run() {
-            if (left == 0) {
+        fun complete() {
+            // 完成时停止通知循环，
+            // 可能正在通知？删除后又调用了延迟100ms的通知，覆盖了完成的通知，
+            // 不对啊，这是在主线程的操作，只有一个线程，那就是其中一个通知在阻塞中，这里通知完了才到它，
+            // 不管了，这多线程实在恶心，给个一秒的延迟，确保最后通知，
+            handler.removeCallbacks(this)
+            handler.postDelayed({
                 nb.setContentText(getString(R.string.download_complete_placeholder, exists, downloads, errors))
                         .setProgress(0, 0, false)
                 manager.notify(1, nb.build())
-            } else {
-                val progress = ((exists + downloads + errors).toFloat() / ((exists + downloads + errors) + left) * 100).toInt()
-                nb.setContentText(getString(R.string.downloading_placeholder, exists, downloads, errors, left))
-                        .setProgress(100, progress, false)
-                manager.notify(1, nb.build())
-                // 100ms通知一次，避免过快，
-                handler.postDelayed(this, 100)
-            }
+            }, 1000)
         }
+
+        override fun run() {
+            val progress = ((exists + downloads + errors).toFloat() / ((exists + downloads + errors) + left) * 100).toInt()
+            nb.setContentText(getString(R.string.downloading_placeholder, exists, downloads, errors, left))
+                    .setProgress(100, progress, false)
+            manager.notify(1, nb.build())
+            // 100ms通知一次，避免过快，
+            handler.postDelayed(this, 100)
+        }
+    }
+
+    fun download() {
+        val index = reader.currentChapter
+        alert {
+            titleResource = R.string.download_chapters_count
+            val layout = View.inflate(ctx, R.layout.dialog_editor, null)
+            customView = layout
+            val etCount = layout.editText.apply {
+                inputType = InputType.TYPE_CLASS_NUMBER
+                setText(50.toString())
+            }
+            neutralPressed(R.string.all) {
+                presenter.download(novel, index, Int.MAX_VALUE)
+            }
+            yesButton {
+                presenter.download(novel, index, etCount.text.toString().toInt())
+            }
+            cancelButton { }
+        }.show()
     }
 
     fun showDownloadStart(left: Int) {
@@ -609,6 +631,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun showDownloadComplete(exists: Int, downloads: Int, errors: Int) {
         downloadingRunnable.set(exists, downloads, errors, 0)
+        downloadingRunnable.complete()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

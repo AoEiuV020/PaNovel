@@ -48,7 +48,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
         return DataManager.requestContent(novel, chapter, refresh)
     }
 
-    fun download(novel: Novel, fromIndex: Int) {
+    fun download(novel: Novel, fromIndex: Int, count: Int) {
         view?.doAsync({ e ->
             val message = "下载失败，"
             Reporter.post(message, e)
@@ -60,10 +60,11 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             val chapters = DataManager.requestChapters(novel)
             val cachedList = DataManager.novelContentsCached(novel)
             val size = chapters.size
+            val last = minOf(size - fromIndex, count) + fromIndex
             var exists = 0
             var downloads = 0
             var errors = 0
-            val left = AtomicInteger(size - fromIndex)
+            val left = AtomicInteger(last - fromIndex)
             val nextIndex = AtomicInteger(fromIndex)
             val threadsLimit = GeneralSettings.downloadThreadsLimit
             debug {
@@ -73,7 +74,8 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                 view?.showDownloadStart(left.get())
             }
             // 同时启动多个线程下载，
-            repeat(threadsLimit) {
+            // 判断一下，线程数不要过多，
+            repeat(minOf(threadsLimit, left.get())) {
                 view?.doAsync({ e ->
                     val message = "线程下载失败，"
                     Reporter.post(message, e)
@@ -87,7 +89,8 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                     var index = nextIndex.getAndIncrement()
                     // 如果presenter已经detach说明离开了这个页面，不继续下载，
                     // 正在下载的章节不中断，
-                    while (index < size && view != null) {
+                    // 上面判断过，线程数不会过多，一进来index会小于size,
+                    while (index < last && view != null) {
                         debug { "${Thread.currentThread().name} downloading $index" }
                         val chapter = chapters[index]
                         if (cachedList.contains(chapter.extra)) {
@@ -105,7 +108,9 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                             }
                         }
                         val tmpLeft = left.decrementAndGet()
+                        val tmpIndex = index
                         uiThread {
+                            debug { "download $tmpIndex, left $tmpLeft" }
                             if (tmpLeft == 0) {
                                 view?.showDownloadComplete(exists, downloads, errors)
                             } else {
