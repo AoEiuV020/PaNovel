@@ -58,4 +58,7 @@ abstract class NovelDao {
 
     @Query("update Novel set readTime = 0")
     abstract fun cleanHistory()
+
+    @Query("update Novel set detail = :detail where id = :id")
+    abstract fun updateDetail(id: Long, detail: String)
 }

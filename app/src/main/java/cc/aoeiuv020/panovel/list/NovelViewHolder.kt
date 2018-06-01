@@ -164,7 +164,7 @@ class NovelViewHolder(itemView: View,
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
                             // TODO: 考虑在特定某些异常出现时直接改数据库里的小说图片地址，
                             novel.image = "https://www.snwx8.com/modules/article/images/nocover.jpg"
-                            Glide.with(imageView).load(novel.image)
+                            Glide.with(ctx.applicationContext).load(novel.image)
                                     .into(target)
                             return true
                         }

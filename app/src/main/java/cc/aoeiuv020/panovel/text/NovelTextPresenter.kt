@@ -36,7 +36,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             view?.runOnUiThread {
                 view?.showNovelNotFound(message, e)
             }
-        }, ioExecutorService) {
+        }) {
             val novel = DataManager.getNovel(id)
             uiThread {
                 view?.showNovel(novel)
@@ -129,7 +129,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             view?.runOnUiThread {
                 view?.showError(message, e)
             }
-        }) {
+        }, ioExecutorService) {
             val list = DataManager.requestChapters(novel)
             uiThread {
                 view?.showChaptersAsc(list)

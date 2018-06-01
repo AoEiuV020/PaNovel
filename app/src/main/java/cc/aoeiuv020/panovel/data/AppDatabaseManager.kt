@@ -19,8 +19,15 @@ class AppDatabaseManager(context: Context) {
             author = novelMinimal.author, name = novelMinimal.name, detail = novelMinimal.detail)
 
     private fun queryOrNewNovel(site: String, author: String, name: String, detail: String): Novel = db.runInTransaction<Novel> {
-        db.novelDao().query(site, author, name)
-                ?: Novel(site = site, author = author, name = name, detail = detail).also {
+        db.novelDao().query(site, author, name)?.also {
+            // 如果查询到了，判断下detail是否一致，
+            if (it.detail != detail) {
+                // 如果detail不一致，以晚得到的，也就是传入的参数detail为准，
+                // 以防万一数据库中的detail无效时，可以通过再次模糊搜索，刷新detail,
+                it.detail = detail
+                db.novelDao().updateDetail(it.nId, it.detail)
+            }
+        } ?: Novel(site = site, author = author, name = name, detail = detail).also {
                     // 数据库里没有，需要插入，
                     // 插入后确保novel要有这个id,
                     it.id = db.novelDao().insert(it)
