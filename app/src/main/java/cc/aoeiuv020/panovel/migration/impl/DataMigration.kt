@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.migration.impl
 
 import android.content.Context
+import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.get
 import cc.aoeiuv020.base.jar.jsonPath
 import cc.aoeiuv020.base.jar.toBean
@@ -98,6 +99,14 @@ class DataMigration : Migration(), AnkoLogger {
         }
     }
 
+    // 旧版requester有两种情况，一个对象包含extra或者竖线|分隔类名和extra,
+    private fun getDetailFromRequester(requester: JsonElement): String =
+            if (requester.isJsonObject) {
+                requester.jsonPath.get("$.extra")
+            } else {
+                requester.asString.divide('|').second
+            }
+
     private fun importBookshelf(base: File) {
         val progress = base.resolve("Progress")
         val list = base.resolve("Bookshelf").listFiles()?.map {
@@ -105,7 +114,7 @@ class DataMigration : Migration(), AnkoLogger {
                 NovelWithProgress(site = get("$.site"),
                         author = get("$.author"),
                         name = get("$.name"),
-                        detail = get("$.requester.extra"))
+                        detail = getDetailFromRequester(get("$.requester")))
             }
             try {
                 progress.resolve(novel.run { "$name.$author.$site" })
@@ -132,7 +141,7 @@ class DataMigration : Migration(), AnkoLogger {
                         NovelMinimal(site = get("$.site"),
                                 author = get("$.author"),
                                 name = get("$.name"),
-                                detail = get("$.requester.extra"))
+                                detail = getDetailFromRequester(get("$.requester")))
                     }
                 }
                 DataManager.importBookList(name, list)
