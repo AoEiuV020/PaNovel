@@ -8,8 +8,7 @@ import java.net.URL
 /**
  * Created by AoEiuV020 on 2018.05.10-18:11:57.
  */
-// TODO：这网站类名起错了应该要Qlwx,
-class Qlyx : DslJsoupNovelContext() { init {
+class Qlwx : DslJsoupNovelContext() { init {
     site {
         name = "齐鲁文学"
         baseUrl = "http://www.76wx.com"

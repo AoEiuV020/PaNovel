@@ -5,10 +5,7 @@ import org.junit.Test
 /**
  * Created by AoEiuV020 on 2018.05.10-22:13:32.
  */
-class QlyxTest : BaseNovelContextText(Qlyx::class) {
-    init {
-        (context as Qlyx).verify()
-    }
+class QlwxTest : BaseNovelContextText(Qlwx::class) {
 
     @Test
     fun yunsuo() {

@@ -25,7 +25,7 @@ class ApiManager(ctx: Context) {
         listOf(
                 Piaotian(), Biquge(), Liudatxt(), Qidian(),
                 Sfacg(), Snwx(), Syxs(),
-                Yssm(), Qlyx()
+                Yssm(), Qlwx()
         )
     }
     // 缓存host对应网站上下文的映射，
