@@ -5,6 +5,7 @@ import android.content.Context
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
@@ -399,4 +400,12 @@ object DataManager : AnkoLogger {
      */
     fun resetSubscript() =
             server.setTags(listBookshelf())
+
+    fun removeAllCookies() {
+        removeWebViewCookies()
+        syncCookies(App.ctx)
+        listSites().forEach {
+            removeNovelContextCookies(it.name)
+        }
+    }
 }

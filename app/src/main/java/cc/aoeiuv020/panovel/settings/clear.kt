@@ -24,6 +24,8 @@ class CacheClearPreferenceFragment : PreferenceFragment(), AnkoLogger {
 
         val map = mapOf("cache" to {
             DataManager.cleanAllCache()
+        }, "cookie" to {
+            DataManager.removeAllCookies()
         }, "bookshelf" to {
             DataManager.cleanBookshelf()
         }, "book_list" to {
@@ -33,24 +35,24 @@ class CacheClearPreferenceFragment : PreferenceFragment(), AnkoLogger {
         })
 
         val listener: Preference.OnPreferenceClickListener = Preference.OnPreferenceClickListener { p ->
-                        map[p.key]?.also { clear ->
-                            alert(p.title.toString(), getString(R.string.confirm_clear)) {
-                                yesButton {
-                                    val dialog = indeterminateProgressDialog(getString(R.string.removing, p.title))
-                                    dialog.show()
-                                    doAsync({ e ->
-                                        val message = "清除失败，"
-                                        Reporter.post(message, e)
-                                        error(message, e)
-                                    }) {
-                                        clear.invoke()
-                                        uiThread {
-                                            dialog.dismiss()
-                                        }
-                                    }
-                                }
-                            }.show()
+            map[p.key]?.also { clear ->
+                alert(p.title.toString(), getString(R.string.confirm_clear)) {
+                    yesButton {
+                        val dialog = indeterminateProgressDialog(getString(R.string.removing, p.title))
+                        dialog.show()
+                        doAsync({ e ->
+                            val message = "清除失败，"
+                            Reporter.post(message, e)
+                            error(message, e)
+                        }) {
+                            clear.invoke()
+                            uiThread {
+                                dialog.dismiss()
+                            }
                         }
+                    }
+                }.show()
+            }
             true
         }
         repeat(preferenceScreen.preferenceCount) {
