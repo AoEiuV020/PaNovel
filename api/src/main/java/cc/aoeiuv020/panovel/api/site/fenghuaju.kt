@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 
@@ -33,7 +32,7 @@ class Fenghuaju : DslJsoupNovelContext() {init {
             }
         }
     }
-    bookIdRegex = compilePattern("/(\\d+_\\d+)")
+    bookIdRegex = "/(\\d+_\\d+)"
     detailPageTemplate = "/%s/"
     detail {
         document {
@@ -52,7 +51,7 @@ class Fenghuaju : DslJsoupNovelContext() {init {
             lastUpdate("#info > p:nth-child(4)", format = "yyyy/MM/dd HH:mm:ss", block = pickString("最后更新：(.*)"))
         }
     }
-    chapterIdRegex = compilePattern("/(\\d+_\\d+/\\d+)")
+    chapterIdRegex = "/(\\d+_\\d+/\\d+)"
     contentPageTemplate = "/%s.html"
     content {
         document {

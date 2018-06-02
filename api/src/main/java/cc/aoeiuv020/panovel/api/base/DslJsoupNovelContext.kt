@@ -10,7 +10,6 @@ import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.Pattern
 
 /**
  * Created by AoEiuV020 on 2018.05.20-16:26:44.
@@ -34,8 +33,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
     override var chaptersPageTemplate: String? = null
     override var contentPageTemplate: String? = null
-    override var bookIdRegex: Pattern = firstIntPattern
-    override var chapterIdRegex: Pattern = firstTwoIntPattern
+    override var bookIdRegex: String = firstIntPattern
+    override var chapterIdRegex: String = firstTwoIntPattern
 
     override var charset: String? = null
 

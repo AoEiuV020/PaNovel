@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.regex.Pattern
 
 /**
  * 小说网站的上下文，
@@ -219,8 +218,11 @@ abstract class NovelContext {
      */
     protected open val detailPageTemplate: String? get() = null
 
+    // http://www.166xs.com/xiaoshuo/121/121623/
+    // 应对这种sb网站，format传两遍id, 不影响其他网站，
     protected open fun getNovelChapterUrl(extra: String): String =
-            absUrl(chaptersPageTemplate?.format(findBookId(extra)) ?: extra)
+            absUrl(chaptersPageTemplate?.format(findBookId(extra), findBookId(extra)) ?: extra)
+
 
     /**
      * 目录页地址模板，String.format形式，"/book/%s/"
@@ -228,8 +230,10 @@ abstract class NovelContext {
      */
     protected open val chaptersPageTemplate: String? get() = detailPageTemplate
 
+    // http://www.166xs.com/xiaoshuo/121/121623/34377471.html
+    // 应对这种sb网站，format传两遍id, 不影响其他网站，
     open fun getNovelContentUrl(extra: String): String =
-            absUrl(contentPageTemplate?.format(findChapterId(extra)) ?: extra)
+            absUrl(contentPageTemplate?.format(findChapterId(extra), findChapterId(extra)) ?: extra)
 
     /**
      * 正文页地址模板，String.format形式，"/book/%s/"
@@ -258,7 +262,7 @@ abstract class NovelContext {
         extra
     }
 
-    protected open val bookIdRegex: Pattern get() = firstIntPattern
+    protected open val bookIdRegex: String get() = firstIntPattern
 
     /**
      * 查找章节id, 是包括小说id的，
@@ -270,5 +274,5 @@ abstract class NovelContext {
         extra
     }
 
-    protected open val chapterIdRegex: Pattern get() = firstTwoIntPattern
+    protected open val chapterIdRegex: String get() = firstTwoIntPattern
 }
