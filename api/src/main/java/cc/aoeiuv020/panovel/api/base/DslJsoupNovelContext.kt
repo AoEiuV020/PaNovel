@@ -99,7 +99,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             )
         }
 
-        fun items(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit) {
+        fun itemsIgnoreFailed(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit) {
             novelItemList = parent.requireElements(query).mapNotNull {
                 try {
                     _NovelItemParser(it).run {
@@ -108,6 +108,15 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                     }
                 } catch (e: Exception) {
                     null
+                }
+            }
+        }
+
+        fun items(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit) {
+            novelItemList = parent.requireElements(query).map {
+                _NovelItemParser(it).run {
+                    init()
+                    parse()
                 }
             }
         }
@@ -137,7 +146,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     protected inner class _NovelDetailParser(
             // 有需要的话这个可以改public,
-            private val detailExtra: String,
+            detailExtra: String,
             root: Element
     ) : _Parser<NovelDetail>(root) {
         private val _novelDetail = _NovelDetail()

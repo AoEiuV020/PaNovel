@@ -30,7 +30,7 @@ class Yssm : DslJsoupNovelContext() {init {
         val cutDocument = Jsoup.parse(byteArray.inputStream(), null, response.request().url().toString())
         document(cutDocument) {
             // 由于被截断，可能处理最后一个元素会出异常，无视，
-            items("#container > div.details.list-type > ul > li") {
+            itemsIgnoreFailed("#container > div.details.list-type > ul > li") {
                 name("> span.s2 > a")
                 author("> span.s3")
             }
