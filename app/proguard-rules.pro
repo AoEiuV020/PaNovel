@@ -26,6 +26,13 @@
 #slf4j https://github.com/getsentry/sentry-java/issues/373
 -dontwarn org.slf4j.**
 
+# OkHttp https://github.com/krschultz/android-proguard-snippets/blob/master/libraries/proguard-square-okhttp3.pro
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
 
 #glide https://github.com/bumptech/glide#proguard
 -keep public class * implements com.bumptech.glide.module.GlideModule
