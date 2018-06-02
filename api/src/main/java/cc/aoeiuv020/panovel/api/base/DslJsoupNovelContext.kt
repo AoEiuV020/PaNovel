@@ -80,10 +80,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _Search(name: String)
         : _Requester(name) {
 
-        fun document(init: _NovelItemListParser.() -> Unit): List<NovelItem> =
-                _NovelItemListParser(
-                        parse(call.notNull(), charset)
-                ).also(init).parse()
+        fun document(document: Document = parse(call.notNull(), charset),
+                     init: _NovelItemListParser.() -> Unit): List<NovelItem> =
+                _NovelItemListParser(document).also(init).parse()
     }
 
     protected inner class _NovelItemListParser(root: Element)
@@ -460,7 +459,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     ) {
         var call: Call? = null
         // 指定响应的编码，用于jsoup解析html时，
-        // 不是参数的编码，参数不进行额外的URLEncode,
+        // 不是参数的编码，参数在_Request里指定编码，
         var charset: String? = this@DslJsoupNovelContext.charset
 
         fun get(init: _Request.() -> Unit) {

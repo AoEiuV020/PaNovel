@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.api.base
 
 import cc.aoeiuv020.base.jar.compilePattern
-import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.path
 import okhttp3.Call
@@ -14,6 +13,7 @@ import org.jsoup.select.Elements
 import org.jsoup.select.NodeTraversor
 import org.jsoup.select.NodeVisitor
 import java.io.IOException
+import java.io.InputStream
 import java.net.URLEncoder
 import java.util.*
 
@@ -94,37 +94,36 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
 
     /**
      * 有的网站没有指定编码，只能在这里强行指定，
-     * null表示用默认的，一版可以，
+     * null表示用默认的，一般可以，
+     * 有点混乱，一般在parse前指定，不用这里的，
      */
     protected open val charset: String? get() = null
 
     protected fun parse(extra: String): Document = parse(connect(absUrl(extra)))
+    protected fun parse(input: InputStream, charset: String?, baseUri: String): Document = try {
+        Jsoup.parse(input, charset, baseUri)
+    } catch (e: Exception) {
+        throw IllegalStateException("页面<$baseUri>解析失败，", e)
+    }
+
     protected fun parse(call: Call, charset: String? = this.charset): Document = try {
         val response = response(call)
-        response.body().notNull().use { body ->
-            // 用Jsoup解析okhttp得到的InputStream，
-            // 编码如果指定，就用指定的，没有就从okhttp的response中拿，再没有传null, Jsoup会自己尝试解析，
-            // 如果有301之类跳转，最终响应的地址作为Jsoup解析的baseUri, 主要应该只是从相对地址计算绝对地址时用到，
-            // close基本上有重复，但是可以重复关闭，
-            body.byteStream().use { input ->
-                Jsoup.parse(
-                        input,
-                        charset ?: body.contentType()?.charset()?.toString(),
-                        response.request().url().toString()
-                )
-            }
+        // 用Jsoup解析okhttp得到的InputStream，
+        // 编码如果指定，就用指定的，没有就从okhttp的response中拿，再没有传null, Jsoup会自己尝试解析，
+        // 如果有301之类跳转，最终响应的地址作为Jsoup解析的baseUri, 主要应该只是从相对地址计算绝对地址时用到，
+        response.inputStream { input ->
+            parse(input, charset ?: response.charset(), response.url())
         }
     } catch (e: IOException) {
         // IOException保持IOException, 使用的时候统一把IOException当成网络错误，
         throw IOException("网络连接错误，", e)
-    } catch (e: Exception) {
-        throw IllegalStateException("页面<${call.request().url()}>解析失败，", e)
     }
 
     /**
      * 下一页相关的暂不支持，
      */
     override fun getNextPage(extra: String): String? = getNextPage(parse(extra))
+
     protected open fun getNextPage(root: Document): String? = null
 
     protected fun Element.src(): String = attr("src")

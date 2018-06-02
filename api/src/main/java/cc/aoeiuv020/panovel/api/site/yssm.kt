@@ -1,8 +1,10 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import org.jsoup.Jsoup
 
 /**
  * Created by AoEiuV020 on 2018.05.10-16:48:32.
@@ -21,10 +23,12 @@ class Yssm : DslJsoupNovelContext() {init {
             }
         }
         // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
-        // 这里限制一下，20K大概小几十个结果，
-        TODO()
-//        requireNotNull(call).maxBodySize(1000 * 20)
-        document {
+        // 这里限制一下，20K大概十几个结果，
+        val byteArray = ByteArray(20 * 1000)
+        val response = call.notNull().execute()
+        response.inputStream { it.read(byteArray) }
+        val cutDocument = Jsoup.parse(byteArray.inputStream(), null, response.request().url().toString())
+        document(cutDocument) {
             // 由于被截断，可能处理最后一个元素会出异常，无视，
             items("#container > div.details.list-type > ul > li") {
                 name("> span.s2 > a")

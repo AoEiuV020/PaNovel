@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import okhttp3.*
 import okio.Buffer
 import java.io.IOException
+import java.io.InputStream
 
 /**
  * Created by AoEiuV020 on 2018.06.01-20:43:49.
@@ -70,6 +71,14 @@ abstract class OkHttpNovelContext : NovelContext() {
      */
     protected operator fun List<Cookie>.get(name: String): String? =
             firstOrNull { it.name() == name }?.value()
+
+    // close基本上有重复，但是可以重复关闭，
+    protected inline fun <reified T> Response.inputStream(block: (InputStream) -> T): T =
+            body().notNull().use { it.byteStream().use(block) }
+
+    protected fun Response.charset(): String? = body()?.contentType()?.charset()?.name()
+
+    protected fun Response.url(): String = this.request().url().toString()
 
 
     protected fun connect(url: String): Call {
