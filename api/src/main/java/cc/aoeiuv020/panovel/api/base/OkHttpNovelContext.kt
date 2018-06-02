@@ -2,11 +2,15 @@ package cc.aoeiuv020.panovel.api.base
 
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.api.NovelContext
 import okhttp3.*
 import okio.Buffer
 import java.io.IOException
 import java.io.InputStream
+import java.security.KeyStore
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 /**
  * Created by AoEiuV020 on 2018.06.01-20:43:49.
@@ -15,10 +19,23 @@ abstract class OkHttpNovelContext : NovelContext() {
     // 子类可以继承自己的clientBuilder, 然后不能影响得到client, 要用lazy,
     protected open val client: OkHttpClient by lazy { clientBuilder.build() }
 
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    private val trustManager: X509TrustManager
+        get() = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+                .apply { init(null as? KeyStore) }
+                .trustManagers
+                .first {
+                    it is X509TrustManager
+                } as X509TrustManager
+
     // 子类可以继承，只在第一次使用client时使用一次，
     protected open val clientBuilder: OkHttpClient.Builder
         get() = OkHttpClient.Builder()
                 .addInterceptor(LogInterceptor())
+                // 没具体测试，低版本安卓可能https握手失败，
+                // 是某个tls协议没有启用导致胡，
+                // 这个工厂类启用了所有支持的ssl,
+                .sslSocketFactory(TLSSocketFactory(), trustManager)
                 .cookieJar(cookieJar)
                 // 一个网站20M缓存，
                 // 还不清楚缓存会被具体用在什么地方，
