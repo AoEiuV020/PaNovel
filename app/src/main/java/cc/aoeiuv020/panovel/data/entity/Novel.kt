@@ -4,7 +4,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.util.notNull
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import java.util.*
 
 /**
@@ -143,9 +143,9 @@ data class Novel(
         var pinnedTime: Date = Date(0)
 ) {
     // id的非空版本，实在是要经常用id, 而且是不可能为空的id,
-    val nId: Long get() = id.notNull()
+    val nId: Long get() = id.notNullOrReport()
     // chapters的非空版本，用的不多，
-    val nChapters: String get() = chapters.notNull()
+    val nChapters: String get() = chapters.notNullOrReport()
 
     fun readAt(index: Int, chapters: List<NovelChapter>) {
         readAtChapterIndex = index

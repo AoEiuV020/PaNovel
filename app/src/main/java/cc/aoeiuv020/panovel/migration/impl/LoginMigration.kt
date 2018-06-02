@@ -6,8 +6,11 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.VersionName
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.Cookie
+import okhttp3.HttpUrl
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
@@ -84,7 +87,10 @@ class LoginMigration : Migration(), AnkoLogger {
                     "${novelContext.site.name}: $cookies"
                 }
                 // 导入旧版本cookies，
-                novelContext.putCookies(cookies)
+                val httpUrl = HttpUrl.parse(novelContext.site.baseUrl).notNullOrReport()
+                novelContext.putCookies(cookies.mapValues { (name, value) ->
+                    Cookie.parse(httpUrl, "$name=$value").notNullOrReport()
+                })
             } catch (e: Exception) {
                 // 单个网站处理失败正常继续，不抛异常，只上报异常，可能是这个网站数据被其他原因破坏了，
                 val message = "网站<${novelContext.site.name}>登录状态迁移失败，"

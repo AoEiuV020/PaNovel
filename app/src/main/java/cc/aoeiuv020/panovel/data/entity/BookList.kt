@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.data.entity
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import cc.aoeiuv020.panovel.util.notNull
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import java.util.*
 
 /**
@@ -28,5 +28,5 @@ data class BookList(
         val createTime: Date = Date()
 ) {
     // id的非空版本，实在是要经常用id, 而且是不可能为空的id,
-    val nId: Long get() = id.notNull()
+    val nId: Long get() = id.notNullOrReport()
 }

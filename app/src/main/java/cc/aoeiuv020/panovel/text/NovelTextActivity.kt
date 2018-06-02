@@ -78,7 +78,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private var index: Int? = null
     private var _novel: Novel? = null
     private var novel: Novel
-        get() = _novel.notNull()
+        get() = _novel.notNullOrReport()
         set(value) {
             _novel = value
         }

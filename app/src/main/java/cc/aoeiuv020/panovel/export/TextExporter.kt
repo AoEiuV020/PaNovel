@@ -14,7 +14,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.getBitmapFromVectorDrawable
-import cc.aoeiuv020.panovel.util.notNull
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import org.jetbrains.anko.*
 import java.io.File
 
@@ -142,7 +142,7 @@ class TextExporter(
                     if (container.contains(chapter.extra)) {
                         export++
                         // 判断过章节存在了，这个必须非空，除非导出过程删除了缓存，
-                        val content = DataManager.getContent(novel, chapter).notNull()
+                        val content = DataManager.getContent(novel, chapter).notNullOrReport()
                         // 逐行写入，
                         content.forEach {
                             output.appendln("　　$it")

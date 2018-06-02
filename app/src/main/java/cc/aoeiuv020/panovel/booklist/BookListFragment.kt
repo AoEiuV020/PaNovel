@@ -15,7 +15,7 @@ import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.loading
-import cc.aoeiuv020.panovel.util.notNull
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import cc.aoeiuv020.panovel.util.showKeyboard
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import kotlinx.android.synthetic.main.novel_item_list.*
@@ -151,7 +151,7 @@ class BookListFragment : Fragment(), IView, AnkoLogger {
     }
 
     fun newBookList() {
-        activity.notNull().alert {
+        activity.notNullOrReport().alert {
             titleResource = R.string.add_book_list
             val layout = View.inflate(context, R.layout.dialog_editor, null)
             customView = layout

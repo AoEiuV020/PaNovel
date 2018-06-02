@@ -9,7 +9,7 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
-import cc.aoeiuv020.panovel.util.notNull
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.Cookie
 import okhttp3.HttpUrl
 import org.jetbrains.anko.AnkoLogger
@@ -252,7 +252,7 @@ object DataManager : AnkoLogger {
      */
     @MainThread
     fun pullCookiesFromWebView(context: NovelContext) {
-        val httpUrl = HttpUrl.parse(context.site.baseUrl).notNull()
+        val httpUrl = HttpUrl.parse(context.site.baseUrl).notNullOrReport()
         // webView传入cookie一次只能一条，取出一次所有，
         cookie.getCookies(context.site.baseUrl)?.split(";")?.mapNotNull { cookiePair ->
             debug { "pull cookie: <$cookiePair>" }
