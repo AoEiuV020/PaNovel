@@ -21,9 +21,15 @@ class Piaotian : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            // 加上&page=1可以避开搜索时间间隔的限制，
-            // 之前是通过不加载cookies避开搜索时间间隔的限制，
-            url = "/modules/article/search.php?searchtype=articlename&searchkey=${gbk(it)}&page=1"
+            charset = "GBK"
+            url = "/modules/article/search.php"
+            data {
+                "searchtype" to "articlename"
+                "searchkey" to it
+                // 加上&page=1可以避开搜索时间间隔的限制，
+                // 也可以通过不加载cookies避开搜索时间间隔的限制，
+                "page" to "1"
+            }
         }
         document {
             // 搜索结果可能直接跳到详情页，

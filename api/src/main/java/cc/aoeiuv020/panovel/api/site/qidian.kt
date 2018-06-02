@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
@@ -65,7 +66,7 @@ class Qidian : DslJsoupNovelContext() {init {
         // 如果没有，就额外拿一遍详情页，取其中返回的_csrfToken，
         // TODO: 缓存cookies的话，_csrfToken不知道会不会过期，有必要测试下如果过期会拿到什么，至少一两天不会过期，
         val token = cookies["_csrfToken"] ?: run {
-            response(connect(getNovelDetailUrl(bookId))).cookie("_csrfToken")
+            response(connect(getNovelDetailUrl(bookId))).headers().responseCookies()["_csrfToken"].notNull()
         }
         get {
             url = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
@@ -138,7 +139,7 @@ class Qidian : DslJsoupNovelContext() {init {
             url = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
         }
         // 不删除这个Cookie就拿不到页面，或者把同样的参数放一份在get参数里，不知道起点怎么想的，
-        requireNotNull(connection).request().removeCookie("_csrfToken")
+//        requireNotNull(call).request().removeCookie("_csrfToken")
         response {
             val json = gson.fromJson(it, JsonObject::class.java)
             val content = json.getAsJsonObject("data")

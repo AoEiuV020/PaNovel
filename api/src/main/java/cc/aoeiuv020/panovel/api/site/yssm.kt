@@ -19,7 +19,8 @@ class Yssm : DslJsoupNovelContext() {init {
         }
         // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
         // 这里限制一下，20K大概小几十个结果，
-        requireNotNull(connection).maxBodySize(1000 * 20)
+        TODO()
+//        requireNotNull(call).maxBodySize(1000 * 20)
         document {
             // 由于被截断，可能处理最后一个元素会出异常，无视，
             items("#container > div.details.list-type > ul > li") {

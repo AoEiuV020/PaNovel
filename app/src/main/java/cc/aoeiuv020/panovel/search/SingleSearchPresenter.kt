@@ -61,6 +61,7 @@ class SingleSearchPresenter(
                 view?.showError(message, e)
             }
         }) {
+            // TODO: 打开前可以考虑先拉一下cookie,
             val novel = try {
                 DataManager.getNovelFromUrl(site, currentUrl)
             } catch (e: Exception) {

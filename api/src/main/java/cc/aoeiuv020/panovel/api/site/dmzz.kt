@@ -1,25 +1,11 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelDetail
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.NovelSite
-import cc.aoeiuv020.panovel.api.base.JsoupNovelContext
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
-import org.jsoup.Connection
-import org.jsoup.nodes.Document
-import java.net.URL
-import java.net.URLEncoder
-import java.text.SimpleDateFormat
-
 
 /**
  * TODO: 等网站恢复正常了再测试，
  * Created by AoEiuV020 on 2017.11.30-17:49:36.
  */
+/*
 class Dmzz : JsoupNovelContext() {
     override val enabled: Boolean
         get() = false
@@ -125,3 +111,4 @@ class Dmzz : JsoupNovelContext() {
         return textList
     }
 }
+*/

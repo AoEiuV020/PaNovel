@@ -6,8 +6,18 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.05.10-22:13:32.
  */
 class QlyxTest : BaseNovelContextText(Qlyx::class) {
+    init {
+        (context as Qlyx).verify()
+    }
+
+    @Test
+    fun yunsuo() {
+
+    }
+
     @Test
     fun search() {
+        // http://www.76wx.com/modules/article/search.php%3Fsearchtype=articlename&searchkey=%D0%DE%D5%E6&page=1
         search("都市")
         search("都市大相医", "减肥哥", "11437")
         search("斗破苍穹之万界商城", "梦回夕照", "7395")

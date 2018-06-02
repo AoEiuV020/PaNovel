@@ -5,7 +5,6 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import org.junit.Assert.*
-import org.junit.Before
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.reflect.KClass
@@ -13,18 +12,13 @@ import kotlin.reflect.KClass
 /**
  * Created by AoEiuV020 on 2018.05.21-19:15:56.
  */
-abstract class BaseNovelContextText(private val clazz: KClass<out NovelContext>) {
+abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     init {
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    protected lateinit var context: NovelContext
-
-    @Before
-    fun setUp() {
-        context = clazz.java.newInstance()
-    }
+    protected val context: NovelContext = clazz.java.newInstance()
 
     protected fun search(name: String, author: String, extra: String, count: Int = 3): NovelItem {
         val list = context.searchNovelName(name)

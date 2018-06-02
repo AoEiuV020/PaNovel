@@ -1,11 +1,10 @@
 package cc.aoeiuv020.panovel.api.base
 
 import cc.aoeiuv020.base.jar.compilePattern
-import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.base.jar.trace
-import cc.aoeiuv020.panovel.api.*
-import org.jsoup.Connection
+import cc.aoeiuv020.panovel.api.path
+import okhttp3.Call
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -22,7 +21,7 @@ import java.util.*
  * Created by AoEiuV020 on 2018.05.10-18:08:08.
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-abstract class JsoupNovelContext : NovelContext() {
+abstract class JsoupNovelContext : OkHttpNovelContext() {
     companion object {
         const val TAG_NOVEL_NAME = "小说名"
         const val TAG_NOVEL_LINK = "小说链接"
@@ -100,73 +99,33 @@ abstract class JsoupNovelContext : NovelContext() {
     protected open val charset: String? get() = null
 
     protected fun parse(extra: String): Document = parse(connect(absUrl(extra)))
-    protected fun parse(conn: Connection, charset: String? = this.charset): Document = try {
-        requireNotNull(response(conn, charset).parse())
+    protected fun parse(call: Call, charset: String? = this.charset): Document = try {
+        val response = response(call)
+        response.body().notNull().use { body ->
+            // 用Jsoup解析okhttp得到的InputStream，
+            // 编码如果指定，就用指定的，没有就从okhttp的response中拿，再没有传null, Jsoup会自己尝试解析，
+            // 如果有301之类跳转，最终响应的地址作为Jsoup解析的baseUri, 主要应该只是从相对地址计算绝对地址时用到，
+            // close基本上有重复，但是可以重复关闭，
+            body.byteStream().use { input ->
+                Jsoup.parse(
+                        input,
+                        charset ?: body.contentType()?.charset()?.toString(),
+                        response.request().url().toString()
+                )
+            }
+        }
     } catch (e: IOException) {
         // IOException保持IOException, 使用的时候统一把IOException当成网络错误，
         throw IOException("网络连接错误，", e)
     } catch (e: Exception) {
-        throw IllegalStateException("页面<${conn.request().url()}>解析失败，", e)
+        throw IllegalStateException("页面<${call.request().url()}>解析失败，", e)
     }
 
     /**
-     * 下面一对一对，参数String的如果被继承，就可能用不到参数Document的方法，但是也要继承，
+     * 下一页相关的暂不支持，
      */
-
-    /**
-     * 搜索，
-     * 要继承[connectByNovelName]指定搜索请求方式，
-     * 如果继承了[searchNovelName], 可以不继承[getSearchResultList]解析搜索页面，
-     */
-    protected open fun getSearchResultList(root: Document): List<NovelItem> = listOf()
-
-    override fun searchNovelName(name: String): List<NovelItem> = getSearchResultList(parse(connectByNovelName(name)))
-    protected open fun connectByNovelName(name: String): Connection = throw NotImplementedError()
-
     override fun getNextPage(extra: String): String? = getNextPage(parse(extra))
     protected open fun getNextPage(root: Document): String? = null
-
-    override fun getNovelDetail(extra: String): NovelDetail = getNovelDetail(parse(getNovelDetailUrl(extra)))
-    protected open fun getNovelDetail(root: Document): NovelDetail = throw NotImplementedError()
-
-    override fun getNovelChaptersAsc(extra: String): List<NovelChapter> = getNovelChaptersAsc(parse(getNovelChapterUrl(extra)))
-    protected open fun getNovelChaptersAsc(root: Document): List<NovelChapter> = throw NotImplementedError()
-
-    override fun getNovelContent(extra: String): List<String> = getNovelText(parse(getNovelContentUrl(extra)))
-    protected open fun getNovelText(root: Document): List<String> = throw NotImplementedError()
-
-    /**
-     * 封装网络请求，主要是为了统一打log,
-     */
-    protected fun connect(url: String): Connection {
-        logger.trace {
-            val stack = Thread.currentThread().stackTrace
-            stack.drop(2).take(6).joinToString("\n", "stack trace\n") {
-                "\tat ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
-            }
-        }
-        logger.debug { "request $url" }
-        return Jsoup.connect(url).maxBodySize(0).also { conn ->
-            // 设置cookies,
-            cookies.takeIf { it.isNotEmpty() }?.let { conn.cookies(it) }
-        }
-    }
-
-    protected fun response(conn: Connection, charset: String? = this.charset): Connection.Response {
-        val response = conn.execute()
-        // 指定编码，如果存在，
-        charset?.let { response.charset(it) }
-        // 保存cookies, 按条目覆盖，
-        putCookies(response.cookies())
-        logger.debug { "status code: ${response.statusCode()}" }
-        logger.debug { "response url: ${response.url()}" }
-        logger.trace { "body length: ${response.body().length}" }
-        if (!check(response.url().toString())) {
-            throw IOException("网络被重定向，检查网络是否可用，")
-        }
-        return response
-    }
-
 
     protected fun Element.src(): String = attr("src")
     protected fun Element.absSrc(): String = absUrl("src")

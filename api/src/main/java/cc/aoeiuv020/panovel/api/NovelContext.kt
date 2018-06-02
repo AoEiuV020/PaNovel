@@ -6,6 +6,7 @@ import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.Cookie
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -68,18 +69,22 @@ abstract class NovelContext {
     protected val mFilesDir: File?
         get() = sFilesDir?.resolve(fileName)?.apply { exists() || mkdirs() }
 
-    private val cookiesFile: File? get() = mFilesDir?.resolve("cookies")
-    private var _cookies: Map<String, String>? = null
-    var cookies: Map<String, String>
+    private val cookiesFile: File?
+        get() = mFilesDir?.resolve("cookies")
+    private var _cookies: Map<String, Cookie>? = null
+    // name to Cookie,
+    // 虽然浏览器支持相同name的不同cookie，按domain和path区分，但是这里一个context只有一个网站，不会有多个name,
+    var cookies: Map<String, Cookie>
         @Synchronized
         get() = _cookies ?: (cookiesFile?.let { file ->
             try {
-                file.readText().toBean<MutableMap<String, String>>(gson)
+                file.readText().toBean<Map<String, Cookie>>(gson)
             } catch (e: Exception) {
+                // 读取失败说明文件损坏，直接删除，下次保存，
                 file.delete()
                 null
             }
-        } ?: mutableMapOf()).also {
+        } ?: mapOf()).also {
             _cookies = it
         }
         @Synchronized
@@ -94,15 +99,32 @@ abstract class NovelContext {
             cookiesFile?.writeText(value.toJson(gson))
         }
 
-    fun putCookies(cookies: Map<String, String>) {
+    /**
+     * 保存okhttp得到的cookie， 不过滤，
+     */
+    fun putCookies(cookies: List<Cookie>) {
+        this.cookies = this.cookies + cookies.map {
+            it.name() to it
+        }
+    }
+
+    /**
+     * 保存webView拿到的cookie, 由于只有name=value信息，没有超时之类的，
+     * 过滤一下，value一样的就没必要更新了，
+     */
+    fun putCookies(cookies: Map<String, Cookie>) {
         if (cookies.isEmpty()) {
             return
         }
         // 要确保setCookies被调用才会本地保存cookie,
-        this.cookies = this.cookies + cookies
+        this.cookies = this.cookies + cookies.filter { (name, cookie) ->
+            // 只更新value不同的，以免覆盖了okhttp拿到的包含超时等完整信息的cookie,
+            this.cookies[name]?.value() != cookie.value()
+        }
     }
 
     fun removeCookies() {
+        // 只要赋值了就会覆盖本地保存的，
         this.cookies = mapOf()
     }
 

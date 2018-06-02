@@ -1,9 +1,13 @@
 package cc.aoeiuv020.panovel.api.base
 
+import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.api.*
-import org.jsoup.Connection
+import okhttp3.*
+import okhttp3.internal.http.HttpMethod
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -78,7 +82,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
         fun document(init: _NovelItemListParser.() -> Unit): List<NovelItem> =
                 _NovelItemListParser(
-                        parse(requireNotNull(connection), charset)
+                        parse(call.notNull(), charset)
                 ).also(init).parse()
     }
 
@@ -125,7 +129,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     protected inner class _Detail(extra: String) : _Requester(extra) {
         fun document(
-                document: Document = parse(connection
+                document: Document = parse(call
                         ?: connect(getNovelDetailUrl(extra)), charset),
                 init: _NovelDetailParser.() -> Unit
         ): NovelDetail =
@@ -221,11 +225,11 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             var introduction: String? = null
             var extra: String? = null
             fun createNovelDetail() = NovelDetail(
-                    requireNotNull(novel),
-                    requireNotNull(image),
+                    novel.notNull(),
+                    image.notNull(),
                     update,
                     introduction.toString(),
-                    requireNotNull(extra)
+                    extra.notNull()
             )
         }
     }
@@ -244,7 +248,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     protected inner class _Chapters(extra: String) : _Requester(extra) {
         fun document(
-                document: Document = parse(connection
+                document: Document = parse(call
                         ?: connect(getNovelChapterUrl(extra)), charset),
                 init: _NovelChapterListParser.() -> Unit
         ): List<NovelChapter> =
@@ -336,8 +340,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             var extra: String? = null
             var update: Date? = null
             fun createNovelChapter(): NovelChapter = NovelChapter(
-                    name = requireNotNull(name),
-                    extra = requireNotNull(extra),
+                    name = name.notNull(),
+                    extra = extra.notNull(),
                     update = update
             )
         }
@@ -353,7 +357,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     protected inner class _Content(extra: String) : _Requester(extra) {
         fun document(
-                document: Document = parse(connection
+                document: Document = parse(call
                         ?: connect(getNovelContentUrl(extra)), charset),
                 init: _NovelContentParser.() -> Unit
         ): List<String> = _NovelContentParser(document).also(init).parse()
@@ -427,9 +431,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
             fun createNovelItem() = NovelItem(
                     site,
-                    requireNotNull(name),
-                    requireNotNull(author),
-                    requireNotNull(extra)
+                    name.notNull(),
+                    author.notNull(),
+                    extra.notNull()
             )
         }
     }
@@ -454,29 +458,29 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected abstract inner class _Requester(
             protected val extra: String
     ) {
-        var connection: Connection? = null
+        var call: Call? = null
         // 指定响应的编码，用于jsoup解析html时，
         // 不是参数的编码，参数不进行额外的URLEncode,
         var charset: String? = this@DslJsoupNovelContext.charset
 
         fun get(init: _Request.() -> Unit) {
-            connection = _Request().run {
-                method = Connection.Method.GET
+            call = _Request().run {
+                method = "GET"
                 init()
-                createConnection()
+                createCall()
             }
         }
 
         fun post(init: _Request.() -> Unit) {
-            connection = _Request().run {
-                method = Connection.Method.POST
+            call = _Request().run {
+                method = "POST"
                 init()
-                createConnection()
+                createCall()
             }
         }
 
         fun <T> response(block: (String) -> T): T {
-            val body = response(requireNotNull(connection).ignoreContentType(true)).body()
+            val body = responseBody(call.notNull()).string()
             return block(body)
         }
     }
@@ -485,16 +489,37 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _Request {
         var url: String? = null
         var charset: String? = this@DslJsoupNovelContext.charset
-        var method: Connection.Method? = null
+        var method: String? = null
+        var httpUrl: HttpUrl? = null
+        var requestBody: RequestBody? = null
+        var request: Request? = null
         var dataMap: Map<String, String>? = null
-        fun createConnection(): Connection = connect(absUrl(requireNotNull(url)))
-                .method(requireNotNull(method))
-                .apply { dataMap?.also { data(it) } }
-                .apply { charset?.also { postDataCharset(it) } }
+        fun createCall(): Call {
+            val httpUrlBuilder = (httpUrl
+                    ?: HttpUrl.parse(absUrl(url.notNull())).notNull()).newBuilder()
+            val requestBuilder = request?.newBuilder() ?: Request.Builder()
+            if (HttpMethod.permitsRequestBody(method.notNull())) {
+                // post,
+                // 编码可以空，会是默认UTF-8,
+                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                val bodyBuilder = FormBody.Builder(charset?.let { Charset.forName(charset) })
+                dataMap?.forEach { name, value ->
+                    bodyBuilder.add(name, value)
+                }
+                requestBuilder.method(method.notNull(), requestBody ?: bodyBuilder.build())
+            } else {
+                // get,
+                dataMap?.forEach { name, value ->
+                    val eName = URLEncoder.encode(name, charset ?: defaultCharset)
+                    val eValue = URLEncoder.encode(value, charset ?: defaultCharset)
+                    httpUrlBuilder.addEncodedQueryParameter(eName, eValue)
+                }
+                requestBuilder.method(method.notNull(), null)
+            }
+            requestBuilder.url(httpUrlBuilder.build())
+            return client.newCall(requestBuilder.build())
+        }
 
-        /**
-         * TODO: 这种方法装载参数的话，如果是get, jsoup写死URLEncode编码utf-8, 需要用到的话就整个改okhttp吧，
-         */
         fun data(init: _Data.() -> Unit) {
             _Data().also { _data ->
                 _data.init()
@@ -505,8 +530,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         inner class _Data {
             val map: MutableMap<String, String> = mutableMapOf()
             fun createDataMap(): Map<String, String> = map
-            operator fun Pair<String, String>.unaryPlus() {
-                map[first] = second
+            infix fun String.to(value: String) {
+                // 和kotlin内建的Pair方法重名，无所谓了，
+                map[this] = value
+
             }
         }
     }

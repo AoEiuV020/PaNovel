@@ -104,6 +104,7 @@ dependencies {
     implementation project(':IronDB')
     implementation 'com.github.santalu:aspect-ratio-imageview:1.0.4'
     implementation "com.jayway.jsonpath:json-path:$json_path_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 }
 
 

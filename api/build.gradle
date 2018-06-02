@@ -10,6 +10,7 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
     implementation project(':baseJar')
     implementation "com.jayway.jsonpath:json-path:$json_path_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 }
 
 sourceCompatibility = "1.7"

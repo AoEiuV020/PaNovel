@@ -8,10 +8,11 @@ import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
-import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.util.notNull
+import okhttp3.Cookie
+import okhttp3.HttpUrl
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
-import org.jetbrains.anko.error
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 
@@ -231,12 +232,12 @@ object DataManager : AnkoLogger {
     @MainThread
     fun pushCookiesToWebView(context: NovelContext) {
         // 高版本的设置cookie的回调乱七八糟的，用不上，
-        context.cookies.forEach { (key, value) ->
-            val cookiePair = "$key=$value"
-            debug { "push cookie: <$cookie>" }
-            context.cookieDomainList().forEach { domain ->
-                cookie.putCookie(domain, cookiePair)
-            }
+        context.cookies.values.forEach { okhttpCookie ->
+            val cookieString = okhttpCookie.toString()
+            debug { "push cookie: <$cookieString>" }
+            // webView传入cookie一次只能一条，取出一次所有，
+            // cookieString只有一条cookie, 可能包含domain, path之类，分号;分隔，webView这个可以识别，
+            cookie.putCookie(context.site.baseUrl, cookieString)
         }
     }
 
@@ -250,28 +251,17 @@ object DataManager : AnkoLogger {
      */
     @MainThread
     fun pullCookiesFromWebView(context: NovelContext) {
-        val cookiesMap = mutableMapOf<String, String>()
-        context.cookieDomainList().forEach { domain ->
-            cookie.getCookies(domain)
-                    ?.split(';')?.map {
-                        it.trim()
-                    }?.mapNotNull { cookiePair ->
-                        debug { "pull cookie: <$cookiePair>" }
-                        try {
-                            val index = cookiePair.indexOf('=')
-                            val key = cookiePair.substring(0, index)
-                            val value = cookiePair.substring(index + 1)
-                            key to value
-                        } catch (e: Exception) {
-                            // 一个cookie处理错误直接无视，
-                            val message = "cookie不合法，<$cookiePair>,"
-                            Reporter.post(message, e)
-                            error(message, e)
-                            null
-                        }
-                    }?.toMap(cookiesMap)
+        val httpUrl = HttpUrl.parse(context.site.baseUrl).notNull()
+        // webView传入cookie一次只能一条，取出一次所有，
+        cookie.getCookies(context.site.baseUrl)?.split(";")?.mapNotNull { cookiePair ->
+            debug { "pull cookie: <$cookiePair>" }
+            // 取出来的cookiePair只有name=value，Cookie.parse一定能通过，也因此可能有超时信息拿不出来的问题，
+            Cookie.parse(httpUrl, cookiePair)?.let { cookie ->
+                cookie.name() to cookie
+            }
+        }?.let { cookiesList ->
+            context.putCookies(cookiesList.toMap())
         }
-        context.putCookies(cookiesMap)
     }
 
     fun getNovelFromUrl(site: String, url: String): Novel {
@@ -358,6 +348,7 @@ object DataManager : AnkoLogger {
         // 向极光取消订阅对应tag,
         server.removeTags(getNovelFromBookList(bookList.nId))
     }
+
     /**
      * 小说导入书架，包含进度，
      */

@@ -19,7 +19,8 @@ class Snwx : DslJsoupNovelContext() {init {
             url = "/modules/article/search.php?searchkey=${gbk(it)}"
         }
         // 删除cookie绕开搜索时间间隔限制，
-        requireNotNull(connection).request().removeCookie("jieqiVisitTime")
+        TODO()
+//        requireNotNull(call).request().removeCookie("jieqiVisitTime")
         document {
             items("#newscontent > div.l > ul > li") {
                 name("> span.s2 > a")
