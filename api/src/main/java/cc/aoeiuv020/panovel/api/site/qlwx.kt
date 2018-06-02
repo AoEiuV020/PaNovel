@@ -75,6 +75,7 @@ class Qlyx : DslJsoupNovelContext() { init {
     }
 }
 
+    // 云锁运行几小时突然又没了，
     fun verify() {
         // 这网站用了云锁，
         // 验证失败就会跳到验证页面，给个cookie, security_session_mid_verify=dc8d646a63a704e5a11228276a0c385d

@@ -7,6 +7,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import okhttp3.Cookie
+import okhttp3.HttpUrl
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.*
@@ -65,7 +67,7 @@ class Qidian : DslJsoupNovelContext() {init {
         // 用到的接口需要cookies中的_csrfToken参数，
         // 如果没有，就额外拿一遍详情页，取其中返回的_csrfToken，
         // TODO: 缓存cookies的话，_csrfToken不知道会不会过期，有必要测试下如果过期会拿到什么，至少一两天不会过期，
-        val token = cookies["_csrfToken"] ?: run {
+        val token = cookies["_csrfToken"]?.value() ?: run {
             response(connect(getNovelDetailUrl(bookId))).headers().responseCookies()["_csrfToken"].notNull()
         }
         get {
@@ -138,8 +140,6 @@ class Qidian : DslJsoupNovelContext() {init {
         get {
             url = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
         }
-        // 不删除这个Cookie就拿不到页面，或者把同样的参数放一份在get参数里，不知道起点怎么想的，
-//        requireNotNull(call).request().removeCookie("_csrfToken")
         response {
             val json = gson.fromJson(it, JsonObject::class.java)
             val content = json.getAsJsonObject("data")
@@ -155,5 +155,13 @@ class Qidian : DslJsoupNovelContext() {init {
 
     // 用来解析章节api和正文api,
     private val gson: Gson = GsonBuilder().create()
+
+    override fun cookieFilter(url: HttpUrl, cookies: MutableList<Cookie>): MutableList<Cookie> {
+        if (url.encodedPath() == "/majax/chapter/getChapterInfo") {
+            // 不删除这个Cookie就拿不到页面，或者把同样的参数放一份在get参数里，不知道起点怎么想的，
+            cookies.removeAll { it.name() == "_csrfToken" }
+        }
+        return cookies
+    }
 }
 

@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.info
+import cc.aoeiuv020.base.jar.notNull
 import okhttp3.*
 import okio.Buffer
 import org.junit.Assert.assertEquals
@@ -122,5 +123,15 @@ class OkHttpTest {
                 logger.info { "load cookies $it" }
             }
         }
+    }
+
+    @Test
+    fun path() {
+        val bookId = "1234"
+        val chapterId = "5678"
+        val url = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
+        val httpUrl = HttpUrl.parse(url).notNull()
+        assertEquals("/majax/chapter/getChapterInfo", httpUrl.encodedPath())
+        assertEquals("bookId=1234&chapterId=5678", httpUrl.query())
     }
 }

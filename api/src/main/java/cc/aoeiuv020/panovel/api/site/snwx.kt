@@ -3,6 +3,8 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import okhttp3.Cookie
+import okhttp3.HttpUrl
 
 /**
  *
@@ -18,9 +20,6 @@ class Snwx : DslJsoupNovelContext() {init {
         get {
             url = "/modules/article/search.php?searchkey=${gbk(it)}"
         }
-        // 删除cookie绕开搜索时间间隔限制，
-        TODO()
-//        requireNotNull(call).request().removeCookie("jieqiVisitTime")
         document {
             items("#newscontent > div.l > ul > li") {
                 name("> span.s2 > a")
@@ -67,5 +66,13 @@ class Snwx : DslJsoupNovelContext() {init {
         }
     }
 }
+
+    override fun cookieFilter(url: HttpUrl, cookies: MutableList<Cookie>): MutableList<Cookie> {
+        cookies.removeAll {
+            // 删除cookie绕开搜索时间间隔限制，
+            it.name() == "jieqiVisitTime"
+        }
+        return cookies
+    }
 }
 
