@@ -1,27 +1,22 @@
+# 枚举都不混淆，
+-keep enum ** { *; }
+
 # 导入导出的选项枚举不混淆，要作为文件名，
 -keepclassmembers class cc.aoeiuv020.panovel.export.ExportOption { <fields>; }
 
+# 本地持久化用到的实体类不能混淆，类名，方法名，变量名，都不能混淆，
+-keep class cc.aoeiuv020.panovel.data.entity.** { *; }
 
 # 和服务器端交互用的pojo需要gson序列化，不混淆，
 -keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.** { <fields>; }
 -keepclassmembers class cc.aoeiuv020.panovel.server.ServerAddress { <fields>; }
 
 
-# 需要用gson序列化的类成员不混淆，
--keepclassmembers class * extends cc.aoeiuv020.panovel.api.Data { <fields>; }
--keepclassmembers class * extends cc.aoeiuv020.panovel.api.Requester { <fields>; }
--keepclassmembers class * extends cc.aoeiuv020.panovel.local.LocalData { <fields>; }
+# 需要用gson序列化的枚举不混淆，
+## NovelChapter有在缓存库中保存章节列表，是直接gson序列化的，混淆的话，改了混淆结果会读出空，
+-keepclassmembers class cc.aoeiuv020.panovel.api.NovelChapter { <fields>; }
 -keepclassmembers class cc.aoeiuv020.reader.AnimationMode { <fields>; }
 -keepclassmembers class cc.aoeiuv020.panovel.share.Expiration { <fields>; }
-
-# 本地保存用到类名，不混淆，
--keepnames class * implements cc.aoeiuv020.panovel.local.LocalSource
--keepnames class * extends cc.aoeiuv020.panovel.api.Data
--keepnames class * extends cc.aoeiuv020.panovel.api.Requester
--keepnames class * extends cc.aoeiuv020.panovel.local.LocalData
-
-# 静态方法new不混淆，为了反射方法new代替初始化，
--keepclassmembers class * extends cc.aoeiuv020.panovel.api.Requester { public static final *** new(java.lang.String); }
 
 
 #jsoup https://stackoverflow.com/a/32169975/5615186
@@ -30,6 +25,13 @@
 
 #slf4j https://github.com/getsentry/sentry-java/issues/373
 -dontwarn org.slf4j.**
+
+# OkHttp https://github.com/krschultz/android-proguard-snippets/blob/master/libraries/proguard-square-okhttp3.pro
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
 
 
 #glide https://github.com/bumptech/glide#proguard
@@ -92,7 +94,7 @@
 -printusage unused.txt
 #混淆前后的映射
 -printmapping mapping.txt
-# 保留行号，区分混淆后的同名方法，
+# 保留行号，区分混淆后的同名方法，虽然会被inline影响，
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute ''
 # 不同类的成员用不同名字，同一个类还是会用相同名字，

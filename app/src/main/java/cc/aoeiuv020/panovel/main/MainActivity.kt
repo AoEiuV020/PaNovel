@@ -22,23 +22,25 @@ import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
+import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
-import cc.aoeiuv020.panovel.local.Bookshelf
 import cc.aoeiuv020.panovel.local.Check
 import cc.aoeiuv020.panovel.local.DevMessage
-import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.migration.Migration
+import cc.aoeiuv020.panovel.migration.MigrationPresenter
+import cc.aoeiuv020.panovel.migration.MigrationView
 import cc.aoeiuv020.panovel.open.OpenManager
+import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.server.UpdateManager
-import cc.aoeiuv020.panovel.server.common.md5
-import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
-import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
-import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
-import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
-import cc.aoeiuv020.panovel.util.asyncExecutor
+import cc.aoeiuv020.panovel.util.VersionName
+import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_main.*
@@ -51,37 +53,136 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTit
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
 import org.jetbrains.anko.*
-import java.util.concurrent.atomic.AtomicInteger
 
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.15-15:53:19.
  */
-class MainActivity : AppCompatActivity(), AnkoLogger {
+class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
+
     lateinit var progressDialog: ProgressDialog
+    private var migratingDialog: ProgressDialog? = null
     private lateinit var bookshelfFragment: BookshelfFragment
     private lateinit var historyFragment: HistoryFragment
     lateinit var bookListFragment: BookListFragment
 
+    private val openListener: OpenManager.OpenListener = object : OpenManager.OpenListener {
+        override fun onNovelOpened(novel: Novel) {
+            NovelDetailActivity.start(ctx, novel)
+        }
+
+        override fun onBookListReceived(count: Int) {
+            progressDialog.dismiss()
+            bookListFragment.refresh()
+            showMessage("添加书单，共${count}本，")
+        }
+
+        override fun onError(message: String, e: Throwable) {
+            showError(message, e)
+        }
+
+        override fun onLoading(status: String) {
+            loading(progressDialog, status)
+        }
+    }
+
+    private lateinit var migrationPresenter: MigrationPresenter
+
+    override fun showDowngrade(from: VersionName, to: VersionName) {
+        debug {
+            "showDowngrade <${from.name} to ${to.name}>"
+        }
+        ctx.alert {
+            title = getString(R.string.warning)
+            message = getString(R.string.downgrade_warning_placeholder, from.name, to.name)
+            okButton { }
+        }.show()
+    }
+
+    override fun showUpgrading(from: VersionName, migration: Migration) {
+        val to = migration.to
+        debug {
+            "showUpgrading <${from.name} to ${to.name}>"
+        }
+        (migratingDialog ?: ProgressDialog(ctx).also { migratingDialog = it }).apply {
+            setTitle(getString(R.string.migrating_title))
+            setMessage(getString(R.string.migrating_message_placeholder, from.name, to.name, migration.message))
+            show()
+        }
+    }
+
+    override fun showMigrateComplete(from: VersionName, to: VersionName) {
+        debug {
+            "showMigrateComplete,"
+        }
+        migratingDialog?.dismiss()
+        migratingDialog = null
+
+        // 版本迁移数据结束了再加载控件，
+        // TODO: 专门开个Splash页面比较好，
+        initWidget()
+    }
+
+    override fun showMigrateError(from: VersionName, migration: Migration) {
+        val to = migration.to
+        debug {
+            "showMigrateError <${from.name} to ${to.name}>"
+        }
+        migratingDialog?.dismiss()
+        migratingDialog = null
+        ctx.alert {
+            title = getString(R.string.migrate_error_title)
+            message = getString(R.string.migrate_error_message_placeholder, from.name, to.name, migration.message)
+            okButton { }
+            neutralPressed(getString(R.string.ignore)) {
+                migrationPresenter.ignoreMigration(migration)
+            }
+        }.show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (!BuildConfig.DEBUG) {
-            Check.asyncCheckSignature(this)
-        }
-
-        Check.asyncCheckVersion(this)
-        DevMessage.asyncShowMessage(this)
-
         setSupportActionBar(toolbar)
-
-        JPushTagReceiver.register(this, tagReceiver)
 
         progressDialog = ProgressDialog(this)
 
+        migrationPresenter = MigrationPresenter(this).apply {
+            attach(this@MainActivity)
+            start()
+        }
+
+        if (!BuildConfig.DEBUG) {
+            // 异步检查签名，
+            Check.asyncCheckSignature(this)
+        }
+
+        // 异步检查是否有更新，
+        Check.asyncCheckVersion(this)
+        // 异步获取可能存在的, 我放在网上想推给用户的消息，
+        DevMessage.asyncShowMessage(this)
+
+
+        ad_view.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                ad_view.show()
+            }
+        }
+
+        if (GeneralSettings.adEnabled) {
+            ad_view.loadAd(App.adRequest)
+        }
+
+        if (isTaskRoot) {
+        } else {
+            // 避免多开，
+            // 初始化完了再退出，否则可能崩溃，
+            finish()
+        }
+    }
+
+    private fun initWidget() {
         bookshelfFragment = BookshelfFragment()
         historyFragment = HistoryFragment()
         bookListFragment = BookListFragment()
@@ -112,28 +213,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         })
 
-        fab.hide()
         fab.setOnClickListener { _ ->
             bookListFragment.newBookList()
-        }
-
-        ad_view.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                ad_view.show()
-            }
-        }
-
-        if (Settings.adEnabled) {
-            ad_view.loadAd(App.adRequest)
-        }
-
-        if (isTaskRoot) {
-            // 只在第一个activity初始化这个负责上传更新的，
-            UpdateManager.create(this)
-        } else {
-            // 避免多开，
-            // 初始化完了再退出，否则可能崩溃，
-            finish()
         }
     }
 
@@ -198,7 +279,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onDestroy() {
-        JPushTagReceiver.unregister(this, tagReceiver)
         ad_view.destroy()
         if (isTaskRoot) {
             UpdateManager.destroy(this)
@@ -233,34 +313,21 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             yesButton {
                 val url = etName.text.toString()
                 if (url.isNotEmpty()) {
-                    OpenManager.open(this@MainActivity, url)
+                    OpenManager.open(this@MainActivity, url, openListener)
                 }
             }
         }.show()
     }
 
-    private val sequence: AtomicInteger = AtomicInteger()
-    private val tagReceiver: JPushTagReceiver = JPushTagReceiver.create { jPushMessage, _ ->
-        val message = "成功订阅当前书架<${jPushMessage.tags.size}>本，"
-        info { message }
-        toast(message)
-    }
-
     private fun subscript() {
-        // 初始化，其中有用到Handler，要在主线程初始化，
-        TagAliasOperatorHelper.getInstance()
-        asyncExecutor.execute {
-            val bean = TagAliasBean()
-            bean.action = TagAliasOperatorHelper.ACTION_SET
-            bean.tags = Bookshelf.list().map {
-                it.requester.run {
-                    Novel().apply {
-                        requesterType = type
-                        requesterExtra = extra
-                    }.md5()
-                }
-            }.toSet()
-            TagAliasOperatorHelper.getInstance().handleAction(this, sequence.getAndIncrement(), bean)
+        doAsync({ e ->
+            val message = "订阅书架的小说失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            showError(message, e)
+        }) {
+            // 有检索书架列表，所以必须异步，
+            DataManager.resetSubscript()
         }
     }
 
@@ -270,7 +337,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         data?.extras?.getString("SCAN_RESULT")?.let {
-            OpenManager.open(this, it)
+            OpenManager.open(this, it, openListener)
         }
     }
 
@@ -303,7 +370,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         snack.show()
     }
 
-    fun showError(message: String, e: Throwable) {
+    override fun showError(message: String, e: Throwable) {
         progressDialog.dismiss()
         snack.setText(message + e.message)
         snack.show()

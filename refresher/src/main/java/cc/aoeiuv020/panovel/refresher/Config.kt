@@ -14,5 +14,14 @@ data class Config(
         /**
          * 一轮最多拿这么多个，
          */
-        val maxSize: Int = 300
+        val maxSize: Int = 100,
+        /**
+         * 是否必须成功获取书架，
+         * 否则直接让程序崩溃，
+         */
+        val requireBookshelf: Boolean = true,
+        /**
+         * 调试模式，
+         */
+        val debug: Boolean = false
 )

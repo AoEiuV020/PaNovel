@@ -5,44 +5,72 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
+import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.base.item.BaseItemListView
-import cc.aoeiuv020.panovel.base.item.DefaultItemListAdapter
-import cc.aoeiuv020.panovel.base.item.OnItemLongClickListener
-import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.data.entity.BookList
+import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.list.NovelListAdapter
+import cc.aoeiuv020.panovel.list.NovelViewHolder
+import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_book_list.*
 import kotlinx.android.synthetic.main.novel_item_list.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.selector
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 /**
  *
  * Created by AoEiuV020 on 2017.11.22-14:49:22.
  */
-class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnItemLongClickListener {
+class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
     companion object {
-        fun start(context: Context, bookListName: String) {
-            context.startActivity<BookListActivity>("bookListName" to bookListName)
+        fun start(context: Context, bookListId: Long) {
+            // 统一转成json字符串，拿的时候不需要给默认值，
+            // 拿不到就直接退出，
+            context.startActivity<BookListActivity>("bookListId" to bookListId.toJson(App.gson))
         }
     }
 
-    private lateinit var bookListName: String
+    // onCreate里赋值，必须有值，
+    private var bookListId: Long = -1
     private lateinit var presenter: BookListActivityPresenter
-    private lateinit var mAdapter: DefaultItemListAdapter
+
+    private val novelListAdapter by lazy {
+        NovelListAdapter(initItem = { vh ->
+            // 长按弹出删除菜单，只要这个就够了，
+            vh.itemView.setOnLongClickListener {
+                onItemLongClick(vh)
+            }
+        }, onError = ::showError)
+    }
+
+    private fun onItemLongClick(vh: NovelViewHolder): Boolean {
+        // 长按弹出删除菜单，只要这个就够了，
+        // TODO: 改成支持滑动删除感觉更好，
+        val list = listOf(R.string.remove to {
+            presenter.remove(vh.novel)
+            this@BookListActivity.novelListAdapter.remove(vh.layoutPosition)
+        })
+        selector(getString(R.string.action), list.unzip().first.map { getString(it) }) { _, i ->
+            list[i].second.invoke()
+        }
+        return true
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("bookListName", bookListName)
+        // 貌似没必要，
+        outState.putString("bookListId", bookListId.toJson(App.gson))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,21 +79,23 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // 没有这个参数就直接结束，
-        bookListName = getStringExtra("bookListName", savedInstanceState) ?: run {
-            // 不应该会到这里，
-            toast("奇怪，重新打开试试，")
+        bookListId = getStringExtra("bookListId", savedInstanceState)
+                ?.toBean(App.gson)
+                ?: run {
+            Reporter.unreachable()
+            toast("不存在，")
             finish()
             return
         }
 
-        title = bookListName
-
-        recyclerView.setLayoutManager(LinearLayoutManager(this))
-        presenter = BookListActivityPresenter(bookListName)
-        mAdapter = DefaultItemListAdapter(this, presenter, this)
-        recyclerView.setAdapter(mAdapter)
-        recyclerView.setRefreshAction {
+        rvNovel.layoutManager = if (ListSettings.gridView) {
+            GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
+        } else {
+            LinearLayoutManager(ctx)
+        }
+        presenter = BookListActivityPresenter(bookListId)
+        rvNovel.adapter = novelListAdapter
+        srlRefresh.setOnRefreshListener {
             forceRefresh()
         }
 
@@ -75,19 +105,17 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
             }
         }
 
-        if (Settings.adEnabled) {
+        if (GeneralSettings.adEnabled) {
             ad_view.loadAd(App.adRequest)
         }
 
         presenter.attach(this)
-        refresh()
+        // 查询书单名，只用来改title, 没什么大用，
+        presenter.start()
     }
 
     override fun onPause() {
         ad_view.pause()
-        if (Settings.bookListAutoSave) {
-            save()
-        }
         super.onPause()
     }
 
@@ -97,13 +125,28 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
     }
 
     override fun onDestroy() {
-        presenter.detach()
+        if (::presenter.isInitialized) {
+            presenter.detach()
+        }
         ad_view.destroy()
         super.onDestroy()
     }
 
+    fun showBookList(bookList: BookList) {
+        // 书单对象只有这个用了，不需要存起来，
+        title = bookList.name
+        // 确实找到书单了再刷新列表，
+        refresh()
+    }
+
+    fun showBookListNotFound(message: String, e: Throwable) {
+        // 不应该出现书单找不到的问题，
+        showError(message, e)
+        finish()
+    }
+
     private fun refresh() {
-        recyclerView.showSwipeRefresh()
+        srlRefresh.isRefreshing = true
         presenter.refresh()
     }
 
@@ -111,34 +154,20 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
      * 强行刷新，重新下载小说详情，主要是看最新章，
      */
     private fun forceRefresh() {
-        presenter.forceRefresh()
+        novelListAdapter.refresh()
+        refresh()
     }
 
-    fun showNovelList(list: List<NovelHistory>) {
-        mAdapter.data = ArrayList(list)
-        recyclerView.dismissSwipeRefresh()
-        recyclerView.showNoMore()
+    fun showNovelList(list: List<Novel>) {
+        novelListAdapter.data = list
+        srlRefresh.isRefreshing = false
     }
 
-    fun showSaveComplete(size: Int) {
-        snack.setText("保存成功，共${size}本")
-        snack.show()
-    }
-
-    private fun remove(position: Int) {
-        presenter.remove(position)
-        mAdapter.remove(position)
-    }
-
-    private fun save() {
-        presenter.saveBookList()
-    }
-
-    private fun selectToAdd(list: List<NovelItem>) {
+    fun selectToAdd(list: List<Novel>, nameArray: Array<String>, containsArray: BooleanArray) {
         AlertDialog.Builder(this)
                 .setTitle(R.string.contents)
-                .setMultiChoiceItems(Array(list.size) { list[it].bookId.toString() },
-                        BooleanArray(list.size) { presenter.contains(list[it]) }, { _, i, isChecked ->
+                .setMultiChoiceItems(nameArray,
+                        containsArray, { _, i, isChecked ->
                     if (isChecked) {
                         presenter.add(list[i])
                     } else {
@@ -146,7 +175,7 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
                     }
                 }).setCancelable(false)
                 .setPositiveButton(android.R.string.yes) { _, _ ->
-                    presenter.addOk()
+                    refresh()
                 }
                 .create().apply {
                     listView.isFastScrollEnabled = true
@@ -155,34 +184,25 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
 
 
     private fun add() {
+        // 这些操作应该很块，不提示了，
         val list = listOf(R.string.bookshelf to {
-            selectToAdd(Bookshelf.list())
+            presenter.addFromBookshelf()
         }, R.string.history to {
-            selectToAdd(History.list().map(NovelHistory::novel))
+            presenter.addFromHistory()
         })
         selector(getString(R.string.add_from), list.unzip().first.map { getString(it) }) { _, i ->
             list[i].second.invoke()
         }
     }
 
-    override fun onItemLongClick(position: Int, novelItem: NovelItem) {
-        val list = listOf(R.string.remove to {
-            remove(position)
-        })
-        selector(getString(R.string.action), list.unzip().first.map { getString(it) }) { _, i ->
-            list[i].second.invoke()
-        }
-    }
-
-
     private val snack: Snackbar by lazy {
-        Snackbar.make(recyclerView, "", Snackbar.LENGTH_SHORT)
+        Snackbar.make(rvNovel, "", Snackbar.LENGTH_SHORT)
     }
 
-    override fun showError(message: String, e: Throwable) {
+    fun showError(message: String, e: Throwable) {
+        srlRefresh.isRefreshing = false
         snack.setText(message + e.message)
         snack.show()
-        recyclerView.dismissSwipeRefresh()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -194,7 +214,6 @@ class BookListActivity : AppCompatActivity(), BaseItemListView, AnkoLogger, OnIt
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
             R.id.add -> add()
-            R.id.save -> save()
             else -> return super.onOptionsItemSelected(item)
         }
         return true

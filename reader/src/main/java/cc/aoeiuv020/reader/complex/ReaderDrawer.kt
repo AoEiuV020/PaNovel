@@ -9,21 +9,21 @@ import cc.aoeiuv020.pager.IMargins
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
-import cc.aoeiuv020.reader.*
+import cc.aoeiuv020.reader.ConfigChangedListener
+import cc.aoeiuv020.reader.ReaderConfigName
 import cc.aoeiuv020.reader.ReaderConfigName.*
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import cc.aoeiuv020.reader.TextRequester
 import org.jetbrains.anko.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  *
  * Created by AoEiuV020 on 2017.12.03-04:09:17.
  */
 @SuppressWarnings("SimpleDateFormat")
-class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, private val requester: TextRequester)
+class ReaderDrawer(private val reader: ComplexReader, private val novel: String, private val requester: TextRequester)
     : PagerDrawer(), AnkoLogger {
     val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
     private lateinit var titlePaint: TextPaint
@@ -124,10 +124,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
             drawPagination(background, pages)
         }
         if (reader.config.chapterNameMargins.enabled) {
-            drawMessage(background, reader.chapterList[chapterIndex].name, reader.config.chapterNameMargins)
+            drawMessage(background, reader.chapterList[chapterIndex], reader.config.chapterNameMargins)
         }
         if (reader.config.bookNameMargins.enabled) {
-            drawMessage(background, novel.name, reader.config.bookNameMargins)
+            drawMessage(background, novel, reader.config.bookNameMargins)
         }
         if (reader.config.timeMargins.enabled) {
             drawTime(background)
@@ -296,7 +296,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
     }
 
-    private val requestingList = mutableSetOf<Int>()
+    private val requestingList = Collections.newSetFromMap(ConcurrentHashMap<Int, Boolean>())
     private fun request(requestIndex: Int, refresh: Boolean = false) {
         if (requestingList.contains(requestIndex)) {
             // 已经在异步请求章节了，
@@ -304,36 +304,38 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         }
         requestingList.add(requestIndex)
         debug { "$this lazyRequest $requestIndex, refresh = $refresh" }
-        Single.fromCallable {
-            val text = requester.request(requestIndex, refresh)
-            val pages = typesetting(reader.chapterList[requestIndex].name, text)
-            pagesCache.put(requestIndex, pages)
-            requestingList.remove(requestIndex)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            debug { "request result $requestIndex == $chapterIndex" }
-            if (requestIndex == chapterIndex) {
-                pager?.refresh()
-            }
-        }, {
-            val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex].name}"
-            error { message }
+        doAsync({ e ->
+            val message = "小说章节获取失败：$requestIndex, ${reader.chapterList[requestIndex]}"
+            error(message, e)
             // 缓存空的页面，到时候显示本章空内容，
             pagesCache.put(requestIndex, listOf())
             requestingList.remove(requestIndex)
             if (requestIndex == chapterIndex) {
                 pager?.refresh()
             }
-        })
+        }, reader.ioExecutorService) {
+            val text = requester.request(requestIndex, refresh)
+            val pages = typesetting(reader.chapterList[requestIndex], text)
+            pagesCache.put(requestIndex, pages)
+            requestingList.remove(requestIndex)
+            debug { "request result $requestIndex == $chapterIndex" }
+            uiThread {
+                // 如果还在这个章节就刷新，
+                if (requestIndex == chapterIndex) {
+                    pager?.refresh()
+                }
+            }
+        }
     }
 
-    private fun typesetting(chapter: String, text: Text): List<Page> {
+    private fun typesetting(chapter: String, list: List<String>): List<Page> {
         val pages = mutableListOf<Page>()
         var height = 0
         val lines = mutableListOf<Any>()
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         val textHeight = textPaint.textSize.toInt()
-        (listOf(chapter) + text.list).forEachIndexed { index, str ->
+        (listOf(chapter) + list).forEachIndexed { index, str ->
             val paragraph = if (index == 0) str else "　　" + str
             var start = 0
             var count: Int
@@ -377,15 +379,18 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
         val prevPageIndex = pageIndex - 1
         if (pages != null && prevPageIndex in pages.indices) {
             pageIndex--
+            reader.readingListener?.onReading(chapterIndex, pageIndex)
             return true
         }
         val prevChapterIndex = chapterIndex - 1
         if (prevChapterIndex in reader.chapterList.indices) {
             chapterIndex--
             pageIndex = -1
-            reader.chapterChangeListener?.onChapterChange()
+            // -1存起来应该也没关系，
+            reader.readingListener?.onReading(chapterIndex, pageIndex)
             return true
         }
+        reader.readingListener?.onReading(chapterIndex, pageIndex)
         return false
     }
 
@@ -399,14 +404,16 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: Novel, 
                 // 提前缓存一章，
                 request(nextChapterIndex)
             }
+            reader.readingListener?.onReading(chapterIndex, pageIndex)
             return true
         }
         if (nextChapterIndex in reader.chapterList.indices) {
             chapterIndex++
             pageIndex = 0
-            reader.chapterChangeListener?.onChapterChange()
+            reader.readingListener?.onReading(chapterIndex, pageIndex)
             return true
         }
+        reader.readingListener?.onReading(chapterIndex, pageIndex)
         return false
     }
 

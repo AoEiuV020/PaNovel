@@ -1,25 +1,19 @@
 package cc.aoeiuv020.panovel
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
-import android.provider.Settings.Secure
+import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
+import android.util.Log
+import cc.aoeiuv020.base.jar.gsonJsonPathInit
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.paNovel
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.local.PrimarySettings
-import cc.aoeiuv020.panovel.local.Settings
-import cc.aoeiuv020.panovel.util.ignoreException
+import cc.aoeiuv020.panovel.report.Reporter
 import cn.jpush.android.api.JPushInterface
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.tencent.bugly.crashreport.CrashReport
-import io.reactivex.internal.functions.Functions
-import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 
@@ -29,15 +23,17 @@ import org.jetbrains.anko.debug
  * Created by AoEiuV020 on 2017.10.03-17:04:22.
  */
 @Suppress("MemberVisibilityCanPrivate")
-class App : Application(), AnkoLogger {
+class App : MultiDexApplication(), AnkoLogger {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var ctx: Context
-        val gsonBuilder: GsonBuilder = GsonBuilder()
+        /**
+         * 用于app不同页面传递数据时的序列化，
+         */
+        val gson: Gson = GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
-                .paNovel()
-        val gson: Gson = gsonBuilder.create()
+                .create()
 
         lateinit var adRequest: AdRequest
     }
@@ -46,9 +42,10 @@ class App : Application(), AnkoLogger {
         super.onCreate()
         ctx = applicationContext
 
-        initDatabase()
+        // 初始化要放在用到JsonPath之前
+        gsonJsonPathInit()
 
-        checkBaseFile()
+        initDataSources()
 
         // android4连接https可能抛SSLHandshakeException，
         // 是tls1.2没有启用，
@@ -60,41 +57,21 @@ class App : Application(), AnkoLogger {
         // https://issuetracker.google.com/issues/37100284
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
-        // 无视RxJava抛的异常，也就是不被捕获调用onError的异常，
-        RxJavaPlugins.setErrorHandler(Functions.emptyConsumer())
-
         initAdmob()
 
-        initBugly()
+        initReporter()
 
-        if (Settings.subscribeNovelUpdate) {
-            initJpush()
-        }
+        initJpush()
 
-        initPaNovel()
     }
 
-    private fun initDatabase() {
+    private fun initDataSources() {
         DataManager.init(ctx)
     }
 
-    private fun initPaNovel() {
-        NovelContext.apply {
-            cache(cacheDir.resolve("api"))
-        }
-    }
-
     private fun initJpush() {
-        JPushInterface.setDebugMode(BuildConfig.DEBUG)
+        JPushInterface.setDebugMode(BuildConfig.DEBUG && Log.isLoggable("JPush", Log.DEBUG))
         JPushInterface.init(ctx)
-    }
-
-    private fun checkBaseFile() {
-        PrimarySettings.baseFilePath = ctx.getExternalFilesDir(null)?.takeIf { base ->
-            val test = base.resolve("test")
-            test.exists() || ignoreException { test.writeText("true") }
-        }?.path
-                ?: ctx.filesDir.path
     }
 
     private fun initAdmob() {
@@ -113,16 +90,10 @@ class App : Application(), AnkoLogger {
                 }.build()
     }
 
-    @SuppressLint("HardwareIds")
-    private fun initBugly() {
-        // 第三个参数为SDK调试模式开关，
-        // 打开会导致开发机上报异常，
-        CrashReport.initCrashReport(ctx, "be0d684a75", false)
-        // 貌似设置了开发设备就不上报了，
-        CrashReport.setIsDevelopmentDevice(ctx, !Settings.reportCrash)
-
-        val androidId = Secure.getString(ctx.contentResolver, Secure.ANDROID_ID)
-        CrashReport.setUserId(androidId)
+    /**
+     * 初始化异常上报封装类，
+     */
+    private fun initReporter() {
+        Reporter.init(ctx)
     }
-
 }

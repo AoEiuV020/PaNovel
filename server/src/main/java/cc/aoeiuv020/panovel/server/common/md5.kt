@@ -9,4 +9,5 @@ import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
  *
  * Created by AoEiuV020 on 2018.04.17-13:01:51.
  */
-fun Novel.md5(): String = "$requesterType.$requesterExtra".md5()
+// 算md5以确保长度小于，40, 极光推送限制tag长度40,
+fun Novel.md5(): String = "$site.$author.$name".md5()

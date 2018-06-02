@@ -78,50 +78,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/llFont"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:text="@string/font"
-            android:textColor="@android:color/primary_text_dark" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/lBackgroundImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxEms="4"
-            android:minEms="4"
-            android:singleLine="true"
-            android:text="@string/background_image"
-            android:textColor="@android:color/primary_text_dark" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/lBackgroundColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -194,12 +150,12 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/tvTypesetting"
+            android:id="@+id/tvBrightness"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
-            android:text="@string/typesetting"
+            android:text="@string/brightness"
             android:textColor="@android:color/primary_text_dark" />
 
         <TextView
@@ -209,6 +165,40 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:text="@string/animation"
+            android:textColor="@android:color/primary_text_dark" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvTypesetting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/typesetting"
+            android:textColor="@android:color/primary_text_dark" />
+
+        <TextView
+            android:id="@+id/tvFont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/font"
+            android:textColor="@android:color/primary_text_dark" />
+
+        <TextView
+            android:id="@+id/tvBackgroundImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/background_image"
             android:textColor="@android:color/primary_text_dark" />
     </LinearLayout>
 </LinearLayout>

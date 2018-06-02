@@ -28,8 +28,7 @@ class SettingsActivity : AppCompatPreferenceActivity(), AnkoLogger {
 
     }
 
-    override fun onIsMultiPane(): Boolean
-            = resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
+    override fun onIsMultiPane(): Boolean = resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
 
     override fun onBuildHeaders(target: List<PreferenceActivity.Header>) {
         loadHeadersFromResource(R.xml.pref_headers, target)
@@ -38,8 +37,8 @@ class SettingsActivity : AppCompatPreferenceActivity(), AnkoLogger {
     override fun isValidFragment(fragmentName: String): Boolean {
         return PreferenceFragment::class.java.name == fragmentName
                 || GeneralPreferenceFragment::class.java.name == fragmentName
-                || BookshelfPreferenceFragment::class.java.name == fragmentName
-                || ReadPreferenceFragment::class.java.name == fragmentName
+                || ListPreferenceFragment::class.java.name == fragmentName
+                || ReaderPreferenceFragment::class.java.name == fragmentName
                 || OthersPreferenceFragment::class.java.name == fragmentName
                 || CacheClearPreferenceFragment::class.java.name == fragmentName
                 || AboutFragment::class.java.name == fragmentName

@@ -6,6 +6,18 @@
         android:title="@string/cache" />
 
     <Preference
+        android:key="cookie"
+        android:title="@string/cookie" />
+
+    <Preference
+        android:key="bookshelf"
+        android:title="@string/bookshelf" />
+
+    <Preference
+        android:key="book_list"
+        android:title="@string/book_list" />
+
+    <Preference
         android:key="history"
         android:title="@string/history" />
 </PreferenceScreen>

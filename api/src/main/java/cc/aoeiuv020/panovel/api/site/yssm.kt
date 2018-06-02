@@ -1,102 +1,86 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.*
-import java.net.URL
-import java.net.URLEncoder
-import java.text.SimpleDateFormat
+import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.panovel.api.firstThreeIntPattern
+import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import org.jsoup.Jsoup
 
 /**
  * Created by AoEiuV020 on 2018.05.10-16:48:32.
  */
-class Yssm : NovelContext() {
-    companion object {
-        private val SEARCH_PAGE_URL = "https://www.yssm.org/SearchBook.php"
+class Yssm : DslJsoupNovelContext() {init {
+    site {
+        name = "幼狮书盟"
+        baseUrl = "https://www.yssm.org"
+        logo = "https://www.yssm.org/images/logo.png"
     }
-
-    private val site = NovelSite(
-            name = "幼狮书盟",
-            baseUrl = "https://www.yssm.org/",
-            logo = "https://www.yssm.org/images/logo.png"
-    )
-
-    override fun getNovelSite(): NovelSite = site
-
-    override fun getNovelItem(url: String): NovelItem {
-        val path = URL(url).path.removePrefix("/")
-        val detailUrl = "${site.baseUrl}$path"
-        return super.getNovelItem(detailUrl)
-    }
-
-    override fun getGenres(): List<NovelGenre> {
-        val root = request(site.baseUrl)
-        val elements = root.select("#subnav > div > p > a").drop(2).dropLast(1)
-        return elements.map { a ->
-            NovelGenre(a.text(), GenreListRequester(a.absHref()))
+    search {
+        get {
+            url = "/SearchBook.php"
+            data {
+                "keyword" to it
+            }
+        }
+        // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
+        // 这里限制一下，20K大概十几个结果，
+        val byteArray = ByteArray(20 * 1000)
+        val response = call.notNull().execute()
+        response.inputStream { it.read(byteArray) }
+        val cutDocument = Jsoup.parse(byteArray.inputStream(), null, response.request().url().toString())
+        document(cutDocument) {
+            // 由于被截断，可能处理最后一个元素会出异常，无视，
+            itemsIgnoreFailed("#container > div.details.list-type > ul > li") {
+                name("> span.s2 > a")
+                author("> span.s3")
+            }
         }
     }
-
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        val root = request(requester)
-        val query = if (requester is SearchListRequester)
-            "#container > div.details.list-type > ul > li"
-        else
-            "#content1 > div > div.details.list-type > ul > li"
-        return root.select(query).map {
-            val a = it.select("> span.s2 > a").first()
-            val name = a.text()
-            val url = a.absHref()
-            val author = it.select("> span.s3").first().text()
-            val last = it.select("> span.s2 > i > a").first().text()
-            val genre = it.select("> span.s1").first().text()
-            val updateTime = it.select("> span.s4").first().text()
-            val status = it.select("> span.s5").first().text()
-            val info = "最新章节: $last 类别: $genre 更新时间: $updateTime 状态: $status"
-            NovelListItem(NovelItem(this, name, author, url), info)
+    bookIdRegex = firstTwoIntPattern
+    // https://www.yssm.org/uctxt/227/227934/
+    detailPageTemplate = "/uctxt/%s/"
+    detail {
+        document {
+            val div = root.requireElement("#container > div.bookinfo")
+            novel {
+                name("> div > span > h1", parent = div)
+                author("> div > span > em", parent = div, block = pickString("作者：(\\S*)"))
+            }
+            // 这网站小说没有封面，
+            image = "https://www.snwx8.com/modules/article/images/nocover.jpg"
+            introduction("> p.intro", parent = div) {
+                it.ownTextList().joinToString("\n")
+            }
+            update("> p.stats > span.fr > i:nth-child(2)", parent = div, format = "yyyy/MM/dd HH:mm:ss")
         }
     }
-
-    override fun searchNovelName(name: String): NovelGenre {
-        val key = URLEncoder.encode(name, "UTF-8")
-        val url = "${SEARCH_PAGE_URL}?keyword=$key"
-        return NovelSearch(name, url)
-    }
-
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        return null
-    }
-
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
-        val root = request(requester)
-        // 这网站小说没有封面，
-        val img = "https://www.snwx8.com/modules/article/images/nocover.jpg"
-        val div = root.select("#container > div.bookinfo").first()
-        val name = div.select("> div > span > h1").first().text()
-        val (author) = div.select("> div > span > em").first().text()
-                .pick("作者：(\\S*)")
-        val introduction = div.select("> p.intro").first().textNodes().joinToString("\n")
-
-        val updateString = div.select("> p.stats > span.fr > i:nth-child(2)").first().text()
-        val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-        val update = sdf.parse(updateString)
-
-        val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, introduction, chapterPageUrl)
-    }
-
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val root = request(requester)
-        // 章节数太少的话，前几章会被抛弃，
-        return root.select("#main > div > dl > dd > a").drop(12).map { a ->
-            NovelChapter(a.text(), a.absHref())
+    chapters {
+        // 章节数太少的话，没有开头的叫最新章节的12章，
+        // 这里判断是大于12认为有那12章，扔掉，
+        // 并不知道有没有例外，
+        // 倒序删除，
+        // TODO: 这种情况还真不少，再来一次就抽象出来，
+        val list = document {
+            items("#main > div > dl > dd > a")
+        }
+        var index = 0
+        // 以防万一，
+        if (list.size == 1) return@chapters list
+        // 倒序列表判断是否重复章节，
+        val reversedList = list.asReversed()
+        list.dropWhile {
+            (it == reversedList[index]
+                    || it.extra.isBlank()).also { ++index }
         }
     }
-
-    override fun getNovelText(requester: TextRequester): NovelText {
-        val root = request(requester)
-        val textList = root.select("#content").first().textList()
-        return NovelText(textList)
+    chapterIdRegex = firstThreeIntPattern
+    // https://www.yssm.org/uctxt/227/227934/1301112.html
+    contentPageTemplate = "/uctxt/%s.html"
+    content {
+        document {
+            items("#content")
+        }
     }
 }
+}
+

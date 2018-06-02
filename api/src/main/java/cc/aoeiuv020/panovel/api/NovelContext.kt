@@ -1,18 +1,16 @@
 package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
-import cc.aoeiuv020.base.jar.trace
-import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.jsoup.Connection
-import org.jsoup.nodes.Document
+import okhttp3.Cookie
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.IOException
+import java.net.MalformedURLException
 import java.net.URL
 
 /**
@@ -26,53 +24,66 @@ abstract class NovelContext {
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
                 .create()
+        /**
+         * 缓存文件夹，可以随时被删除的，
+         */
         private var sCacheDir: File? = null
+
         fun cache(cacheDir: File?) {
             this.sCacheDir = cacheDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
         }
 
-        @Suppress("RemoveExplicitTypeArguments")
-        private val contexts: List<NovelContext> = listOf(
-                Piaotian(), Biquge(), Liudatxt(), Qidian(), Dmzz(), Sfacg(), Snwx(), Syxs(),
-                Yssm(), Qlyx()
-        )
-        private val hostMap = contexts.associateBy { URL(it.getNovelSite().baseUrl).host }
-        private val nameMap = contexts.associateBy { it.getNovelSite().name }
-        fun getNovelContexts(): List<NovelContext> = contexts
-        fun getNovelContextByUrl(url: String): NovelContext {
-            val host = URL(url).host
-            return hostMap[host] ?: contexts.firstOrNull { it.check(url) }
-            ?: throw IllegalArgumentException("网址不支持: $url")
+        fun cleanCache() {
+            sCacheDir?.deleteRecursively()
         }
 
-        fun getNovelContextBySite(site: NovelSite): NovelContext = getNovelContextByUrl(site.baseUrl)
+        /**
+         * 非缓存，不会随时被删除，不要放太大的东西，
+         */
+        private var sFilesDir: File? = null
 
-        @Suppress("unused")
-        fun getNovelContextByName(name: String): NovelContext {
-            return nameMap[name] ?: throw IllegalArgumentException("网站不支持: $name")
+        fun files(filesDir: File?) {
+            this.sFilesDir = filesDir?.takeIf { (it.exists() && it.isDirectory) || it.mkdirs() }
         }
+
     }
 
     @Suppress("MemberVisibilityCanPrivate")
     protected val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
+
     /**
-     * 用类名simpleName当缓存目录名，所以类名不能重复，
+     * 用网站名当数据保存目录名，网站名不能重复，
+     */
+    private val fileName get() = site.name
+    /**
+     * 缓存文件夹，可以随时被删除的，
      */
     @Suppress("MemberVisibilityCanBePrivate")
     protected val mCacheDir: File?
-        get() = sCacheDir?.resolve(this.javaClass.simpleName)?.apply { exists() || mkdirs() }
-    private val mCookieFile: File? get() = mCacheDir?.resolve("cookies")
-    private var _cookies: Map<String, String>? = null
-    var cookies: Map<String, String>
+        get() = sCacheDir?.resolve(fileName)?.apply { exists() || mkdirs() }
+    /**
+     * 非缓存，不会随时被删除，不要放太大的东西，
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    protected val mFilesDir: File?
+        get() = sFilesDir?.resolve(fileName)?.apply { exists() || mkdirs() }
+
+    private val cookiesFile: File?
+        get() = mFilesDir?.resolve("cookies")
+    private var _cookies: Map<String, Cookie>? = null
+    // name to Cookie,
+    // 虽然浏览器支持相同name的不同cookie，按domain和path区分，但是这里一个context只有一个网站，不会有多个name,
+    var cookies: Map<String, Cookie>
         @Synchronized
-        get() = _cookies ?: (mCookieFile?.let { file ->
+        get() = _cookies ?: (cookiesFile?.let { file ->
             try {
-                file.readText().toBean<MutableMap<String, String>>(gson)
+                file.readText().toBean<Map<String, Cookie>>(gson)
             } catch (e: Exception) {
+                // 读取失败说明文件损坏，直接删除，下次保存，
                 file.delete()
                 null
             }
-        } ?: mutableMapOf()).also {
+        } ?: mapOf()).also {
             _cookies = it
         }
         @Synchronized
@@ -84,18 +95,35 @@ abstract class NovelContext {
                 return
             }
             _cookies = value
-            mCookieFile?.writeText(value.toJson(gson))
+            cookiesFile?.writeText(value.toJson(gson))
         }
 
-    fun putCookies(cookies: Map<String, String>) {
+    /**
+     * 保存okhttp得到的cookie， 不过滤，
+     */
+    fun putCookies(cookies: List<Cookie>) {
+        this.cookies = this.cookies + cookies.map {
+            it.name() to it
+        }
+    }
+
+    /**
+     * 保存webView拿到的cookie, 由于只有name=value信息，没有超时之类的，
+     * 过滤一下，value一样的就没必要更新了，
+     */
+    fun putCookies(cookies: Map<String, Cookie>) {
         if (cookies.isEmpty()) {
             return
         }
         // 要确保setCookies被调用才会本地保存cookie,
-        this.cookies = this.cookies + cookies
+        this.cookies = this.cookies + cookies.filter { (name, cookie) ->
+            // 只更新value不同的，以免覆盖了okhttp拿到的包含超时等完整信息的cookie,
+            this.cookies[name]?.value() != cookie.value()
+        }
     }
 
     fun removeCookies() {
+        // 只要赋值了就会覆盖本地保存的，
         this.cookies = mapOf()
     }
 
@@ -103,7 +131,7 @@ abstract class NovelContext {
      *
      */
     open fun cookieDomainList(): List<String> {
-        val host = URL(getNovelSite().baseUrl).host
+        val host = URL(site.baseUrl).host
         val domain = secondLevelDomain(host)
         return listOf(domain)
     }
@@ -114,105 +142,137 @@ abstract class NovelContext {
         return host.substring(index2)
     }
 
-    /**
-     * 有的网站没有指定编码，只能在这里强行指定，
-     * null表示用默认的，一版可以，
-     */
-    protected open val charset: String? = null
-
-    abstract fun getNovelSite(): NovelSite
-    /**
-     * 获取网站分类信息，
-     */
-    open fun getGenres(): List<NovelGenre> = listOf()
 
     /**
-     * 获取分类页面的下一页，
+     * 这个网站是否启用，
      */
-    open fun getNextPage(genre: NovelGenre): NovelGenre? = null
+    open val enabled: Boolean = true
+
+    abstract val site: NovelSite
 
     /**
-     * 获取分类页面里的小说列表信息，
+     * 打开网站的话，可能不希望打开根目录，那就重写这个变量，
      */
-    abstract fun getNovelList(requester: ListRequester): List<NovelListItem>
+    val homePage: String get() = site.baseUrl
+
+    /**
+     * 获取搜索页面的下一页，
+     * TODO: 考虑在搜索结果直接加上关于下一页的，或者干脆不要下一页吧，反正现在搜索结果和下一页分别获取解析页面挺浪费的，
+     *
+     */
+    open fun getNextPage(extra: String): String? = null
 
     /**
      * 搜索小说名，
+     *
      */
-    abstract fun searchNovelName(name: String): NovelGenre
-
-    /**
-     * 搜索小说作者，
-     */
-    open fun searchNovelAuthor(author: String): NovelGenre = searchNovelName(author)
+    abstract fun searchNovelName(name: String): List<NovelItem>
 
     /**
      * 获取小说详情页信息，
+     *
+     * @param extra [NovelItem.extra] 尽量直接让这个extra就是bookId,
      */
-    abstract fun getNovelDetail(requester: DetailRequester): NovelDetail
+    abstract fun getNovelDetail(extra: String): NovelDetail
 
-    open fun getNovelItem(url: String): NovelItem = getNovelDetail(DetailRequester(url)).novel
+    /**
+     * 从给定地址找到这本小说，
+     * 要尽可能支持，
+     */
+    open fun getNovelItem(url: String): NovelItem = getNovelDetail(findBookId(url)).novel
 
     /**
      * 获取小说章节列表，
+     *
+     * @param extra [NovelDetail.extra]
      */
-    abstract fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter>
+    abstract fun getNovelChaptersAsc(extra: String): List<NovelChapter>
 
     /**
      * 获取小说章节文本内容，
+     *
+     * @param extra [NovelChapter.extra]
      */
-    abstract fun getNovelText(requester: TextRequester): NovelText
+    abstract fun getNovelContent(extra: String): List<String>
 
     /**
      * 判断这个地址是不是属于这个网站，
+     * 默认对比二级域名，正常情况所有三级域名都是一个同一个网站同一个NovelContext的，
+     * 有的网站可能用到站外地址，比如使用了百度搜索，不能单纯缓存host,
      */
     open fun check(url: String): Boolean = try {
-        secondLevelDomain(URL(getNovelSite().baseUrl).host) == secondLevelDomain(URL(url).host)
+        secondLevelDomain(URL(site.baseUrl).host) == secondLevelDomain(URL(url).host)
     } catch (_: Exception) {
         false
     }
 
     /**
-     * 封装网络请求，主要是为了统一打log,
-     * TODO: 整理下，最终得到的有document、string两种，是否设置cookies再分两种，
+     * 以下几个都是为了得到真实地址，毕竟extra现在支持各种随便写法，
+     * 要快，要能在ui线程使用，不能有网络请求，
      */
-    protected fun connect(requester: Requester): Connection {
-        logger.trace {
-            val stack = Thread.currentThread().stackTrace
-            stack.drop(2).take(6).joinToString("\n", "stack trace\n") {
-                "\tat ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})"
-            }
-        }
-        logger.debug { "request $requester" }
-        return requester.connect()
+    open fun getNovelDetailUrl(extra: String): String =
+            absUrl(detailPageTemplate?.format(findBookId(extra)) ?: extra)
+
+    /**
+     * 详情页地址模板，String.format形式，"/book/%s/"
+     */
+    protected open val detailPageTemplate: String? get() = null
+
+    // http://www.166xs.com/xiaoshuo/121/121623/
+    // 应对这种sb网站，format传两遍id, 不影响其他网站，
+    protected open fun getNovelChapterUrl(extra: String): String =
+            absUrl(chaptersPageTemplate?.format(findBookId(extra), findBookId(extra)) ?: extra)
+
+
+    /**
+     * 目录页地址模板，String.format形式，"/book/%s/"
+     * 目录英文是contents，但是和正文content接近，干脆用chapters,
+     */
+    protected open val chaptersPageTemplate: String? get() = detailPageTemplate
+
+    // http://www.166xs.com/xiaoshuo/121/121623/34377471.html
+    // 应对这种sb网站，format传两遍id, 不影响其他网站，
+    open fun getNovelContentUrl(extra: String): String =
+            absUrl(contentPageTemplate?.format(findChapterId(extra), findChapterId(extra)) ?: extra)
+
+    /**
+     * 正文页地址模板，String.format形式，"/book/%s/"
+     */
+    protected open val contentPageTemplate: String? get() = null
+
+    /**
+     * 尝试从extra获取真实地址，
+     * 只支持extra本身就是完整地址和extra为斜杆/开头的file两种情况，
+     */
+    protected fun absUrl(extra: String): String = try {
+        // 先尝试extra是否是个合法的地址
+        // 好像没必要，URL会直接判断，
+        URL(extra)
+    } catch (e: MalformedURLException) {
+        // 再尝试extra当成spec部分，拼接上网站baseUrl,
+        URL(URL(site.baseUrl), extra)
+    }.toExternalForm()
+
+    /**
+     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是bookId了，
+     */
+    protected open fun findBookId(extra: String): String = try {
+        extra.pick(bookIdRegex).first()
+    } catch (e: Exception) {
+        extra
     }
 
-    protected fun connect(url: String) = connect(Requester(url))
+    protected open val bookIdRegex: String get() = firstIntPattern
 
-    protected fun response(conn: Connection, doBeforeExecute: Connection.() -> Connection = { this }): Connection.Response {
-        // 设置cookies,
-        cookies.takeIf { it.isNotEmpty() }?.let { conn.cookies(it) }
-        val response = conn.doBeforeExecute().execute()
-        // 指定编码，如果存在，
-        charset?.let { response.charset(it) }
-        // 保存cookies, 按条目覆盖，
-        putCookies(response.cookies())
-        logger.debug { "status code: ${response.statusCode()}" }
-        logger.debug { "response url: ${response.url()}" }
-        logger.trace { "body length: ${response.body().length}" }
-        if (!check(response.url().toString())) {
-            throw IOException("网络被重定向，检查网络是否可用，")
-        }
-        return response
+    /**
+     * 查找章节id, 是包括小说id的，
+     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是chapterId了，
+     */
+    protected open fun findChapterId(extra: String): String = try {
+        extra.pick(chapterIdRegex).first()
+    } catch (e: Exception) {
+        extra
     }
 
-    protected fun response(requester: Requester): Connection.Response = response(connect(requester), requester::doBeforeExecute)
-
-    protected fun response(url: String) = response(Requester(url))
-
-    protected fun request(response: Connection.Response): Document = response.parse()
-
-    protected fun request(requester: Requester): Document = request(response(requester))
-
-    protected fun request(url: String) = request(Requester(url))
+    protected open val chapterIdRegex: String get() = firstTwoIntPattern
 }

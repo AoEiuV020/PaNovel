@@ -1,47 +1,36 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.*
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
-import java.net.URL
-import java.net.URLEncoder
-import java.text.SimpleDateFormat
-
 
 /**
- *
+ * TODO: 等网站恢复正常了再测试，
  * Created by AoEiuV020 on 2017.11.30-17:49:36.
  */
+/*
 class Dmzz : JsoupNovelContext() {
+    override val enabled: Boolean
+        get() = false
     override val site = NovelSite(
             name = "动漫之家",
-            baseUrl = "http://q.dmzj.com/",
+            baseUrl = "http://q.dmzj.com",
             logo = "http://m.dmzj.com/images/head_logo.gif"
     )
 
-    override fun getNovelSite(): NovelSite = site
-
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        return null
+    override fun connectByNovelName(name: String): Connection {
+        val key = URLEncoder.encode(name, "UTF-8")
+        return connect("http://s.acg.dmzj.com/lnovelsum/search.php?s=$key")
     }
 
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        if (requester !is SearchListRequester) {
-            return listOf()
-        }
-        val arr: List<DmzzNovelItem> = response(connect(requester).ignoreContentType(true)).body().let { js ->
+    override fun searchNovelName(name: String): List<NovelItem> {
+        val arr: List<DmzzNovelItem> = response(connect(absUrl(name)).ignoreContentType(true)).body().let { js ->
             val json = js.dropWhile { it != '[' }
                     .dropLastWhile { it != ']' }
             Gson().fromJson(json, object : TypeToken<List<DmzzNovelItem>>() {}.type)
         }
         return arr.map { dmzz ->
-            val info = dmzz.mIntro ?: dmzz.description ?: null.toString()
-            NovelListItem(NovelItem(this, dmzz.fullName, dmzz.author,
-                    // 相对路径，"../"开头，没找到自动处理的，
-                    site.baseUrl + dmzz.lnovelUrl.removePrefix("../")), info)
+            NovelItem(this, dmzz.fullName, dmzz.author,
+                    // 相对路径，"../"开头，jsoup没有自动处理这样的的，
+                    // TODO: URL有处理，待测试，
+                    dmzz.lnovelUrl.removePrefix(".."))
         }
     }
 
@@ -60,66 +49,66 @@ class Dmzz : JsoupNovelContext() {
             @SerializedName("status") val status: String //[<span class="red1_font12">完</span>]
     )
 
-    override fun searchNovelName(name: String): NovelGenre {
-        val key = URLEncoder.encode(name, "UTF-8")
-        val url = "http://s.acg.dmzj.com/lnovelsum/search.php?s=$key"
-        return NovelSearch(name, url)
-    }
-
     override fun check(url: String): Boolean {
         return super.check(url) ||
                 URL(url).host == "s.acg.dmzj.com"
     }
 
+    override val detailPageTemplate: String
+        get() = "/%s/index.shtml"
+
     @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
-        val root = request(requester)
-        val con = root.select("body > div.main > div > div.pic > div ").first()
+    override fun getNovelDetail(root: Document): NovelDetail {
+        val con = root.requireElement(query = "body > div.main > div > div.pic > div ")
 
-        val img = root.select("#cover_pic").first().src()
-        val name = con.select("> h3").first().text()
-        val (author) = con.select("> p:nth-child(2)").first().text()
-                .pick("作者：(\\S*)")
-        val (updateString) = con.select("> p:nth-child(5)").first().text()
-                .pick("更新：(.*)")
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val update = sdf.parse(updateString)
-        val info = ""
-        val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, info, chapterPageUrl)
+        val img = root.requireElement(query = "#cover_pic", name = TAG_IMAGE) { it.src() }
+        val name = con.requireElement(query = "> h3", name = TAG_NOVEL_NAME) { it.text() }
+        val (author) = con.requireElement(query = "> p:nth-child(2)", name = TAG_AUTHOR_NAME) {
+            it.text().pick("作者：(\\S*)")
+        }
+        val update = con.getElement(query = "> p:nth-child(5)") {
+            val (updateString) = it.text().pick("更新：(.*)")
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            sdf.parse(updateString)
+        }
+        val intro = ""
+
+        val bookId = findBookId(root.location())
+        return NovelDetail(NovelItem(this, name, author, bookId), img, update, intro, bookId)
     }
 
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val root = request(requester)
-        val text = root.select("#list_block > script").first().html()
+    override fun getNovelChaptersAsc(root: Document): List<NovelChapter> {
         val regex = Regex(".*chapter_list\\[\\d*\\]\\[\\d*\\] = '<a href=\"([^\"]*)\".*>(.*)</a>'.*;.*")
-        return text.lines().filter { it.matches(regex) }.map {
-            val (url, name) = it.pick(regex.toPattern())
-            NovelChapter(name, "http://q.dmzj.com" + url)
+        return root.requireElement(query = "#list_block > script", name = TAG_CHAPTER_LINK) {
+            it.html().lines().filter { it.matches(regex) }.map {
+                val (url, name) = it.pick(regex.toPattern())
+                NovelChapter(name, url)
+            }
         }
     }
 
-    override fun getNovelText(requester: TextRequester): NovelText {
-        val root = request(requester)
-        val script = root.select("head > script:nth-child(10)").first().html()
-        val (json) = script.pick("var g_chapter_pages_url = (\\[.*\\]);")
-        val urlList: List<String> = Gson().fromJson(json, object : TypeToken<List<String>>() {}.type)
-        val textList = urlList.map {
-            val url = if (it.isEmpty()) {
-                requester.url
-            } else {
-                "http://q.dmzj.com" + it
+    override fun getNovelText(root: Document): List<String> {
+        val textList = root.requireElement(query = "head > script:nth-child(10)", name = TAG_CONTENT) {
+            val (json) = it.html().pick("var g_chapter_pages_url = (\\[.*\\]);")
+            val urlList: List<String> = Gson().fromJson(json, object : TypeToken<List<String>>() {}.type)
+            urlList.map {
+                val url = if (it.isEmpty()) {
+                    root.location()
+                } else {
+                    absUrl(it)
+                }
+                parse(url).requireElements(query = "p")
+                        .dropLastWhile { it.className() == "zlist" }
+                        .flatMap {
+                            // 有的只有一个p，
+                            // http://q.dmzj.com/2013/7335/54663.shtml
+                            it.textList()
+                        }
+            }.reduce { acc, list ->
+                acc + list
             }
-            request(url).select("p")
-                    .dropLastWhile { it.className() == "zlist" }
-                    .flatMap {
-                        // 有的只有一个p，
-                        // http://q.dmzj.com/2013/7335/54663.shtml
-                        it.textList()
-                    }
-        }.reduce { acc, list ->
-            acc + list
         }
-        return NovelText(textList)
+        return textList
     }
 }
+*/

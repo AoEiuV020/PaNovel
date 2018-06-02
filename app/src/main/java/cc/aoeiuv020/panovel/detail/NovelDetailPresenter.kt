@@ -1,28 +1,19 @@
 package cc.aoeiuv020.panovel.detail
 
 import cc.aoeiuv020.panovel.Presenter
-import cc.aoeiuv020.panovel.api.ChaptersRequester
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.local.Cache
+import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.qrcode.QrCodeManager
-import cc.aoeiuv020.panovel.util.async
-import cc.aoeiuv020.panovel.util.suffixThreadName
-import io.reactivex.Observable
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.error
-import java.io.IOException
+import cc.aoeiuv020.panovel.report.Reporter
+import org.jetbrains.anko.*
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.03-18:10:45.
  */
-class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDetailActivity>(), AnkoLogger {
-    private val context: NovelContext by lazy {
-        NovelContext.getNovelContextByUrl(novelItem.requester.url)
-    }
+class NovelDetailPresenter(private val id: Long) : Presenter<NovelDetailActivity>(), AnkoLogger {
     private var refresh = false
+    private var novel: Novel? = null
 
     fun start() {
         requestNovelDetail()
@@ -34,66 +25,79 @@ class NovelDetailPresenter(private val novelItem: NovelItem) : Presenter<NovelDe
     }
 
     fun share() {
-        Observable.fromCallable {
-            suffixThreadName("shareBook")
-            val url = novelItem.requester.url
-            val qrCode = QrCodeManager.generate(novelItem.requester.url)
-            url to qrCode
-        }.async().subscribe({ (url, qrCode) ->
-            view?.showSharedUrl(url, qrCode)
-        }, { e ->
-            val message = "上传失败，"
-            error(message, e)
-            view?.showError(message, e)
-        }).let { addDisposable(it, 1) }
-
+        novel?.let {
+            view?.doAsync({ e ->
+                val message = "获取小说《${it.name}》<${it.site}, ${it.detail}>详情页地址失败，"
+                // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
+                Reporter.post(message, e)
+                error(message, e)
+                view?.runOnUiThread {
+                    view?.showError(message, e)
+                }
+            }) {
+                val url = DataManager.getDetailUrl(it)
+                // 简单拼接，这步不可能不问题，
+                val qrCode = QrCodeManager.generate(url)
+                uiThread {
+                    view?.showSharedUrl(url, qrCode)
+                }
+            }
+        } ?: run {
+            val message = "还没获取到小说详情，"
+            view?.showError(message)
+        }
     }
 
     private fun requestNovelDetail() {
-        val requester = novelItem.requester
-        Observable.fromCallable {
-            suffixThreadName("requestNovelDetail")
-            if (refresh) {
-                context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
-            } else {
-                Cache.detail.get(novelItem)
-                        ?: context.getNovelDetail(requester).also { Cache.detail.put(it.novel, it) }
+        view?.doAsync({ e ->
+            val message = "获取小说详情失败，"
+            Reporter.post(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
             }
-        }.async().subscribe({ comicDetail ->
-            view?.showNovelDetail(comicDetail)
-        }, { e ->
-            val message = "加载小说详情失败，"
-            error(message, e)
-            view?.showError(message, e)
-        }).let { addDisposable(it, 0) }
+        }) {
+            val novel = if (refresh) {
+                DataManager.requestDetail(id)
+            } else {
+                DataManager.getNovelDetail(id)
+            }
+            this@NovelDetailPresenter.novel = novel
+            uiThread {
+                view?.showNovelDetail(novel)
+            }
+        }
     }
 
-    fun requestChapters(requester: ChaptersRequester) {
-        Observable.fromCallable {
-            // 还有其他地方有requestChapters，所以多加个后缀，
-            suffixThreadName("requestChaptersDetail")
-            if (refresh) {
-                refresh = false
-                context.getNovelChaptersAsc(requester)
-                        .also { Cache.chapters.put(novelItem, it) }
-                        .also { debug { "重新获取章节，${it.size}" } }
-            } else {
-                try {
-                    Cache.chapters.get(novelItem)?.also { debug { "读取缓存章节，${it.size}" } }
-                            ?: context.getNovelChaptersAsc(requester)
-                                    .also { Cache.chapters.put(novelItem, it) }
-                                    .also { debug { "重新获取章节，${it.size}" } }
-                } catch (e: IOException) {
-                    Cache.chapters.get(novelItem, refreshTime = 0)?.also { debug { "网络有问题，读取缓存不判断超时，${it.size}" } }
-                            ?: throw e
-                }
-            }.asReversed().let { ArrayList(it) }
-        }.async().subscribe({ chapters ->
-            view?.showNovelChaptersDesc(chapters)
-        }, { e ->
-            val message = "加载小说章节失败，"
+    fun browse() {
+        novel?.also {
+            try {
+                val url = DataManager.getDetailUrl(it)
+                view?.browse(url)
+            } catch (e: Exception) {
+                val message = "获取小说《${it.name}》<${it.site}, ${it.detail}>详情页地址失败，"
+                // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
+                Reporter.post(message, e)
+                error(message, e)
+                view?.showError(message, e)
+            }
+        } ?: run {
+            val message = "还没获取到小说详情，"
+            view?.showError(message)
+        }
+    }
+
+    fun updateBookshelf(novel: Novel) {
+        view?.doAsync({ e ->
+            val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.name}》失败，"
+            // 这应该是数据库操作出问题，正常情况不会出现才对，
+            // 未知异常统一上报，
+            Reporter.post(message, e)
             error(message, e)
-            view?.showError(message, e)
-        }).let { addDisposable(it, 1) }
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.updateBookshelf(novel)
+        }
     }
 }

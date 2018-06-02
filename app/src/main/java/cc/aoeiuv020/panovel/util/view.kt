@@ -3,7 +3,6 @@
 package cc.aoeiuv020.panovel.util
 
 import android.app.Activity
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
@@ -13,6 +12,7 @@ import android.os.BaseBundle
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
@@ -42,6 +42,7 @@ import org.jetbrains.anko.yesButton
 fun Context.loading(dialog: ProgressDialog, id: Int) = loading(dialog, getString(R.string.loading, getString(id)))
 
 fun Context.loading(dialog: ProgressDialog, str: String) = dialog.apply {
+    setTitle(null)
     setMessage(str)
     show()
 }
@@ -63,6 +64,13 @@ fun View.hide() {
 
 fun View.show() {
     visibility = View.VISIBLE
+}
+
+fun View.setSize(size: Int) {
+    layoutParams = layoutParams.also {
+        it.height = size
+        it.width = size
+    }
 }
 
 fun View.setHeight(height: Int) {
@@ -98,17 +106,22 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
         // 因为取消前可能已经选了颜色，所以要设置一次初始的颜色，
         .setNegativeButton(android.R.string.cancel) { _, _ -> callback(initial) }
         .build().apply {
+            // 去除对话框的灰背景，
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.show()
 
-fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null) {
+fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null, bigText: String? = null) {
     val intent = intentFor<MainActivity>()
     val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
     val nb = NotificationCompat.Builder(this)
             .setContentTitle(title)
             .setContentText(text)
             .setAutoCancel(true)
+            .setOnlyAlertOnce(true)
             .setContentIntent(pendingIntent)
+    bigText?.let {
+        nb.setStyle(NotificationCompat.BigTextStyle().bigText(it))
+    }
     time?.let {
         nb.setWhen(it)
     }
@@ -120,7 +133,7 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
             setSmallIcon(icon)
         }
     }
-    val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+    val manager = NotificationManagerCompat.from(this)
     manager.notify(id, nb.build())
 }
 
@@ -156,5 +169,21 @@ fun Bundle.toMap(): Map<String, Any?> = BaseBundle::class.java.getDeclaredField(
         .get(this) as Map<String, *>
 
 // 从保存的状态或者传入的intent中拿String,
-fun Activity.getStringExtra(key: String, savedInstanceState: Bundle?): String? = savedInstanceState?.run { getString(key) }
+fun Activity.getStringExtra(key: String, savedInstanceState: Bundle? = null): String? = savedInstanceState?.run { getString(key) }
         ?: intent.getStringExtra(key)
+
+fun Activity.setBrightness(brightness: Int) {
+    if (brightness < 0) {
+        setBrightnessFollowSystem()
+    } else {
+        window.attributes = window.attributes.apply {
+            screenBrightness = minOf(255, brightness) / 255f
+        }
+    }
+}
+
+fun Activity.setBrightnessFollowSystem() {
+    window.attributes = window.attributes.apply {
+        screenBrightness = -1f
+    }
+}

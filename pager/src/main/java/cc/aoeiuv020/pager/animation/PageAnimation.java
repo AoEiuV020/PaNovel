@@ -223,6 +223,7 @@ public abstract class PageAnimation implements PagerAnimation {
 
     @Override
     public void refresh() {
+        // TODO: 刷新时一定概率闪烁，以及其他问题，缺字重字之类的，
         drawCurrent();
         abortAnim();
     }

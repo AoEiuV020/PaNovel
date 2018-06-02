@@ -1,20 +1,21 @@
 package cc.aoeiuv020.panovel.text
 
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
 import android.view.View
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.local.Bookshelf
-import cc.aoeiuv020.panovel.local.Margins
-import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.settings.Margins
+import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.text.NovelTextNavigation.Direction.*
-import cc.aoeiuv020.panovel.util.changeColor
-import cc.aoeiuv020.panovel.util.hide
-import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName
+import kotlinx.android.synthetic.main.dialog_seekbar.view.*
 import kotlinx.android.synthetic.main.novel_text_navigation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_animation.view.*
 import kotlinx.android.synthetic.main.novel_text_read_default.view.*
@@ -30,7 +31,7 @@ import org.jetbrains.anko.debug
  *
  * Created by AoEiuV020 on 2017.11.20-21:59:26.
  */
-class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem, navigation: View) : AnkoLogger {
+class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigation: View) : AnkoLogger {
     private val mPanelDefault = navigation.panelDefault
     private val mPanelSettings = navigation.panelSettings
     private val mPanelTypesetting = navigation.panelTypesetting
@@ -53,14 +54,11 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             view.fullScreen()
         }
         mPanelDefault.ivStar.apply {
-            isChecked = Bookshelf.contains(novelItem)
+            isChecked = novel.bookshelf
             setOnClickListener {
                 toggle()
-                if (isChecked) {
-                    Bookshelf.add(novelItem)
-                } else {
-                    Bookshelf.remove(novelItem)
-                }
+                novel.bookshelf = isChecked
+                view.presenter.updateBookshelf(novel)
             }
         }
         mPanelDefault.ivDetail.setOnClickListener {
@@ -102,7 +100,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
 
         mPanelSettings.apply {
             // 设置信息字体大小，
-            val messageSize = Settings.messageSize
+            val messageSize = ReaderSettings.messageSize
             debug { "load textSite = $messageSize" }
             messageSizeTextView.text = view.getString(R.string.text_size_placeholders, messageSize)
             messageSizeSeekBar.progress = messageSize - 12
@@ -118,12 +116,12 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     val iTextSize = 12 + seekBar.progress
-                    Settings.messageSize = iTextSize
+                    ReaderSettings.messageSize = iTextSize
                 }
             })
 
             // 设置字体大小，
-            val textSize = Settings.textSize
+            val textSize = ReaderSettings.textSize
             debug { "load textSite = $textSize" }
             textSizeTextView.text = view.getString(R.string.text_size_placeholders, textSize)
             textSizeSeekBar.progress = textSize - 12
@@ -139,12 +137,12 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     val iTextSize = 12 + seekBar.progress
-                    Settings.textSize = iTextSize
+                    ReaderSettings.textSize = iTextSize
                 }
             })
 
             // 设置字体，
-            llFont.setOnClickListener {
+            tvFont.setOnClickListener {
                 view.alert(R.string.select_font) {
                     positiveButton(android.R.string.yes) {
                         view.requestFont()
@@ -156,28 +154,28 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
             }
 
             // 设置背景图，
-            lBackgroundImage.setOnClickListener {
+            tvBackgroundImage.setOnClickListener {
                 view.requestBackgroundImage()
             }
 
             // 设置背景色，
-            val backgroundColor = Settings.backgroundColor
+            val backgroundColor = ReaderSettings.backgroundColor
             view.setBackgroundColor(backgroundColor)
             backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, backgroundColor)
             lBackgroundColor.setOnClickListener {
-                view.changeColor(Settings.backgroundColor) { color ->
-                    Settings.backgroundColor = color
-                    Settings.backgroundImage = null
+                view.changeColor(ReaderSettings.backgroundColor) { color ->
+                    ReaderSettings.backgroundColor = color
+                    ReaderSettings.backgroundImage = null
                     backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, color)
                     view.setBackgroundColor(color, true)
                 }
             }
 
             // 设置文字颜色，
-            textColorTextView.text = view.getString(R.string.text_color_placeholder, Settings.textColor)
+            textColorTextView.text = view.getString(R.string.text_color_placeholder, ReaderSettings.textColor)
             lTextColor.setOnClickListener {
-                view.changeColor(Settings.textColor) { color ->
-                    Settings.textColor = color
+                view.changeColor(ReaderSettings.textColor) { color ->
+                    ReaderSettings.textColor = color
                     textColorTextView.text = view.getString(R.string.text_color_placeholder, color)
                     view.setTextColor(color)
                 }
@@ -191,11 +189,56 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 showLayout(mPanelAnimation)
             }
 
+            // 设置亮度，
+            view.setBrightness(ReaderSettings.brightness)
+            tvBrightness.setOnClickListener {
+                AlertDialog.Builder(view).apply {
+                    setTitle(R.string.brightness)
+                    val layout = View.inflate(view, R.layout.dialog_seekbar, null)
+                    setView(layout)
+                    layout.seekBar.apply {
+                        progress = ReaderSettings.brightness
+                        setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                                // progress 0-255,
+                                view.setBrightness(progress)
+                            }
+
+                            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                            }
+
+                            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                                ReaderSettings.brightness = seekBar.progress
+                            }
+                        })
+                    }
+                    setNeutralButton(R.string.follow_system) { _, _ ->
+                        view.setBrightnessFollowSystem()
+                        // 负数代表亮度跟随系统，
+                        ReaderSettings.brightness = -1
+                    }
+                    // 鬼知道发生了什么，这里简写成lambda就会编译报错，上面的就没问题，
+                    @Suppress("ObjectLiteralToLambda")
+                    val emptyListener = object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                        }
+                    }
+                    setPositiveButton(android.R.string.yes, emptyListener)
+                }.create().apply {
+                    // 去除对话框的灰背景，
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                }.show()
+            }
+
+            // 设置保持亮屏，
+            if (ReaderSettings.keepScreenOn) {
+                view.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
 
         mPanelTypesetting.apply {
             // 设置行间距，
-            val lineSpacing = Settings.lineSpacing
+            val lineSpacing = ReaderSettings.lineSpacing
             lineSpacingTextView.text = view.getString(R.string.line_spacing_placeholder, lineSpacing)
             lineSpacingSeekBar.progress = lineSpacing
             lineSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -208,12 +251,12 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    Settings.lineSpacing = seekBar.progress
+                    ReaderSettings.lineSpacing = seekBar.progress
                 }
             })
 
             // 设置段间距，
-            val paragraphSpacing = Settings.paragraphSpacing
+            val paragraphSpacing = ReaderSettings.paragraphSpacing
             paragraphSpacingTextView.text = view.getString(R.string.paragraph_spacing_placeholder, paragraphSpacing)
             paragraphSpacingSeekBar.progress = paragraphSpacing
             paragraphSpacingSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -226,38 +269,38 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    Settings.paragraphSpacing = seekBar.progress
+                    ReaderSettings.paragraphSpacing = seekBar.progress
                 }
             })
 
-            initLayoutMargins(llMargins, Settings.contentMargins, ReaderConfigName.ContentMargins)
+            initLayoutMargins(llMargins, ReaderSettings.contentMargins, ReaderConfigName.ContentMargins)
             llMargins.llDisplay.hide()
 
             tvPagination.setOnClickListener {
                 showLayout(mPanelMargins)
-                initLayoutMargins(mPanelMargins, Settings.paginationMargins, ReaderConfigName.PaginationMargins)
+                initLayoutMargins(mPanelMargins, ReaderSettings.paginationMargins, ReaderConfigName.PaginationMargins)
             }
             tvTime.setOnClickListener {
                 showLayout(mPanelMargins)
-                initLayoutMargins(mPanelMargins, Settings.timeMargins, ReaderConfigName.TimeMargins)
+                initLayoutMargins(mPanelMargins, ReaderSettings.timeMargins, ReaderConfigName.TimeMargins)
             }
             tvBattery.setOnClickListener {
                 showLayout(mPanelMargins)
-                initLayoutMargins(mPanelMargins, Settings.batteryMargins, ReaderConfigName.BatteryMargins)
+                initLayoutMargins(mPanelMargins, ReaderSettings.batteryMargins, ReaderConfigName.BatteryMargins)
             }
             tvBookName.setOnClickListener {
                 showLayout(mPanelMargins)
-                initLayoutMargins(mPanelMargins, Settings.bookNameMargins, ReaderConfigName.BookNameMargins)
+                initLayoutMargins(mPanelMargins, ReaderSettings.bookNameMargins, ReaderConfigName.BookNameMargins)
             }
             tvChapterName.setOnClickListener {
                 showLayout(mPanelMargins)
-                initLayoutMargins(mPanelMargins, Settings.chapterNameMargins, ReaderConfigName.ChapterNameMargins)
+                initLayoutMargins(mPanelMargins, ReaderSettings.chapterNameMargins, ReaderConfigName.ChapterNameMargins)
             }
         }
 
         mPanelAnimation.apply {
             val maxSpeed = 3f
-            val animationSpeed: Float = Settings.animationSpeed
+            val animationSpeed: Float = ReaderSettings.animationSpeed
             tvAnimationSpeed.text = view.getString(R.string.animation_speed_placeholder, animationSpeed)
             sbAnimationSpeed.let { sb ->
                 sb.progress = (animationSpeed / maxSpeed * sb.max).toInt()
@@ -275,14 +318,14 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                     override fun onStopTrackingTouch(seekBar: SeekBar) {
                         progressToSpeed(seekBar).let {
                             view.setAnimationSpeed(it)
-                            Settings.animationSpeed = it
+                            ReaderSettings.animationSpeed = it
                         }
                     }
 
                 })
             }
 
-            rgAnimationMode.check(when (Settings.animationMode) {
+            rgAnimationMode.check(when (ReaderSettings.animationMode) {
                 AnimationMode.SIMPLE -> R.id.rbSimple
                 AnimationMode.SIMULATION -> R.id.rbSimulation
                 AnimationMode.COVER -> R.id.rbCover
@@ -300,9 +343,9 @@ class NovelTextNavigation(val view: NovelTextActivity, val novelItem: NovelItem,
                     R.id.rbScroll -> AnimationMode.SCROLL
                     else -> AnimationMode.SIMPLE // 不存在的，
                 }
-                val oldAnimationMode = Settings.animationMode
+                val oldAnimationMode = ReaderSettings.animationMode
                 if (oldAnimationMode != animationMode) {
-                    Settings.animationMode = animationMode
+                    ReaderSettings.animationMode = animationMode
                     view.setAnimationMode(animationMode, oldAnimationMode)
                 }
             }

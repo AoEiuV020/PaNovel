@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.local.Settings
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import kotlinx.android.synthetic.main.activity_donate.*
 import org.jetbrains.anko.startActivity
 import java.util.concurrent.TimeUnit
@@ -44,7 +44,7 @@ class DonateActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         if (stopTime > 0 && System.currentTimeMillis() - stopTime > TimeUnit.SECONDS.toMillis(5)) {
-            Settings.adEnabled = false
+            GeneralSettings.adEnabled = false
         }
     }
 

@@ -1,160 +1,82 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.api.*
-import org.jsoup.nodes.TextNode
-import java.net.URL
-import java.net.URLEncoder
-import java.util.*
+import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.panovel.api.firstThreeIntPattern
+import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import okhttp3.Cookie
+import okhttp3.HttpUrl
 
 /**
  *
  * Created by AoEiuV020 on 2018.03.07-02:42:57.
  */
-class Snwx : JsoupNovelContext() {
-    companion object {
-        private val SEARCH_PAGE_URL = "https://www.snwx8.com/modules/article/search.php"
+class Snwx : DslJsoupNovelContext() {init {
+    site {
+        name = "少年文学"
+        baseUrl = "https://www.snwx8.com"
+        logo = "https://www.snwx8.com/xiaoyi/images/logo.gif"
     }
-
-    override val site = NovelSite(
-            name = "少年文学",
-            baseUrl = "https://www.snwx8.com/",
-            logo = "https://www.snwx8.com/xiaoyi/images/logo.gif"
-    )
-
-    override fun getNovelSite(): NovelSite = site
-
-    override fun getNovelItem(url: String): NovelItem {
-        val path = URL(url).path.removePrefix("/")
-        val detailUrl = "${site.baseUrl}$path"
-        return super.getNovelItem(detailUrl)
-    }
-
-    override fun getGenres(): List<NovelGenre> {
-        val root = request(site.baseUrl)
-        val elements = root.select("#wrapper > div.nav > ul > li > a").drop(2).dropLast(1)
-        return elements.map { a ->
-            NovelGenre(a.text(), GenreListRequester(a.absHref()))
+    search {
+        get {
+            charset = "GBK"
+            url = "/modules/article/search.php"
+            data {
+                "searchkey" to it
+            }
         }
-    }
-
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelList(requester: ListRequester): List<NovelListItem> {
-        val root = request(requester)
-        return when {
-            requester is SearchListRequester -> root.select("#newscontent > div.l > ul > li").map {
-                val a = it.select("> span.s2 > a").first()
-                val name = a.text()
-                val url = a.absHref()
-                val author = it.select("> span.s4").first().text()
-                val last = it.select("> span.s3 > a").first().text()
-                val update = it.select("> span.s5").first().text()
-                val genre = it.select("> span.s1").first().text()
-                val info = "最新章节: $last 类型: $genre 更新: $update"
-                NovelListItem(NovelItem(this, name, author, url), info)
-            }
-            requester.url.startsWith("https://www.snwx8.com/quanben/") -> if (requester.url.matches(Regex(".*[/1]"))) {
-                // 如果是第一页，右边的推荐也算上，
-                root.select("#newscontent > div.r > ul > li").map {
-                    val a = it.select("> span.s2 > a").first()
-                    val name = a.text()
-                    val url = a.absHref()
-                    val author = it.select("> span.s5").first().text()
-                    val info = ""
-                    NovelListItem(NovelItem(this, name, author, url), info)
-                }
-            } else {
-                emptyList()
-            } + root.select("#newscontent > div.l > ul > li").map {
-                val a = it.select("> span.s2 > a").first()
-                val name = a.text()
-                val url = a.absHref()
-                val author = it.select("> span.s4").first().text()
-                val last = it.select("> span.s3 > a").first().text()
-                val update = it.select("> span.s5").first().text()
-                val genre = it.select("> span.s1").first().text()
-                val info = "最新章节: $last 类型: $genre 更新: $update"
-                NovelListItem(NovelItem(this, name, author, url), info)
-            }
-            else -> if (requester.url.endsWith("1.html")) {
-                // 如果是第一页，上面和右边的推荐也算上，
-                root.select("#hotcontent > div > div").map {
-                    val a = it.select("> dl > dt > a").first()
-                    val name = a.text()
-                    val url = a.absHref()
-                    val (author) = it.select("> dl > dt > span").first().text().pick("作者：(\\S*)")
-                    val info = it.select("> dl > dd").first().text().trim()
-                    NovelListItem(NovelItem(this, name, author, url), info)
-                } + root.select("#newscontent > div.r > ul > li").map {
-                    val a = it.select("> span.s2 > a").first()
-                    val name = a.text()
-                    val url = a.absHref()
-                    val author = it.select("> span.s5").first().text()
-                    val info = ""
-                    NovelListItem(NovelItem(this, name, author, url), info)
-                }
-            } else {
-                emptyList()
-            } + root.select("#newscontent > div.l > ul > li").map {
-                val a = it.select("> span.s2 > a").first()
-                val name = a.text()
-                val url = a.absHref()
-                val author = it.select("> span.s4").first().text()
-                val last = it.select("> span.s3 > a").first().text()
-                val update = it.select("> span.s5").first().text()
-                val info = "最新章节: $last 更新: $update"
-                NovelListItem(NovelItem(this, name, author, url), info)
+        document {
+            items("#newscontent > div.l > ul > li") {
+                name("> span.s2 > a")
+                author("> span.s4")
             }
         }
     }
-
-    override fun searchNovelName(name: String): NovelGenre {
-        val key = URLEncoder.encode(name, "GBK")
-        val url = "${SEARCH_PAGE_URL}?searchkey=$key"
-        return NovelSearch(name, url)
-    }
-
-    override fun getNextPage(genre: NovelGenre): NovelGenre? {
-        if (genre.requester is SearchListRequester) {
-            return null
-        }
-        val root = request(genre.requester)
-        val a = root.select("#pagelink > a.next").first() ?: return null
-        val url = a.absHref()
-        if (url.isEmpty()) return null
-        return NovelGenre(genre.name, url)
-    }
-
-    @SuppressWarnings("SimpleDateFormat")
-    override fun getNovelDetail(requester: DetailRequester): NovelDetail {
-        val root = request(requester)
-        val img = root.select("#fmimg > img").first().src()
-        val div = root.select("#info").first()
-        val title = div.select("> div.infotitle").first()
-        val name = title.select("> h1").first().text()
-        val (author) = title.select("> i:nth-child(2)").first().text()
-                .pick("作者：(\\S*)")
-        val intro = div.getElement(query = "> div.intro") {
-            it.childNodes().first {
-                it is TextNode && !it.isBlank
-            }.let { (it as TextNode).wholeText }.trim()
-        }.toString()
-        val update = Date(0)
-
-        val chapterPageUrl = requester.url
-        return NovelDetail(NovelItem(this, name, author, requester), img, update, intro, chapterPageUrl)
-    }
-
-    override fun getNovelChaptersAsc(requester: ChaptersRequester): List<NovelChapter> {
-        val root = request(requester)
-        return root.select("#list > dl > dd > a").map { a ->
-            NovelChapter(a.text(), a.absHref())
+    bookIdRegex = firstTwoIntPattern
+    // https://www.snwx8.com/book/66/66076/
+    detailPageTemplate = "/book/%s/"
+    detail {
+        document {
+            val div = element("#info")
+            val title = element("> div.infotitle", parent = div)
+            novel {
+                name("> h1", parent = title)
+                author("> i:nth-child(2)", parent = title, block = pickString("作者：(\\S*)"))
+            }
+            image("#fmimg > img")
+            introduction("> div.intro", parent = div) {
+                it.textNodes().first {
+                    // TextNode不可避免的有空的，
+                    !it.isBlank
+                            && !it.wholeText.let {
+                        // 后面几个TextNode广告包含这些文字，
+                        it.startsWith("各位书友要是觉得《${novel?.name}》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！")
+                                || it.startsWith("${novel?.name}最新章节,${novel?.name}无弹窗,${novel?.name}全文阅读.")
+                    }
+                }.ownTextList().joinToString()
+            }
+            // 这网站详情页没有更新时间，
         }
     }
-
-    override fun getNovelText(requester: TextRequester): NovelText {
-        val root = request(requester)
-        val content = root.select("#BookText").first()
-        return NovelText(content.textList())
+    chapters {
+        document {
+            items("#list > dl > dd > a")
+        }
+    }
+    chapterIdRegex = firstThreeIntPattern
+    contentPageTemplate = "/book/%s.html"
+    content {
+        document {
+            items("#BookText")
+        }
     }
 }
+
+    override fun cookieFilter(url: HttpUrl, cookies: MutableList<Cookie>): MutableList<Cookie> {
+        cookies.removeAll {
+            // 删除cookie绕开搜索时间间隔限制，
+            it.name() == "jieqiVisitTime"
+        }
+        return cookies
+    }
+}
+

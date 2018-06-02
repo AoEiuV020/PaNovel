@@ -5,27 +5,29 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
+import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
-import cc.aoeiuv020.panovel.check.SignatureUtil
-import cc.aoeiuv020.panovel.check.VersionUtil
-import cc.aoeiuv020.panovel.util.async
-import cc.aoeiuv020.panovel.util.suffixThreadName
-import io.reactivex.Observable
+import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.util.Delegates
+import cc.aoeiuv020.panovel.util.Pref
+import cc.aoeiuv020.panovel.util.SignatureUtil
+import cc.aoeiuv020.panovel.util.VersionUtil
 import org.jetbrains.anko.*
 import org.jsoup.Jsoup
 import java.io.BufferedReader
 import java.net.URL
-import java.util.regex.Pattern
 
 /**
  *
  * Created by AoEiuV020 on 2018.03.25-04:00:29.
  */
-object Check : BaseLocalSource(), AnkoLogger {
-    private var cachedVersionName: String by PrimitiveDelegate("0")
+object Check : Pref, AnkoLogger {
+    override val name: String
+        get() = "Check"
+    private var cachedVersionName: String by Delegates.string("0")
     private const val CHANGE_LOG_URL = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/master/app/src/main/assets/ChangeLog.txt"
     private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
-    private var knownVersionName: String by PrimitiveDelegate("0")
+    private var knownVersionName: String by Delegates.string("0")
     private fun getNewestVersionName(): String {
         return Jsoup.connect(RELEASE_GITHUB).get().select("#js-repo-pjax-container " +
                 "> div.container.new-discussion-timeline.experiment-repo-nav " +
@@ -58,7 +60,7 @@ object Check : BaseLocalSource(), AnkoLogger {
     }
 
     private fun BufferedReader.cutChangeLog(fromVersion: String): String {
-        val pattern = Pattern.compile("([0-9.]*):")
+        val pattern = compilePattern("([0-9.]*):")
         return useLines {
             it.takeWhile {
                 try {
@@ -72,54 +74,53 @@ object Check : BaseLocalSource(), AnkoLogger {
     }
 
     fun asyncCheckVersion(ctx: Context) {
-        Observable.fromCallable {
-            suffixThreadName("checkVersion")
+        ctx.doAsync({ e ->
+            val message = "检测更新失败，"
+            Reporter.post(message, e)
+            error(message, e)
+        }) {
             val currentVersionName = VersionUtil.getAppVersionName(ctx)
             val newestVersionName = getNewestVersionName()
             val hasUpdate = VersionUtil.compare(newestVersionName, currentVersionName) > 0
                     && VersionUtil.compare(newestVersionName, knownVersionName) > 0
-            when {
+            val changeLog = when {
+            // 有更新，网上获取更新日志，截取当前版本到网上最新的日志，
                 hasUpdate -> {
-                    val changeLog = getChangeLog(currentVersionName)
-                    cachedVersionName = currentVersionName
-                    listOf(hasUpdate, changeLog, newestVersionName)
+                    getChangeLog(currentVersionName)
                 }
+            // 已经更新，截取更新部分日志，从上次保存的版本到最新的日志，
                 VersionUtil.compare(currentVersionName, cachedVersionName) > 0 -> {
-                    val changeLog = getChangeLogFromAssert(ctx, cachedVersionName)
-                    cachedVersionName = currentVersionName
-                    listOf(hasUpdate, changeLog, newestVersionName)
+                    getChangeLogFromAssert(ctx, cachedVersionName)
                 }
-                else -> listOf(hasUpdate, "", "0")
+            // 没有更新也不是刚更新完，直接返回，
+                else -> return@doAsync
             }
-        }.async().subscribe({ (hasUpdate, changeLog, newestVersionName) ->
-            if (!(hasUpdate as Boolean)) {
-                if ((changeLog as String).isNotEmpty()) {
+            // 缓存当前版本，以便更新后对比，
+            cachedVersionName = currentVersionName
+            uiThread { ctx ->
+                if (hasUpdate) {
+                    ctx.alert {
+                        title = "有更新"
+                        message = changeLog
+                        neutralPressed("忽略") {
+                            Check.knownVersionName = newestVersionName
+                        }
+                        positiveButton("酷安") {
+                            startCoolapk(ctx)
+                        }
+                        negativeButton("Github") {
+                            ctx.browse(Check.RELEASE_GITHUB)
+                        }
+                    }.show()
+                } else {
                     ctx.alert {
                         title = "已更新"
                         message = changeLog
                         yesButton { }
                     }.show()
                 }
-                return@subscribe
             }
-            ctx.alert {
-                title = "有更新"
-                message = changeLog as String
-                neutralPressed("忽略") {
-                    Check.knownVersionName = newestVersionName as String
-                }
-                positiveButton("酷安") {
-                    startCoolapk(ctx)
-                }
-                negativeButton("Github") {
-                    ctx.browse(Check.RELEASE_GITHUB)
-                }
-            }.show()
-
-        }, { e ->
-            val errorMessage = "检测更新失败"
-            error(errorMessage, e)
-        })
+        }
     }
 
     private fun startCoolapk(ctx: Context) {
@@ -140,8 +141,8 @@ object Check : BaseLocalSource(), AnkoLogger {
     private const val AOEIUV020_SIGNATURE = "F473239FE5E994CC7FF64F505D0F0BB6F8E3CB8C"
     private const val RELEASE_COOLAPK = "https://www.coolapk.com/apk/167994"
     private const val RELEASE_GITHUB = "https://github.com/AoEiuV020/PaNovel/releases"
-    private var ignoreSignatureCheck: Boolean by PrimitiveDelegate(false)
-    private var signature: String? by NullablePrimitiveDelegate()
+    private var ignoreSignatureCheck: Boolean by Delegates.boolean(false)
+    private var signature: String by Delegates.string("")
 
     /**
      * @return 忽略或者通过都返回true,
@@ -150,33 +151,35 @@ object Check : BaseLocalSource(), AnkoLogger {
         if (ignoreSignatureCheck) {
             return true
         }
-        val apkSign = signature
+        val apkSign = signature.takeIf(String::isNotEmpty)
                 ?: SignatureUtil.getAppSignature(ctx).also { signature = it }
         return apkSign == AOEIUV020_SIGNATURE
     }
 
     fun asyncCheckSignature(ctx: Context) {
-        Observable.fromCallable {
-            suffixThreadName("checkSignature")
-            Check.checkSignature(ctx)
-        }.async().subscribe {
-            if (it) {
-                return@subscribe
+        ctx.doAsync({ e ->
+            val message = "检查签名出错"
+            error(message, e)
+            Reporter.post(message, e)
+        }) {
+            if (Check.checkSignature(ctx)) {
+                return@doAsync
             }
-            ctx.alert {
-                title = "签名不正确"
-                message = "你可能用了假app,"
-                neutralPressed("忽略") {
-                    Check.ignoreSignatureCheck = true
-                }
-                positiveButton("酷安") {
-                    startCoolapk(ctx)
-                }
-                negativeButton("Github") {
-                    ctx.browse(Check.RELEASE_GITHUB)
-                }
-            }.show()
-
+            uiThread { ctx ->
+                ctx.alert {
+                    title = "签名不正确"
+                    message = "你可能用了假app,"
+                    neutralPressed("忽略") {
+                        Check.ignoreSignatureCheck = true
+                    }
+                    positiveButton("酷安") {
+                        startCoolapk(ctx)
+                    }
+                    negativeButton("Github") {
+                        ctx.browse(Check.RELEASE_GITHUB)
+                    }
+                }.show()
+            }
         }
     }
 }

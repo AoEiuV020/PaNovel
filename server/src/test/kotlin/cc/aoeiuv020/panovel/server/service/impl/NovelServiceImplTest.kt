@@ -16,27 +16,47 @@ class NovelServiceImplTest {
     private lateinit var service: NovelServiceImpl
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress(
-                data = mapOf("updateUploadUrl" to "http://localhost:8080/update/upload")
-        ))
+        service = NovelServiceImpl(ServerAddress.new("localhost:8080"))
     }
 
     @Test
     fun uploadUpdate() {
-        val novel = Novel().also {
-            it.requesterType = "type"
-            it.requesterExtra = "extra"
-            it.chaptersCount = 12
-            it.updateTime = Date()
+        val novel = Novel().apply {
+            site = "Site"
+            author = "Author"
+            name = "Name"
+            detail = "Detail"
+            chaptersCount = 12
+            receiveUpdateTime = Date()
         }
         assertTrue(service.uploadUpdate(novel))
-        novel.updateTime = Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+        novel.receiveUpdateTime = Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
         assertFalse(service.uploadUpdate(novel))
         novel.let {
             it.chaptersCount = 13
-            it.updateTime = null
+            it.receiveUpdateTime = null
         }
         assertTrue(service.uploadUpdate(novel))
+    }
+
+    @Test
+    fun notifyTest() {
+        val novel = Novel().apply {
+            site = "起点中文"
+            author = "圣骑士的传说"
+            name = "修真聊天群"
+            detail = "3602691"
+            chaptersCount = 22222
+            receiveUpdateTime = Date()
+        }
+        assertTrue(service.uploadUpdate(novel))
+    }
+
+    @Test
+    fun needRefreshNovelList() {
+        service.needRefreshNovelList(0).forEach { novel ->
+            println("<${novel.run { "$site.$author.$name" }}>")
+        }
     }
 
 }
