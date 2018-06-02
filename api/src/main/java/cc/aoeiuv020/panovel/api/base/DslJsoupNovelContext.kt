@@ -510,13 +510,13 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 // 编码可以空，会是默认UTF-8,
                 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                 val bodyBuilder = FormBody.Builder(charset?.let { Charset.forName(charset) })
-                dataMap?.forEach { name, value ->
+                dataMap?.forEach { (name, value) ->
                     bodyBuilder.add(name, value)
                 }
                 requestBuilder.method(method.notNull(), requestBody ?: bodyBuilder.build())
             } else {
                 // get,
-                dataMap?.forEach { name, value ->
+                dataMap?.forEach { (name, value) ->
                     val eName = URLEncoder.encode(name, charset ?: defaultCharset)
                     val eValue = URLEncoder.encode(value, charset ?: defaultCharset)
                     httpUrlBuilder.addEncodedQueryParameter(eName, eValue)
