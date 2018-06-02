@@ -16,7 +16,11 @@ class Syxs : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            url = "/search.php?keywords=${gbk(it)}"
+            charset = "GBK"
+            url = "/search.php"
+            data {
+                "keywords" to it
+            }
         }
         document {
             /*

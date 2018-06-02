@@ -15,7 +15,10 @@ class Yssm : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            url = "/SearchBook.php?keyword=$it"
+            url = "/SearchBook.php"
+            data {
+                "keyword" to it
+            }
         }
         // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
         // 这里限制一下，20K大概小几十个结果，

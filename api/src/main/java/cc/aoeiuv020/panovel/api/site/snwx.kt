@@ -18,7 +18,11 @@ class Snwx : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            url = "/modules/article/search.php?searchkey=${gbk(it)}"
+            charset = "GBK"
+            url = "/modules/article/search.php"
+            data {
+                "searchkey" to it
+            }
         }
         document {
             items("#newscontent > div.l > ul > li") {

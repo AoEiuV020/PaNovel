@@ -25,7 +25,10 @@ class Qidian : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            url = "/search?kw=$it"
+            url = "/search"
+            data {
+                "kw" to it
+            }
         }
         /*
         <a href="//book.qidian.com/info/3548786" target="_blank" data-eid="qd_S05" data-bid="3548786" data-algrid="0.0.0">重生之<cite class="red-kw">都市</cite>修仙</a>
@@ -138,7 +141,11 @@ class Qidian : DslJsoupNovelContext() {init {
         val bookId = args[0]
         val chapterId = args[1]
         get {
-            url = "https://m.qidian.com/majax/chapter/getChapterInfo?bookId=$bookId&chapterId=$chapterId"
+            url = "https://m.qidian.com/majax/chapter/getChapterInfo"
+            data {
+                "bookId" to bookId
+                "chapterId" to chapterId
+            }
         }
         response {
             val json = gson.fromJson(it, JsonObject::class.java)
