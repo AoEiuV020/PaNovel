@@ -76,7 +76,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         }
 
         /**
-         * 并不得到子元素里的文字，
+         * 并不获取子元素里的文字，
          * 支持全角空格，
          */
         fun ownTextList(element: Element): List<String> =
