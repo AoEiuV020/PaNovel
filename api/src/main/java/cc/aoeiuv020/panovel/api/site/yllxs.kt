@@ -9,7 +9,7 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 class Yllxs : DslJsoupNovelContext() {init {
     site {
         name = "166小说"
-        baseUrl = "http://www.166xs.com/"
+        baseUrl = "http://www.166xs.com"
         logo = "http://m.166xs.com/system/logo.png"
     }
     search {

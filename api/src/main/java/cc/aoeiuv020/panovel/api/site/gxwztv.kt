@@ -9,7 +9,7 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 class Gxwztv : DslJsoupNovelContext() {init {
     site {
         name = "梧州中文台"
-        baseUrl = "https://www.gxwztv.com/"
+        baseUrl = "https://www.gxwztv.com"
         logo = "https://www.gxwztv.com/images/logo.png"
     }
     search {
@@ -22,8 +22,8 @@ class Gxwztv : DslJsoupNovelContext() {init {
         }
         document {
             items("#novel-list > ul > li:not(:nth-child(1)):not(:nth-last-child(1))") {
-                name(" > div.col-xs-3 > a")
-                author(" > div:nth-child(4)")
+                name("> div.col-xs-3 > a")
+                author("> div:nth-child(4)")
             }
         }
     }

@@ -232,6 +232,20 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
     }
 
     /**
+     * 用于获取简介，一个元素，简介内容都在ownText里，子标签可能有无用信息，
+     */
+    protected fun ownLinesString(): (Element) -> String = {
+        it.ownTextList().joinToString("\n")
+    }
+
+    /**
+     * 用于获取正文，一个元素，正文内容都在ownText里，子标签可能有无用信息，
+     */
+    protected fun ownLines(): (Element) -> List<String> = {
+        it.ownTextList()
+    }
+
+    /**
      * URLEncode with gbk file encoding,
      */
     protected fun gbk(value: String): String = URLEncoder.encode(value, "GBK")

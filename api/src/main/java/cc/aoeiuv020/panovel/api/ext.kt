@@ -38,3 +38,20 @@ inline fun <T> tryOrNul(block: () -> T?): T? = try {
 } catch (e: Exception) {
     null
 }
+
+/**
+ * 倒序删除重复章节，有的网站章节列表开头有倒叙的最新章节，
+ * 987123456789 删除后得到 123456789,
+ */
+fun List<NovelChapter>.reverseRemoveDuplication(): List<NovelChapter> {
+    // 以防万一，
+    if (this.size == 1) return this
+    // 倒序列表判断是否重复章节，
+    val reversedList = this.asReversed()
+    var index = 0
+    return this.dropWhile {
+        it == reversedList[index].also {
+            ++index
+        }
+    }
+}
