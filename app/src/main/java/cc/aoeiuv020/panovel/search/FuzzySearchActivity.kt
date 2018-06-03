@@ -47,6 +47,10 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
             ctx.startActivity<FuzzySearchActivity>("name" to name, "author" to author)
         }
 
+        fun startSingleSite(ctx: Context, site: String) {
+            // 单个网站模糊搜索，fuzzy search,
+            ctx.startActivity<FuzzySearchActivity>("site" to site)
+        }
     }
 
     private lateinit var presenter: FuzzySearchPresenter
