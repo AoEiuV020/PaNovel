@@ -23,6 +23,9 @@ class GulizwTest : BaseNovelContextText(Gulizw::class) {
 
     @Test
     fun chapters() {
+        chapters("52771", "第1章 黄山真君和九洲一号群", "52771/20455308", null,
+                "第1743章 你就不能给我正常的晋升一回吗？", "52771/37939770", null,
+                1824)
         chapters("94719", "外传1 柯父。", "94719/28723558", null,
                 "第1314章 你的选择（终）", "94719/37928328", null,
                 1529)

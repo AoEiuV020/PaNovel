@@ -58,7 +58,7 @@ class Gulizw : DslJsoupNovelContext() {init {
     chaptersPageTemplate = "/%s/"
     chapters {
         document {
-            items("#novel94719 > dl > dd > a")
+            items("div.novel_list > dl > dd > a")
             // 时间是js拿到的，
             // http://www.gulizw.com/modules/article/52mb.php?id=94719&uptime=
         }
