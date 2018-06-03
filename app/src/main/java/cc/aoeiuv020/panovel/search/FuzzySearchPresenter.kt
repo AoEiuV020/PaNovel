@@ -52,7 +52,9 @@ class FuzzySearchPresenter : Presenter<FuzzySearchActivity>() {
                     }
                 }
             }
-            view?.showOnComplete()
+            uiThread {
+                view?.showOnComplete()
+            }
         }
     }
 }
