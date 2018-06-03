@@ -12,7 +12,6 @@ import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
 import org.jsoup.select.NodeTraversor
 import org.jsoup.select.NodeVisitor
-import java.io.IOException
 import java.io.InputStream
 import java.net.URLEncoder
 import java.util.*
@@ -106,17 +105,14 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         throw IllegalStateException("页面<$baseUri>解析失败，", e)
     }
 
-    protected fun parse(call: Call, charset: String? = this.charset): Document = try {
+    protected fun parse(call: Call, charset: String? = this.charset): Document {
         val response = response(call)
         // 用Jsoup解析okhttp得到的InputStream，
         // 编码如果指定，就用指定的，没有就从okhttp的response中拿，再没有传null, Jsoup会自己尝试解析，
         // 如果有301之类跳转，最终响应的地址作为Jsoup解析的baseUri, 主要应该只是从相对地址计算绝对地址时用到，
-        response.inputStream { input ->
+        return response.inputStream { input ->
             parse(input, charset ?: response.charset(), response.url())
         }
-    } catch (e: IOException) {
-        // IOException保持IOException, 使用的时候统一把IOException当成网络错误，
-        throw IOException("网络连接错误，", e)
     }
 
     /**

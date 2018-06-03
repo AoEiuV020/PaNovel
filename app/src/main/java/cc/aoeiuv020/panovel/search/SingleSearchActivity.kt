@@ -158,7 +158,7 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> FuzzySearchActivity.start(ctx, siteName)
+            R.id.search -> FuzzySearchActivity.startSingleSite(ctx, siteName)
             R.id.open -> open()
             R.id.close -> finish()
             R.id.removeCookies -> removeCookies()

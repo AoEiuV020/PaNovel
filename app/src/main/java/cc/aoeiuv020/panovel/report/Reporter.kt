@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import cc.aoeiuv020.panovel.BuildConfig
+import cc.aoeiuv020.panovel.api.NoInternetException
 import cc.aoeiuv020.panovel.settings.OtherSettings
 import com.tencent.bugly.crashreport.CrashReport
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import java.net.UnknownHostException
 
 /**
  * 封装异常上报，
@@ -65,7 +67,18 @@ object Reporter : AnkoLogger {
     private fun postException(e: Throwable) {
         // 开发过程不要上报，
         if (!BuildConfig.DEBUG) {
-            CrashReport.postCatchedException(e)
+            return
         }
+        var cause: Throwable? = e
+        while (cause != null) {
+            if (cause is NoInternetException
+                    || cause is UnknownHostException) {
+                // 没有网络连接导致的异常不上报，
+                return
+            }
+            // 以防万一，虽然应该不会出现cause就是本身导致死循环，
+            cause = e.cause.takeIf { it != cause }
+        }
+        CrashReport.postCatchedException(e)
     }
 }

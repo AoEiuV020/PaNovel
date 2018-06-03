@@ -33,6 +33,11 @@ object UpdateManager : AnkoLogger {
             error(message, e)
         }) {
             val remoteNovel: Novel = extra.jsonPath.get<String>("novel").toBean()
+            requireNotNull(remoteNovel.site)
+            requireNotNull(remoteNovel.author)
+            requireNotNull(remoteNovel.name)
+            requireNotNull(remoteNovel.detail)
+            requireNotNull(remoteNovel.chaptersCount)
             val (localNovel, hasUpdate) = DataManager.receiveUpdate(remoteNovel)
             if (hasUpdate) {
                 uiThread {

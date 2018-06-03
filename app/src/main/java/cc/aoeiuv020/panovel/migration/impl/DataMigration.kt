@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.migration.impl
 
 import android.content.Context
+import android.net.Uri
 import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.get
 import cc.aoeiuv020.base.jar.jsonPath
@@ -95,6 +96,13 @@ class DataMigration : Migration(), AnkoLogger {
             } else if (file.isDirectory) {
                 val margins = marginsMap[file.name] ?: return@forEach
                 importMargins(file, margins)
+            }
+        }
+        list.forEach { file ->
+            // 导入字体和背景图，
+            when (file.name) {
+                "font" -> ReaderSettings.font = Uri.fromFile(file)
+                "backgroundImage" -> ReaderSettings.backgroundImage = Uri.fromFile(file)
             }
         }
     }

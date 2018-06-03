@@ -101,7 +101,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                                 DataManager.requestContent(novel, chapter, false)
                                 ++downloads
                             } catch (e: Exception) {
-                                val message = "缓存章节失败，"
+                                val message = "缓存<${novel.run { "$site.$author.$name" }}.$index>章节失败，"
                                 Reporter.post(message, e)
                                 error(message, e)
                                 ++errors
