@@ -4,6 +4,7 @@ import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 import org.jsoup.Jsoup
 
 /**
@@ -55,23 +56,9 @@ class Yssm : DslJsoupNovelContext() {init {
         }
     }
     chapters {
-        // 章节数太少的话，没有开头的叫最新章节的12章，
-        // 这里判断是大于12认为有那12章，扔掉，
-        // 并不知道有没有例外，
-        // 倒序删除，
-        // TODO: 这种情况还真不少，再来一次就抽象出来，
-        val list = document {
+        document {
             items("#main > div > dl > dd > a")
-        }
-        var index = 0
-        // 以防万一，
-        if (list.size == 1) return@chapters list
-        // 倒序列表判断是否重复章节，
-        val reversedList = list.asReversed()
-        list.dropWhile {
-            (it == reversedList[index]
-                    || it.extra.isBlank()).also { ++index }
-        }
+        }.reverseRemoveDuplication()
     }
     bookIdWithChapterIdRegex = firstThreeIntPattern
     // https://www.yssm.org/uctxt/227/227934/1301112.html
