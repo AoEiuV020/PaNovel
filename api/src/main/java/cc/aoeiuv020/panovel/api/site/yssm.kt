@@ -50,9 +50,7 @@ class Yssm : DslJsoupNovelContext() {init {
             }
             // 这网站小说没有封面，
             image = noImage
-            introduction("> p.intro", parent = div) {
-                it.ownTextList().joinToString("\n")
-            }
+            introduction("> p.intro", parent = div, block = ownLinesString())
             update("> p.stats > span.fr > i:nth-child(2)", parent = div, format = "yyyy/MM/dd HH:mm:ss")
         }
     }

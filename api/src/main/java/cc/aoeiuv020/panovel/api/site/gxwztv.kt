@@ -53,9 +53,7 @@ class Gxwztv : DslJsoupNovelContext() {init {
             <a class="unfold" href="javascript:$('#shot,#all').toggle();">[收起]</a>
             </p>
              */
-            introduction("#all") {
-                it.ownTextList().joinToString("\n")
-            }
+            introduction("#all", block = ownLinesString())
         }
     }
     // https://www.gxwztv.com/9/9814/

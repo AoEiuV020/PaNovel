@@ -65,7 +65,7 @@ class Qingkan : DslJsoupNovelContext() {init {
             introduction("#aboutbook") {
                 // 不知道jsoup算的，（作者：何途）算一个，（类别：玄幻奇幻）算一个，
                 it.textNodes().drop(2).dropLast(1).joinToString {
-                    it.ownTextList().joinToString("\n")
+                    it.ownLinesString()
                 }
             }
         }

@@ -136,6 +136,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
     protected fun Elements.ownTextList(): List<String> = flatMap { it.ownTextList() }
     protected fun Element.ownTextList(): List<String> = ownTextList(this)
     protected fun TextNode.ownTextList(): List<String> = ownTextList(this)
+    protected fun TextNode.ownLinesString(): String = ownTextList().joinToString("\n")
     protected fun Node.text(): String = (this as TextNode).text()
 
     private val replaceWhiteWithNewLineRegex = Regex("\\s+")

@@ -95,9 +95,7 @@ class Piaotian : DslJsoupNovelContext() {init {
             }
             val td = element("tr:nth-child(4) > td > table > tbody > tr > td:nth-child(2)", parent = tbody1)
             image("a > img", parent = td)
-            introduction("div", parent = td) {
-                it.ownTextList().joinToString("\n")
-            }
+            introduction("div", parent = td, block = ownLinesString())
             update("tr:nth-child(8) > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > li > a", parent = tbody1) {
                 val updateString = list[5]
                 val (year) = updateString.pick("(\\d*)-(\\d*)-(\\d*)")
