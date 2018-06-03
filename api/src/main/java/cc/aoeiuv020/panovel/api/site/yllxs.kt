@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 
 /**
  * Created by AoEiuV020 on 2018.06.02-20:54:12.
@@ -42,8 +44,10 @@ class Yllxs : DslJsoupNovelContext() {init {
     // "http://www.166xs.com/116732.html"
     // "http://www.166xs.com/xiaoshuo/116/116732/"
     // "http://www.166xs.com/xiaoshuo/121/121623/34377467.html"
-    // 前面一段只有3个数字，所以找第一个有四个以上数字的，
-    bookIdRegex = "/(\\d{4,})"
+    // http://www.166xs.com/xiaoshuo/0/121/59420.html
+    // 主要就是这个详情页，和其他网站比，这个详情页地址没有取bookId一部分分隔，
+    bookIdRegex = "(/xiaoshuo/\\d*)?/(\\d+)"
+    bookIdIndex = 1
     detailPageTemplate = "/%s.html"
     detail {
         document {
@@ -61,8 +65,7 @@ class Yllxs : DslJsoupNovelContext() {init {
             introduction("#book_left_a > div.book > div.book_info > div.intro > p")
         }
     }
-    // http://www.166xs.com/xiaoshuo/121/121623/
-    chaptersPageTemplate = "/xiaoshuo/%.3s/%s/"
+    chaptersPageTemplate = "/xiaoshuo/%s/%s"
     chapters {
         // 七个多余的，
         // 三个class="book_btn"，
@@ -73,8 +76,9 @@ class Yllxs : DslJsoupNovelContext() {init {
         }.drop(3)
     }
     // http://www.166xs.com/xiaoshuo/121/121623/34377471.html
-    chapterIdRegex = "/xiaoshuo/\\d+/(\\d+/\\d+)"
-    contentPageTemplate = "/xiaoshuo/%.3s/%s.html"
+    // http://www.166xs.com/xiaoshuo/31/31008/6750409.html
+    chapterIdRegex = firstThreeIntPattern
+    contentPageTemplate = "/xiaoshuo/%s.html"
     content {
         document {
             items("p.Book_Text") {
@@ -85,5 +89,17 @@ class Yllxs : DslJsoupNovelContext() {init {
         }
     }
 }
+
+    // http://www.166xs.com/xiaoshuo/121/121623/
+    // http://www.166xs.com/xiaoshuo/84/84625/
+    // http://www.166xs.com/xiaoshuo/0/121/
+    // 事实上不少网站都这样，取bookId的一部分分隔路径，免得一个目录太大，
+    // 但这网站关键在于，详情页没有分隔，不能把前缀一起当成bookId,
+    // chaptersPageTemplate = "/xiaoshuo/%s/%s"
+    override fun getNovelChapterUrl(extra: String): String {
+        val bookId = findBookId(extra)
+        val prefix = (bookId.toInt() / 1000).toString()
+        return absUrl(chaptersPageTemplate.notNull().format(prefix, bookId))
+    }
 }
 

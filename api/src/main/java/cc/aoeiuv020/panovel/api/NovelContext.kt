@@ -218,10 +218,8 @@ abstract class NovelContext {
      */
     protected open val detailPageTemplate: String? get() = null
 
-    // http://www.166xs.com/xiaoshuo/121/121623/
-    // 应对这种sb网站，format传两遍id, 不影响其他网站，
     protected open fun getNovelChapterUrl(extra: String): String =
-            absUrl(chaptersPageTemplate?.format(findBookId(extra), findBookId(extra)) ?: extra)
+            absUrl(chaptersPageTemplate?.format(findBookId(extra)) ?: extra)
 
 
     /**
@@ -230,10 +228,8 @@ abstract class NovelContext {
      */
     protected open val chaptersPageTemplate: String? get() = detailPageTemplate
 
-    // http://www.166xs.com/xiaoshuo/121/121623/34377471.html
-    // 应对这种sb网站，format传两遍id, 不影响其他网站，
     open fun getNovelContentUrl(extra: String): String =
-            absUrl(contentPageTemplate?.format(findChapterId(extra), findChapterId(extra)) ?: extra)
+            absUrl(contentPageTemplate?.format(findChapterId(extra)) ?: extra)
 
     /**
      * 正文页地址模板，String.format形式，"/book/%s/"
@@ -257,22 +253,24 @@ abstract class NovelContext {
      * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是bookId了，
      */
     protected open fun findBookId(extra: String): String = try {
-        extra.pick(bookIdRegex).first()
+        extra.pick(bookIdRegex)[bookIdIndex]
     } catch (e: Exception) {
         extra
     }
 
     protected open val bookIdRegex: String get() = firstIntPattern
-
+    // 应对一些复杂的正则，可能不得不用到多个组，
+    protected open val bookIdIndex: Int get() = 0
     /**
      * 查找章节id, 是包括小说id的，
      * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是chapterId了，
      */
     protected open fun findChapterId(extra: String): String = try {
-        extra.pick(chapterIdRegex).first()
+        extra.pick(chapterIdRegex)[chapterIdIndex]
     } catch (e: Exception) {
         extra
     }
 
     protected open val chapterIdRegex: String get() = firstTwoIntPattern
+    protected open val chapterIdIndex: Int get() = 0
 }

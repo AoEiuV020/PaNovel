@@ -11,14 +11,21 @@ import java.text.SimpleDateFormat
 class YllxsTest : BaseNovelContextText(Yllxs::class) {
     @Test
     fun regex() {
-        val regex = "/(\\d{4,})"
-        "http://www.166xs.com/116732.html".pick(regex).first().let {
+        val regex = "(/xiaoshuo/\\d*)?/(\\d+)"
+        val index = 1
+        "http://www.166xs.com/116732.html".pick(regex)[index].let {
             assertEquals("116732", it)
         }
-        "http://www.166xs.com/xiaoshuo/116/116732/".pick(regex).first().let {
+        "http://www.166xs.com/xiaoshuo/116/116732/".pick(regex)[index].let {
             assertEquals("116732", it)
         }
-        "http://www.166xs.com/xiaoshuo/121/121623/34377467.html".pick(regex).first().let {
+        "http://www.166xs.com/xiaoshuo/90/90745/".pick(regex)[index].let {
+            assertEquals("90745", it)
+        }
+        "http://www.166xs.com/xiaoshuo/90/90745/19961399.html".pick(regex)[index].let {
+            assertEquals("90745", it)
+        }
+        "http://www.166xs.com/xiaoshuo/121/121623/34377467.html".pick(regex)[index].let {
             assertEquals("121623", it)
         }
     }
@@ -59,14 +66,17 @@ class YllxsTest : BaseNovelContextText(Yllxs::class) {
 
     @Test
     fun chapters() {
-        chapters("121623", "第一章 庄稼把式 一锄一翻皆功夫", "121623/34377467", null,
-                "第249章 继承烦恼 取舍去留会选择", "121623/37797899", null,
+        chapters("121623", "第一章 庄稼把式 一锄一翻皆功夫", "121/121623/34377467", null,
+                "第249章 继承烦恼 取舍去留会选择", "121/121623/37797899", null,
                 249)
+        chapters("1", "第一章 罗峰", "0/1/2", null,
+                "完本免费看啦", "0/1/21700169", null,
+                1492)
     }
 
     @Test
     fun content() {
-        content("121623/37797899",
+        content("121/121623/37797899",
                 "“这其中有什么分别么？”刘石问。",
                 "倒是这男子沉得住气，看了苏劫一眼，点点头：“老爸，你既然有高手保护，那我就放心了。”",
                 64)

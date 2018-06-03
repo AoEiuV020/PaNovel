@@ -34,7 +34,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     override var chaptersPageTemplate: String? = null
     override var contentPageTemplate: String? = null
     override var bookIdRegex: String = firstIntPattern
+    override var bookIdIndex: Int = 0
     override var chapterIdRegex: String = firstTwoIntPattern
+    override var chapterIdIndex: Int = 0
 
     override var charset: String? = null
     override var enabled: Boolean = true
@@ -219,8 +221,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.extra = value
             }
 
-        // 目录页一般可以靠bookId拼接地址搞定，如果不行，要调用这个方法，就很可能需要完整地址，所以默认用absHref,
-        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.absHref() }) {
+        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.path() }) {
             extra = parent.requireElement(query = query, name = TAG_CHAPTER_PAGE, block = block)
         }
 
@@ -281,8 +282,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
         fun items(query: String, parent: Element = root, init: _NovelChapterParser.() -> Unit = {
             name = root.text()
-            // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
-            extra = findChapterId(root.path())
+            if (extra == null) {
+                // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
+                extra = findChapterId(root.path())
+            }
         }) {
             novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {
                 // 解析不通过的章节直接无视，不抛异常，
@@ -321,7 +324,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelChapter.extra = value
             }
 
-        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.absHref() }) {
+        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.path() }) {
             extra = parent.requireElement(query, block = block)
         }
 
