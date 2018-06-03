@@ -10,7 +10,7 @@ class Fenghuaju : DslJsoupNovelContext() {init {
     site {
         name = "风华居"
         baseUrl = "http://www.fenghuaju.cc"
-        logo = "https://imgsa.baidu.com/forum/w%3D580/sign=ebd2f12bdd58ccbf1bbcb53229d9bcd4/670693fa513d269701e250c459fbb2fb4216d865.jpg"
+        logo = "http://m.fenghuaju.cc/templates/html5/images/qd_logo.png"
     }
     search {
         get {

@@ -181,9 +181,18 @@ object DataManager : AnkoLogger {
      * 同步所有网站到数据库，app升级时调用一次就好，
      */
     fun syncSites(): List<Site> = app.db.runInTransaction<List<Site>> {
-        allNovelContexts().map {
-            it.site.run {
-                app.queryOrNewSite(name, baseUrl, logo, it.enabled)
+        allNovelContexts().map { context ->
+            context.site.run {
+                app.queryOrNewSite(name, baseUrl, logo, context.enabled)
+            }.also { site ->
+                if (site.baseUrl != context.site.baseUrl
+                        || site.logo != context.site.logo) {
+                    // 比如网站logo地址可能改了，
+                    // 主要是有的网站logo是我发到百度外链的，可能被删除，
+                    site.baseUrl = context.site.baseUrl
+                    site.logo = context.site.logo
+                    app.updateSiteInfo(site)
+                }
             }
         }
     }

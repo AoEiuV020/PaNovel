@@ -13,7 +13,7 @@ import android.arch.persistence.room.PrimaryKey
 data class Site(
         @PrimaryKey
         val name: String,
-        val baseUrl: String,
-        val logo: String,
+        var baseUrl: String,
+        var logo: String,
         var enabled: Boolean = true
 )
