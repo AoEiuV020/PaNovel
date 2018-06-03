@@ -37,6 +37,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     override var chapterIdRegex: String = firstTwoIntPattern
 
     override var charset: String? = null
+    override var enabled: Boolean = true
 
     /*
     *************** site ***************
