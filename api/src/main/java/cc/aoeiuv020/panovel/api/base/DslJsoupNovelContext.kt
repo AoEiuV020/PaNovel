@@ -22,7 +22,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     /*
     *************** member ***************
      */
-    var bookIdRegex: String = firstIntPattern
+    var bookIdRegex: String? = firstIntPattern
     // 应对一些复杂的正则，可能不得不用到多个组，
     var bookIdIndex: Int = 0
     // 有的网站地址有分一级出来对bookId取模，
@@ -61,7 +61,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     var contentPageTemplate: String? = null
     // 一般网站都是bookId/chapterId的形式，合起来处理，
-    var bookIdWithChapterIdRegex: String = firstTwoIntPattern
+    var bookIdWithChapterIdRegex: String? = firstTwoIntPattern
     var bookIdWithChapterIdIndex: Int = 0
 
     override var charset: String? = null
@@ -77,9 +77,13 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     /**
      * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是bookId了，
      */
-    protected open fun findBookId(extra: String): String = try {
-        extra.pick(bookIdRegex)[bookIdIndex]
-    } catch (e: Exception) {
+    protected open fun findBookId(extra: String): String = if (bookIdRegex != null) {
+        try {
+            extra.pick(bookIdRegex.notNull())[bookIdIndex]
+        } catch (e: Exception) {
+            extra
+        }
+    } else {
         extra
     }
 
@@ -87,9 +91,13 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      * 查找章节id, 是包括小说id的，
      * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是chapterId了，
      */
-    protected open fun findBookIdWithChapterId(extra: String): String = try {
-        extra.pick(bookIdWithChapterIdRegex)[bookIdWithChapterIdIndex]
-    } catch (e: Exception) {
+    protected open fun findBookIdWithChapterId(extra: String): String = if (bookIdWithChapterIdRegex != null) {
+        try {
+            extra.pick(bookIdWithChapterIdRegex.notNull())[bookIdWithChapterIdIndex]
+        } catch (e: Exception) {
+            extra
+        }
+    } else {
         extra
     }
 
@@ -274,7 +282,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.image = value
             }
 
-        fun image(query: String, parent: Element = root, block: (Element) -> String = { it.absSrc() }) {
+        fun image(query: String, parent: Element = root, block: (Element) -> String = {
+            it.absDataOriginal().takeIf(String::isNotBlank) ?: it.absSrc()
+        }) {
             image = parent.requireElement(query = query, name = TAG_IMAGE, block = block)
         }
 
@@ -378,7 +388,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             name = root.text()
             if (extra == null) {
                 // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
-                extra = findBookIdWithChapterId(root.path())
+                extra = findBookIdWithChapterId(root.absHref())
             }
         }) {
             novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {
@@ -499,7 +509,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 // 尝试从该元素中提取bookId，如果能成功，就不需要调用extra块，
                 // 如果是详情页，在这前后传入详情页的extra都可以，不会被这里覆盖，
                 if (_novelItem.extra == null && it.href().isNotBlank()) {
-                    _novelItem.extra = findBookId(it.path())
+                    _novelItem.extra = findBookId(it.absHref())
                 }
                 block(it)
             }

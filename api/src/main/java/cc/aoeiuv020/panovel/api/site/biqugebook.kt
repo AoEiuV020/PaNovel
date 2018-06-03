@@ -49,7 +49,7 @@ class Biqugebook : DslJsoupNovelContext() {init {
             }
             image("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-2.col-xs-4.hidden-xs > img")
             update("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-10 > p:nth-child(3) > span", format = "yyyy-MM-dd HH:mm", block = pickString("（(.*)）"))
-            introduction("#bookIntro")
+            introduction("#bookIntro", block = ownLinesString())
         }
     }
     chapters {
