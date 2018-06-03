@@ -11,7 +11,7 @@ class Yllxs : DslJsoupNovelContext() {init {
     site {
         name = "166小说"
         baseUrl = "http://www.166xs.com/"
-        logo = "https://imgsa.baidu.com/forum/w%3D580/sign=b59a4eba45540923aa696376a259d1dc/90c68adfa9ec8a135b0ce779fb03918fa1ecc004.jpg"
+        logo = "http://m.166xs.com/system/logo.png"
     }
     search {
         get {
