@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.base
 
-import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.path
 import okhttp3.Call
@@ -228,7 +227,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
      * 返回通过pattern提取元素中的字符串的lambda,
      */
     protected fun pickString(pattern: String): (Element) -> String = {
-        it.text().pick(compilePattern(pattern)).first()
+        it.text().pick(pattern).first()
     }
 
     /**

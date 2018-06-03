@@ -4,6 +4,7 @@ import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import cc.aoeiuv020.panovel.api.noImage
 import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 import org.jsoup.Jsoup
 
@@ -48,7 +49,7 @@ class Yssm : DslJsoupNovelContext() {init {
                 author("> div > span > em", parent = div, block = pickString("作者：(\\S*)"))
             }
             // 这网站小说没有封面，
-            image = "https://www.snwx8.com/modules/article/images/nocover.jpg"
+            image = noImage
             introduction("> p.intro", parent = div) {
                 it.ownTextList().joinToString("\n")
             }

@@ -55,3 +55,8 @@ fun List<NovelChapter>.reverseRemoveDuplication(): List<NovelChapter> {
         }
     }
 }
+
+/**
+ * 没有图片的小说统一用这个填充图片地址，
+ */
+val noImage: String get() = "https://www.snwx8.com/modules/article/images/nocover.jpg"
