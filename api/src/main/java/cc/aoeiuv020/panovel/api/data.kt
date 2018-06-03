@@ -43,7 +43,7 @@ data class NovelItem(
 /**
  * 小说详情页，
  * @param extra 只要网站Context能用这个请求到章节列表就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
- * @param update 本小说最后更新时间，没有就null,
+ * @param update 本小说最后更新时间，没有就null, 并没有什么用，但还是获取着，
  */
 data class NovelDetail(
         val novel: NovelItem,
@@ -58,7 +58,7 @@ data class NovelDetail(
 /**
  * 小说目录，
  * @param extra 只要网站Context能用这个请求到本章节正文就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
- * @param update 本章节更新时间，没有就null，
+ * @param update 本章节更新时间，没有就null， 可以用于更新通知显示个时间，
  */
 data class NovelChapter(
         /**

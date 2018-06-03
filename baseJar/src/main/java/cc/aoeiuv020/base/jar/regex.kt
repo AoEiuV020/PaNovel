@@ -24,6 +24,7 @@ fun String.pick(pattern: Pattern): List<String> {
  */
 fun String.pick(pattern: String) = pick(compilePattern(pattern))
 
+fun String.matches(pattern: String): Boolean = compilePattern(pattern).matcher(this).find()
 
 private val patternMap = WeakHashMap<String, Pattern>()
 /**

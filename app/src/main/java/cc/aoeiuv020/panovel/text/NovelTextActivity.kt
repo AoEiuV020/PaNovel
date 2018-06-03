@@ -164,6 +164,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             presenter.saveReadStatus(novel)
         }
 
+        cancelNotify(novel.nId.toInt())
+
         presenter.requestChapters(novel)
     }
 
@@ -439,6 +441,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             alert(alertDialog, R.string.novel_not_support)
             // 无法浏览的情况显示状态栏标题栏导航栏，方便离开，
             show()
+            // 进度条可以收起来了，
+            progressDialog.dismiss()
             return
         }
         index?.let {

@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api.base
 
 import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
 import okhttp3.*
 import okhttp3.internal.http.HttpMethod
@@ -21,7 +22,23 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     /*
     *************** member ***************
      */
-    override var detailPageTemplate: String? = null
+    var bookIdRegex: String? = firstIntPattern
+    // 应对一些复杂的正则，可能不得不用到多个组，
+    var bookIdIndex: Int = 0
+    // 有的网站地址有分一级出来对bookId取模，
+    // 比如“https://www.gxwztv.com/55/55886/”，就是除以1000，
+    // 章节列表页和正文页都可能有，
+    var detailDivision: Int? = null
+    // 向下传递，
+        set(value) {
+            if (chapterDivision == null) {
+                chapterDivision = value
+            }
+        }
+    /**
+     * 详情页地址模板，String.format形式，"/book/%s/"
+     */
+    var detailPageTemplate: String? = null
         /**
          * 详情页地址模板默认同时赋值给目录页，
          */
@@ -31,13 +48,100 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
             field = value
         }
-    override var chaptersPageTemplate: String? = null
-    override var contentPageTemplate: String? = null
-    override var bookIdRegex: String = firstIntPattern
-    override var chapterIdRegex: String = firstTwoIntPattern
+    // set时不传到contentDivision，一般正文地址要另外处理，
+    var chapterDivision: Int? = null
+    /**
+     * 目录页地址模板，String.format形式，"/book/%s/"
+     * 目录英文是contents，但是和正文content接近，干脆用chapters,
+     */
+    var chaptersPageTemplate: String? = null
+    var contentDivision: Int? = null
+    /**
+     * 正文页地址模板，String.format形式，"/book/%s/"
+     */
+    var contentPageTemplate: String? = null
+    // 一般网站都是bookId/chapterId的形式，合起来处理，
+    var bookIdWithChapterIdRegex: String? = firstTwoIntPattern
+    var bookIdWithChapterIdIndex: Int = 0
 
     override var charset: String? = null
     override var enabled: Boolean = true
+
+    /*
+    *************** url ***************
+     */
+    /**
+     * 以下几个都是为了得到真实地址，毕竟extra现在支持各种随便写法，
+     * 要快，要能在ui线程使用，不能有网络请求，
+     */
+    /**
+     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是bookId了，
+     */
+    protected open fun findBookId(extra: String): String = if (bookIdRegex != null) {
+        try {
+            extra.pick(bookIdRegex.notNull())[bookIdIndex]
+        } catch (e: Exception) {
+            extra
+        }
+    } else {
+        extra
+    }
+
+    /**
+     * 查找章节id, 是包括小说id的，
+     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是chapterId了，
+     */
+    protected open fun findBookIdWithChapterId(extra: String): String = if (bookIdWithChapterIdRegex != null) {
+        try {
+            extra.pick(bookIdWithChapterIdRegex.notNull())[bookIdWithChapterIdIndex]
+        } catch (e: Exception) {
+            extra
+        }
+    } else {
+        extra
+    }
+
+    override fun getNovelItem(url: String): NovelItem = getNovelDetail(findBookId(url)).novel
+    override fun getNovelDetailUrl(extra: String): String {
+        val path = detailPageTemplate?.let { template ->
+            val bookId = findBookId(extra)
+            detailDivision?.let { mod ->
+                template.format(bookId.toInt() / mod, bookId)
+            } ?: template.format(bookId)
+        } ?: extra
+        return absUrl(path)
+    }
+
+    protected open fun getNovelChapterUrl(extra: String): String {
+        val path = chaptersPageTemplate?.let { template ->
+            val bookId = findBookId(extra)
+            chapterDivision?.let { mod ->
+                template.format(bookId.toInt() / mod, bookId)
+            } ?: template.format(bookId)
+        } ?: extra
+        return absUrl(path)
+    }
+
+    override fun getNovelContentUrl(extra: String): String {
+        return if (::getNovelContentUrlLambda.isInitialized) {
+            absUrl(getNovelContentUrlLambda(extra))
+        } else {
+            val path = contentPageTemplate?.let { template ->
+                val bookId = findBookId(extra)
+                val chapterId = findBookIdWithChapterId(extra)
+                contentDivision?.let { mod ->
+                    template.format(bookId.toInt() / mod, chapterId)
+                } ?: template.format(chapterId)
+            } ?: extra
+            return absUrl(path)
+
+        }
+    }
+
+    private lateinit var getNovelContentUrlLambda: (String) -> String
+    fun getNovelContentUrl(lambda: (String) -> String) {
+        getNovelContentUrlLambda = lambda
+    }
 
     /*
     *************** site ***************
@@ -178,7 +282,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.image = value
             }
 
-        fun image(query: String, parent: Element = root, block: (Element) -> String = { it.absSrc() }) {
+        fun image(query: String, parent: Element = root, block: (Element) -> String = {
+            it.absDataOriginal().takeIf(String::isNotBlank) ?: it.absSrc()
+        }) {
             image = parent.requireElement(query = query, name = TAG_IMAGE, block = block)
         }
 
@@ -219,8 +325,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.extra = value
             }
 
-        // 目录页一般可以靠bookId拼接地址搞定，如果不行，要调用这个方法，就很可能需要完整地址，所以默认用absHref,
-        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.absHref() }) {
+        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.path() }) {
             extra = parent.requireElement(query = query, name = TAG_CHAPTER_PAGE, block = block)
         }
 
@@ -276,13 +381,15 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 }
 
         fun lastUpdate(query: String, parent: Element = root, block: (Element) -> Date) {
-            novelChapterList.last().update = parent.getElement(query = query, block = block)
+            novelChapterList.lastOrNull()?.update = parent.getElement(query = query, block = block)
         }
 
         fun items(query: String, parent: Element = root, init: _NovelChapterParser.() -> Unit = {
             name = root.text()
-            // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
-            extra = findChapterId(root.path())
+            if (extra == null) {
+                // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
+                extra = findBookIdWithChapterId(root.absHref())
+            }
         }) {
             novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {
                 // 解析不通过的章节直接无视，不抛异常，
@@ -321,7 +428,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelChapter.extra = value
             }
 
-        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.absHref() }) {
+        fun extra(query: String, parent: Element = root, block: (Element) -> String = { it.path() }) {
             extra = parent.requireElement(query, block = block)
         }
 
@@ -402,7 +509,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 // 尝试从该元素中提取bookId，如果能成功，就不需要调用extra块，
                 // 如果是详情页，在这前后传入详情页的extra都可以，不会被这里覆盖，
                 if (_novelItem.extra == null && it.href().isNotBlank()) {
-                    _novelItem.extra = findBookId(it.path())
+                    _novelItem.extra = findBookId(it.absHref())
                 }
                 block(it)
             }
@@ -551,20 +658,4 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     @DslMarker
     annotation class DslTag
-
-    /*
-    *************** url ***************
-     */
-    override fun getNovelContentUrl(extra: String): String {
-        return if (::getNovelContentUrlLambda.isInitialized) {
-            absUrl(getNovelContentUrlLambda(extra))
-        } else {
-            super.getNovelContentUrl(extra)
-        }
-    }
-
-    private lateinit var getNovelContentUrlLambda: (String) -> String
-    fun getNovelContentUrl(lambda: (String) -> String) {
-        getNovelContentUrlLambda = lambda
-    }
 }

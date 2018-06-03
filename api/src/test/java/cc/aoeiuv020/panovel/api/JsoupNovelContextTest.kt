@@ -85,4 +85,33 @@ class JsoupNovelContextTest {
             assertEquals("<p>制作游戏成功的林陨意外猝死，穿越到自己制作的游戏世界，结果拥有了这个世界的最大权限！<br>　　最大权限书友群：305908807</p>", it.outerHtml())
         }
     }
+
+    @Test
+    fun textNode() {
+        val html = """
+            <p>a s　d f</br>q w e</p>
+            """
+        val root = Jsoup.parse(html)
+        root.select("p").forEach {
+            it.textNodes().forEach {
+                println(it)
+            }
+            val nodes = it.textNodes()
+            assertEquals(2, nodes.size)
+            assertEquals("a s　d&nbsp;f", nodes.first().toString())
+            assertEquals("q w e", nodes.last().toString())
+        }
+    }
+
+    @Test
+    fun current() {
+        val html = """
+            <p>asdf</p>
+            """
+        val root = Jsoup.parse(html)
+        val p = root.select("p").first()
+        p.select("p").forEach {
+            assertEquals("asdf", it.text())
+        }
+    }
 }

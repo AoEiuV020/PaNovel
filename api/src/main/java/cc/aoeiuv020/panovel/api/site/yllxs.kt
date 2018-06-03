@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 
 /**
  * Created by AoEiuV020 on 2018.06.02-20:54:12.
@@ -8,8 +9,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 class Yllxs : DslJsoupNovelContext() {init {
     site {
         name = "166小说"
-        baseUrl = "http://www.166xs.com/"
-        logo = "https://imgsa.baidu.com/forum/w%3D580/sign=b59a4eba45540923aa696376a259d1dc/90c68adfa9ec8a135b0ce779fb03918fa1ecc004.jpg"
+        baseUrl = "http://www.166xs.com"
+        logo = "http://m.166xs.com/system/logo.png"
     }
     search {
         get {
@@ -42,8 +43,10 @@ class Yllxs : DslJsoupNovelContext() {init {
     // "http://www.166xs.com/116732.html"
     // "http://www.166xs.com/xiaoshuo/116/116732/"
     // "http://www.166xs.com/xiaoshuo/121/121623/34377467.html"
-    // 前面一段只有3个数字，所以找第一个有四个以上数字的，
-    bookIdRegex = "/(\\d{4,})"
+    // http://www.166xs.com/xiaoshuo/0/121/59420.html
+    // 主要就是这个详情页，和其他网站比，这个详情页地址没有取bookId一部分分隔，
+    bookIdRegex = "(/xiaoshuo/\\d*)?/(\\d+)"
+    bookIdIndex = 1
     detailPageTemplate = "/%s.html"
     detail {
         document {
@@ -61,8 +64,8 @@ class Yllxs : DslJsoupNovelContext() {init {
             introduction("#book_left_a > div.book > div.book_info > div.intro > p")
         }
     }
-    // http://www.166xs.com/xiaoshuo/121/121623/
-    chaptersPageTemplate = "/xiaoshuo/%.3s/%s/"
+    chapterDivision = 1000
+    chaptersPageTemplate = "/xiaoshuo/%d/%s"
     chapters {
         // 七个多余的，
         // 三个class="book_btn"，
@@ -73,8 +76,9 @@ class Yllxs : DslJsoupNovelContext() {init {
         }.drop(3)
     }
     // http://www.166xs.com/xiaoshuo/121/121623/34377471.html
-    chapterIdRegex = "/xiaoshuo/\\d+/(\\d+/\\d+)"
-    contentPageTemplate = "/xiaoshuo/%.3s/%s.html"
+    // http://www.166xs.com/xiaoshuo/31/31008/6750409.html
+    bookIdWithChapterIdRegex = firstThreeIntPattern
+    contentPageTemplate = "/xiaoshuo/%s.html"
     content {
         document {
             items("p.Book_Text") {

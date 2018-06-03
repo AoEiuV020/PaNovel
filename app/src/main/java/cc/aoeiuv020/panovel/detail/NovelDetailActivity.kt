@@ -66,7 +66,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         rvNovel.setLayoutManager(GridLayoutManager(this@NovelDetailActivity, 3))
 */
 
-        title = id.toString()
+        toolbar_layout.title = id.toString()
 
         fabRead.setOnClickListener {
             NovelTextActivity.start(this, id)
@@ -128,8 +128,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
     fun showNovelDetail(novel: Novel) {
         srlRefresh.isRefreshing = false
         this.novel = novel
-        // TODO: 部分设备上无法更新标题，原因不明，比如api27的模拟器，
-        toolbar.title = novel.name
+        toolbar_layout.title = novel.name
         // TODO: 调整上半部分展示内容，作者名网站名什么都加上，
         // TODO: 下面考虑用viewPager两页实现简介和目录，
         tvIntroduction.text = novel.introduction

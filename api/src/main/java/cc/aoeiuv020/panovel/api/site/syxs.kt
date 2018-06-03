@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 
 /**
  *
@@ -57,23 +58,11 @@ class Syxs : DslJsoupNovelContext() {init {
         }
     }
     chapters {
-        // 开头 9 章可能是网站上显示的最新章节，和列表最后重复，
-        // 但也可能没有这重复的 9 章，
-        // 接着两章是js脚本，拿到的地址会是空，
-        val list = document {
+        document {
             items("#list > dl > dd > a")
-        }
-        var index = 0
-        // 以防万一，
-        if (list.size == 1) return@chapters list
-        // 倒序列表判断是否重复章节，
-        val reversedList = list.asReversed()
-        list.dropWhile {
-            (it == reversedList[index]
-                    || it.extra.isBlank()).also { ++index }
-        }
+        }.reverseRemoveDuplication().dropWhile { it.extra.isBlank() }
     }
-    chapterIdRegex = firstThreeIntPattern
+    bookIdWithChapterIdRegex = firstThreeIntPattern
     // http://www.31xs.net/13/13011/8981866.html
     contentPageTemplate = "/%s.html"
     content {

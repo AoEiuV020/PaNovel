@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.base
 
-import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.path
 import okhttp3.Call
@@ -56,6 +55,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         /**
          * 用所有空格或空白符分割元素里的文字，
          * 支持全角空格，
+         * 同时添加了图片，markdown格式，
          */
         fun textList(element: Element): List<String> {
             // 用LinkedList方便频繁添加，
@@ -67,6 +67,14 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
                 override fun head(node: Node?, depth: Int) {
                     if (node is TextNode) {
                         ownTextList(node).toCollection(list)
+                    } else if (node is Element && node.tagName() == "img") {
+                        // 延迟加载可能把地址放在data-original,
+                        (node.absDataOriginal().takeIf(String::isNotBlank)
+                                ?: node.absSrc().takeIf(String::isNotBlank))
+                                ?.let {
+                                    list.add("![img]($it)")
+                                }
+
                     }
                 }
 
@@ -76,7 +84,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         }
 
         /**
-         * 并不得到子元素里的文字，
+         * 并不获取子元素里的文字，
          * 支持全角空格，
          */
         fun ownTextList(element: Element): List<String> =
@@ -89,6 +97,18 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         // trim里的判断和这个whitespaceRegex是一样的，
         // trim后可能得到空字符串，判断一下，
                 node.wholeText.trim().takeIf(String::isNotEmpty)?.split(whitespaceRegex) ?: listOf()
+
+        fun Element.src(): String = attr("src")
+        fun Element.absSrc(): String = absUrl("src")
+        fun Element.absDataOriginal(): String = absUrl("data-original")
+        fun Element.href(): String = attr("href")
+        fun Element.absHref(): String = absUrl("href")
+        /**
+         * 地址仅路径，斜杆/开头，
+         */
+        fun Element.path(): String = path(absHref())
+
+        fun Element.title(): String = attr("title")
     }
 
     /**
@@ -122,21 +142,12 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
 
     protected open fun getNextPage(root: Document): String? = null
 
-    protected fun Element.src(): String = attr("src")
-    protected fun Element.absSrc(): String = absUrl("src")
-    protected fun Element.href(): String = attr("href")
-    protected fun Element.absHref(): String = absUrl("href")
-    /**
-     * 地址仅路径，斜杆/开头，
-     */
-    protected fun Element.path(): String = path(absHref())
-
-    protected fun Element.title(): String = attr("title")
     protected fun Elements.textList(): List<String> = flatMap { it.textList() }
     protected fun Element.textList(): List<String> = textList(this)
     protected fun Elements.ownTextList(): List<String> = flatMap { it.ownTextList() }
     protected fun Element.ownTextList(): List<String> = ownTextList(this)
     protected fun TextNode.ownTextList(): List<String> = ownTextList(this)
+    protected fun TextNode.ownLinesString(): String = ownTextList().joinToString("\n")
     protected fun Node.text(): String = (this as TextNode).text()
 
     private val replaceWhiteWithNewLineRegex = Regex("\\s+")
@@ -228,7 +239,21 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
      * 返回通过pattern提取元素中的字符串的lambda,
      */
     protected fun pickString(pattern: String): (Element) -> String = {
-        it.text().pick(compilePattern(pattern)).first()
+        it.text().pick(pattern).first()
+    }
+
+    /**
+     * 用于获取简介，一个元素，简介内容都在ownText里，子标签可能有无用信息，
+     */
+    protected fun ownLinesString(): (Element) -> String = {
+        it.ownTextList().joinToString("\n")
+    }
+
+    /**
+     * 用于获取正文，一个元素，正文内容都在ownText里，子标签可能有无用信息，
+     */
+    protected fun ownLines(): (Element) -> List<String> = {
+        it.ownTextList()
     }
 
     /**

@@ -85,6 +85,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         assertEquals(firstExtra, first.extra)
         compareUpdate(firstUpdate, first.update)
         val newList = list.takeLastWhile {
+            // 至少打印最后一章，
             println(it)
             it.name != lastName || it.extra != lastExtra
         }
