@@ -371,7 +371,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 }
 
         fun lastUpdate(query: String, parent: Element = root, block: (Element) -> Date) {
-            novelChapterList.last().update = parent.getElement(query = query, block = block)
+            novelChapterList.lastOrNull()?.update = parent.getElement(query = query, block = block)
         }
 
         fun items(query: String, parent: Element = root, init: _NovelChapterParser.() -> Unit = {
