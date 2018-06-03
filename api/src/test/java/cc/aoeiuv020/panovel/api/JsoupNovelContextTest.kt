@@ -102,4 +102,16 @@ class JsoupNovelContextTest {
             assertEquals("q w e", nodes.last().toString())
         }
     }
+
+    @Test
+    fun current() {
+        val html = """
+            <p>asdf</p>
+            """
+        val root = Jsoup.parse(html)
+        val p = root.select("p").first()
+        p.select("p").forEach {
+            assertEquals("asdf", it.text())
+        }
+    }
 }
