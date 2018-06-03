@@ -164,6 +164,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             presenter.saveReadStatus(novel)
         }
 
+        cancelNotify(novel.nId.toInt())
+
         presenter.requestChapters(novel)
     }
 

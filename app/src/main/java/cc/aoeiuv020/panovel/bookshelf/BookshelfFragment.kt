@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cc.aoeiuv020.panovel.App.Companion.ctx
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
@@ -51,9 +50,9 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
         super.onActivityCreated(savedInstanceState)
 
         rvNovel.layoutManager = if (ListSettings.gridView) {
-            GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
+            GridLayoutManager(requireContext(), if (ListSettings.largeView) 3 else 5)
         } else {
-            LinearLayoutManager(ctx)
+            LinearLayoutManager(requireContext())
         }
         rvNovel.adapter = novelListAdapter
         srlRefresh.setOnRefreshListener {

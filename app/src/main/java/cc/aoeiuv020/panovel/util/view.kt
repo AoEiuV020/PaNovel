@@ -137,6 +137,11 @@ fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: I
     manager.notify(id, nb.build())
 }
 
+fun Context.cancelNotify(id: Int) {
+    val manager = NotificationManagerCompat.from(this)
+    manager.cancel(id)
+}
+
 /**
  * https://stackoverflow.com/a/38244327/5615186
  */
