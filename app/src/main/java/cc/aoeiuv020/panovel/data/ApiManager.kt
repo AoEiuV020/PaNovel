@@ -28,7 +28,7 @@ class ApiManager(ctx: Context) {
                 Yssm(), Qlwx(),
                 Byzw(), Fenghuaju(), Yllxs(),
                 Mianhuatang(), Gxwztv(), Ymoxuan(),
-                Qingkan(), Ggdown()
+                Qingkan(), Ggdown(), Biqugebook()
         )
     }
     // 缓存host对应网站上下文的映射，

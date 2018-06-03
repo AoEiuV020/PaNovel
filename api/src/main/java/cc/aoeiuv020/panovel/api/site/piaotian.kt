@@ -21,6 +21,7 @@ class Piaotian : DslJsoupNovelContext() {init {
     }
     search {
         get {
+            // https://www.piaotian.com/modules/article/search.php?searchtype=articlename&searchkey=%B6%BC%CA%D0&page=1
             charset = "GBK"
             url = "/modules/article/search.php"
             data {

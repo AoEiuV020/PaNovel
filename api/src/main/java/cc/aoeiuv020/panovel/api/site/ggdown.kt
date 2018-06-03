@@ -9,8 +9,6 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.03-15:46:06.
  */
 class Ggdown : DslJsoupNovelContext() {init {
-    // 网络连接超时，默认不启用，
-    enabled = false
     site {
         name = "格格党"
         baseUrl = "http://www.ggdown.com"
