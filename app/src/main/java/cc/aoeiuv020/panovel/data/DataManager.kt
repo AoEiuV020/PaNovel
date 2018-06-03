@@ -97,8 +97,7 @@ object DataManager : AnkoLogger {
             debug { "no update ${result.chaptersCount} <= ${novel.chaptersCount}" }
             // 如果没更新，就保存服务器上的更新时间，如果更大的话，
             novel.apply {
-                // 确实收到更新的时间也改了，如果是有更新但不是新章节更新，也一样刷新这个时间，
-                receiveUpdateTime = maxOf(receiveUpdateTime, result.receiveUpdateTime)
+                // 不更新receiveUpdateTime，不准，有时别人比较晚收到同一个更新然后推上去被拿到，
                 checkUpdateTime = maxOf(checkUpdateTime, result.checkUpdateTime)
             }
         }
