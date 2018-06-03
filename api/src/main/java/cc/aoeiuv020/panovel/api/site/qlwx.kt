@@ -1,8 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.hex
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
-import org.jsoup.Jsoup
 import java.net.URL
 
 /**
@@ -79,22 +77,5 @@ class Qlwx : DslJsoupNovelContext() { init {
         }
     }
 }
-
-    // 云锁运行几小时突然又没了，
-    fun verify() {
-        // 这网站用了云锁，
-        // 验证失败就会跳到验证页面，给个cookie, security_session_mid_verify=dc8d646a63a704e5a11228276a0c385d
-        // 然后这个cookie要请求两次才能拿到，第一次没有拿到cookie会再跳一次，
-        val w = 1080
-        val h = 1920
-        val d = "$w,$h"
-        val response = Jsoup.connect("http://www.76wx.com/modules/?&security_verify_data=${d.hex()}")
-                .cookie("yunsuo_session_verify", "6c1078dcaa1f22f1058b7bb6bbbf64a3")
-                .cookie("srcurl", "/")
-                .execute()
-//        putCookies(response.cookies())
-        println(cookies)
-        println(response.cookies())
-    }
 }
 

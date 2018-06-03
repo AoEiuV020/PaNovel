@@ -25,7 +25,7 @@ class Yssm : DslJsoupNovelContext() {init {
         // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
         // 这里限制一下，20K大概十几个结果，
         val byteArray = ByteArray(20 * 1000)
-        val response = call.notNull().execute()
+        val response = response(call.notNull())
         response.inputStream { it.read(byteArray) }
         val cutDocument = Jsoup.parse(byteArray.inputStream(), null, response.request().url().toString())
         document(cutDocument) {
