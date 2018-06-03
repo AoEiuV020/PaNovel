@@ -131,7 +131,7 @@ class Piaotian : DslJsoupNovelContext() {init {
                 require(root.href() != "#")
                 extra = root.path().let {
                     require(it.isNotBlank())
-                    findChapterId(it)
+                    findBookIdWithChapterId(it)
                 }
             }
         }

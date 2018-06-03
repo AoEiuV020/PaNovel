@@ -22,6 +22,19 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     /*
     *************** member ***************
      */
+    var bookIdRegex: String = firstIntPattern
+    // 应对一些复杂的正则，可能不得不用到多个组，
+    var bookIdIndex: Int = 0
+    // 有的网站地址有分一级出来对bookId取模，
+    // 比如“https://www.gxwztv.com/55/55886/”，就是除以1000，
+    // 章节列表页和正文页都可能有，
+    var detailDivision: Int? = null
+    // 向下传递，
+        set(value) {
+            if (chapterDivision == null) {
+                chapterDivision = value
+            }
+        }
     /**
      * 详情页地址模板，String.format形式，"/book/%s/"
      */
@@ -35,19 +48,19 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
             field = value
         }
+    // set时不传到contentDivision，一般正文地址要另外处理，
+    var chapterDivision: Int? = null
     /**
      * 目录页地址模板，String.format形式，"/book/%s/"
      * 目录英文是contents，但是和正文content接近，干脆用chapters,
      */
     var chaptersPageTemplate: String? = null
-    var bookIdRegex: String = firstIntPattern
-    // 应对一些复杂的正则，可能不得不用到多个组，
-    var bookIdIndex: Int = 0
+    var contentDivision: Int? = null
     /**
      * 正文页地址模板，String.format形式，"/book/%s/"
      */
     var contentPageTemplate: String? = null
-    // 一般网站都是bookId/chapterId的形式，
+    // 一般网站都是bookId/chapterId的形式，合起来处理，
     var bookIdWithChapterIdRegex: String = firstTwoIntPattern
     var bookIdWithChapterIdIndex: Int = 0
 
@@ -74,24 +87,46 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      * 查找章节id, 是包括小说id的，
      * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是chapterId了，
      */
-    protected open fun findChapterId(extra: String): String = try {
+    protected open fun findBookIdWithChapterId(extra: String): String = try {
         extra.pick(bookIdWithChapterIdRegex)[bookIdWithChapterIdIndex]
     } catch (e: Exception) {
         extra
     }
 
     override fun getNovelItem(url: String): NovelItem = getNovelDetail(findBookId(url)).novel
-    override fun getNovelDetailUrl(extra: String): String =
-            absUrl(detailPageTemplate?.format(findBookId(extra)) ?: extra)
+    override fun getNovelDetailUrl(extra: String): String {
+        val path = detailPageTemplate?.let { template ->
+            val bookId = findBookId(extra)
+            detailDivision?.let { mod ->
+                template.format(bookId.toInt() / mod, bookId)
+            } ?: template.format(bookId)
+        } ?: extra
+        return absUrl(path)
+    }
 
-    protected open fun getNovelChapterUrl(extra: String): String =
-            absUrl(chaptersPageTemplate?.format(findBookId(extra)) ?: extra)
+    protected open fun getNovelChapterUrl(extra: String): String {
+        val path = chaptersPageTemplate?.let { template ->
+            val bookId = findBookId(extra)
+            chapterDivision?.let { mod ->
+                template.format(bookId.toInt() / mod, bookId)
+            } ?: template.format(bookId)
+        } ?: extra
+        return absUrl(path)
+    }
 
     override fun getNovelContentUrl(extra: String): String {
         return if (::getNovelContentUrlLambda.isInitialized) {
             absUrl(getNovelContentUrlLambda(extra))
         } else {
-            absUrl(contentPageTemplate?.format(findChapterId(extra)) ?: extra)
+            val path = contentPageTemplate?.let { template ->
+                val bookId = findBookId(extra)
+                val chapterId = findBookIdWithChapterId(extra)
+                contentDivision?.let { mod ->
+                    template.format(bookId.toInt() / mod, chapterId)
+                } ?: template.format(chapterId)
+            } ?: extra
+            return absUrl(path)
+
         }
     }
 
@@ -343,7 +378,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             name = root.text()
             if (extra == null) {
                 // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
-                extra = findChapterId(root.path())
+                extra = findBookIdWithChapterId(root.path())
             }
         }) {
             novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {

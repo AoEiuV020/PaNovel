@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 
@@ -65,7 +64,8 @@ class Yllxs : DslJsoupNovelContext() {init {
             introduction("#book_left_a > div.book > div.book_info > div.intro > p")
         }
     }
-    chaptersPageTemplate = "/xiaoshuo/%s/%s"
+    chapterDivision = 1000
+    chaptersPageTemplate = "/xiaoshuo/%d/%s"
     chapters {
         // 七个多余的，
         // 三个class="book_btn"，
@@ -89,17 +89,5 @@ class Yllxs : DslJsoupNovelContext() {init {
         }
     }
 }
-
-    // http://www.166xs.com/xiaoshuo/121/121623/
-    // http://www.166xs.com/xiaoshuo/84/84625/
-    // http://www.166xs.com/xiaoshuo/0/121/
-    // 事实上不少网站都这样，取bookId的一部分分隔路径，免得一个目录太大，
-    // 但这网站关键在于，详情页没有分隔，不能把前缀一起当成bookId,
-    // chaptersPageTemplate = "/xiaoshuo/%s/%s"
-    override fun getNovelChapterUrl(extra: String): String {
-        val bookId = findBookId(extra)
-        val prefix = (bookId.toInt() / 1000).toString()
-        return absUrl(chaptersPageTemplate.notNull().format(prefix, bookId))
-    }
 }
 

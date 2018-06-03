@@ -81,6 +81,7 @@ class Sfacg : DslJsoupNovelContext() { init {
             }
         }
     }
+    // 好像直接用extra当path就可以，
     getNovelContentUrl {
         // vip章节和普通章节规则不一致，不统一处理，
         try {

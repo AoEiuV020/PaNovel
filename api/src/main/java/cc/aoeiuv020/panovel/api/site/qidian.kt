@@ -136,7 +136,7 @@ class Qidian : DslJsoupNovelContext() {init {
     // https://m.qidian.com/book/1010136878/381295976
     contentPageTemplate = "//m.qidian.com/book/%s"
     content {
-        val bookIdAndChapterId = findChapterId(it)
+        val bookIdAndChapterId = findBookIdWithChapterId(it)
         val args = bookIdAndChapterId.split('/')
         val bookId = args[0]
         val chapterId = args[1]
