@@ -77,7 +77,7 @@ class Yllxs : DslJsoupNovelContext() {init {
     }
     // http://www.166xs.com/xiaoshuo/121/121623/34377471.html
     // http://www.166xs.com/xiaoshuo/31/31008/6750409.html
-    chapterIdRegex = firstThreeIntPattern
+    bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/xiaoshuo/%s.html"
     content {
         document {

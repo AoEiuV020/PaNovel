@@ -51,7 +51,7 @@ class Fenghuaju : DslJsoupNovelContext() {init {
             lastUpdate("#info > p:nth-child(4)", format = "yyyy/MM/dd HH:mm:ss", block = pickString("最后更新：(.*)"))
         }
     }
-    chapterIdRegex = "/(\\d+_\\d+/\\d+)"
+    bookIdWithChapterIdRegex = "/(\\d+_\\d+/\\d+)"
     contentPageTemplate = "/%s.html"
     content {
         document {

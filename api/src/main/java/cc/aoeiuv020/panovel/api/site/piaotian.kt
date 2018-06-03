@@ -136,7 +136,7 @@ class Piaotian : DslJsoupNovelContext() {init {
             }
         }
     }
-    chapterIdRegex = firstThreeIntPattern
+    bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/html/%s.html"
     content {
         document {

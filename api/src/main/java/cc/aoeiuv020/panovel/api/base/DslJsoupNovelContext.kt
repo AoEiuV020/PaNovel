@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api.base
 
 import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
 import okhttp3.*
 import okhttp3.internal.http.HttpMethod
@@ -21,7 +22,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     /*
     *************** member ***************
      */
-    override var detailPageTemplate: String? = null
+    /**
+     * 详情页地址模板，String.format形式，"/book/%s/"
+     */
+    var detailPageTemplate: String? = null
         /**
          * 详情页地址模板默认同时赋值给目录页，
          */
@@ -31,15 +35,70 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
             field = value
         }
-    override var chaptersPageTemplate: String? = null
-    override var contentPageTemplate: String? = null
-    override var bookIdRegex: String = firstIntPattern
-    override var bookIdIndex: Int = 0
-    override var chapterIdRegex: String = firstTwoIntPattern
-    override var chapterIdIndex: Int = 0
+    /**
+     * 目录页地址模板，String.format形式，"/book/%s/"
+     * 目录英文是contents，但是和正文content接近，干脆用chapters,
+     */
+    var chaptersPageTemplate: String? = null
+    var bookIdRegex: String = firstIntPattern
+    // 应对一些复杂的正则，可能不得不用到多个组，
+    var bookIdIndex: Int = 0
+    /**
+     * 正文页地址模板，String.format形式，"/book/%s/"
+     */
+    var contentPageTemplate: String? = null
+    // 一般网站都是bookId/chapterId的形式，
+    var bookIdWithChapterIdRegex: String = firstTwoIntPattern
+    var bookIdWithChapterIdIndex: Int = 0
 
     override var charset: String? = null
     override var enabled: Boolean = true
+
+    /*
+    *************** url ***************
+     */
+    /**
+     * 以下几个都是为了得到真实地址，毕竟extra现在支持各种随便写法，
+     * 要快，要能在ui线程使用，不能有网络请求，
+     */
+    /**
+     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是bookId了，
+     */
+    protected open fun findBookId(extra: String): String = try {
+        extra.pick(bookIdRegex)[bookIdIndex]
+    } catch (e: Exception) {
+        extra
+    }
+
+    /**
+     * 查找章节id, 是包括小说id的，
+     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是chapterId了，
+     */
+    protected open fun findChapterId(extra: String): String = try {
+        extra.pick(bookIdWithChapterIdRegex)[bookIdWithChapterIdIndex]
+    } catch (e: Exception) {
+        extra
+    }
+
+    override fun getNovelItem(url: String): NovelItem = getNovelDetail(findBookId(url)).novel
+    override fun getNovelDetailUrl(extra: String): String =
+            absUrl(detailPageTemplate?.format(findBookId(extra)) ?: extra)
+
+    protected open fun getNovelChapterUrl(extra: String): String =
+            absUrl(chaptersPageTemplate?.format(findBookId(extra)) ?: extra)
+
+    override fun getNovelContentUrl(extra: String): String {
+        return if (::getNovelContentUrlLambda.isInitialized) {
+            absUrl(getNovelContentUrlLambda(extra))
+        } else {
+            absUrl(contentPageTemplate?.format(findChapterId(extra)) ?: extra)
+        }
+    }
+
+    private lateinit var getNovelContentUrlLambda: (String) -> String
+    fun getNovelContentUrl(lambda: (String) -> String) {
+        getNovelContentUrlLambda = lambda
+    }
 
     /*
     *************** site ***************
@@ -554,20 +613,4 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     @DslMarker
     annotation class DslTag
-
-    /*
-    *************** url ***************
-     */
-    override fun getNovelContentUrl(extra: String): String {
-        return if (::getNovelContentUrlLambda.isInitialized) {
-            absUrl(getNovelContentUrlLambda(extra))
-        } else {
-            super.getNovelContentUrl(extra)
-        }
-    }
-
-    private lateinit var getNovelContentUrlLambda: (String) -> String
-    fun getNovelContentUrl(lambda: (String) -> String) {
-        getNovelContentUrlLambda = lambda
-    }
 }

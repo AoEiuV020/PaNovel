@@ -73,7 +73,7 @@ class Syxs : DslJsoupNovelContext() {init {
                     || it.extra.isBlank()).also { ++index }
         }
     }
-    chapterIdRegex = firstThreeIntPattern
+    bookIdWithChapterIdRegex = firstThreeIntPattern
     // http://www.31xs.net/13/13011/8981866.html
     contentPageTemplate = "/%s.html"
     content {

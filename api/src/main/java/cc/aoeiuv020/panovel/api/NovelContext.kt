@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
 import com.google.gson.Gson
@@ -179,7 +178,7 @@ abstract class NovelContext {
      * 从给定地址找到这本小说，
      * 要尽可能支持，
      */
-    open fun getNovelItem(url: String): NovelItem = getNovelDetail(findBookId(url)).novel
+    abstract fun getNovelItem(url: String): NovelItem
 
     /**
      * 获取小说章节列表，
@@ -210,31 +209,9 @@ abstract class NovelContext {
      * 以下几个都是为了得到真实地址，毕竟extra现在支持各种随便写法，
      * 要快，要能在ui线程使用，不能有网络请求，
      */
-    open fun getNovelDetailUrl(extra: String): String =
-            absUrl(detailPageTemplate?.format(findBookId(extra)) ?: extra)
+    abstract fun getNovelDetailUrl(extra: String): String
 
-    /**
-     * 详情页地址模板，String.format形式，"/book/%s/"
-     */
-    protected open val detailPageTemplate: String? get() = null
-
-    protected open fun getNovelChapterUrl(extra: String): String =
-            absUrl(chaptersPageTemplate?.format(findBookId(extra)) ?: extra)
-
-
-    /**
-     * 目录页地址模板，String.format形式，"/book/%s/"
-     * 目录英文是contents，但是和正文content接近，干脆用chapters,
-     */
-    protected open val chaptersPageTemplate: String? get() = detailPageTemplate
-
-    open fun getNovelContentUrl(extra: String): String =
-            absUrl(contentPageTemplate?.format(findChapterId(extra)) ?: extra)
-
-    /**
-     * 正文页地址模板，String.format形式，"/book/%s/"
-     */
-    protected open val contentPageTemplate: String? get() = null
+    abstract fun getNovelContentUrl(extra: String): String
 
     /**
      * 尝试从extra获取真实地址，
@@ -249,28 +226,4 @@ abstract class NovelContext {
         URL(URL(site.baseUrl), extra)
     }.toExternalForm()
 
-    /**
-     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是bookId了，
-     */
-    protected open fun findBookId(extra: String): String = try {
-        extra.pick(bookIdRegex)[bookIdIndex]
-    } catch (e: Exception) {
-        extra
-    }
-
-    protected open val bookIdRegex: String get() = firstIntPattern
-    // 应对一些复杂的正则，可能不得不用到多个组，
-    protected open val bookIdIndex: Int get() = 0
-    /**
-     * 查找章节id, 是包括小说id的，
-     * 有继承给定正则就用上，没有找到就直接返回传入的数据，可能已经是chapterId了，
-     */
-    protected open fun findChapterId(extra: String): String = try {
-        extra.pick(chapterIdRegex)[chapterIdIndex]
-    } catch (e: Exception) {
-        extra
-    }
-
-    protected open val chapterIdRegex: String get() = firstTwoIntPattern
-    protected open val chapterIdIndex: Int get() = 0
 }

@@ -73,7 +73,7 @@ class Yssm : DslJsoupNovelContext() {init {
                     || it.extra.isBlank()).also { ++index }
         }
     }
-    chapterIdRegex = firstThreeIntPattern
+    bookIdWithChapterIdRegex = firstThreeIntPattern
     // https://www.yssm.org/uctxt/227/227934/1301112.html
     contentPageTemplate = "/uctxt/%s.html"
     content {

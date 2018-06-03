@@ -62,7 +62,7 @@ class Snwx : DslJsoupNovelContext() {init {
             items("#list > dl > dd > a")
         }
     }
-    chapterIdRegex = firstThreeIntPattern
+    bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/book/%s.html"
     content {
         document {
