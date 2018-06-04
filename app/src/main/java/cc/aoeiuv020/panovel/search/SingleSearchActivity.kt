@@ -130,6 +130,10 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     fun showError(message: String, e: Throwable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
+            // 太丑了，
+            return
+        }
         alert(
                 title = ctx.getString(R.string.error),
                 message = message + e.message
