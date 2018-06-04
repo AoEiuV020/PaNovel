@@ -134,7 +134,7 @@ class Refresher(
     }
 
     private val executor: ThreadPoolExecutor =
-            ThreadPoolExecutor(config.threads, config.threads, 0L, TimeUnit.MILLISECONDS, LinkedBlockingQueue()).apply {
+            ThreadPoolExecutor(config.threads, config.threads, 0L, TimeUnit.MILLISECONDS, LinkedBlockingQueue(1)).apply {
                 // 线程满了就自己上，
                 rejectedExecutionHandler = ThreadPoolExecutor.CallerRunsPolicy()
             }
