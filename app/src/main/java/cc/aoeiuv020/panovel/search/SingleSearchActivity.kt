@@ -163,6 +163,7 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.search -> FuzzySearchActivity.startSingleSite(ctx, siteName)
+            R.id.browse -> getCurrentUrl()?.let { browse(it) }
             R.id.open -> open()
             R.id.close -> finish()
             R.id.removeCookies -> removeCookies()
