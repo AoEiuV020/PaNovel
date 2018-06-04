@@ -412,9 +412,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         debug { "onChapterSelected $index" }
         // 可能重复赋值，但是无所谓了，
         novel.readAt(index, chaptersAsc)
-        val chapter = chaptersAsc[index]
-        title = "${novel.name} - ${chapter.name}"
-        urlTextView.text = DataManager.getContentUrl(novel, chapter)
+        if (index in chaptersAsc.indices) {
+            val chapter = chaptersAsc[index]
+            title = "${novel.name} - ${chapter.name}"
+            urlTextView.text = DataManager.getContentUrl(novel, chapter)
+        }
     }
 
     fun showError(message: String, e: Throwable) {
