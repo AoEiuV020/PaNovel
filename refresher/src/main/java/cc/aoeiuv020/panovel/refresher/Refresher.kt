@@ -135,8 +135,11 @@ class Refresher(
 
     private val executor: ThreadPoolExecutor =
             ThreadPoolExecutor(config.threads, config.threads, 0L, TimeUnit.MILLISECONDS, LinkedBlockingQueue(1)).apply {
-                // 线程满了就自己上，
-                rejectedExecutionHandler = ThreadPoolExecutor.CallerRunsPolicy()
+                // 线程满了就休息100ms,
+                setRejectedExecutionHandler { runnable, threadPoolExecutor ->
+                    TimeUnit.MILLISECONDS.sleep(100)
+                    threadPoolExecutor.submit(runnable)
+                }
             }
     private fun refresh(novel: Novel) {
         executor.submit {
