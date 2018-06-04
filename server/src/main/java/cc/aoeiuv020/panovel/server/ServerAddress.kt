@@ -28,7 +28,7 @@ class ServerAddress(
 
         fun getAndroidTest(): ServerAddress = new("192.168.1.10:8080")
 
-        fun new(host: String): ServerAddress {
+        fun new(host: String = PANOVEL_HOST): ServerAddress {
             return CONFIG_TEMPLATE
                     .replace("#host#", host)
                     .toBean()

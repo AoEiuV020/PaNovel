@@ -16,7 +16,7 @@ class NovelServiceImplTest {
     private lateinit var service: NovelServiceImpl
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress.new("localhost:8080"))
+        service = NovelServiceImpl(ServerAddress.new())
     }
 
     @Test
