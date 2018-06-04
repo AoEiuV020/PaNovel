@@ -10,6 +10,8 @@ import cc.aoeiuv020.panovel.share.PasteUbuntu
 import com.google.gson.JsonObject
 import org.slf4j.LoggerFactory
 import java.util.*
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 class Refresher(
@@ -131,7 +133,18 @@ class Refresher(
         }
     }
 
+    private val executor: ThreadPoolExecutor =
+            ThreadPoolExecutor(config.threads, config.threads, 0L, TimeUnit.MILLISECONDS, LinkedBlockingQueue()).apply {
+                // 线程满了就自己上，
+                rejectedExecutionHandler = ThreadPoolExecutor.CallerRunsPolicy()
+            }
     private fun refresh(novel: Novel) {
+        executor.submit {
+            refreshActual(novel)
+        }
+    }
+
+    private fun refreshActual(novel: Novel) {
         logger.info {
             "refresh <${novel.run { "$site.$author.$name.$detail" }}>"
         }
