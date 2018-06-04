@@ -196,8 +196,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 override fun onReading(chapter: Int, text: Int) {
                     // 阅读时退出全屏，
                     hide()
-                    onChapterSelected(chapter)
-                    novel.readAtTextIndex = text
+                    if (chapter in chaptersAsc.indices) {
+                        onChapterSelected(chapter)
+                        novel.readAtTextIndex = text
+                    }
                 }
             }
         }
