@@ -629,7 +629,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     presenter.download(novel, index, Int.MAX_VALUE)
                 }
                 yesButton {
-                    presenter.download(novel, index, etCount.text.toString().toInt())
+                    presenter.download(novel, index, etCount.text.toString().toIntOrNull() ?: 0)
                 }
                 cancelButton { }
             }.show()
