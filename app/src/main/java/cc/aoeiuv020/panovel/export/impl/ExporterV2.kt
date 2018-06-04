@@ -98,6 +98,7 @@ class ExporterV2 : DefaultExporter() {
                 "textSize" -> editor.putInt(key, value.asInt)
                 "dateFormat" -> editor.putString(key, value.asString)
                 "enabled" -> editor.putBoolean(key, value.asBoolean)
+                "notifyNovelUpdate" -> editor.putBoolean(key, value.asBoolean)
                 "bottom" -> editor.putInt(key, value.asInt)
                 "left" -> editor.putInt(key, value.asInt)
                 "right" -> editor.putInt(key, value.asInt)
