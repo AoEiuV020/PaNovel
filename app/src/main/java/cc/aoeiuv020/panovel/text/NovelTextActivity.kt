@@ -470,6 +470,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             // 总觉得还有其他可能，但是找不到，
             novel.readAtTextIndex = chaptersAsc.lastIndex
         }
+        if (novel.readAtChapterIndex < 0) {
+            // 以防万一，判断不嫌大多，
+            // 主要是太乱了，找不到到底什么情况会出现-1,
+            novel.readAtChapterIndex = chaptersAsc.lastIndex
+        }
         onChapterSelected(novel.readAtChapterIndex)
         progressDialog.dismiss()
         doAsync({ e ->
