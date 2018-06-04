@@ -12,6 +12,8 @@ import org.jsoup.Jsoup
  * Created by AoEiuV020 on 2018.05.10-16:48:32.
  */
 class Yssm : DslJsoupNovelContext() {init {
+    // 有用户也上不去，看来不是我的网站问题，我这里同一个教育网的电脑能上手机不能上，
+    enabled = false
     site {
         name = "幼狮书盟"
         baseUrl = "https://www.yssm.org"
