@@ -78,7 +78,7 @@ class TextExporter(
                 handler.removeCallbacks(this)
                 nb.setContentText(ctx.getString(R.string.export_error_placeholder, export, skip, left))
                         .setProgress(0, 0, false)
-                manager.notify(10000 + novel.nId.toInt(), nb.build())
+                manager.notify(1, nb.build())
             }
 
             lateinit var file: File
@@ -92,12 +92,12 @@ class TextExporter(
 
                             .setProgress(0, 0, false)
                     nb.setStyle(NotificationCompat.BigTextStyle().bigText(ctx.getString(R.string.export_complete_big_placeholder, file.path)))
-                    manager.notify(10000 + novel.nId.toInt(), nb.build())
+                    manager.notify(1, nb.build())
                 } else {
                     val progress = ((export + skip).toFloat() / ((export + skip) + left) * 100).toInt()
                     nb.setContentText(ctx.getString(R.string.exporting_placeholder, export, skip, left))
                             .setProgress(100, progress, false)
-                    manager.notify(10000 + novel.nId.toInt(), nb.build())
+                    manager.notify(1, nb.build())
                     // 100ms循环一次通知，
                     handler.postDelayed(this, 100)
                 }
