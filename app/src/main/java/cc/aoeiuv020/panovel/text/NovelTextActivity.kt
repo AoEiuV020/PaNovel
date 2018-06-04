@@ -464,6 +464,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             // 章节内进度改成本章开头，
             novel.readAtTextIndex = 0
         }
+        if (novel.readAtChapterIndex > chaptersAsc.lastIndex) {
+            // 以防万一，比如更新后章节反而减少了，
+            // 总觉得还有其他可能，但是找不到，
+            novel.readAtTextIndex = chaptersAsc.lastIndex
+        }
         onChapterSelected(novel.readAtChapterIndex)
         progressDialog.dismiss()
         doAsync({ e ->
