@@ -130,6 +130,10 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     fun showError(message: String, e: Throwable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
+            // 太丑了，
+            return
+        }
         alert(
                 title = ctx.getString(R.string.error),
                 message = message + e.message
@@ -159,6 +163,7 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.search -> FuzzySearchActivity.startSingleSite(ctx, siteName)
+            R.id.browse -> getCurrentUrl()?.let { browse(it) }
             R.id.open -> open()
             R.id.close -> finish()
             R.id.removeCookies -> removeCookies()

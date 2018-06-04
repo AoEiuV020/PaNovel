@@ -10,7 +10,7 @@
     <item
         android:id="@+id/browse"
         android:icon="@drawable/ic_open_in_browser"
-        android:title="@string/browse"
+        android:title="@string/open_in_browser"
         app:showAsAction="never" />
     <item
         android:id="@+id/share"

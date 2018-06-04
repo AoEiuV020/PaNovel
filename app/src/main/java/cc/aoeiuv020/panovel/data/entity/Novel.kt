@@ -149,8 +149,11 @@ data class Novel(
 
     fun readAt(index: Int, chapters: List<NovelChapter>) {
         readAtChapterIndex = index
-        // 同时改保存的章节名，
-        readAtChapterName = chapters[index].name
+        if (index in chapters.indices) {
+            // 仅限于章节数正常的情况，否则可能chapters为空list导致崩溃，
+            // 同时改保存的章节名，
+            readAtChapterName = chapters[index].name
+        }
     }
 
     companion object {

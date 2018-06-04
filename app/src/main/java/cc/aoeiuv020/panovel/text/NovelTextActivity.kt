@@ -33,6 +33,7 @@ import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.Margins
 import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.util.*
@@ -116,7 +117,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         // 进度，读取顺序， savedInstanceState > intent > DataManager
         // intent传入的index，activity死了再开，应该会恢复这个intent, 不能让intent覆盖了死前的阅读进度，
         // 用getSerializableExtra读Int不需要默认值，
-        index = savedInstanceState?.run { getString("index").toBean<Int>(App.gson) }
+        // 出现过存在savedInstanceState但是getString("index")为null的不明状况，干脆都加问号?,
+        index = savedInstanceState?.run { getString("index")?.toBean<Int>(App.gson) }
                 ?: intent.getStringExtra("index")?.toBean(App.gson)
 
         presenter = NovelTextPresenter(id)
@@ -195,8 +197,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 override fun onReading(chapter: Int, text: Int) {
                     // 阅读时退出全屏，
                     hide()
-                    onChapterSelected(chapter)
-                    novel.readAtTextIndex = text
+                    if (chapter in chaptersAsc.indices) {
+                        onChapterSelected(chapter)
+                        novel.readAtTextIndex = text
+                    }
                 }
             }
         }
@@ -411,9 +415,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         debug { "onChapterSelected $index" }
         // 可能重复赋值，但是无所谓了，
         novel.readAt(index, chaptersAsc)
-        val chapter = chaptersAsc[index]
-        title = "${novel.name} - ${chapter.name}"
-        urlTextView.text = DataManager.getContentUrl(novel, chapter)
+        if (index in chaptersAsc.indices) {
+            val chapter = chaptersAsc[index]
+            title = "${novel.name} - ${chapter.name}"
+            urlTextView.text = DataManager.getContentUrl(novel, chapter)
+        }
     }
 
     fun showError(message: String, e: Throwable) {
@@ -458,6 +464,16 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             novel.readAt(chapterIndex, chaptersAsc)
             // 章节内进度改成本章开头，
             novel.readAtTextIndex = 0
+        }
+        if (novel.readAtChapterIndex > chaptersAsc.lastIndex) {
+            // 以防万一，比如更新后章节反而减少了，
+            // 总觉得还有其他可能，但是找不到，
+            novel.readAtTextIndex = chaptersAsc.lastIndex
+        }
+        if (novel.readAtChapterIndex < 0) {
+            // 以防万一，判断不嫌大多，
+            // 主要是太乱了，找不到到底什么情况会出现-1,
+            novel.readAtChapterIndex = chaptersAsc.lastIndex
         }
         onChapterSelected(novel.readAtChapterIndex)
         progressDialog.dismiss()
@@ -599,22 +615,27 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun download() {
         val index = reader.currentChapter
-        alert {
-            titleResource = R.string.download_chapters_count
-            val layout = View.inflate(ctx, R.layout.dialog_editor, null)
-            customView = layout
-            val etCount = layout.editText.apply {
-                inputType = InputType.TYPE_CLASS_NUMBER
-                setText(50.toString())
-            }
-            neutralPressed(R.string.all) {
-                presenter.download(novel, index, Int.MAX_VALUE)
-            }
-            yesButton {
-                presenter.download(novel, index, etCount.text.toString().toInt())
-            }
-            cancelButton { }
-        }.show()
+        val count = GeneralSettings.downloadCount
+        when {
+            count < 0 -> alert {
+                titleResource = R.string.download_chapters_count
+                val layout = View.inflate(ctx, R.layout.dialog_editor, null)
+                customView = layout
+                val etCount = layout.editText.apply {
+                    inputType = InputType.TYPE_CLASS_NUMBER
+                    setText(50.toString())
+                }
+                neutralPressed(R.string.all) {
+                    presenter.download(novel, index, Int.MAX_VALUE)
+                }
+                yesButton {
+                    presenter.download(novel, index, etCount.text.toString().toIntOrNull() ?: 0)
+                }
+                cancelButton { }
+            }.show()
+            count == 0 -> presenter.download(novel, index, Int.MAX_VALUE)
+            else -> presenter.download(novel, index, count)
+        }
     }
 
     fun showDownloadStart(left: Int) {

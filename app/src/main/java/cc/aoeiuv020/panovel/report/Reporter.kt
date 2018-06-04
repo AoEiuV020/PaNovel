@@ -64,6 +64,22 @@ object Reporter : AnkoLogger {
         postException(IllegalStateException(message, e))
     }
 
+    /**
+     * 判断该异常是否是不存在网络连接导致的，
+     */
+    private fun isNoInternetException(e: Throwable): Boolean {
+        if (e is NoInternetException
+                || e is UnknownHostException) {
+            return true
+        }
+        if (e.message?.contains("No address associated with hostname") == true) {
+            // 有的设备报的不是UnknownHostException，原因不明，
+            // android_getaddrinfo failed: EAI_NODATA (No address associated with hostname)
+            return true
+        }
+        return false
+    }
+
     private fun postException(e: Throwable) {
         // 开发过程不要上报，
         if (!BuildConfig.DEBUG) {
@@ -71,8 +87,7 @@ object Reporter : AnkoLogger {
         }
         var cause: Throwable? = e
         while (cause != null) {
-            if (cause is NoInternetException
-                    || cause is UnknownHostException) {
+            if (isNoInternetException(cause)) {
                 // 没有网络连接导致的异常不上报，
                 return
             }

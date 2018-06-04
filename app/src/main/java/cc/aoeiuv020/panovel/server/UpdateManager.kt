@@ -13,6 +13,7 @@ import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.VersionUtil
 import cc.aoeiuv020.panovel.util.notify
@@ -39,7 +40,7 @@ object UpdateManager : AnkoLogger {
             requireNotNull(remoteNovel.detail)
             requireNotNull(remoteNovel.chaptersCount)
             val (localNovel, hasUpdate) = DataManager.receiveUpdate(remoteNovel)
-            if (hasUpdate) {
+            if (hasUpdate && GeneralSettings.notifyNovelUpdate) {
                 uiThread {
                     it.notify(localNovel.nId.toInt(),
                             text = localNovel.lastChapterName,

@@ -31,6 +31,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     var detailDivision: Int? = null
     // 向下传递，
         set(value) {
+            field = value
             if (chapterDivision == null) {
                 chapterDivision = value
             }
@@ -43,10 +44,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
          * 详情页地址模板默认同时赋值给目录页，
          */
         set(value) {
+            field = value
             if (chaptersPageTemplate == null) {
                 chaptersPageTemplate = value
             }
-            field = value
         }
     // set时不传到contentDivision，一般正文地址要另外处理，
     var chapterDivision: Int? = null
@@ -105,8 +106,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     override fun getNovelDetailUrl(extra: String): String {
         val path = detailPageTemplate?.let { template ->
             val bookId = findBookId(extra)
-            detailDivision?.let { mod ->
-                template.format(bookId.toInt() / mod, bookId)
+            detailDivision?.let { division ->
+                template.format(bookId.toInt() / division, bookId)
             } ?: template.format(bookId)
         } ?: extra
         return absUrl(path)
@@ -115,8 +116,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected open fun getNovelChapterUrl(extra: String): String {
         val path = chaptersPageTemplate?.let { template ->
             val bookId = findBookId(extra)
-            chapterDivision?.let { mod ->
-                template.format(bookId.toInt() / mod, bookId)
+            chapterDivision?.let { division ->
+                template.format(bookId.toInt() / division, bookId)
             } ?: template.format(bookId)
         } ?: extra
         return absUrl(path)
@@ -129,8 +130,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             val path = contentPageTemplate?.let { template ->
                 val bookId = findBookId(extra)
                 val chapterId = findBookIdWithChapterId(extra)
-                contentDivision?.let { mod ->
-                    template.format(bookId.toInt() / mod, chapterId)
+                contentDivision?.let { division ->
+                    template.format(bookId.toInt() / division, chapterId)
                 } ?: template.format(chapterId)
             } ?: extra
             return absUrl(path)
@@ -141,6 +142,38 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     private lateinit var getNovelContentUrlLambda: (String) -> String
     fun getNovelContentUrl(lambda: (String) -> String) {
         getNovelContentUrlLambda = lambda
+    }
+
+    /*
+    *************** cookie ***************
+     */
+    private lateinit var cookieFilterLambda: (HttpUrl, MutableList<Cookie>) -> MutableList<Cookie>
+
+    protected fun cookieFilter(init: _Cookie.() -> Unit) {
+        cookieFilterLambda = { url, cookies ->
+            _Cookie(url, cookies).also(init)
+                    .filter()
+        }
+    }
+
+    override fun cookieFilter(url: HttpUrl, cookies: MutableList<Cookie>): MutableList<Cookie> {
+        return if (::cookieFilterLambda.isInitialized) {
+            cookieFilterLambda(url, cookies)
+        } else {
+            super.cookieFilter(url, cookies)
+        }
+    }
+
+    @Suppress("unused")
+    protected class _Cookie(
+            val httpUrl: HttpUrl,
+            val cookies: MutableList<Cookie>
+    ) {
+        fun removeAll(predicate: (Cookie) -> Boolean) {
+            cookies.removeAll(predicate)
+        }
+
+        fun filter(): MutableList<Cookie> = cookies
     }
 
     /*

@@ -62,6 +62,7 @@ class ExporterV1 : DefaultExporter(), AnkoLogger {
                         "fullScreenClickNextPage" to { value -> ReaderSettings.fullScreenClickNextPage = value.asBoolean },
                         "volumeKeyScroll" to { value -> ReaderSettings.volumeKeyScroll = value.asBoolean },
                         "reportCrash" to { value -> OtherSettings.reportCrash = value.asBoolean },
+                        "subscribeNovelUpdate" to { value -> GeneralSettings.notifyNovelUpdate = value.asBoolean },
                         "bookshelfRedDotColor" to { value -> ListSettings.dotColor = value.asInt },
                         "bookshelfRedDotSize" to { value -> ListSettings.dotSize = value.asFloat },
                         "fullScreenDelay" to { value -> ReaderSettings.fullScreenDelay = value.asInt },

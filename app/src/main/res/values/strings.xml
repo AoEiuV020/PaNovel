@@ -175,5 +175,11 @@
     <string name="download_chapters_count">下载章节数</string>
     <string name="all">全部</string>
     <string name="cookie">cookie</string>
+    <string name="notify_novel_update">通知小说更新</string>
+    <string name="notify_novel_update_summary">收到小说更新弹出通知，</string>
+    <string name="download_chapters_count_summary">-1为每次询问，0为剩下全部，</string>
+    <string name="history_count_summary">只是展示的历史记录数限制，由于没有分页，一次展示太多可能影响性能，</string>
+    <string name="no_file_explorer">没有文件管理器，</string>
+    <string name="open_in_browser">在浏览器打开</string>
 
 </resources>

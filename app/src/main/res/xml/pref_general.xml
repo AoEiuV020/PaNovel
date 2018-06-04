@@ -6,6 +6,7 @@
         android:key="historyCount"
         android:maxLines="1"
         android:defaultValue="30"
+        android:summary="@string/history_count_summary"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/history_count" />
@@ -19,6 +20,24 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/download_thread_count" />
+
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
+        android:defaultValue="-1"
+        android:inputType="number|numberSigned"
+        android:key="downloadCount"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/download_chapters_count_summary"
+        android:title="@string/download_chapters_count" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:enabled="false"
+        android:key="notifyNovelUpdate"
+        android:summary="@string/notify_novel_update_summary"
+        android:title="@string/notify_novel_update" />
 
     <SwitchPreference
         android:defaultValue="true"
