@@ -2,17 +2,15 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
-import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 
 /**
- *
- * Created by AoEiuV020 on 2018.03.07-02:42:57.
+ * Created by AoEiuV020 on 2018.06.04-17:23:51.
  */
-class Snwx : DslJsoupNovelContext() {init {
+class N73xs : DslJsoupNovelContext() {init {
     site {
-        name = "少年文学"
-        baseUrl = "https://www.snwx8.com"
-        logo = "https://www.snwx8.com/xiaoyi/images/logo.gif"
+        name = "73文学"
+        baseUrl = "http://www.73wx.com/"
+        logo = "https://imgsa.baidu.com/forum/w%3D580/sign=d8f0b6300f3b5bb5bed720f606d2d523/958c4b160924ab1867ef56ac39fae6cd79890b9f.jpg"
     }
     search {
         get {
@@ -23,15 +21,28 @@ class Snwx : DslJsoupNovelContext() {init {
             }
         }
         document {
-            items("#newscontent > div.l > ul > li") {
-                name("> span.s2 > a")
-                author("> span.s4")
+            if (root.ownerDocument().location().endsWith("/")) {
+                single {
+                    name(".zhuyan > ul:nth-child(1) > li:nth-child(1)", block = pickString("书名：(\\S*)"))
+                    author(".zhuyan > ul:nth-child(1) > li:nth-child(2)", block = pickString("作者：(\\S*)"))
+                }
+            } else {
+                items("#content > table > tbody > tr:not(:nth-child(1)):not(:nth-last-child(1))") {
+                    name("> td.odd > a")
+                    author("> td.odd", block = pickString(" / (\\S*)"))
+                }
             }
         }
     }
-    bookIdRegex = firstTwoIntPattern
-    // https://www.snwx8.com/book/66/66076/
-    detailPageTemplate = "/book/%s/"
+    // http://www.73wx.com/book/32252/
+    // http://www.73wx.com/32/32252/
+    // http://www.73wx.com/32/32252/8967417.html
+    bookIdRegex = "/((book)|(\\d+))/(\\d+)"
+    bookIdIndex = 3
+    // 详情页连简介都没有，直接用章节列表页，
+    // 但是搜索结果可能跳到详情页，bookId不得不支持，
+    detailDivision = 1000
+    detailPageTemplate = "/%d/%s/"
     detail {
         document {
             val div = element("#info")
@@ -40,7 +51,7 @@ class Snwx : DslJsoupNovelContext() {init {
                 name("> h1", parent = title)
                 author("> i:nth-child(2)", parent = title, block = pickString("作者：(\\S*)"))
             }
-            image("#fmimg > img")
+            image("#fmimg img")
             introduction("> div.intro", parent = div) {
                 it.textNodes().first {
                     // TextNode不可避免的有空的，
@@ -52,21 +63,25 @@ class Snwx : DslJsoupNovelContext() {init {
                     }
                 }.ownLinesString()
             }
-            // 这网站详情页没有更新时间，
+            // 这网站详情页更新时间是js另外拿的，
+            // http://www.73wx.com/modules/article/pd_uptime.php?id=32252
         }
     }
+    // http://www.73wx.com/32/32252/
     chapters {
         document {
             items("#list > dl > dd > a")
         }
     }
+    // http://www.73wx.com/32/32252/8967417.html
     bookIdWithChapterIdRegex = firstThreeIntPattern
-    contentPageTemplate = "/book/%s.html"
+    contentPageTemplate = "/%s.html"
     content {
         document {
-            items("#BookText")
+            items("#content > p")
         }
     }
+
     cookieFilter {
         removeAll {
             // 删除cookie绕开搜索时间间隔限制，

@@ -52,7 +52,9 @@ abstract class OkHttpNovelContext : NovelContext() {
             override fun loadForRequest(url: HttpUrl): MutableList<Cookie> {
                 return cookies.values.toMutableList().let {
                     logger.debug { "load cookies $it" }
-                    cookieFilter(url, it)
+                    cookieFilter(url, it).also {
+                        logger.debug { "after filter cookies $it" }
+                    }
                 }
             }
         }
