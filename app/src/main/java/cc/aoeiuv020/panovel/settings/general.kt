@@ -10,6 +10,12 @@ object GeneralSettings : Pref {
     override val name: String
         get() = "General"
     var downloadThreadsLimit: Int by Delegates.int(4)
+    /**
+     * 点击下载时下载的章节数，
+     * 0表示下载剩余全部，
+     * -1表示每次询问，
+     */
+    var downloadCount: Int by Delegates.int(-1)
     // 提供彩蛋，满足条件就关闭广告，要在代码中改这个值，所以可变，var,
     var adEnabled: Boolean by Delegates.boolean(true)
     var historyCount: Int by Delegates.int(30)

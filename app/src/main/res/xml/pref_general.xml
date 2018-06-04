@@ -20,6 +20,17 @@
         android:singleLine="true"
         android:title="@string/download_thread_count" />
 
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
+        android:defaultValue="-1"
+        android:inputType="number|numberSigned"
+        android:key="downloadCount"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="-1为每次询问，0为剩下全部，"
+        android:title="@string/download_chapters_count" />
+
     <SwitchPreference
         android:defaultValue="true"
         android:enabled="false"

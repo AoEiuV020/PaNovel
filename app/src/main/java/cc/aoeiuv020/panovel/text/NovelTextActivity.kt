@@ -33,6 +33,7 @@ import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.Margins
 import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.util.*
@@ -599,22 +600,27 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun download() {
         val index = reader.currentChapter
-        alert {
-            titleResource = R.string.download_chapters_count
-            val layout = View.inflate(ctx, R.layout.dialog_editor, null)
-            customView = layout
-            val etCount = layout.editText.apply {
-                inputType = InputType.TYPE_CLASS_NUMBER
-                setText(50.toString())
-            }
-            neutralPressed(R.string.all) {
-                presenter.download(novel, index, Int.MAX_VALUE)
-            }
-            yesButton {
-                presenter.download(novel, index, etCount.text.toString().toInt())
-            }
-            cancelButton { }
-        }.show()
+        val count = GeneralSettings.downloadCount
+        when {
+            count < 0 -> alert {
+                titleResource = R.string.download_chapters_count
+                val layout = View.inflate(ctx, R.layout.dialog_editor, null)
+                customView = layout
+                val etCount = layout.editText.apply {
+                    inputType = InputType.TYPE_CLASS_NUMBER
+                    setText(50.toString())
+                }
+                neutralPressed(R.string.all) {
+                    presenter.download(novel, index, Int.MAX_VALUE)
+                }
+                yesButton {
+                    presenter.download(novel, index, etCount.text.toString().toInt())
+                }
+                cancelButton { }
+            }.show()
+            count == 0 -> presenter.download(novel, index, Int.MAX_VALUE)
+            else -> presenter.download(novel, index, count)
+        }
     }
 
     fun showDownloadStart(left: Int) {

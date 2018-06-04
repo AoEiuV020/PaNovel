@@ -5,9 +5,10 @@
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:defaultValue="-1"
-        android:inputType="number"
+        android:inputType="number|numberSigned"
         android:key="brightness"
         android:maxLines="1"
+        android:summary="-1为跟随系统，"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/brightness" />
