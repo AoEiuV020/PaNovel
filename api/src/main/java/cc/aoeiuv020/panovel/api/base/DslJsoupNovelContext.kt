@@ -628,8 +628,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
 
         fun <T> response(block: (String) -> T): T {
-            val body = responseBody(call.notNull()).string()
-            return block(body)
+            return responseBody(call.notNull()).use {
+                val body = it.string()
+                block(body)
+            }
         }
     }
 
