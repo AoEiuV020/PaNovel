@@ -6,7 +6,6 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.site.*
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.util.notNullOrReport
 import java.net.URL
 import java.util.*
 
@@ -66,9 +65,8 @@ class ApiManager(ctx: Context) {
         novel.image = novelDetail.image
         novel.introduction = novelDetail.introduction
         novel.chapters = novelDetail.extra
-        if (novelDetail.update != null) {
-            novel.updateTime = novelDetail.update.notNullOrReport()
-        }
+        // detail页面的更新时间不保存，
+        // 万一只有详情页有时间，章节列表页没有，收到更新通知时会通知详情页的时间，可能一直没变过，
     }
 
     fun requestNovelChapters(novel: Novel): List<NovelChapter> {
