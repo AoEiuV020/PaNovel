@@ -7,4 +7,10 @@
         android:summary="@string/notify_novel_update_summary"
         android:title="@string/notify_novel_update" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="askUpdate"
+        android:summary="@string/ask_update_summary"
+        android:title="@string/ask_update" />
+
 </PreferenceScreen>

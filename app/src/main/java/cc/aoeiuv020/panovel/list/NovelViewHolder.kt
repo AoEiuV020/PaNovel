@@ -13,6 +13,7 @@ import cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
+import cc.aoeiuv020.panovel.settings.ServerSettings
 import cc.aoeiuv020.panovel.text.CheckableImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -143,8 +144,10 @@ class NovelViewHolder(itemView: View,
             itemView.tag === novel -> refreshing()
         // 手动刷新后需要联网更新，
             refreshTime > novel.checkUpdateTime -> refresh()
-        // 询问服务器是否有更新，
-            else -> askUpdate()
+            else -> if (ServerSettings.askUpdate) {
+                // 询问服务器是否有更新，
+                askUpdate(novel)
+            }
         }
     }
 
@@ -206,7 +209,7 @@ class NovelViewHolder(itemView: View,
     /**
      * 询问服务器是否有更新，
      */
-    private fun askUpdate() {
+    private fun askUpdate(novel: Novel) {
         debug { "askUpdate ${name?.text}" }
         refreshing()
         // 首次新结束时tag为null, 不能直接返回，

@@ -13,4 +13,10 @@ object ServerSettings : Pref {
      * 是否通知小说更新，
      */
     var notifyNovelUpdate: Boolean by Delegates.boolean(true)
+    /**
+     * 是否询问服务器有无更新，
+     * 并会刷新“上次刷新”为服务器上的时间，
+     * 省流量用，
+     */
+    var askUpdate: Boolean by Delegates.boolean(true)
 }

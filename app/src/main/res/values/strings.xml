@@ -176,11 +176,13 @@
     <string name="all">全部</string>
     <string name="cookie">cookie</string>
     <string name="notify_novel_update">通知小说更新</string>
-    <string name="notify_novel_update_summary">收到小说更新弹出通知，</string>
+    <string name="notify_novel_update_summary">收到小说更新推送时弹出通知，</string>
     <string name="download_chapters_count_summary">-1为每次询问，0为剩下全部，</string>
     <string name="history_count_summary">只是展示的历史记录数限制，由于没有分页，一次展示太多可能影响性能，</string>
     <string name="no_file_explorer">没有文件管理器，</string>
     <string name="open_in_browser">在浏览器打开</string>
     <string name="pref_header_server">服务设置</string>
+    <string name="ask_update">询问更新</string>
+    <string name="ask_update_summary">没有手动刷新时询问服务器是否有更新，并更新“上次刷新”为服务器上的时间，\n可以看情况减少手动刷新频率，但如果效果不好也可能因频繁询问服务器而多费流量，</string>
 
 </resources>
