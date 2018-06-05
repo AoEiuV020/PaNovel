@@ -15,6 +15,10 @@
         android:title="@string/pref_header_read" />
 
     <header
+        android:fragment="cc.aoeiuv020.panovel.settings.ServerPreferenceFragment"
+        android:title="@string/pref_header_server" />
+
+    <header
         android:fragment="cc.aoeiuv020.panovel.settings.OthersPreferenceFragment"
         android:title="@string/pref_others" />
 

@@ -16,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxEms="4"
+            android:textSize="@dimen/reader_settings_text_size"
             android:minEms="4"
             android:singleLine="true"
             android:text="@string/display"

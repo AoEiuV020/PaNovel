@@ -23,5 +23,13 @@ data class Config(
         /**
          * 调试模式，
          */
-        val debug: Boolean = false
+        val debug: Boolean = false,
+        /**
+         * 并发请求线程数，
+         */
+        val threads: Int = 10,
+        /**
+         * 禁用的网站名，
+         */
+        val disableSites: Set<String> = setOf()
 )

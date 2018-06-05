@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="notifyNovelUpdate"
+        android:summary="@string/notify_novel_update_summary"
+        android:title="@string/notify_novel_update" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notifyPinnedOnly"
+        android:summary="@string/notify_pinned_only_summary"
+        android:title="@string/notify_pinned_only" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="singleNotification"
+        android:summary="@string/single_notification_summary"
+        android:title="@string/single_notification" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="askUpdate"
+        android:summary="@string/ask_update_summary"
+        android:title="@string/ask_update" />
+
+</PreferenceScreen>

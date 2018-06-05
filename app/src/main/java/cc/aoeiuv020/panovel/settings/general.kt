@@ -9,11 +9,14 @@ import cc.aoeiuv020.panovel.util.Pref
 object GeneralSettings : Pref {
     override val name: String
         get() = "General"
-    var downloadThreadsLimit: Int by Delegates.int(4)
     /**
-     * 是否通知小说更新，
+     * 搜索线程数，
      */
-    var notifyNovelUpdate: Boolean by Delegates.boolean(true)
+    var searchThreadsLimit: Int by Delegates.int(4)
+    /**
+     * 下载线程数，
+     */
+    var downloadThreadsLimit: Int by Delegates.int(4)
     /**
      * 点击下载时下载的章节数，
      * 0表示下载剩余全部，

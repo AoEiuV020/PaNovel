@@ -2,8 +2,7 @@ package cc.aoeiuv020.panovel.server.service.impl
 
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import java.util.*
@@ -13,10 +12,13 @@ import java.util.concurrent.TimeUnit
  * Created by AoEiuV020 on 2018.04.13-10:19:51.
  */
 class NovelServiceImplTest {
+    init {
+        System.setProperty("org.slf4j.simpleLogger.log.NovelServiceImpl", "trace")
+    }
     private lateinit var service: NovelServiceImpl
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress.new("localhost:8080"))
+        service = NovelServiceImpl(ServerAddress.getAndroidTest())
     }
 
     @Test
@@ -37,6 +39,26 @@ class NovelServiceImplTest {
             it.receiveUpdateTime = null
         }
         assertTrue(service.uploadUpdate(novel))
+    }
+
+    @Test
+    fun queryTest() {
+        val novel = Novel().apply {
+            site = "Site"
+            author = "Author"
+            name = "Name"
+            detail = "Detail"
+            chaptersCount = 12
+            receiveUpdateTime = Date()
+        }
+        val result = service.query(novel)
+        requireNotNull(result)
+        assertEquals(novel.site, result.site)
+        assertEquals(novel.author, result.author)
+        assertEquals(novel.name, result.name)
+        assertEquals(novel.detail, result.detail)
+        println(result.receiveUpdateTime)
+        println(result.checkUpdateTime)
     }
 
     @Test

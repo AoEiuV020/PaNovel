@@ -327,7 +327,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelDetail.update = value
             }
 
-        fun update(query: String, parent: Element = root, format: String, block: (Element) -> String = { it.text() }) =
+        fun update(query: String, parent: Element = root, format: String, block: (Element) -> String = {
+            // kotlin的trim有包括utf8的特殊的空格，和java的trim不重复，
+            it.text().trim()
+        }) =
                 update(query = query, parent = parent) {
                     val updateString = block(it)
                     val sdf = SimpleDateFormat(format, Locale.CHINA)
@@ -628,8 +631,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
 
         fun <T> response(block: (String) -> T): T {
-            val body = responseBody(call.notNull()).string()
-            return block(body)
+            return responseBody(call.notNull()).use {
+                val body = it.string()
+                block(body)
+            }
         }
     }
 

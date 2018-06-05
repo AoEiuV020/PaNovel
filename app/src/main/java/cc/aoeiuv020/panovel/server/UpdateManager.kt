@@ -13,7 +13,7 @@ import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
-import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.ServerSettings
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.VersionUtil
 import cc.aoeiuv020.panovel.util.notify
@@ -40,9 +40,40 @@ object UpdateManager : AnkoLogger {
             requireNotNull(remoteNovel.detail)
             requireNotNull(remoteNovel.chaptersCount)
             val (localNovel, hasUpdate) = DataManager.receiveUpdate(remoteNovel)
-            if (hasUpdate && GeneralSettings.notifyNovelUpdate) {
+            if (!hasUpdate || !ServerSettings.notifyNovelUpdate) {
+                // 没有更新或者不通知更新就不继续，
+                return@doAsync
+            }
+            debug {
+                "notifyPinnedOnly: ${ServerSettings.notifyPinnedOnly}"
+            }
+            debug {
+                "pinnedTime: ${localNovel.pinnedTime}"
+            }
+            debug {
+                "pinnedTime.notZero: ${localNovel.pinnedTime.notZero()}"
+            }
+            if (ServerSettings.notifyPinnedOnly && localNovel.pinnedTime.notZero() == null) {
+                return@doAsync
+            }
+            debug {
+                "notify update: $localNovel"
+            }
+            if (ServerSettings.singleNotification) {
+                val bitText = DataManager.hasUpdateNovelList()
+                        .joinToString("\n") {
+                            it.run { "$name: $lastChapterName" }
+                        }
                 uiThread {
-                    it.notify(localNovel.nId.toInt(),
+                    it.notify(id = 2,
+                            text = localNovel.lastChapterName,
+                            title = it.getString(R.string.notify_has_update_title_placeholder, localNovel.name),
+                            bigText = bitText,
+                            time = localNovel.updateTime.notZero()?.time)
+                }
+            } else {
+                uiThread {
+                    it.notify(id = localNovel.nId.toInt(),
                             text = localNovel.lastChapterName,
                             title = it.getString(R.string.notify_has_update_title_placeholder, localNovel.name),
                             time = localNovel.updateTime.notZero()?.time)
@@ -69,7 +100,7 @@ object UpdateManager : AnkoLogger {
         debug { "touch ：<${novel.run { "$site.$author.$name" }}>" }
         val service = novelService ?: return
         doAsync({ e ->
-            val message = "上传无更新失败,"
+            val message = "上传刷新结果失败,"
             Reporter.post(message, e)
             error(message, e)
         }) {
@@ -109,6 +140,7 @@ object UpdateManager : AnkoLogger {
 
     // 回收novelService以便下次重新获取，否则可能这个UpdateManager一直留在内存，唔，真的有必要么，
     // 不用了，
+    @Suppress("unused")
     fun destroy(context: Context) {
         debug { "destroy ${context.javaClass}" }
         novelService = null

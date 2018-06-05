@@ -13,6 +13,7 @@ import cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
+import cc.aoeiuv020.panovel.settings.ServerSettings
 import cc.aoeiuv020.panovel.text.CheckableImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -133,7 +134,7 @@ class NovelViewHolder(itemView: View,
 
     fun apply(novel: Novel, refreshTime: Date) {
         debug { "apply <${novel.run { "$site.$author.$name.$checkUpdateTime" }}>, refreshTime = $refreshTime" }
-        apply(novel)
+        show(novel)
 
         // 用tag防止复用vh导致异步冲突，
         // 如果没开始刷新或者刷新结束，tag会是null,
@@ -143,12 +144,14 @@ class NovelViewHolder(itemView: View,
             itemView.tag === novel -> refreshing()
         // 手动刷新后需要联网更新，
             refreshTime > novel.checkUpdateTime -> refresh()
-        // 询问服务器是否有更新，
-            else -> askUpdate()
+            else -> if (ServerSettings.askUpdate) {
+                // 询问服务器是否有更新，
+                askUpdate(novel)
+            }
         }
     }
 
-    private fun apply(novel: Novel) {
+    private fun show(novel: Novel) {
         this.novel = novel
         name?.text = novel.name
         author?.text = novel.author
@@ -206,9 +209,14 @@ class NovelViewHolder(itemView: View,
     /**
      * 询问服务器是否有更新，
      */
-    private fun askUpdate() {
+    private fun askUpdate(novel: Novel) {
         debug { "askUpdate ${name?.text}" }
         refreshing()
+        // 首次新结束时tag为null, 不能直接返回，
+        // 被复用时tag可能非空且不等于novel,
+        if (itemView.tag != null && itemView.tag !== novel) {
+            return
+        }
         itemView.tag = novel
         itemListener.askUpdate(this)
     }
@@ -225,7 +233,7 @@ class NovelViewHolder(itemView: View,
         }
         itemView.tag = null
         // 刷新小说相关信息，
-        apply(novel)
+        show(novel)
         // 显示是否有更新，
         refreshingDot?.refreshed(this.novel.receiveUpdateTime > this.novel.readTime)
         // TODO: 根据是否刷出章节，移动item,

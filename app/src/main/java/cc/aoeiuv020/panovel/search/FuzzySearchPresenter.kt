@@ -4,6 +4,7 @@ import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
@@ -46,10 +47,35 @@ class FuzzySearchPresenter : Presenter<FuzzySearchActivity>() {
                     }
                 }
             } ?: run {
-                DataManager.search(name, author) { list ->
-                    uiThread {
-                        view?.addResult(list)
+                val sites = DataManager.listSites().filter { it.enabled }
+                val ite = sites.iterator()
+                val futureList = List(GeneralSettings.searchThreadsLimit) {
+                    doAsync({ e ->
+                        val message = " 搜索线程异常，"
+                        // 正常不会到这，
+                        Reporter.post(message, e)
+                    }) {
+                        while (view != null && ite.hasNext()) {
+                            val site = synchronized(ite) { ite.next() }
+                            debug {
+                                "${Thread.currentThread().name} search ${site.name}"
+                            }
+                            try {
+                                val novels = DataManager.search(site.name, name, author)
+                                uiThread {
+                                    view?.addResult(novels)
+                                }
+                            } catch (e: Exception) {
+                                val message = "搜索<${site.name}, $name, $author>失败，"
+                                Reporter.post(message, e)
+                                // 单个网站搜索失败不中断，
+                            }
+                        }
                     }
+                }
+                futureList.forEach {
+                    // 阻塞，
+                    it.get()
                 }
             }
             uiThread {
