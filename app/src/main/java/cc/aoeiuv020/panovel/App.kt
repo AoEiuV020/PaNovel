@@ -70,7 +70,10 @@ class App : MultiDexApplication(), AnkoLogger {
     }
 
     private fun initJpush() {
-        JPushInterface.setDebugMode(BuildConfig.DEBUG && Log.isLoggable("JPush", Log.DEBUG))
+        if (BuildConfig.DEBUG) {
+            JPushInterface.setDebugMode(Log.isLoggable("JPush", Log.DEBUG))
+            JPushInterface.setAlias(ctx, 0, "debug")
+        }
         JPushInterface.init(ctx)
     }
 
