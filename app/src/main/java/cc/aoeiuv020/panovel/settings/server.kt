@@ -10,9 +10,13 @@ object ServerSettings : Pref {
     override val name: String
         get() = "Server"
     /**
-     * 是否通知小说更新，
+     * 收到小说更新推送时是否弹出通知小说更新，
      */
     var notifyNovelUpdate: Boolean by Delegates.boolean(true)
+    /**
+     * 更新推送的通知只保留最后一个，
+     */
+    var singleNotification: Boolean by Delegates.boolean(true)
     /**
      * 是否询问服务器有无更新，
      * 并会刷新“上次刷新”为服务器上的时间，

@@ -100,6 +100,7 @@ class ExporterV2 : DefaultExporter() {
                 "enabled" -> editor.putBoolean(key, value.asBoolean)
                 "notifyNovelUpdate" -> editor.putBoolean(key, value.asBoolean)
                 "askUpdate" -> editor.putBoolean(key, value.asBoolean)
+                "singleNotification" -> editor.putBoolean(key, value.asBoolean)
                 "bottom" -> editor.putInt(key, value.asInt)
                 "left" -> editor.putInt(key, value.asInt)
                 "right" -> editor.putInt(key, value.asInt)

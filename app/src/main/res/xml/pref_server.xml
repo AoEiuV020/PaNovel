@@ -9,6 +9,12 @@
 
     <SwitchPreference
         android:defaultValue="true"
+        android:key="singleNotification"
+        android:summary="@string/single_notification_summary"
+        android:title="@string/single_notification" />
+
+    <SwitchPreference
+        android:defaultValue="true"
         android:key="askUpdate"
         android:summary="@string/ask_update_summary"
         android:title="@string/ask_update" />
