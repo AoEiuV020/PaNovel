@@ -9,6 +9,12 @@
 
     <SwitchPreference
         android:defaultValue="true"
+        android:key="notifyPinnedOnly"
+        android:summary="@string/notify_pinned_only_summary"
+        android:title="@string/notify_pinned_only" />
+
+    <SwitchPreference
+        android:defaultValue="true"
         android:key="singleNotification"
         android:summary="@string/single_notification_summary"
         android:title="@string/single_notification" />

@@ -14,6 +14,10 @@ object ServerSettings : Pref {
      */
     var notifyNovelUpdate: Boolean by Delegates.boolean(true)
     /**
+     * 更新通知只限置顶过的小说，
+     */
+    var notifyPinnedOnly: Boolean by Delegates.boolean(false)
+    /**
      * 更新推送的通知只保留最后一个，
      */
     var singleNotification: Boolean by Delegates.boolean(true)

@@ -186,5 +186,7 @@
     <string name="ask_update_summary">没有手动刷新时询问服务器是否有更新，并更新“上次刷新”为服务器上的时间，\n可以看情况减少手动刷新频率，但如果效果不好也可能因频繁询问服务器而多费流量，</string>
     <string name="single_notification">只保留一个通知</string>
     <string name="single_notification_summary">更新推送的通知只保留最后一个，</string>
+    <string name="notify_pinned_only">只通知置顶小说</string>
+    <string name="notify_pinned_only_summary">更新通知只限置顶过的小说，</string>
 
 </resources>

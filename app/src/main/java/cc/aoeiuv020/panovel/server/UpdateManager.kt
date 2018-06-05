@@ -44,6 +44,9 @@ object UpdateManager : AnkoLogger {
                 // 没有更新或者不通知更新就不继续，
                 return@doAsync
             }
+            if (ServerSettings.notifyPinnedOnly && localNovel.pinnedTime.notZero() == null) {
+                return@doAsync
+            }
             if (ServerSettings.singleNotification) {
                 val bitText = DataManager.hasUpdateNovelList()
                         .joinToString("\n") {
