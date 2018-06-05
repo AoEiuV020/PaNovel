@@ -23,9 +23,9 @@ class ApiManager(ctx: Context) {
     @Suppress("RemoveExplicitTypeArguments")
     val contexts: List<NovelContext> by lazy {
         listOf(
-                Piaotian(), Biquge(), Liudatxt(), Qidian(),
-                Sfacg(), Snwx(), Syxs(),
-                Yssm(), Qlwx(),
+                Piaotian(), Biquge(), Liudatxt(),
+                Qidian(), Sfacg(), Snwx(),
+                Syxs(), Yssm(), Qlwx(),
                 Byzw(), Fenghuaju(), Yllxs(),
                 Mianhuatang(), Gxwztv(), Ymoxuan(),
                 Qingkan(), Ggdown(), Biqugebook(),
