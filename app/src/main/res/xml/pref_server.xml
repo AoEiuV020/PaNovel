@@ -8,7 +8,7 @@
         android:title="@string/notify_novel_update" />
 
     <SwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="notifyPinnedOnly"
         android:summary="@string/notify_pinned_only_summary"
         android:title="@string/notify_pinned_only" />

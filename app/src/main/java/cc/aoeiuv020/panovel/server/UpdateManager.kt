@@ -44,8 +44,20 @@ object UpdateManager : AnkoLogger {
                 // 没有更新或者不通知更新就不继续，
                 return@doAsync
             }
+            debug {
+                "notifyPinnedOnly: ${ServerSettings.notifyPinnedOnly}"
+            }
+            debug {
+                "pinnedTime: ${localNovel.pinnedTime}"
+            }
+            debug {
+                "pinnedTime.notZero: ${localNovel.pinnedTime.notZero()}"
+            }
             if (ServerSettings.notifyPinnedOnly && localNovel.pinnedTime.notZero() == null) {
                 return@doAsync
+            }
+            debug {
+                "notify update: $localNovel"
             }
             if (ServerSettings.singleNotification) {
                 val bitText = DataManager.hasUpdateNovelList()
@@ -88,7 +100,7 @@ object UpdateManager : AnkoLogger {
         debug { "touch ：<${novel.run { "$site.$author.$name" }}>" }
         val service = novelService ?: return
         doAsync({ e ->
-            val message = "上传无更新失败,"
+            val message = "上传刷新结果失败,"
             Reporter.post(message, e)
             error(message, e)
         }) {
