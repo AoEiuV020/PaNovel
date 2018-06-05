@@ -10,8 +10,8 @@
         android:id="@+id/tvMarginName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxEms="4"
-        android:minEms="4"
+        android:gravity="start"
+        android:textSize="@dimen/reader_settings_text_size"
         android:singleLine="true"
         android:textColor="@android:color/primary_text_dark"
         tools:text="@string/left_spacing" />
@@ -20,6 +20,10 @@
         android:id="@+id/tvDecrease"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxEms="1"
+        android:minEms="1"
+        android:textSize="@dimen/reader_settings_text_size"
         android:text="@string/button_decrease"
         android:textColor="@android:color/primary_text_dark" />
 
@@ -33,7 +37,11 @@
 
     <TextView
         android:id="@+id/tvIncrease"
+        android:gravity="center"
         android:layout_width="wrap_content"
+        android:maxEms="1"
+        android:minEms="1"
+        android:textSize="@dimen/reader_settings_text_size"
         android:layout_height="wrap_content"
         android:text="@string/button_increase"
         android:textColor="@android:color/primary_text_dark" />
@@ -43,10 +51,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:maxEms="4"
-        android:minEms="4"
+        android:maxEms="3"
+        android:minEms="3"
         android:singleLine="true"
         android:textColor="@android:color/primary_text_dark"
-        tools:text="0dp" />
+        tools:text="0%" />
 
 </LinearLayout>

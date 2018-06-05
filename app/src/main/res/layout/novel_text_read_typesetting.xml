@@ -15,6 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
@@ -50,6 +51,7 @@
 
         <TextView
             android:layout_width="wrap_content"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_height="wrap_content"
             android:maxEms="4"
             android:minEms="4"
@@ -91,6 +93,7 @@
             android:id="@+id/tvTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_weight="1"
             android:singleLine="true"
             android:text="@string/time"
@@ -101,6 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="@dimen/reader_settings_text_size"
             android:singleLine="true"
             android:text="@string/battery"
             android:textColor="@android:color/primary_text_dark" />
@@ -108,6 +112,7 @@
         <TextView
             android:id="@+id/tvPagination"
             android:layout_width="match_parent"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
@@ -116,6 +121,7 @@
 
         <TextView
             android:id="@+id/tvBookName"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -126,6 +132,7 @@
         <TextView
             android:id="@+id/tvChapterName"
             android:layout_width="match_parent"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"

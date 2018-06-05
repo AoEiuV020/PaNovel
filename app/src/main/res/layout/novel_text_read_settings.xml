@@ -14,6 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
@@ -50,6 +51,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
@@ -87,6 +89,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
@@ -120,6 +123,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
@@ -152,6 +156,7 @@
         <TextView
             android:id="@+id/tvBrightness"
             android:layout_width="match_parent"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
@@ -161,6 +166,7 @@
         <TextView
             android:id="@+id/tvAnimation"
             android:layout_width="match_parent"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
@@ -177,6 +183,7 @@
         <TextView
             android:id="@+id/tvTypesetting"
             android:layout_width="match_parent"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
@@ -186,6 +193,7 @@
         <TextView
             android:id="@+id/tvFont"
             android:layout_width="match_parent"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
@@ -195,6 +203,7 @@
         <TextView
             android:id="@+id/tvBackgroundImage"
             android:layout_width="match_parent"
+            android:textSize="@dimen/reader_settings_text_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
