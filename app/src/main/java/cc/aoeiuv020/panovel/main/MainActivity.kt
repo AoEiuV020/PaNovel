@@ -36,7 +36,6 @@ import cc.aoeiuv020.panovel.migration.MigrationView
 import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
-import cc.aoeiuv020.panovel.server.UpdateManager
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.VersionName
@@ -282,9 +281,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
     override fun onDestroy() {
         ad_view.destroy()
-        if (isTaskRoot) {
-            UpdateManager.destroy(this)
-        }
         super.onDestroy()
     }
 

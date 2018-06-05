@@ -140,6 +140,7 @@ object UpdateManager : AnkoLogger {
 
     // 回收novelService以便下次重新获取，否则可能这个UpdateManager一直留在内存，唔，真的有必要么，
     // 不用了，
+    @Suppress("unused")
     fun destroy(context: Context) {
         debug { "destroy ${context.javaClass}" }
         novelService = null
