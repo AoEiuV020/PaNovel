@@ -40,17 +40,25 @@ object UpdateManager : AnkoLogger {
             requireNotNull(remoteNovel.detail)
             requireNotNull(remoteNovel.chaptersCount)
             val (localNovel, hasUpdate) = DataManager.receiveUpdate(remoteNovel)
-            if (hasUpdate) {
+            if (!hasUpdate || !ServerSettings.notifyNovelUpdate) {
+                // 没有更新或者不通知更新就不继续，
                 return@doAsync
             }
-            if (ServerSettings.notifyNovelUpdate) {
+            if (ServerSettings.singleNotification) {
+                val bitText = DataManager.hasUpdateNovelList()
+                        .joinToString("\n") {
+                            it.run { "$name: $lastChapterName" }
+                        }
                 uiThread {
-                    val id = if (ServerSettings.singleNotification) {
-                        2
-                    } else {
-                        localNovel.nId.toInt()
-                    }
-                    it.notify(id = id,
+                    it.notify(id = 2,
+                            text = localNovel.lastChapterName,
+                            title = it.getString(R.string.notify_has_update_title_placeholder, localNovel.name),
+                            bigText = bitText,
+                            time = localNovel.updateTime.notZero()?.time)
+                }
+            } else {
+                uiThread {
+                    it.notify(id = localNovel.nId.toInt(),
                             text = localNovel.lastChapterName,
                             title = it.getString(R.string.notify_has_update_title_placeholder, localNovel.name),
                             time = localNovel.updateTime.notZero()?.time)

@@ -423,4 +423,10 @@ object DataManager : AnkoLogger {
             removeNovelContextCookies(it.name)
         }
     }
+
+    /**
+     * 返回书架上有更新的小说列表，
+     * 按收到更新的时间倒序排列，
+     */
+    fun hasUpdateNovelList(): List<Novel> = app.hasUpdateNovelList()
 }

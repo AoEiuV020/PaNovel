@@ -61,4 +61,7 @@ abstract class NovelDao {
 
     @Query("update Novel set detail = :detail where id = :id")
     abstract fun updateDetail(id: Long, detail: String)
+
+    @Query("select * from Novel where bookshelf = 1 and receiveUpdateTime > readTime order by receiveUpdateTime desc")
+    abstract fun hasUpdateNovelList(): List<Novel>
 }
