@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.server.service.impl
 
 import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.base.jar.type
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.common.toJson
@@ -8,12 +10,14 @@ import cc.aoeiuv020.panovel.server.dal.model.MobRequest
 import cc.aoeiuv020.panovel.server.dal.model.MobResponse
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
-import org.jsoup.Connection
-import org.jsoup.Jsoup
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
-import java.util.concurrent.TimeUnit
+import java.lang.reflect.Type
 
 /**
  *
@@ -21,23 +25,32 @@ import java.util.concurrent.TimeUnit
  */
 class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService {
     private val logger: Logger = LoggerFactory.getLogger(NovelServiceImpl::class.java.simpleName)
+    private val client: OkHttpClient = OkHttpClient.Builder()
+            .build()
 
-    private inline fun <reified T> post(url: String, any: Any): T {
+    private inline fun <reified T> post(url: String, any: Any): T =
+            post(url, any, type<T>())
+
+    private fun <T> post(url: String, any: Any, type: Type): T {
         val mobRequest = MobRequest(any.toJson())
-        val response: MobResponse = Jsoup.connect(url)
-                .timeout(TimeUnit.SECONDS.toMillis(10).toInt())
-                .header("Content-type", "application/json")
-                .ignoreContentType(true)
-                .requestBody(mobRequest.toJson())
-                .method(Connection.Method.POST)
-                .execute()
-                .body()
+        val requestBody = RequestBody.create(
+                MediaType.parse("application/json"),
+                mobRequest.toJson()
+        )
+        val request = Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build()
+        val call = client.newCall(request)
+        // .string()会关闭body,
+        val response: MobResponse = call.execute().body().notNull().string().notNull()
+                .also { logger.debug { "response: $it" } }
                 .toBean()
         if (!response.isSuccess()) {
             // 只能说可能是上传的参数不对，
             throw IllegalStateException("请求失败，")
         }
-        return response.getRealData()
+        return response.getRealData(type)
     }
 
     override fun uploadUpdate(novel: Novel): Boolean {
