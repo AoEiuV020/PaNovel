@@ -34,12 +34,6 @@
 
     <SwitchPreference
         android:defaultValue="true"
-        android:key="notifyNovelUpdate"
-        android:summary="@string/notify_novel_update_summary"
-        android:title="@string/notify_novel_update" />
-
-    <SwitchPreference
-        android:defaultValue="true"
         android:enabled="false"
         android:key="adEnabled"
         android:title="@string/ad_enabled" />

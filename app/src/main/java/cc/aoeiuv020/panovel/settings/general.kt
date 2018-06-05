@@ -11,10 +11,6 @@ object GeneralSettings : Pref {
         get() = "General"
     var downloadThreadsLimit: Int by Delegates.int(4)
     /**
-     * 是否通知小说更新，
-     */
-    var notifyNovelUpdate: Boolean by Delegates.boolean(true)
-    /**
      * 点击下载时下载的章节数，
      * 0表示下载剩余全部，
      * -1表示每次询问，
