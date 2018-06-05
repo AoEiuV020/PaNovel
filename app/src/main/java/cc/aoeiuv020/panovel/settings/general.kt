@@ -9,6 +9,13 @@ import cc.aoeiuv020.panovel.util.Pref
 object GeneralSettings : Pref {
     override val name: String
         get() = "General"
+    /**
+     * 搜索线程数，
+     */
+    var searchThreadsLimit: Int by Delegates.int(4)
+    /**
+     * 下载线程数，
+     */
     var downloadThreadsLimit: Int by Delegates.int(4)
     /**
      * 点击下载时下载的章节数，

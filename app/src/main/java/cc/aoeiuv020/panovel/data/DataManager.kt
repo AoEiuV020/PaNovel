@@ -9,7 +9,6 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
-import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -193,22 +192,6 @@ object DataManager : AnkoLogger {
                     site.logo = context.site.logo
                     app.updateSiteInfo(site)
                 }
-            }
-        }
-    }
-
-    /**
-     * @param author 作者名为空就不从数据库查询，
-     * @param block 回调，对每个网站搜索结果进行操作，
-     */
-    fun search(name: String, author: String?, block: (List<Novel>) -> Unit) {
-        listSites().filter(Site::enabled).forEach {
-            try {
-                search(it.name, name, author).also(block)
-            } catch (e: Exception) {
-                val message = "搜索<${it.name}, $name, $author>失败，"
-                Reporter.post(message, e)
-                // 单个网站搜索失败不中断，
             }
         }
     }

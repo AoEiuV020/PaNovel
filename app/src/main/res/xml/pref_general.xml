@@ -13,6 +13,16 @@
 
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
+        android:defaultValue="4"
+        android:inputType="number"
+        android:key="searchThreadsLimit"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/search_thread_count" />
+
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
         android:inputType="number"
         android:defaultValue="4"
         android:key="downloadThreadsLimit"
