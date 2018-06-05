@@ -155,6 +155,11 @@ class Refresher(
             // 避免频繁刷新，
             return
         }
+        if (config.disableSites.contains(novel.site)) {
+            // 有些网站可以选择跳过，可能连不上之类的，超时一直等就不爽了，
+            logger.info { "skip <${novel.run { "$site.$author.$name.$detail" }}>" }
+            return
+        }
         try {
             val context = getNovelContextByName(novel.site)
             val chapters = context.getNovelChaptersAsc(novel.detail)

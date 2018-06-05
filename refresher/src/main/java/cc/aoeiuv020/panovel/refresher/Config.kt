@@ -27,5 +27,9 @@ data class Config(
         /**
          * 并发请求线程数，
          */
-        val threads: Int = 10
+        val threads: Int = 10,
+        /**
+         * 禁用的网站名，
+         */
+        val disableSites: Set<String> = setOf()
 )
