@@ -102,7 +102,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
                           firstLine: String,
                           lastLine: String,
                           size: Int, count: Int = 3): List<String> {
-        val list = context.getNovelContent(extra)
+        val list = content(extra)
         println(list.size)
         list.take(count).forEach {
             println(it)
@@ -115,5 +115,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         assertEquals(size, list.size)
         return list
     }
+
+    protected fun content(extra: String) = context.getNovelContent(extra)
 
 }

@@ -69,13 +69,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
                     if (node is TextNode) {
                         ownTextList(node).toCollection(list)
                     } else if (node is Element && node.tagName() == "img") {
-                        // 延迟加载可能把地址放在data-original,
-                        (node.absDataOriginal().takeIf(String::isNotBlank)
-                                ?: node.absSrc().takeIf(String::isNotBlank))
-                                ?.let {
-                                    list.add("![img]($it)")
-                                }
-
+                        imgText(node)?.let { list.add(it) }
                     }
                 }
 
@@ -84,12 +78,39 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
             return list.toList()
         }
 
+        fun imgText(img: Element): String? {
+            // 延迟加载可能把地址放在data-original,
+            return (img.absDataOriginal().takeIf(String::isNotBlank)
+                    ?: img.absSrc().takeIf(String::isNotBlank))
+                    ?.let {
+                        "![img]($it)"
+                    }
+        }
+
         /**
          * 并不获取子元素里的文字，
          * 支持全角空格，
          */
         fun ownTextList(element: Element): List<String> =
                 element.textNodes().flatMap { ownTextList(it) }
+
+
+        /**
+         * 并不获取子元素里的文字，
+         * 支持全角空格，
+         * 同时添加了图片，markdown格式，
+         */
+        fun ownTextListWithImage(element: Element): List<String> =
+                element.childNodes().flatMap {
+                    if (it is TextNode) {
+                        ownTextList(it)
+                    } else if (it is Element && it.tagName() == "img") {
+                        imgText(it)?.let { listOf(it) }
+                                ?: listOf()
+                    } else {
+                        listOf()
+                    }
+                }
 
         /**
          * 切开所有空白符，
@@ -108,6 +129,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
          * 地址仅路径，斜杆/开头，
          */
         fun Element.path(): String = path(absHref())
+
         fun Element.title(): String = attr("title")
         fun Element.ownerPath(): String = URL(ownerDocument().location()).path
     }
@@ -147,6 +169,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
     protected fun Element.textList(): List<String> = textList(this)
     protected fun Elements.ownTextList(): List<String> = flatMap { it.ownTextList() }
     protected fun Element.ownTextList(): List<String> = ownTextList(this)
+    protected fun Element.ownTextListWithImage(): List<String> = ownTextListWithImage(this)
     protected fun TextNode.ownTextList(): List<String> = ownTextList(this)
     protected fun TextNode.ownLinesString(): String = ownTextList().joinToString("\n")
     protected fun Node.text(): String = (this as TextNode).text()
