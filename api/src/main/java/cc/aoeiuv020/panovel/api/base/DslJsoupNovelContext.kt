@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api.base
 
+import cc.aoeiuv020.base.jar.matches
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.*
@@ -7,6 +8,7 @@ import okhttp3.*
 import okhttp3.internal.http.HttpMethod
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
@@ -67,6 +69,18 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     override var charset: String? = null
     override var enabled: Boolean = true
+
+    /*
+    *************** host ***************
+     */
+    val hostList: MutableList<String> = mutableListOf()
+
+    override fun check(url: String): Boolean {
+        val domain = secondLevelDomain(URL(url).host)
+        return super.check(url) || hostList.any {
+            secondLevelDomain(it) == domain
+        }
+    }
 
     /*
     *************** url ***************
@@ -225,6 +239,16 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _NovelItemListParser(root: Element)
         : _Parser<List<NovelItem>>(root) {
         lateinit var novelItemList: List<NovelItem>
+        /**
+         * 有个模板的搜索是可能跳到详情页，就只有一个搜索结果，
+         * @param detailRegex 匹配详情页的正则，
+         */
+        fun single(detailRegex: String, init: _NovelItemParser.() -> Unit) {
+            if (root.ownerPath().matches(detailRegex)) {
+                single(init)
+            }
+        }
+
         fun single(init: _NovelItemParser.() -> Unit) {
             novelItemList = listOf(
                     _NovelItemParser(root).run {
@@ -237,6 +261,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
 
         fun itemsIgnoreFailed(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit) {
+            if (::novelItemList.isInitialized) {
+                // 调用single方法生效了，也就是跳到详情页了，
+                return
+            }
             novelItemList = parent.requireElements(query).mapNotNull {
                 try {
                     _NovelItemParser(it).run {
@@ -250,6 +278,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
 
         fun items(query: String, parent: Element = root, init: _NovelItemParser.() -> Unit) {
+            if (::novelItemList.isInitialized) {
+                // 调用single方法生效了，也就是跳到详情页了，
+                return
+            }
             novelItemList = parent.requireElements(query).map {
                 _NovelItemParser(it).run {
                     init()

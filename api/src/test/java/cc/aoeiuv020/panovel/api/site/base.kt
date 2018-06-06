@@ -12,6 +12,7 @@ import kotlin.reflect.KClass
 /**
  * Created by AoEiuV020 on 2018.05.21-19:15:56.
  */
+// 传入class为了在初始化logger前配置log级别，
 abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     init {
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
@@ -102,7 +103,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
                           firstLine: String,
                           lastLine: String,
                           size: Int, count: Int = 3): List<String> {
-        val list = context.getNovelContent(extra)
+        val list = content(extra)
         println(list.size)
         list.take(count).forEach {
             println(it)
@@ -115,5 +116,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         assertEquals(size, list.size)
         return list
     }
+
+    protected fun content(extra: String) = context.getNovelContent(extra)
 
 }

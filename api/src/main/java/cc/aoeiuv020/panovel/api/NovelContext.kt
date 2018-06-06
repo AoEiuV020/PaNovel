@@ -135,7 +135,7 @@ abstract class NovelContext {
         return listOf(domain)
     }
 
-    private fun secondLevelDomain(host: String): String {
+    protected fun secondLevelDomain(host: String): String {
         val index1 = host.lastIndexOf('.')
         val index2 = host.lastIndexOf('.', index1 - 1)
         return host.substring(index2)
