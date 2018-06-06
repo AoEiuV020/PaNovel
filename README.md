@@ -4,7 +4,7 @@
 [![img](https://img.shields.io/github/release/AoEiuV020/PaNovel.svg)](https://github.com/AoEiuV020/PaNovel/releases)
 
 ## 应用简介
-这是有理想的小说神器，目前支持<31>个网站，
+这是有理想的小说神器，目前支持<32>个网站，
 
 【库】  
 kotlin + mvp + room

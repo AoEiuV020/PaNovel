@@ -12,6 +12,7 @@ import org.jsoup.select.Elements
 import org.jsoup.select.NodeTraversor
 import org.jsoup.select.NodeVisitor
 import java.io.InputStream
+import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 
@@ -107,8 +108,8 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
          * 地址仅路径，斜杆/开头，
          */
         fun Element.path(): String = path(absHref())
-
         fun Element.title(): String = attr("title")
+        fun Element.ownerPath(): String = URL(ownerDocument().location()).path
     }
 
     /**
