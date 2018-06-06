@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
-import cc.aoeiuv020.panovel.api.firstIntPattern
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 
 /**
@@ -41,7 +40,8 @@ class Bqg5200 : DslJsoupNovelContext() {init {
         }
     }
     // https://www.bqg5200.com/book/2889/
-    bookIdRegex = firstIntPattern
+    bookIdRegex = "/(book|xiaoshuo/\\d+)/(\\d+)"
+    bookIdIndex = 1
     detailPageTemplate = "/book/%s/"
     detail {
         document {

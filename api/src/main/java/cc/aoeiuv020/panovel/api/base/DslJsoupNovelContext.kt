@@ -8,6 +8,7 @@ import okhttp3.*
 import okhttp3.internal.http.HttpMethod
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
@@ -68,6 +69,18 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     override var charset: String? = null
     override var enabled: Boolean = true
+
+    /*
+    *************** host ***************
+     */
+    val hostList: MutableList<String> = mutableListOf()
+
+    override fun check(url: String): Boolean {
+        val domain = secondLevelDomain(URL(url).host)
+        return super.check(url) || hostList.any {
+            secondLevelDomain(it) == domain
+        }
+    }
 
     /*
     *************** url ***************
@@ -235,6 +248,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 single(init)
             }
         }
+
         fun single(init: _NovelItemParser.() -> Unit) {
             novelItemList = listOf(
                     _NovelItemParser(root).run {
