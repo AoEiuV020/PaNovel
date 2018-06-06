@@ -12,6 +12,7 @@ import kotlin.reflect.KClass
 /**
  * Created by AoEiuV020 on 2018.05.21-19:15:56.
  */
+// 传入class为了在初始化logger前配置log级别，
 abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     init {
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
