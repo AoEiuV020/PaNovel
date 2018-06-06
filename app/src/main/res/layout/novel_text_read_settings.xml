@@ -14,7 +14,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
@@ -51,7 +50,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
@@ -89,7 +87,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
@@ -123,7 +120,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/reader_settings_text_size"
             android:maxEms="4"
             android:minEms="4"
             android:singleLine="true"
