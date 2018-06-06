@@ -129,6 +129,6 @@ class AppDatabaseManager(context: Context) {
     fun cleanBookList() = db.bookListDao().cleanBookList()
 
     fun cleanHistory() = db.novelDao().cleanHistory()
-    fun updateSiteInfo(site: Site) = db.siteDao().updateSiteInfo(site)
+    fun updateSiteInfo(site: Site) = db.siteDao().updateSiteInfo(site.name, site.baseUrl, site.logo)
     fun hasUpdateNovelList(): List<Novel> = db.novelDao().hasUpdateNovelList()
 }

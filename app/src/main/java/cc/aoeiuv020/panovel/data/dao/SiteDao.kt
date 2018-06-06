@@ -3,7 +3,6 @@ package cc.aoeiuv020.panovel.data.dao
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.Update
 import cc.aoeiuv020.panovel.data.entity.Site
 
 /**
@@ -29,6 +28,6 @@ abstract class SiteDao {
     @Query("select count(*) from Site where name = :name")
     abstract fun checkSiteSupport(name: String): Boolean
 
-    @Update
-    abstract fun updateSiteInfo(site: Site)
+    @Query("update Site set baseUrl = :baseUrl, logo = :logo where name = :name")
+    abstract fun updateSiteInfo(name: String, baseUrl: String, logo: String)
 }
