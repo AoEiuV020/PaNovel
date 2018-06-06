@@ -9,8 +9,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
  * Created by AoEiuV020 on 2017.10.08-21:03:33.
  */
 class Biquge : DslJsoupNovelContext() {init {
-    // 网络连接超时，默认不启用，
-    enabled = false
+    enabled = true
     site {
         name = "笔趣阁"
         baseUrl = "https://www.biqubao.com"

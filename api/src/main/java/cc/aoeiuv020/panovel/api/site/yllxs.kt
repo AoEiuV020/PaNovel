@@ -7,6 +7,8 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  * Created by AoEiuV020 on 2018.06.02-20:54:12.
  */
 class Yllxs : DslJsoupNovelContext() {init {
+    // 网络连接超时，
+    enabled = false
     site {
         name = "166小说"
         baseUrl = "http://www.166xs.com"
