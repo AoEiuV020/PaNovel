@@ -77,11 +77,12 @@ class Aileleba : DslJsoupNovelContext() {init {
     content {
         document {
             items("#content")
-        }.dropWhile {
-            it == "百度搜索乐安宣書網小说稳定更新最快"
         }.toMutableList().also { list ->
-            list.lastOrNull()?.removeSuffix("百度搜索乐安宣書網(乐安宣书网http://www.aileleba.com)")
-                    ?.let {
+            list.firstOrNull()?.removePrefix("百度搜索乐安宣書網小说稳定更新最快")?.trim()?.let {
+                list[0] = it
+
+            }
+            list.lastOrNull()?.removeSuffix("百度搜索乐安宣書網(乐安宣书网http://www.aileleba.com)")?.let {
                         list[list.lastIndex] = it
                     }
         }

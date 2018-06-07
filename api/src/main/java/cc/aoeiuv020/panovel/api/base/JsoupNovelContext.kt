@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api.base
 
+import cc.aoeiuv020.base.jar.compileRegex
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.path
 import okhttp3.Call
@@ -45,17 +46,16 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
          * javaWhitespace能匹配全角空格，
          * javaSpaceChar能匹配utf-8扩充的半角空格，
          */
-        private val whitespaceRegex = Regex("[\\p{javaWhitespace}\\p{javaSpaceChar}]+")
+        private val whitespaceRegex = compileRegex("[\\p{javaWhitespace}\\p{javaSpaceChar}]+")
+        private val newLineRegex = compileRegex("[\n\r]+")
 
         /**
          * 得到列表中每个元素的文字，包括子元素，
          * 所有文字部分按空白字符分割，这是最常有的情况，
          */
-        fun textList(elements: Elements): List<String> = elements.flatMap { textList(it) }
+        fun textListSplitWhitespace(elements: Elements): List<String> = elements.flatMap { textListSplitWhitespace(it) }
 
         /**
-         * 用所有空格或空白符分割元素里的文字，
-         * 支持全角空格，
          * 同时添加了图片，markdown格式，
          */
         fun textList(element: Element): List<String> {
@@ -68,6 +68,31 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
                 override fun head(node: Node?, depth: Int) {
                     if (node is TextNode) {
                         ownTextList(node).toCollection(list)
+                    } else if (node is Element && node.tagName() == "img") {
+                        imgText(node)?.let { list.add(it) }
+                    }
+                }
+
+            }).traverse(element)
+            // 转成RandomAccess的ArrayList,
+            return list.toList()
+        }
+
+        /**
+         * 用所有空格或空白符分割元素里的文字，
+         * 支持全角空格，
+         * 同时添加了图片，markdown格式，
+         */
+        fun textListSplitWhitespace(element: Element): List<String> {
+            // 用LinkedList方便频繁添加，
+            val list = LinkedList<String>()
+            NodeTraversor(object : NodeVisitor {
+                override fun tail(node: Node?, depth: Int) {
+                }
+
+                override fun head(node: Node?, depth: Int) {
+                    if (node is TextNode) {
+                        ownTextListSplitWhitespace(node).toCollection(list)
                     } else if (node is Element && node.tagName() == "img") {
                         imgText(node)?.let { list.add(it) }
                     }
@@ -91,8 +116,8 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
          * 并不获取子元素里的文字，
          * 支持全角空格，
          */
-        fun ownTextList(element: Element): List<String> =
-                element.textNodes().flatMap { ownTextList(it) }
+        fun ownTextListSplitWhitespace(element: Element): List<String> =
+                element.textNodes().flatMap { ownTextListSplitWhitespace(it) }
 
 
         /**
@@ -103,7 +128,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         fun ownTextListWithImage(element: Element): List<String> =
                 element.childNodes().flatMap {
                     if (it is TextNode) {
-                        ownTextList(it)
+                        ownTextListSplitWhitespace(it)
                     } else if (it is Element && it.tagName() == "img") {
                         imgText(it)?.let { listOf(it) }
                                 ?: listOf()
@@ -113,12 +138,23 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
                 }
 
         /**
-         * 切开所有空白符，
+         * 切开所有换行符，
          */
         fun ownTextList(node: TextNode): List<String> =
+        // 用wholeText才能拿到换行符，
+                node.wholeText.trim().takeIf(String::isNotEmpty)?.splitNewLine()?.filter(String::isNotBlank)
+                        ?: listOf()
+
+        /**
+         * 切开所有空白符，
+         */
+        fun ownTextListSplitWhitespace(node: TextNode): List<String> =
         // trim里的判断和这个whitespaceRegex是一样的，
         // trim后可能得到空字符串，判断一下，
-                node.wholeText.trim().takeIf(String::isNotEmpty)?.split(whitespaceRegex) ?: listOf()
+                node.wholeText.trim().takeIf(String::isNotEmpty)?.splitWhitespace() ?: listOf()
+
+        fun String.splitWhitespace(): List<String> = this.split(whitespaceRegex)
+        fun String.splitNewLine(): List<String> = this.split(newLineRegex)
 
         fun Element.src(): String = attr("src")
         fun Element.absSrc(): String = absUrl("src")
@@ -132,6 +168,8 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
 
         fun Element.title(): String = attr("title")
         fun Element.ownerPath(): String = URL(ownerDocument().location()).path
+        // kotlin的trim有包括utf8的特殊的空格，和java的trim不重复，
+        fun TextNode.textNotBlank(): String? = this.text().trim().takeIf(String::isNotBlank)
     }
 
     /**
@@ -165,12 +203,13 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
 
     protected open fun getNextPage(root: Document): String? = null
 
-    protected fun Elements.textList(): List<String> = flatMap { it.textList() }
+    protected fun Elements.textListSplitWhitespace(): List<String> = flatMap { it.textListSplitWhitespace() }
+    protected fun Element.textListSplitWhitespace(): List<String> = textListSplitWhitespace(this)
     protected fun Element.textList(): List<String> = textList(this)
     protected fun Elements.ownTextList(): List<String> = flatMap { it.ownTextList() }
-    protected fun Element.ownTextList(): List<String> = ownTextList(this)
+    protected fun Element.ownTextList(): List<String> = ownTextListSplitWhitespace(this)
     protected fun Element.ownTextListWithImage(): List<String> = ownTextListWithImage(this)
-    protected fun TextNode.ownTextList(): List<String> = ownTextList(this)
+    protected fun TextNode.ownTextList(): List<String> = ownTextListSplitWhitespace(this)
     protected fun TextNode.ownLinesString(): String = ownTextList().joinToString("\n")
     protected fun Node.text(): String = (this as TextNode).text()
 

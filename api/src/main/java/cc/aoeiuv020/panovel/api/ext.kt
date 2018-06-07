@@ -50,7 +50,9 @@ fun List<NovelChapter>.reverseRemoveDuplication(): List<NovelChapter> {
     val reversedList = this.asReversed()
     var index = 0
     return this.dropWhile {
-        it == reversedList[index].also {
+        val asc = it
+        val desc = reversedList[index]
+        (asc.name == desc.name && asc.extra == desc.extra).also {
             ++index
         }
     }

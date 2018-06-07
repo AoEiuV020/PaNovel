@@ -47,6 +47,7 @@ class ExporterV2 : DefaultExporter() {
                 "Reader_PaginationMargins" -> importPref(ReaderSettings.paginationMargins, file)
                 "Reader_TimeMargins" -> importPref(ReaderSettings.timeMargins, file)
                 "backgroundImage" -> 1.also { ReaderSettings.backgroundImage = Uri.fromFile(file) }
+                "lastBackgroundImage" -> 1.also { ReaderSettings.lastBackgroundImage = Uri.fromFile(file) }
                 "font" -> 1.also { ReaderSettings.font = Uri.fromFile(file) }
                 else -> 0
             }
@@ -83,6 +84,7 @@ class ExporterV2 : DefaultExporter() {
                 "brightness" -> editor.putInt(key, value.asInt)
                 "autoRefreshInterval" -> editor.putInt(key, value.asInt)
                 "backgroundColor" -> editor.putInt(key, value.asInt)
+                "lastBackgroundColor" -> editor.putInt(key, value.asInt)
                 "chapterColorCached" -> editor.putInt(key, value.asInt)
                 "chapterColorDefault" -> editor.putInt(key, value.asInt)
                 "chapterColorReadAt" -> editor.putInt(key, value.asInt)
@@ -96,6 +98,7 @@ class ExporterV2 : DefaultExporter() {
                 "messageSize" -> editor.putInt(key, value.asInt)
                 "paragraphSpacing" -> editor.putInt(key, value.asInt)
                 "textColor" -> editor.putInt(key, value.asInt)
+                "lastTextColor" -> editor.putInt(key, value.asInt)
                 "textSize" -> editor.putInt(key, value.asInt)
                 "dateFormat" -> editor.putString(key, value.asString)
                 "enabled" -> editor.putBoolean(key, value.asBoolean)
@@ -182,6 +185,17 @@ class ExporterV2 : DefaultExporter() {
         if (backgroundImage != null) {
             folder.resolve("backgroundImage").outputStream().use { output ->
                 App.ctx.contentResolver.openInputStream(backgroundImage).use { input ->
+                    input.copyTo(output)
+                }
+                output.flush()
+            }
+            count++
+        }
+        // 导出前一次设置的背景图片，
+        val lastBackgroundImage = ReaderSettings.lastBackgroundImage
+        if (lastBackgroundImage != null) {
+            folder.resolve("lastBackgroundImage").outputStream().use { output ->
+                App.ctx.contentResolver.openInputStream(lastBackgroundImage).use { input ->
                     input.copyTo(output)
                 }
                 output.flush()

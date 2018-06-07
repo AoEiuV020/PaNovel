@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 
 /**
  * Created by AoEiuV020 on 2018.06.02-20:00:14.
@@ -49,7 +50,7 @@ class Fenghuaju : DslJsoupNovelContext() {init {
         document {
             items("#list > dl > dd > a")
             lastUpdate("#info > p:nth-child(4)", format = "yyyy/MM/dd HH:mm:ss", block = pickString("最后更新：(.*)"))
-        }
+        }.reverseRemoveDuplication()
     }
     bookIdWithChapterIdRegex = "/(\\d+_\\d+/\\d+)"
     contentPageTemplate = "/%s.html"

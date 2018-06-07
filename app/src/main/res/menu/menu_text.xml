@@ -13,4 +13,10 @@
         android:title="@string/search"
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/detail"
+        android:icon="@drawable/ic_info"
+        android:title="@string/detail"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
 </menu>

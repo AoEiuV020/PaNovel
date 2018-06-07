@@ -5,4 +5,16 @@
     <color name="colorAccent">#FF4081</color>
     <color name="black_overlay">#66000000</color>
     <color name="colorFavorite">#f00</color>
+
+    <color name="defaultBackgroundColor1">#D6D2D6</color>
+    <color name="defaultBackgroundColor2">#191B19</color>
+    <color name="defaultBackgroundColor3">#C6E0B1</color>
+    <color name="defaultBackgroundColor4">#F8C9C9</color>
+    <color name="defaultBackgroundColor5">#DFC798</color>
+
+    <color name="defaultTextColor1">#000000</color>
+    <color name="defaultTextColor2">#737273</color>
+    <color name="defaultTextColor3">#0000ff</color>
+    <color name="defaultTextColor4">#ff0000</color>
+    <color name="defaultTextColor5">#00ff00</color>
 </resources>

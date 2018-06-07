@@ -80,6 +80,7 @@ object Delegates {
 /**
  * 文件相关的用这个，
  * Uri可以从文件得到，也可以打开写入文件，
+ * ${ctx.cacheDir}/UriDelegate/${pref.name}/${key ?: property.name}
  */
 class UriDelegate(
         private val key: kotlin.String? = null

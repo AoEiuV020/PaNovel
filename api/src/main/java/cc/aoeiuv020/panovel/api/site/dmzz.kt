@@ -88,7 +88,7 @@ class Dmzz : JsoupNovelContext() {
     }
 
     override fun getNovelText(root: Document): List<String> {
-        val textList = root.requireElement(query = "head > script:nth-child(10)", name = TAG_CONTENT) {
+        val textListSplitWhitespace = root.requireElement(query = "head > script:nth-child(10)", name = TAG_CONTENT) {
             val (json) = it.html().pick("var g_chapter_pages_url = (\\[.*\\]);")
             val urlList: List<String> = Gson().fromJson(json, object : TypeToken<List<String>>() {}.type)
             urlList.map {
@@ -102,13 +102,13 @@ class Dmzz : JsoupNovelContext() {
                         .flatMap {
                             // 有的只有一个p，
                             // http://q.dmzj.com/2013/7335/54663.shtml
-                            it.textList()
+                            it.textListSplitWhitespace()
                         }
             }.reduce { acc, list ->
                 acc + list
             }
         }
-        return textList
+        return textListSplitWhitespace
     }
 }
 */

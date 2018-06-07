@@ -209,19 +209,10 @@ object DataManager : AnkoLogger {
         }
         val context = api.getNovelContextByName(site)
         val resultList = api.search(context, name)
-        val novelList = app.db.runInTransaction<List<Novel>> {
+        return app.db.runInTransaction<List<Novel>> {
             resultList.map {
                 // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
                 app.queryOrNewNovel(NovelMinimal(it))
-            }
-        }
-        return novelList.filter {
-            // 过滤，author为空表示模糊搜索，只要小说名包含，
-            // author不为空表示精确搜索，要小说名和作者名都匹配，
-            if (author == null) {
-                it.name.contains(name)
-            } else {
-                it.name == name && it.author == author
             }
         }
     }
