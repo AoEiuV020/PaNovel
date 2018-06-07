@@ -77,7 +77,7 @@
 //
 //    @Test
 //    fun getNovelContent() {
-//        context.getNovelContent("http://q.dmzj.com/2137/8856/78730.shtml").textList.let {
+//        context.getNovelContent("http://q.dmzj.com/2137/8856/78730.shtml").textListSplitWhitespace.let {
 //            assertEquals("「等、等很久了吗？」", it.first())
 //            assertEquals("——我们头顶上那片照耀着北方大陆的璀璨星空，今天异常闪耀。", it.last())
 //            assertEquals(629, it.size)

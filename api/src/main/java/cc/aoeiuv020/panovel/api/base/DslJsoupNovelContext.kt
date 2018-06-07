@@ -382,7 +382,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         fun introduction(
                 query: String,
                 parent: Element = root,
-                block: (Element) -> String = { it.textList().joinToString("\n") }
+                block: (Element) -> String = { it.textListSplitWhitespace().joinToString("\n") }
         ) {
             introduction = parent.getElement(query = query, block = block)
         }

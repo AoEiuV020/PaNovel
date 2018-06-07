@@ -35,9 +35,9 @@ class N360dxsTest : BaseNovelContextText(N360dxs::class) {
     @Test
     fun content() {
         content("http://jiaochuanwenku.360dxs.com/chapter_86695.html",
-                "网译版",
+                "网译版 转自 百度贴吧",
                 "——结果面具用肥皂抹了一下之后，就拿下来了。",
-                44)
+                42)
         content("http://famitongwenku.360dxs.com/chapter_89626.html",
                 "![img](http://famitongwenku.360dxs.com/static/books/chapter/1592/89626/106143.jpg)",
                 "![img](http://famitongwenku.360dxs.com/static/books/chapter/1592/89626/106155.jpg)",

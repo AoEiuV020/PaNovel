@@ -50,7 +50,7 @@ class Zaidudu : DslJsoupNovelContext() {init {
             update("#post-mate > li:nth-child(3)", format = "更新时间：yyyy-MM-dd")
             introduction("#articledesc") {
                 // 不是每本书都有，大概是互相抄出现的，
-                it.textList().dropLastWhile {
+                it.textListSplitWhitespace().dropLastWhile {
                     it.startsWith("各位书友要是觉得《${novel?.name}》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！")
                 }
                         .joinToString("\n")

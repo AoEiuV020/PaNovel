@@ -25,7 +25,7 @@ class JsoupNovelContextTest {
     }
 
     private fun Elements.testList(): List<String> = flatMap {
-        JsoupNovelContext.textList(it)
+        JsoupNovelContext.textListSplitWhitespace(it)
     }
 
     @Test

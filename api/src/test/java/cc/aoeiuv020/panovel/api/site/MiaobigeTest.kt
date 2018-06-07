@@ -1,10 +1,9 @@
 package cc.aoeiuv020.panovel.api.site
 
-import org.junit.Test
-
 /**
  * Created by AoEiuV020 on 2018.06.05-19:25:41.
  */
+/*
 class MiaobigeTest : BaseNovelContextText(Miaobige::class) {
     @Test
     fun search() {
@@ -49,3 +48,4 @@ class MiaobigeTest : BaseNovelContextText(Miaobige::class) {
     }
 
 }
+*/

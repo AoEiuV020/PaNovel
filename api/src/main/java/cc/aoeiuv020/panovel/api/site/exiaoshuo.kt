@@ -55,7 +55,7 @@ class Exiaoshuo : DslJsoupNovelContext() {init {
             image(".con_limg > img:nth-child(1)")
             update(".green", format = "yyyy-MM-dd")
             introduction(".r_cons > p:nth-child(1)") {
-                it.textList().joinToString("\n") {
+                it.textListSplitWhitespace().joinToString("\n") {
                     it.removeSuffix("...[详细介绍]")
                 }
             }
