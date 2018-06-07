@@ -23,9 +23,9 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
         requestNovel()
     }
 
-    fun refreshChapterList() {
+    fun refreshChapterList(novel: Novel) {
         refresh = true
-        requestNovel()
+        requestChapters(novel)
     }
 
     private fun requestNovel() {
@@ -135,7 +135,12 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                 view?.showError(message, e)
             }
         }, ioExecutorService) {
-            val list = DataManager.requestChapters(novel)
+            val list = if (refresh) {
+                refresh = false
+                DataManager.refreshChapters(novel)
+            } else {
+                DataManager.requestChapters(novel)
+            }
             uiThread {
                 view?.showChaptersAsc(list)
             }

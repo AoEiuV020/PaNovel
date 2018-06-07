@@ -455,7 +455,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             // 以防万一index再被使用，不知道是否必要，
             index = null
             // 支持跳到最后一章，
-            val chapterIndex = if (it == -1) {
+            val chapterIndex = if (it < 0) {
                 chaptersAsc.lastIndex
             } else {
                 it
@@ -465,15 +465,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             // 章节内进度改成本章开头，
             novel.readAtTextIndex = 0
         }
-        if (novel.readAtChapterIndex > chaptersAsc.lastIndex) {
+        if (novel.readAtChapterIndex > chaptersAsc.lastIndex
+                || novel.readAtChapterIndex < 0) {
             // 以防万一，比如更新后章节反而减少了，
             // 总觉得还有其他可能，但是找不到，
-            novel.readAtTextIndex = chaptersAsc.lastIndex
-        }
-        if (novel.readAtChapterIndex < 0) {
-            // 以防万一，判断不嫌大多，
             // 主要是太乱了，找不到到底什么情况会出现-1,
-            novel.readAtChapterIndex = chaptersAsc.lastIndex
+            novel.readAt(chaptersAsc.lastIndex, chaptersAsc)
         }
         onChapterSelected(novel.readAtChapterIndex)
         progressDialog.dismiss()
@@ -487,6 +484,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }) {
             val chapterList = chaptersAsc.map { it.name }
             uiThread {
+                debug {
+                    "load status: <${novel.run { "$readAtChapterIndex.$readAtChapterName/$readAtTextIndex" }}"
+                }
                 reader.chapterList = chapterList
                 reader.currentChapter = novel.readAtChapterIndex
                 reader.textProgress = novel.readAtTextIndex
@@ -509,9 +509,22 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun refreshChapterList() {
         loading(progressDialog, R.string.novel_chapters)
+        debug {
+            "refreshChapterList"
+        }
+        if (_novel == null) {
+            // 以防万一，太乱了，
+            return
+        }
         // 保存一下的进度，
-        reader.textProgress.let { novel.readAtTextIndex = it }
-        presenter.refreshChapterList()
+        if (::reader.isInitialized) {
+            novel.readAt(reader.currentChapter, chaptersAsc)
+            novel.readAtTextIndex = reader.textProgress
+            debug {
+                "save status: <${novel.run { "$readAtChapterIndex.$readAtChapterName/$readAtTextIndex" }}"
+            }
+        }
+        presenter.refreshChapterList(novel)
     }
 
     fun detail() {
