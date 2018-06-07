@@ -9,7 +9,6 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
  * Created by AoEiuV020 on 2017.10.08-21:03:33.
  */
 class Biquge : DslJsoupNovelContext() {init {
-    enabled = true
     site {
         name = "笔趣阁"
         baseUrl = "https://www.biqubao.com"
@@ -43,9 +42,6 @@ class Biquge : DslJsoupNovelContext() {init {
     }
     chapters {
         document {
-            /*
-            <a href="/book/1196/443990.html">第一章 觉醒日</a>
-             */
             items("#list > dl > dd > a")
             lastUpdate("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
         }
