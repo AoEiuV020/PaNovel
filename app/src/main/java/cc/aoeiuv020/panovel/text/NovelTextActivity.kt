@@ -376,6 +376,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     override fun onDestroy() {
         // 删除循环自动保存阅读自动的回调，
         handler.removeCallbacks(autoSaveReadStatusRunnable)
+        // 删除可能存在的循环通知下载状态的回调，
+        handler.removeCallbacks(downloadingRunnable)
         if (::presenter.isInitialized) {
             presenter.detach()
         }
