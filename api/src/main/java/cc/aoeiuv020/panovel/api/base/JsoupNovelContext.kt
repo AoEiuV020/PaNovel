@@ -118,7 +118,9 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         fun ownTextList(node: TextNode): List<String> =
         // trim里的判断和这个whitespaceRegex是一样的，
         // trim后可能得到空字符串，判断一下，
-                node.wholeText.trim().takeIf(String::isNotEmpty)?.split(whitespaceRegex) ?: listOf()
+                node.wholeText.trim().takeIf(String::isNotEmpty)?.splitWhitespace() ?: listOf()
+
+        fun String.splitWhitespace(): List<String> = this.split(whitespaceRegex)
 
         fun Element.src(): String = attr("src")
         fun Element.absSrc(): String = absUrl("src")

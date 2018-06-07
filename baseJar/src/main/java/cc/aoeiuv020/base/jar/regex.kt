@@ -35,3 +35,5 @@ fun compilePattern(pattern: String): Pattern {
         Pattern.compile(pattern, Pattern.DOTALL)
     }
 }
+
+fun compileRegex(pattern: String): Regex = compilePattern(pattern).toRegex()
