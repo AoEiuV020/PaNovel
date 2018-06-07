@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.list
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.support.annotation.UiThread
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils
 import android.util.TypedValue
@@ -136,17 +137,13 @@ class NovelViewHolder(itemView: View,
         debug { "apply <${novel.run { "$site.$author.$name.$checkUpdateTime" }}>, refreshTime = $refreshTime" }
         show(novel)
 
-        // 用tag防止复用vh导致异步冲突，
-        // 如果没开始刷新或者刷新结束，tag会是null,
-        // 如果刷新结束前vh被复用，tag就是非空且不等于当前novel,
-        // 如果刷新结束前vh被复用，且刷新了新小说且刷新没结束就被原来的小说复用，tag等于novel，不重复请求刷新，
         when {
-            itemView.tag === novel -> refreshing()
+            refreshingNovelSet.contains(novel.nId) -> refreshing()
         // 手动刷新后需要联网更新，
             refreshTime > novel.checkUpdateTime -> refresh()
             else -> if (ServerSettings.askUpdate) {
                 // 询问服务器是否有更新，
-                askUpdate(novel)
+                askUpdate()
             }
         }
     }
@@ -184,6 +181,7 @@ class NovelViewHolder(itemView: View,
         readAt?.text = novel.readAtChapterName
     }
 
+    @UiThread
     private fun refreshing() {
         debug { "refreshing ${name?.text}" }
         // 显示正在刷新，
@@ -194,49 +192,37 @@ class NovelViewHolder(itemView: View,
      * 主动刷新，
      * 可以在itemListener里调用以刷新这本小说，
      */
+    @UiThread
     fun refresh() {
         debug { "refresh ${name?.text}" }
         refreshing()
-        // 首次新结束时tag为null, 不能直接返回，
-        // 被复用时tag可能非空且不等于novel,
-        if (itemView.tag != null && itemView.tag !== novel) {
-            return
-        }
-        itemView.tag = novel
+        refreshingNovelSet.add(novel.nId)
         itemListener.requireRefresh(this)
     }
 
     /**
      * 询问服务器是否有更新，
      */
-    private fun askUpdate(novel: Novel) {
+    @UiThread
+    private fun askUpdate() {
         debug { "askUpdate ${name?.text}" }
         refreshing()
-        // 首次新结束时tag为null, 不能直接返回，
-        // 被复用时tag可能非空且不等于novel,
-        if (itemView.tag != null && itemView.tag !== novel) {
-            return
-        }
-        itemView.tag = novel
+        refreshingNovelSet.add(novel.nId)
         itemListener.askUpdate(this)
     }
 
     /**
      * 刷新结束时调用，
      */
+    @UiThread
     fun refreshed(novel: Novel) {
         debug { "refreshed ${novel.name}" }
-        // 首次新结束时tag为null, 不能直接返回，
-        // 被复用时tag可能非空且不等于novel,
-        if (itemView.tag != null && itemView.tag !== novel) {
-            return
+        refreshingNovelSet.remove(novel.nId)
+        if (novel.nId == this.novel.nId) {
+            // 显示刷新结果，
+            show(novel)
+            refreshingDot?.refreshed(this.novel.receiveUpdateTime > this.novel.readTime)
         }
-        itemView.tag = null
-        // 刷新小说相关信息，
-        show(novel)
-        // 显示是否有更新，
-        refreshingDot?.refreshed(this.novel.receiveUpdateTime > this.novel.readTime)
-        // TODO: 根据是否刷出章节，移动item,
     }
 
     /**
@@ -250,5 +236,10 @@ class NovelViewHolder(itemView: View,
     fun addBookshelf() {
         star?.isChecked = true
         itemListener.onStarChanged(this, true)
+    }
+
+    companion object {
+        // 保存正在刷新的小说的id，避免重复刷新，以及view复用导致一直显示正在刷新中，
+        val refreshingNovelSet = mutableSetOf<Long>()
     }
 }
