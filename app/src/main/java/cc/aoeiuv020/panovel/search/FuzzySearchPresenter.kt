@@ -61,7 +61,15 @@ class FuzzySearchPresenter : Presenter<FuzzySearchActivity>() {
                                 "${Thread.currentThread().name} search ${site.name}"
                             }
                             try {
-                                val novels = DataManager.search(site.name, name, author)
+                                val novels = DataManager.search(site.name, name, author).filter {
+                                    // 过滤，author为空表示模糊搜索，只要小说名包含，
+                                    // author不为空表示精确搜索，要小说名和作者名都匹配，
+                                    if (author == null) {
+                                        it.name.contains(name)
+                                    } else {
+                                        it.name == name && it.author == author
+                                    }
+                                }
                                 uiThread {
                                     view?.addResult(novels)
                                 }
