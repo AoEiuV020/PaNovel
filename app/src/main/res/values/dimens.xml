@@ -3,6 +3,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="reader_settings_size">30dp</dimen>
-    <dimen name="reader_settings_text_size">20sp</dimen>
-    <dimen name="reader_settings_image_size">40dp</dimen>
+    <dimen name="reader_settings_text_size">18sp</dimen>
+    <dimen name="reader_settings_image_size">30dp</dimen>
 </resources>
