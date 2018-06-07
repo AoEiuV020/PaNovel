@@ -68,12 +68,12 @@
             app:srcCompat="@drawable/ic_favorite_selector" />
 
         <ImageView
-            android:id="@+id/ivDetail"
+            android:id="@+id/ivColor"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/reader_settings_image_size"
             android:layout_weight="1"
             android:tint="@android:color/white"
-            app:srcCompat="@drawable/ic_info"
+            app:srcCompat="@drawable/ic_color_lens"
             tools:ignore="ContentDescription" />
 
         <ImageView

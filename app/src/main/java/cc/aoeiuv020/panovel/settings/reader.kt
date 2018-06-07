@@ -51,7 +51,6 @@ object ReaderSettings : Pref {
     var messageSize: Int by Delegates.int(12)
     var autoRefreshInterval: Int by Delegates.int(60)
     var dateFormat: String by Delegates.string("HH:mm")
-    var textColor: Int by Delegates.int(0xff000000.toInt())
     var font: Uri? by Delegates.uri()
     val tfFont: Typeface?
         get() = font?.let {
@@ -63,8 +62,17 @@ object ReaderSettings : Pref {
                 null
             }
         }
+    var textColor: Int by Delegates.int(0xff000000.toInt())
     var backgroundColor: Int by Delegates.int(0xffffe3aa.toInt())
     var backgroundImage: Uri? by Delegates.uri()
+    /**
+     * 保存两对配色，假装有夜间模式，
+     * 修改配色时，当前配色存到last里，
+     * 也就是last保存前一次设置的颜色，
+     */
+    var lastTextColor: Int by Delegates.int(0xff737273.toInt())
+    var lastBackgroundColor: Int by Delegates.int(0xff191B19.toInt())
+    var lastBackgroundImage: Uri? by Delegates.uri()
     var animationMode: AnimationMode by Delegates.enum(AnimationMode.SIMULATION)
     var animationSpeed: Float by Delegates.float(0.8f)
 

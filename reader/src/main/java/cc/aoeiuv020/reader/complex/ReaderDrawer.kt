@@ -14,6 +14,7 @@ import cc.aoeiuv020.reader.ReaderConfigName
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import cc.aoeiuv020.reader.TextRequester
 import org.jetbrains.anko.*
+import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -94,7 +95,14 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         titlePaint = TextPaint(textPaint).apply {
             typeface = reader.config.titleFont
         }
-        backgroundImage = reader.config.backgroundImage?.let { BitmapFactory.decodeStream(reader.ctx.contentResolver.openInputStream(it)) }
+        backgroundImage = reader.config.backgroundImage?.let {
+            try {
+                BitmapFactory.decodeStream(reader.ctx.contentResolver.openInputStream(it))
+            } catch (e: FileNotFoundException) {
+                // 以防万一，说不定uri存在但是文件已经不存在了，
+                null
+            }
+        }
         messagePaint = TextPaint(textPaint).apply {
             textSize = reader.ctx.sp(reader.config.messageSize).toFloat()
         }

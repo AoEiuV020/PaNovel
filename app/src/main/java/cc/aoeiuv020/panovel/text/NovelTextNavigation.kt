@@ -12,7 +12,10 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.Margins
 import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.text.NovelTextNavigation.Direction.*
-import cc.aoeiuv020.panovel.util.*
+import cc.aoeiuv020.panovel.util.hide
+import cc.aoeiuv020.panovel.util.setBrightness
+import cc.aoeiuv020.panovel.util.setBrightnessFollowSystem
+import cc.aoeiuv020.panovel.util.show
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName
 import kotlinx.android.synthetic.main.dialog_seekbar.view.*
@@ -61,8 +64,12 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
                 view.presenter.updateBookshelf(novel)
             }
         }
-        mPanelDefault.ivDetail.setOnClickListener {
-            view.detail()
+        mPanelDefault.ivColor.setOnClickListener {
+            view.selectColorScheme()
+        }
+        mPanelDefault.ivColor.setOnLongClickListener {
+            view.lastColorScheme()
+            true
         }
         mPanelDefault.ivRefresh.apply {
             setOnClickListener {
@@ -151,34 +158,6 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
                         view.resetFont()
                     }
                 }.show()
-            }
-
-            // 设置背景图，
-            tvBackgroundImage.setOnClickListener {
-                view.requestBackgroundImage()
-            }
-
-            // 设置背景色，
-            val backgroundColor = ReaderSettings.backgroundColor
-            view.setBackgroundColor(backgroundColor)
-            backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, backgroundColor)
-            lBackgroundColor.setOnClickListener {
-                view.changeColor(ReaderSettings.backgroundColor) { color ->
-                    ReaderSettings.backgroundColor = color
-                    ReaderSettings.backgroundImage = null
-                    backgroundColorTextView.text = view.getString(R.string.background_color_placeholder, color)
-                    view.setBackgroundColor(color, true)
-                }
-            }
-
-            // 设置文字颜色，
-            textColorTextView.text = view.getString(R.string.text_color_placeholder, ReaderSettings.textColor)
-            lTextColor.setOnClickListener {
-                view.changeColor(ReaderSettings.textColor) { color ->
-                    ReaderSettings.textColor = color
-                    textColorTextView.text = view.getString(R.string.text_color_placeholder, color)
-                    view.setTextColor(color)
-                }
             }
 
             tvTypesetting.setOnClickListener {

@@ -189,5 +189,7 @@
     <string name="notify_pinned_only">只通知置顶小说</string>
     <string name="notify_pinned_only_summary">更新通知只限置顶的小说，</string>
     <string name="search_thread_count">搜索线程数</string>
+    <string name="select_color_scheme">选择配色</string>
+    <string name="input">输入</string>
 
 </resources>

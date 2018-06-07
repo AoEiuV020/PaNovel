@@ -3,11 +3,13 @@
 package cc.aoeiuv020.panovel.text
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,10 +19,8 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AlertDialog
 import android.text.InputType
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.ImageView
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
@@ -42,6 +42,7 @@ import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
+import kotlinx.android.synthetic.main.dialog_select_color_scheme.view.*
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
@@ -273,18 +274,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
     }
 
-    fun setTextColor(color: Int) {
-        reader.config.textColor = color
-    }
-
-    fun setBackgroundColor(color: Int, fromUser: Boolean = false) {
-        if (fromUser) {
-            reader.config.backgroundImage = null
-        }
-        reader.config.backgroundColor = color
-    }
-
-    fun requestBackgroundImage() {
+    /**
+     * 选择图片，
+     * 选择后修改当前背景图，但不保存，
+     */
+    private fun requestBackgroundImage() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
         startActivityForResult(intent, 0)
@@ -307,8 +301,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (requestCode) {
             0 -> data?.data?.let { uri ->
                 try {
-                    ReaderSettings.backgroundImage = uri
-                    setBackgroundImage(uri)
+                    // 不在这里做永久保存，
+                    reader.config.backgroundImage = uri
                 } catch (e: SecurityException) {
                     error("读取背景图失败", e)
                     cacheUri = uri
@@ -340,8 +334,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (requestCode) {
             0 -> cacheUri?.let { uri ->
                 try {
-                    ReaderSettings.backgroundImage = uri
-                    setBackgroundImage(uri)
+                    // 不在这里做永久保存，
+                    reader.config.backgroundImage = uri
                 } catch (e: SecurityException) {
                     error("读取背景图还是失败", e)
                     cacheUri = null
@@ -357,10 +351,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 }
             }
         }
-    }
-
-    private fun setBackgroundImage(uri: Uri?) {
-        reader.config.backgroundImage = uri
     }
 
     private fun setFont(font: Typeface?) {
@@ -527,7 +517,120 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         presenter.refreshChapterList(novel)
     }
 
-    fun detail() {
+    /**
+     * 上一对配色，文字色/背景（图|色），
+     */
+    fun lastColorScheme() {
+        // 交换设置中的两套配色，
+        tempColorPref.textColor = ReaderSettings.lastTextColor
+        tempColorPref.backgroundColor = ReaderSettings.lastBackgroundColor
+        tempColorPref.backgroundImage = ReaderSettings.lastBackgroundImage
+        ReaderSettings.lastTextColor = ReaderSettings.textColor
+        ReaderSettings.lastBackgroundColor = ReaderSettings.backgroundColor
+        ReaderSettings.lastBackgroundImage = ReaderSettings.backgroundImage
+        ReaderSettings.textColor = tempColorPref.textColor
+        ReaderSettings.backgroundColor = tempColorPref.backgroundColor
+        ReaderSettings.backgroundImage = tempColorPref.backgroundImage
+        // 切换到上次的配色，已经是现在的配色了，
+        // 先设置图片，因为每次设置都会刷新全部，图片可能Uri存在但是文件已经被删除了，
+        reader.config.backgroundImage = ReaderSettings.backgroundImage
+        reader.config.textColor = ReaderSettings.textColor
+        reader.config.backgroundColor = ReaderSettings.backgroundColor
+    }
+
+    private val tempColorPref = object : Pref {
+        override val name: String
+            get() = "TempColor"
+        // 默认值没有用，
+        var textColor: Int by Delegates.int(0xff000000.toInt())
+        var backgroundColor: Int by Delegates.int(0xffffe3aa.toInt())
+        var backgroundImage: Uri? by Delegates.uri()
+    }
+
+    /**
+     * 弹出对话框选择配色，文字色/背景（图|色），
+     */
+    @SuppressLint("InflateParams")
+    fun selectColorScheme() {
+        if (!::reader.isInitialized) {
+            // 以防万一，
+            return
+        }
+        // 备份当前的配色，
+        // 对话框中如果选择取消，就恢复临时配色，
+        // 如果确定，临时配色保存到last上次设置的配色，
+        tempColorPref.textColor = ReaderSettings.textColor
+        tempColorPref.backgroundColor = ReaderSettings.backgroundColor
+        tempColorPref.backgroundImage = ReaderSettings.backgroundImage
+        AlertDialog.Builder(ctx).apply {
+            setTitle(R.string.select_color_scheme)
+            val view = layoutInflater.inflate(R.layout.dialog_select_color_scheme, null)
+            view.tvBackgroundImage.setOnClickListener {
+                requestBackgroundImage()
+            }
+            view.tvInputBackgroundColor.setOnClickListener {
+                changeColor(reader.config.backgroundColor) { color ->
+                    reader.config.backgroundImage = null
+                    reader.config.backgroundColor = color
+                }
+            }
+            view.llBackgroundColor.apply {
+                val listener = View.OnClickListener {
+                    val color = ((it as ImageView).drawable as ColorDrawable).color
+                    reader.config.backgroundImage = null
+                    reader.config.backgroundColor = color
+                }
+                repeat(childCount) {
+                    val ivColor = getChildAt(it)
+                    ivColor.setOnClickListener(listener)
+                }
+            }
+            view.tvInputTextColor.setOnClickListener {
+                changeColor(reader.config.backgroundColor) { color ->
+                    reader.config.textColor = color
+                }
+            }
+            view.llTextColor.apply {
+                val listener = View.OnClickListener {
+                    val color = ((it as ImageView).drawable as ColorDrawable).color
+                    reader.config.textColor = color
+                }
+                repeat(childCount) {
+                    val ivColor = getChildAt(it)
+                    ivColor.setOnClickListener(listener)
+                }
+            }
+            setView(view)
+            setPositiveButton(android.R.string.yes) { _, _ ->
+                // 确定，临时配色保存到last上次设置的配色，
+                ReaderSettings.lastTextColor = tempColorPref.textColor
+                ReaderSettings.lastBackgroundColor = tempColorPref.backgroundColor
+                ReaderSettings.lastBackgroundImage = tempColorPref.backgroundImage
+                // 当前配色保存，
+                ReaderSettings.textColor = reader.config.textColor
+                ReaderSettings.backgroundColor = reader.config.backgroundColor
+                ReaderSettings.backgroundImage = reader.config.backgroundImage
+            }
+            setNegativeButton(android.R.string.cancel) { _, _ ->
+                // 选择取消，就恢复临时配色，全程没有操作ReaderSettings永久保存的设置，
+                reader.config.textColor = tempColorPref.textColor
+                setBackground(tempColorPref.backgroundColor, tempColorPref.backgroundImage)
+            }
+        }.setCancelable(false).create().also {
+            // 去除对话框的灰背景，
+            it.window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        }.show()
+    }
+
+    private fun setBackground(color: Int, image: Uri?) {
+        reader.config.backgroundColor = color
+        if (image != null) {
+            // 避免重复设置覆盖背景色，
+            reader.config.backgroundImage = image
+        }
+    }
+
+    private fun detail() {
         NovelDetailActivity.start(this, novel)
     }
 
@@ -707,6 +810,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         when (item.itemId) {
             R.id.refresh -> refreshChapterList()
             R.id.search -> refineSearch()
+            R.id.detail -> detail()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
