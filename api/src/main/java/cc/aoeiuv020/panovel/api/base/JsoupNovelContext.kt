@@ -114,6 +114,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
 
         /**
          * 切开所有空白符，
+         * TODO: 随便都切开好像不大好，遇上英文就糟糕了，空格全切开了，
          */
         fun ownTextList(node: TextNode): List<String> =
         // trim里的判断和这个whitespaceRegex是一样的，
@@ -173,6 +174,8 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
     protected fun Element.ownTextList(): List<String> = ownTextList(this)
     protected fun Element.ownTextListWithImage(): List<String> = ownTextListWithImage(this)
     protected fun TextNode.ownTextList(): List<String> = ownTextList(this)
+    // kotlin的trim有包括utf8的特殊的空格，和java的trim不重复，
+    protected fun TextNode.textNotBlank(): String? = this.text().trim().takeIf(String::isNotBlank)
     protected fun TextNode.ownLinesString(): String = ownTextList().joinToString("\n")
     protected fun Node.text(): String = (this as TextNode).text()
 
