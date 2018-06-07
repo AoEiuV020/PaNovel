@@ -580,8 +580,16 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     reader.config.backgroundImage = null
                     reader.config.backgroundColor = color
                 }
-                repeat(childCount) {
-                    val ivColor = getChildAt(it)
+                (getChildAt(0) as ImageView).apply {
+                    setImageDrawable(ColorDrawable(ReaderSettings.backgroundColor))
+                    setOnClickListener(listener)
+                }
+                (getChildAt(1) as ImageView).apply {
+                    setImageDrawable(ColorDrawable(ReaderSettings.lastBackgroundColor))
+                    setOnClickListener(listener)
+                }
+                for (index in 2 until 7) {
+                    val ivColor = getChildAt(index)
                     ivColor.setOnClickListener(listener)
                 }
             }
@@ -595,8 +603,16 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     val color = ((it as ImageView).drawable as ColorDrawable).color
                     reader.config.textColor = color
                 }
-                repeat(childCount) {
-                    val ivColor = getChildAt(it)
+                (getChildAt(0) as ImageView).apply {
+                    setImageDrawable(ColorDrawable(ReaderSettings.textColor))
+                    setOnClickListener(listener)
+                }
+                (getChildAt(1) as ImageView).apply {
+                    setImageDrawable(ColorDrawable(ReaderSettings.lastTextColor))
+                    setOnClickListener(listener)
+                }
+                for (index in 2 until 7) {
+                    val ivColor = getChildAt(index)
                     ivColor.setOnClickListener(listener)
                 }
             }
