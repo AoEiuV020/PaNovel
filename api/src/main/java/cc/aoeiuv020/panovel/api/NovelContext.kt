@@ -138,7 +138,12 @@ abstract class NovelContext {
     protected fun secondLevelDomain(host: String): String {
         val index1 = host.lastIndexOf('.')
         val index2 = host.lastIndexOf('.', index1 - 1)
-        return host.substring(index2)
+        return if (index2 == -1) {
+            // 可能没有第二个点.也就是已经是个二级域名, index2会为-1,
+            host
+        } else {
+            host.substring(maxOf(index2, 0))
+        }
     }
 
 
