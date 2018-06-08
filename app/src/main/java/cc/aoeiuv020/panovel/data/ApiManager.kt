@@ -37,9 +37,12 @@ class ApiManager(ctx: Context) {
 
                 N73xs(), Siluke(), Wukong(),
 
+
                 Exiaoshuo(), Dajiadu(), Liewen(),
                 Qingkan5(), Bqg5200(), Lewen123(),
-                Zaidudu(), Shangshu(), Haxds()
+                Zaidudu(), Shangshu(), Haxds(),
+
+                X23us()
 
         )
     }

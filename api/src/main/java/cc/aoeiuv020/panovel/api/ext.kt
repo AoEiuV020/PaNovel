@@ -2,7 +2,6 @@
 
 package cc.aoeiuv020.panovel.api
 
-import cc.aoeiuv020.base.jar.pick
 import java.net.MalformedURLException
 import java.net.URL
 
@@ -15,14 +14,8 @@ import java.net.URL
  * 开头要有斜杆/，因为有的网站可能host有整数，
  */
 const val firstIntPattern: String = "/(\\d+)"
-
-fun findFirstOneInt(url: String): String = path(url).pick(firstIntPattern).first()
-
 const val firstTwoIntPattern: String = "/(\\d+/\\d+)"
-fun findFirstTwoInt(url: String): String = url.pick(firstTwoIntPattern).first()
-
 const val firstThreeIntPattern: String = "/(\\d+/\\d+/\\d+)"
-fun findThreeTwoInt(url: String): String = url.pick(firstTwoIntPattern).first()
 
 /**
  * 地址仅路径，斜杆/开头，
