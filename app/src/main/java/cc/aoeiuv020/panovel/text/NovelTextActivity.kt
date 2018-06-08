@@ -596,7 +596,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 }
             }
             view.tvInputTextColor.setOnClickListener {
-                changeColor(reader.config.backgroundColor) { color ->
+                changeColor(reader.config.textColor) { color ->
                     reader.config.textColor = color
                 }
             }
