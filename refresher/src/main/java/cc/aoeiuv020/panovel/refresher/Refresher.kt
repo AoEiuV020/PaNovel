@@ -78,6 +78,7 @@ class Refresher(
                 logger.error(e) {
                     "请求需要刷新的小说列表失败，"
                 }
+                executor.shutdown()
                 isRunning = false
             }
         }
