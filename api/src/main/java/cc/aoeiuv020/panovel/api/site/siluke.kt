@@ -68,7 +68,7 @@ class Siluke : DslJsoupNovelContext() {init {
     content {
         document {
             items("#contents") {
-                it.textNodes().drop(1).flatMap { it.ownTextList() }
+                it.textNodes().drop(1).flatMap { it.ownTextListSplitWhitespace() }
             }
         }
     }

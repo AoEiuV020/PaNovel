@@ -68,7 +68,7 @@ class Bqg5200 : DslJsoupNovelContext() {init {
     contentPageTemplate = "/xiaoshuo/%s.html"
     content {
         document {
-            items("#content", block = ownLines())
+            items("#content", block = ownLinesSplitWhitespace())
         }
     }
 }

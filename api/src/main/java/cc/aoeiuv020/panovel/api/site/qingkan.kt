@@ -79,7 +79,7 @@ class Qingkan : DslJsoupNovelContext() {init {
     contentPageTemplate = "/book/%s.html"
     content {
         document {
-            items("#content", block = ownLines())
+            items("#content", block = ownLinesSplitWhitespace())
         }
     }
 }

@@ -116,7 +116,7 @@ class Liudatxt : DslJsoupNovelContext() { init {
         document {
             // 去广告，"#content > i"都是广告，
             items("#content") {
-                it.ownTextList()
+                it.ownTextListSplitWhitespace()
             }
         }
     }

@@ -54,7 +54,7 @@ class Qingkan5 : DslJsoupNovelContext() {init {
             image("#bookimg > img")
             update("#bookinfo > div.bookright > div.new > span.new_t", format = "yyyy-MM-dd", block = pickString("最后更新：(.*)"))
             introduction("#bookintro > p") {
-                it.textNodes().flatMap { it.ownTextList() }
+                it.textNodes().flatMap { it.ownTextListSplitWhitespace() }
                         .dropLastWhile {
                             it == "各位书友要是觉得《${novel?.name}》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！"
                         }.joinToString("\n")

@@ -89,7 +89,7 @@ class Ggdown : DslJsoupNovelContext() {init {
         document {
             // 有的有广告，
             // http://www.ggdown.com/t/t.php?did=19447&vid=5585742
-            items("body", block = ownLines())
+            items("body", block = ownLinesSplitWhitespace())
         }
     }
 }

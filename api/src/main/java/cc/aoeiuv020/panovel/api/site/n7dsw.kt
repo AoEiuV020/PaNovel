@@ -60,7 +60,7 @@ class N7dsw : DslJsoupNovelContext() {init {
                         it.startsWith("各位书友要是觉得《${novel?.name}》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！")
                                 || it.startsWith("${novel?.name}最新章节,${novel?.name}无弹窗,${novel?.name}全文阅读.")
                     }
-                }.ownTextList().dropLastWhile {
+                }.ownTextListSplitWhitespace().dropLastWhile {
                     it.startsWith("各位书友要是觉得《${novel?.name}》还不错的话请不要忘记向您QQ群和微博里的朋友推荐哦！")
                 }.joinToString("\n")
             }

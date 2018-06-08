@@ -206,11 +206,12 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
     protected fun Elements.textListSplitWhitespace(): List<String> = flatMap { it.textListSplitWhitespace() }
     protected fun Element.textListSplitWhitespace(): List<String> = textListSplitWhitespace(this)
     protected fun Element.textList(): List<String> = textList(this)
-    protected fun Elements.ownTextList(): List<String> = flatMap { it.ownTextList() }
-    protected fun Element.ownTextList(): List<String> = ownTextListSplitWhitespace(this)
+    protected fun Element.ownTextList(): List<String> = this.textNodes().flatMap { it.ownTextList() }
+    protected fun Element.ownTextListSplitWhitespace(): List<String> = ownTextListSplitWhitespace(this)
     protected fun Element.ownTextListWithImage(): List<String> = ownTextListWithImage(this)
-    protected fun TextNode.ownTextList(): List<String> = ownTextListSplitWhitespace(this)
-    protected fun TextNode.ownLinesString(): String = ownTextList().joinToString("\n")
+    protected fun TextNode.ownTextList(): List<String> = ownTextList(this)
+    protected fun TextNode.ownTextListSplitWhitespace(): List<String> = ownTextListSplitWhitespace(this)
+    protected fun TextNode.ownLinesString(): String = ownTextListSplitWhitespace().joinToString("\n")
     protected fun Node.text(): String = (this as TextNode).text()
 
     private val replaceWhiteWithNewLineRegex = Regex("\\s+")
@@ -309,12 +310,20 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
      * 用于获取简介，一个元素，简介内容都在ownText里，子标签可能有无用信息，
      */
     protected fun ownLinesString(): (Element) -> String = {
-        it.ownTextList().joinToString("\n")
+        it.ownTextListSplitWhitespace().joinToString("\n")
+    }
+
+    protected fun ownText(): (Element) -> String = {
+        it.ownText().trim()
     }
 
     /**
      * 用于获取正文，一个元素，正文内容都在ownText里，子标签可能有无用信息，
      */
+    protected fun ownLinesSplitWhitespace(): (Element) -> List<String> = {
+        it.ownTextListSplitWhitespace()
+    }
+
     protected fun ownLines(): (Element) -> List<String> = {
         it.ownTextList()
     }

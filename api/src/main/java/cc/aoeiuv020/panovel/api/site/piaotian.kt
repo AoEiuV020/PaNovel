@@ -140,7 +140,7 @@ class Piaotian : DslJsoupNovelContext() {init {
     content {
         document {
             items("html > body") {
-                it.ownTextList()
+                it.ownTextListSplitWhitespace()
             }
         }
     }

@@ -23,27 +23,19 @@ class ApiManager(ctx: Context) {
     @Suppress("RemoveExplicitTypeArguments")
     val contexts: List<NovelContext> by lazy {
         listOf(
-                Piaotian(), Biquge(), Liudatxt(),
-                Qidian(), Sfacg(), Snwx(),
-                Syxs(), Yssm(), Qlwx(),
+                Piaotian(), Biquge(), Liudatxt(), Qidian(), Sfacg(),
+                Snwx(), Syxs(), Yssm(), Qlwx(), Byzw(),
 
-                Byzw(), Fenghuaju(), Yllxs(),
-                Mianhuatang(), Gxwztv(), Ymoxuan(),
-                Qingkan(), Ggdown(), Biqugebook(),
+                Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
+                Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
 
-                Guanshuwang(), Jdxs520(), Lread(),
-                Wenxuemi(), Yipinxia(), N360dxs(),
-                N7dsw(), Aileleba(), Gulizw(),
+                Lread(), Wenxuemi(), Yipinxia(), N360dxs(), N7dsw(),
+                Aileleba(), Gulizw(), N73xs(), Siluke(), Wukong(),
 
-                N73xs(), Siluke(), Wukong(),
+                Exiaoshuo(), Dajiadu(), Liewen(), Qingkan5(), Bqg5200(),
+                Lewen123(), Zaidudu(), Shangshu(), Haxds(), X23us(),
 
-
-                Exiaoshuo(), Dajiadu(), Liewen(),
-                Qingkan5(), Bqg5200(), Lewen123(),
-                Zaidudu(), Shangshu(), Haxds(),
-
-                X23us(), Zhuishu(), N2kzw(),
-                Shu8()
+                Zhuishu(), N2kzw(), Shu8(), N52ranwen()
 
         )
     }

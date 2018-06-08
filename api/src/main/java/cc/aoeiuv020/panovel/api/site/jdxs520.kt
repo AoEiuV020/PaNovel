@@ -75,7 +75,7 @@ class Jdxs520 : DslJsoupNovelContext() {init {
                         .drop(1)
                         .dropLastWhile { !it.wholeText.trim().endsWith("的其他作品：") }
                         .dropLast(1)
-                        .flatMap { it.ownTextList() }
+                        .flatMap { it.ownTextListSplitWhitespace() }
                         .dropLast(1)
                         .joinToString("\n")
             }
@@ -94,7 +94,7 @@ class Jdxs520 : DslJsoupNovelContext() {init {
         document {
             items("#htmlContent") {
                 it.textNodes().drop(1)
-                        .flatMap { it.ownTextList() }
+                        .flatMap { it.ownTextListSplitWhitespace() }
             }
         }
     }
