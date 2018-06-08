@@ -18,7 +18,7 @@ class YssmTest : BaseNovelContextText(Yssm::class) {
     fun detail() {
         // https://www.yssm.org/uctxt/37/37777/
         detail("37/37777", "37/37777", "全能高手都市护花", "一朵小白",
-                "https://www.snwx8.com/modules/article/images/nocover.jpg",
+                null,
                 "会医术，会读心，厨艺精，好身手…想提升某项能力？那就动动手指头选择…\n" +
                         "一个倒了十八年霉的悲催孩子，在悲催地与恶少结仇后，终于人品大爆发，得到了一个来自两百年后的系统，有逆天的宿主升级功能，还附带兑换系统…\n" +
                         "&nb",

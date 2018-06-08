@@ -192,3 +192,9 @@ fun Activity.setBrightnessFollowSystem() {
         screenBrightness = -1f
     }
 }
+
+/**
+ * 没有图片的小说统一用这个填充图片地址，
+ * 展示的时候换成内置的图片，
+ */
+val noCover: String get() = "https://www.snwx8.com/modules/article/images/nocover.jpg"

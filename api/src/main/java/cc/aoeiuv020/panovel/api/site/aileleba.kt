@@ -54,7 +54,7 @@ class Aileleba : DslJsoupNovelContext() {init {
                             update = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA).parse(it.first().wholeText.trim().pick("最后更新：(\\S+ \\S+)").first())
                         }
                         .drop(1)
-                        .flatMap { it.ownTextList() }
+                        .flatMap { it.ownTextListSplitWhitespace() }
                         .toMutableList().also { list ->
                             list.lastOrNull()?.removeSuffix("...${root.ownerDocument().location()}")
                                     ?.let {

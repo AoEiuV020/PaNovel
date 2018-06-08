@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.site.*
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.util.noCover
 import java.net.URL
 import java.util.*
 
@@ -22,23 +23,19 @@ class ApiManager(ctx: Context) {
     @Suppress("RemoveExplicitTypeArguments")
     val contexts: List<NovelContext> by lazy {
         listOf(
-                Piaotian(), Biquge(), Liudatxt(),
-                Qidian(), Sfacg(), Snwx(),
-                Syxs(), Yssm(), Qlwx(),
+                Piaotian(), Biquge(), Liudatxt(), Qidian(), Sfacg(),
+                Snwx(), Syxs(), Yssm(), Qlwx(), Byzw(),
 
-                Byzw(), Fenghuaju(), Yllxs(),
-                Mianhuatang(), Gxwztv(), Ymoxuan(),
-                Qingkan(), Ggdown(), Biqugebook(),
+                Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
+                Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
 
-                Guanshuwang(), Jdxs520(), Lread(),
-                Wenxuemi(), Yipinxia(), N360dxs(),
-                N7dsw(), Aileleba(), Gulizw(),
+                Lread(), Wenxuemi(), Yipinxia(), N360dxs(), N7dsw(),
+                Aileleba(), Gulizw(), N73xs(), Siluke(), Wukong(),
 
-                N73xs(), Siluke(), Wukong(),
+                Exiaoshuo(), Dajiadu(), Liewen(), Qingkan5(), Bqg5200(),
+                Lewen123(), Zaidudu(), Shangshu(), Haxds(), X23us(),
 
-                Exiaoshuo(), Dajiadu(), Liewen(),
-                Qingkan5(), Bqg5200(), Lewen123(),
-                Zaidudu(), Shangshu(), Haxds()
+                Zhuishu(), N2kzw(), Shu8(), N52ranwen()
 
         )
     }
@@ -67,10 +64,11 @@ class ApiManager(ctx: Context) {
 
     fun updateNovelDetail(novel: Novel) {
         val novelDetail = context(novel).getNovelDetail(novel.detail)
+        "".split("\n\r")
         novel.name = novelDetail.novel.name
         novel.author = novelDetail.novel.author
         novel.detail = novelDetail.novel.extra
-        novel.image = novelDetail.image
+        novel.image = novelDetail.image ?: noCover
         novel.introduction = novelDetail.introduction
         novel.chapters = novelDetail.extra
         // detail页面的更新时间不保存，

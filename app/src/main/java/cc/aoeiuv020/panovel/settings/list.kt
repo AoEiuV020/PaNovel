@@ -15,6 +15,12 @@ object ListSettings : Pref {
     // 书架的小红点设置，
     var dotColor: Int by Delegates.int(0xffff0000.toInt())
     var dotSize: Float by Delegates.float(16f)
+    /**
+     * 小红点提示有更新，
+     * 是则提示刷出更新的时间在阅读时间之后，
+     * 否则提示阅读进度没到最新章节，
+     */
+    var dotNotifyUpdate: Boolean by Delegates.boolean(true)
 
     // 点击事件设置，
     var onDotClick: ItemAction by Delegates.enum(ItemAction.Refresh)

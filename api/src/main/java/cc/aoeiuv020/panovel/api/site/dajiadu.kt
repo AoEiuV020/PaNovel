@@ -70,7 +70,7 @@ class Dajiadu : DslJsoupNovelContext() {init {
             <span class="copy">更多精彩小说，欢迎访问大家读书院 http://www.dajiadu.net</span>
              */
             // 最后一段最后可能有一两个无意义字母，搞不定，
-            items("#center > div:not(#centerin)", block = ownLines())
+            items("#center > div:not(#centerin)", block = ownLinesSplitWhitespace())
         }
     }
 }

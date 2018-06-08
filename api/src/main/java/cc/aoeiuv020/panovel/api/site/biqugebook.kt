@@ -61,7 +61,7 @@ class Biqugebook : DslJsoupNovelContext() {init {
     contentPageTemplate = "/book/%s.html"
     content {
         document {
-            items("#htmlContent", block = ownLines())
+            items("#htmlContent", block = ownLinesSplitWhitespace())
         }.dropWhile {
             it.startsWith("笔~趣*阁")
                     || it.startsWith("www.biqugebook.com")

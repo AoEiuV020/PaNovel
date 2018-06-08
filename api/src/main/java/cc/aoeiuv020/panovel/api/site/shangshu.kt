@@ -78,7 +78,7 @@ class Shangshu : DslJsoupNovelContext() {init {
             items("#content") {
                 it.textNodes()
                         .also { it.lastOrNull()?.let { it.text(it.text().replace(compileRegex("\\( \\S+ http[^)]*\\)$"), "")) } }
-                        .flatMap { it.ownTextList() }
+                        .flatMap { it.ownTextListSplitWhitespace() }
             }
         }
     }

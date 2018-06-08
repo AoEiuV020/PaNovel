@@ -84,7 +84,7 @@ class Yllxs : DslJsoupNovelContext() {init {
     content {
         document {
             items("p.Book_Text") {
-                it.ownTextList().dropLastWhile {
+                it.ownTextListSplitWhitespace().dropLastWhile {
                     it == "166小说阅读网"
                 }
             }

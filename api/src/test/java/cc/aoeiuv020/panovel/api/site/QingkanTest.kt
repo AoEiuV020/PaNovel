@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.panovel.api.noImage
 import org.junit.Test
 
 /**
@@ -17,7 +16,7 @@ class QingkanTest : BaseNovelContextText(Qingkan::class) {
     @Test
     fun detail() {
         detail("daotianxiantu", "daotianxiantu", "盗天仙途", "荆柯守",
-                noImage,
+                null,
                 "福地产生地仙，洞天来往天仙，我有梅花一株，盗取天机！",
                 null)
     }

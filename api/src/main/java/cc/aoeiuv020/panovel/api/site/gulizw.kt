@@ -67,7 +67,7 @@ class Gulizw : DslJsoupNovelContext() {init {
     contentPageTemplate = "/%s.html"
     content {
         document {
-            items("#content", block = ownLines())
+            items("#content", block = ownLinesSplitWhitespace())
         }.dropLastWhile { it == "：" }
     }
 }

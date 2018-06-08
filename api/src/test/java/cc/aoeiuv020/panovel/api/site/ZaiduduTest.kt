@@ -39,7 +39,7 @@ class ZaiduduTest : BaseNovelContextText(Zaidudu::class) {
                 "第393章 逆天速 度", "0/31/61590017", null,
                 7443)
         chapters("133", "第01章 神奇的任务", "0/133/108834", null,
-                "第7020章 2单向通道", "0/133/61990904", null,
+                "第7020章 单向通道", "0/133/61990904", null,
                 7338)
     }
 

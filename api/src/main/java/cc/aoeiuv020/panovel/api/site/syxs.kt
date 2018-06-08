@@ -50,7 +50,7 @@ class Syxs : DslJsoupNovelContext() {init {
             }
             image("#fmimg > img")
             introduction("#intro") {
-                it.ownTextList().joinToString("\n")
+                it.ownTextListSplitWhitespace().joinToString("\n")
             }
             update("head > meta[property=og:novel:update_time]", format = "yyyy-MM-dd HH:mm:ss") {
                 it.attr("content")

@@ -106,6 +106,7 @@ class ExporterV2 : DefaultExporter() {
                 "askUpdate" -> editor.putBoolean(key, value.asBoolean)
                 "singleNotification" -> editor.putBoolean(key, value.asBoolean)
                 "notifyPinnedOnly" -> editor.putBoolean(key, value.asBoolean)
+                "dotNotifyUpdate" -> editor.putBoolean(key, value.asBoolean)
                 "bottom" -> editor.putInt(key, value.asInt)
                 "left" -> editor.putInt(key, value.asInt)
                 "right" -> editor.putInt(key, value.asInt)

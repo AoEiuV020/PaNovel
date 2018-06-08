@@ -407,7 +407,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             var extra: String? = null
             fun createNovelDetail() = NovelDetail(
                     novel.notNull(),
-                    image.notNull(),
+                    image,
                     update,
                     introduction.toString(),
                     extra.notNull()
@@ -589,7 +589,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 _novelItem.author = value
             }
 
-        fun author(query: String, parent: Element = root, block: (Element) -> String = { it.text() }) {
+        fun author(query: String, parent: Element = root, block: (Element) -> String = { it.text().trim() }) {
             author = parent.requireElement(query = query, name = TAG_AUTHOR_NAME, block = block)
         }
 

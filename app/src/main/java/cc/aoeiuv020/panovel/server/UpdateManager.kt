@@ -111,29 +111,35 @@ object UpdateManager : AnkoLogger {
 
     fun create(context: Context) {
         debug { "create ${context.javaClass}" }
-        // 如果已经初始化过就直接返回，
+        // 以防万一，如果已经初始化过就直接返回，
         novelService?.let { return }
         // 调试模式直接初始化，
         if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
             debug { "debug mode," }
             novelService = NovelServiceImpl(ServerAddress.getAndroidTest())
             return
+        } else {
+            // 先给个默认地址，毕竟正常情况就是默认地址使用，
+            novelService = NovelServiceImpl(ServerAddress())
         }
         doAsync({ e ->
-            val message = "获取服务器信息失败, 尝试默认，"
+            // 出错了就继续用默认地址，
+            // 如果是断网，就让这连接不断失败，没什么影响，
+            val message = "获取服务器信息失败, "
             Reporter.post(message, e)
             error(message, e)
-            novelService = NovelServiceImpl(ServerAddress())
         }) {
             // 从github拿服务器地址，这样可以随时改，至少最低版本需要修改，以达到让用户手中的app过期，不连接服务器，
             val address = ServerAddress.getOnline()
             debug { "ServerAddress ${address.minVersion}: ${address.data}" }
             val currentVersionName = VersionUtil.getAppVersionName(context)
-            if (VersionName(address.minVersion) > VersionName(currentVersionName)) {
-                // 版本低于要求的，就直接返回，不初始化novelService, 也就拒绝所有服务器请求，
+            novelService = if (VersionName(address.minVersion) > VersionName(currentVersionName)) {
+                // 版本低于要求的，就直接返回，novelService设为空，拒绝请求，
                 warn { "minVersion(${address.minVersion}) > currentVersion($currentVersionName)" }
+                null
             } else {
-                novelService = NovelServiceImpl(address)
+                // 不管地址是否有不同，都覆盖默认配置，没影响，
+                NovelServiceImpl(address)
             }
         }
     }

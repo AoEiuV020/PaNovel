@@ -65,7 +65,7 @@ class Wukong : DslJsoupNovelContext() {init {
     contentPageTemplate = "/book/%s.html"
     content {
         document {
-            items("#htmlContent", block = ownLines())
+            items("#htmlContent", block = ownLinesSplitWhitespace())
         }.dropWhile {
             it.startsWith("悟空看书")
                     || it.startsWith("www.wukong.la")
