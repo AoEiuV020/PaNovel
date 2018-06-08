@@ -41,7 +41,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     }
 
     protected fun detail(detailExtra: String, extra: String, name: String, author: String,
-                         image: String, intro: String? = null, update: String? = null): NovelDetail {
+                         image: String?, intro: String? = null, update: String? = null): NovelDetail {
         val detail = context.getNovelDetail(detailExtra)
         println(detail)
         assertEquals(name, detail.novel.name)

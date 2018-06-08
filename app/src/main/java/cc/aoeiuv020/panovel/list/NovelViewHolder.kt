@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.list
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.support.annotation.UiThread
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils
@@ -16,12 +15,9 @@ import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.settings.ServerSettings
 import cc.aoeiuv020.panovel.text.CheckableImageView
+import cc.aoeiuv020.panovel.util.noCover
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.novel_item_big.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -155,25 +151,17 @@ class NovelViewHolder(itemView: View,
         site?.text = novel.site
         last?.text = novel.lastChapterName
         image?.let { imageView ->
-            Glide.with(ctx.applicationContext)
-                    .load(novel.image)
-                    .apply(RequestOptions().apply {
-                        placeholder(R.drawable.ic_read)
-                    })
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
-                            // TODO: 考虑在特定某些异常出现时直接改数据库里的小说图片地址，
-                            novel.image = "https://www.snwx8.com/modules/article/images/nocover.jpg"
-                            Glide.with(ctx.applicationContext).load(novel.image)
-                                    .into(target)
-                            return true
-                        }
-
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            return false
-                        }
-                    })
-                    .into(imageView)
+            if (novel.image == noCover) {
+                imageView.setImageResource(R.mipmap.no_cover)
+            } else {
+                Glide.with(ctx.applicationContext)
+                        .load(novel.image)
+                        .apply(RequestOptions().apply {
+                            placeholder(R.mipmap.no_cover)
+                            error(R.mipmap.no_cover)
+                        })
+                        .into(imageView)
+            }
         }
         star?.isChecked = novel.bookshelf
         // 显示“x分钟前”，

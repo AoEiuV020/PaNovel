@@ -42,12 +42,13 @@ data class NovelItem(
 
 /**
  * 小说详情页，
+ * @param image 有的网站没有小说封面图片，这也不是很重要，很多网站到处都是暂无封面，
  * @param extra 只要网站Context能用这个请求到章节列表就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
  * @param update 本小说最后更新时间，没有就null, 并没有什么用，但还是获取着，
  */
 data class NovelDetail(
         val novel: NovelItem,
-        val image: String,
+        val image: String?,
         // 最后更新的时间，
         val update: Date?,
         // 简介，

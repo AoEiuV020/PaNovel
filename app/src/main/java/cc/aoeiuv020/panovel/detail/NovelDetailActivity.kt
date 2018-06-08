@@ -18,12 +18,15 @@ import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
+import cc.aoeiuv020.panovel.util.noCover
 import cc.aoeiuv020.panovel.util.show
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.ctx
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.startActivity
 
@@ -132,7 +135,16 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         // TODO: 调整上半部分展示内容，作者名网站名什么都加上，
         // TODO: 下面考虑用viewPager两页实现简介和目录，
         tvIntroduction.text = novel.introduction
-        Glide.with(this.applicationContext).load(novel.image).into(toolbar_layout.image)
+        if (novel.image == noCover) {
+            toolbar_layout.image.setImageResource(R.mipmap.no_cover)
+        } else {
+            Glide.with(ctx.applicationContext)
+                    .load(novel.image)
+                    .apply(RequestOptions().apply {
+                        error(R.mipmap.no_cover)
+                    })
+                    .into(toolbar_layout.image)
+        }
         fabRead.setOnClickListener {
             NovelTextActivity.start(this, novel)
         }

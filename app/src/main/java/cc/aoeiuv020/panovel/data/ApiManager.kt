@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.site.*
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.util.noCover
 import java.net.URL
 import java.util.*
 
@@ -67,10 +68,11 @@ class ApiManager(ctx: Context) {
 
     fun updateNovelDetail(novel: Novel) {
         val novelDetail = context(novel).getNovelDetail(novel.detail)
+        "".split("\n\r")
         novel.name = novelDetail.novel.name
         novel.author = novelDetail.novel.author
         novel.detail = novelDetail.novel.extra
-        novel.image = novelDetail.image
+        novel.image = novelDetail.image ?: noCover
         novel.introduction = novelDetail.introduction
         novel.chapters = novelDetail.extra
         // detail页面的更新时间不保存，

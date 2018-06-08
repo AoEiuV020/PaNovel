@@ -2,7 +2,6 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
-import cc.aoeiuv020.panovel.api.noImage
 
 /**
  * Created by AoEiuV020 on 2018.06.03-14:54:37.
@@ -52,7 +51,7 @@ class Qingkan : DslJsoupNovelContext() {init {
                     it.textNodes().first().text().pick("作者：(\\S+)").first()
                 }
             }
-            image = noImage
+            image = null
             /*
 <div id="aboutbook">
 作者：何途&nbsp;&nbsp;&nbsp;&nbsp;类别：玄幻奇幻<br>

@@ -407,7 +407,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             var extra: String? = null
             fun createNovelDetail() = NovelDetail(
                     novel.notNull(),
-                    image.notNull(),
+                    image,
                     update,
                     introduction.toString(),
                     extra.notNull()

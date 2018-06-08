@@ -4,6 +4,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import cc.aoeiuv020.panovel.api.NovelChapter
+import cc.aoeiuv020.panovel.util.noCover
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import java.util.*
 
@@ -84,8 +85,10 @@ data class Novel(
         /**
          * 图片地址，没有图片的统一填充一张写着没有封面的图片地址，不可空，
          * 默认一样统一填充一张写着没有封面的图片地址，不空，
+         * 然后展示时判断，是noCover就填充内置的暂无封面的封面，
+         * 直接改成可空更好，但是sqlite不能改字段，
          */
-        var image: String = "https://www.snwx8.com/modules/article/images/nocover.jpg",
+        var image: String = noCover,
         /**
          * 简介，获取后如果小说没有简介，留空白或者字符串null，不可空，
          */
