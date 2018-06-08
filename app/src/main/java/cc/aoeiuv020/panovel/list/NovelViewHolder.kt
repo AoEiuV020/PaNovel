@@ -221,7 +221,14 @@ class NovelViewHolder(itemView: View,
         if (novel.nId == this.novel.nId) {
             // 显示刷新结果，
             show(novel)
-            refreshingDot?.refreshed(this.novel.receiveUpdateTime > this.novel.readTime)
+            val hasNew = if (ListSettings.dotNotifyUpdate) {
+                // 判断上次刷出更新时间在阅读时间之后，
+                this.novel.receiveUpdateTime > this.novel.readTime
+            } else {
+                // 判断阅读进度章节小于最后一章，
+                this.novel.chaptersCount - 1 > this.novel.readAtChapterIndex
+            }
+            refreshingDot?.refreshed(hasNew)
         }
     }
 

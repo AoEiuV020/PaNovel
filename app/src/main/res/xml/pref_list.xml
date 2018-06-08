@@ -33,6 +33,12 @@
             app:alphaSlider="true"
             app:lightnessSlider="true"
             app:wheelType="CIRCLE" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="dotNotifyUpdate"
+            android:summary="@string/dot_notify_update_summary"
+            android:title="@string/dot_notify_update" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_click_action">
