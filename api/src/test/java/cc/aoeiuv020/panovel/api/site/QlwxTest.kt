@@ -8,11 +8,6 @@ import org.junit.Test
 class QlwxTest : BaseNovelContextText(Qlwx::class) {
 
     @Test
-    fun yunsuo() {
-
-    }
-
-    @Test
     fun search() {
         // http://www.76wx.com/modules/article/search.php%3Fsearchtype=articlename&searchkey=%D0%DE%D5%E6&page=1
         search("都市")
