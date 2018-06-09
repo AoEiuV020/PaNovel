@@ -11,7 +11,7 @@ class N52ranwen : DslJsoupNovelContext() {init {
     site {
         name = "燃文小说"
         baseUrl = "http://www.52ranwen.cc"
-        logo = "https://imgsa.baidu.com/forum/pic/item/1ed95395d143ad4bdb3c06408e025aafa50f060e.jpg"
+        logo = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/static/logo/52ranwen.png"
     }
     search {
         get {
