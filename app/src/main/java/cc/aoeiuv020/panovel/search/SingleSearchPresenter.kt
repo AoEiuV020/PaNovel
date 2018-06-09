@@ -53,9 +53,7 @@ class SingleSearchPresenter(
         debug { "open <$currentUrl>," }
         view?.doAsync({ e ->
             val message = "打开地址<$currentUrl>失败，"
-            if (e !is IllegalArgumentException) {
-                Reporter.post(message, e)
-            }
+            Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
                 view?.showError(message, e)
