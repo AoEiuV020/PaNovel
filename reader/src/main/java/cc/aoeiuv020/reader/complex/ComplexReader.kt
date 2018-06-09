@@ -71,7 +71,7 @@ class ComplexReader(override var ctx: Context, novel: String, private val parent
     override fun scrollNext(): Boolean = pageView.scrollNext()
     override fun scrollPrev(): Boolean = pageView.scrollPrev()
 
-    override fun onDestroy() {
+    override fun destroy() {
         autoRefreshThread.cancel()
         pageView.drawer.detach()
         parent.removeView(pageView)

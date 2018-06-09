@@ -140,6 +140,9 @@ class NovelViewHolder(itemView: View,
             else -> if (ServerSettings.askUpdate) {
                 // 询问服务器是否有更新，
                 askUpdate()
+            } else {
+                // 不能什么都不做，要调用refreshingDot?.refreshed明确隐藏进度条，
+                refreshed(novel)
             }
         }
     }
@@ -204,7 +207,10 @@ class NovelViewHolder(itemView: View,
      */
     @UiThread
     fun refreshed(novel: Novel) {
-        debug { "refreshed ${novel.name}" }
+        debug { "refreshed <${novel.run { "$site.$author.$name" }}>" }
+        debug {
+            "bind <${this.novel.run { "$site.$author.$name" }}>"
+        }
         refreshingNovelSet.remove(novel.nId)
         if (novel.nId == this.novel.nId) {
             // 显示刷新结果，
@@ -215,6 +221,9 @@ class NovelViewHolder(itemView: View,
             } else {
                 // 判断阅读进度章节小于最后一章，
                 this.novel.chaptersCount - 1 > this.novel.readAtChapterIndex
+            }
+            debug {
+                "show hasNew: $hasNew"
             }
             refreshingDot?.refreshed(hasNew)
         }

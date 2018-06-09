@@ -30,7 +30,7 @@ interface INovelReader {
     fun scrollNext(): Boolean
     fun scrollPrev(): Boolean
 
-    fun onDestroy()
+    fun destroy()
 }
 
 abstract class BaseNovelReader(override var novel: String, override var requester: TextRequester) : INovelReader {

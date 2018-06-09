@@ -63,7 +63,7 @@ internal class SimpleReader(override var ctx: Context, novel: String, private va
         background.setImageURI(config.backgroundImage)
     }
 
-    override fun onDestroy() {
+    override fun destroy() {
         // 清空viewPager，自动调用destroyItem切断presenter,
         viewPager.adapter = null
         parent.removeView(contentView)

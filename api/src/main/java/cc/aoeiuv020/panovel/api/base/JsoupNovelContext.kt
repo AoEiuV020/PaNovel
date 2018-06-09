@@ -211,6 +211,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
     protected fun Element.ownTextListWithImage(): List<String> = ownTextListWithImage(this)
     protected fun TextNode.ownTextList(): List<String> = ownTextList(this)
     protected fun TextNode.ownTextListSplitWhitespace(): List<String> = ownTextListSplitWhitespace(this)
+    protected fun Element.ownLinesString(): String = ownTextListSplitWhitespace().joinToString("\n")
     protected fun TextNode.ownLinesString(): String = ownTextListSplitWhitespace().joinToString("\n")
     protected fun Node.text(): String = (this as TextNode).text()
 

@@ -356,7 +356,7 @@ object DataManager : AnkoLogger {
             novel.readAtTextIndex = it.readAtTextIndex
             // 顺便更新下阅读至的章节名，
             if (novel.chapters != null) {
-                novel.readAtChapterName = cache.loadChapters(novel)?.get(novel.readAtChapterIndex)?.name ?: ""
+                novel.readAtChapterName = cache.loadChapters(novel)?.getOrNull(novel.readAtChapterIndex)?.name ?: ""
             }
             // 加入书架，
             novel.bookshelf = true
