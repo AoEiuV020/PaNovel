@@ -6,6 +6,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
  * Created by AoEiuV020 on 2018.06.09-19:08:51.
  */
 class Zzdxsw : DslJsoupNovelContext() {init {
+    // 网速过慢，
+    enabled = false
     site {
         name = "猪猪岛小说网"
         baseUrl = "http://www.zzdxsw.org"
