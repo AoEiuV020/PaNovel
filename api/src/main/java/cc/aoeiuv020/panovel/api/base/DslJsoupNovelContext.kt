@@ -71,6 +71,19 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     override var enabled: Boolean = true
 
     /*
+    *************** interceptor ***************
+     */
+    private val interceptors = mutableListOf<Interceptor>()
+    override val clientBuilder: OkHttpClient.Builder
+        get() = super.clientBuilder.also {
+            it.interceptors().addAll(interceptors)
+        }
+
+    protected fun interceptor(interceptor: (Interceptor.Chain) -> Response) {
+        interceptors.add(Interceptor(interceptor))
+    }
+
+    /*
     *************** host ***************
      */
     val hostList: MutableList<String> = mutableListOf()
