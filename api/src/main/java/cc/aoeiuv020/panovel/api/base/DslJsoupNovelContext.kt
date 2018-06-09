@@ -200,6 +200,12 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             cookies.removeAll(predicate)
         }
 
+        fun remove(name: String) {
+            cookies.removeAll {
+                it.name() == name
+            }
+        }
+
         fun filter(): MutableList<Cookie> = cookies
     }
 
