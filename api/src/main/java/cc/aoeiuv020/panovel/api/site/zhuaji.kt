@@ -9,6 +9,8 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
  * Created by AoEiuV020 on 2018.06.09-19:47:51.
  */
 class Zhuaji : DslJsoupNovelContext() {init {
+    // 这网站连接总超时，
+    enabled = false
     site {
         name = "爪机书屋"
         baseUrl = "http://www.zhuaji.org"
