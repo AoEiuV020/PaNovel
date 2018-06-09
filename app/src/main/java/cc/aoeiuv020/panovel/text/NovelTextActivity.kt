@@ -179,6 +179,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     private fun initReader(novel: Novel) {
+        if (::reader.isInitialized) {
+            reader.destroy()
+        }
         reader = Readers.getReader(this, novel.name,
                 flContent, contentRequester, ReaderSettings.makeReaderConfig()).apply {
             menuListener = object : MenuListener {
@@ -241,7 +244,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
      * 重置阅读器，
      */
     private fun resetReader() {
-        reader.onDestroy()
+        reader.destroy()
         flContent.removeAllViews() // 多余，上面已经移除，
         initReader(novel)
         showChaptersAsc(chaptersAsc)
@@ -382,7 +385,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             presenter.detach()
         }
         if (::reader.isInitialized) {
-            reader.onDestroy()
+            reader.destroy()
         }
         super.onDestroy()
     }
