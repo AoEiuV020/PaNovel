@@ -2,15 +2,13 @@ package cc.aoeiuv020.panovel.search
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.CookieManager
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebViewClient
+import android.webkit.*
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
@@ -65,7 +63,7 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
         wvSite.apply {
-            webViewClient = WebViewClient()
+            webViewClient = MyWebViewClient()
             webChromeClient = WebChromeClient()
             settings.apply {
                 javaScriptEnabled = true
@@ -84,6 +82,27 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 setAcceptThirdPartyCookies(wvSite, true)
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        debug {
+            "onNewIntent $intent"
+        }
+        wvSite.loadUrl(intent.data.toString())
+    }
+
+    private inner class MyWebViewClient : WebViewClient(), AnkoLogger {
+        // 过时代替方法使用要api>=21,
+        @Suppress("OverridingDeprecatedMember")
+        override fun shouldOverrideUrlLoading(view: WebView, url: String?): Boolean {
+            debug { "shouldOverrideUrlLoading $url" }
+            if (url == null || url.startsWith("http")) {
+                return false
+            }
+            // 自定义协议之类的调用其他app打开，
+            // 主要是为了支持QQ一键登录的wtloginmqq协议，拉起QQ，
+            return browse(url)
         }
     }
 

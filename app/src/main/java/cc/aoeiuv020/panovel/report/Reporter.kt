@@ -50,8 +50,9 @@ object Reporter : AnkoLogger {
     }
 
     fun post(message: String) {
-        debug(message)
-        postException(IllegalStateException(message))
+        val e = IllegalStateException(message)
+        debug(message, e)
+        postException(e)
     }
 
     fun unreachable(e: Throwable) {
