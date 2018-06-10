@@ -14,6 +14,7 @@ import okhttp3.Cookie
 import okhttp3.HttpUrl
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import java.util.*
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 
@@ -290,6 +291,15 @@ object DataManager : AnkoLogger {
     fun pinned(novel: Novel) = app.pinned(novel)
 
     fun cancelPinned(novel: Novel) = app.cancelPinned(novel)
+    fun pinned(site: Site) {
+        site.pinnedTime = Date()
+        app.updatePinnedTime(site)
+    }
+
+    fun cancelPinned(site: Site) {
+        site.pinnedTime = Date(0)
+        app.updatePinnedTime(site)
+    }
 
     fun updateReadStatus(novel: Novel) = app.updateReadStatus(novel)
 

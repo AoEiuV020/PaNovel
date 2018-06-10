@@ -16,11 +16,12 @@ import kotlinx.android.synthetic.main.site_list_item.view.*
  * Created by AoEiuV020 on 2018.05.13-16:50:53.
  */
 class SiteListAdapter(
-        private val novelSiteList: List<Site>,
+        siteList: List<Site>,
         private val itemListener: ItemListener
 ) : RecyclerView.Adapter<SiteListAdapter.ViewHolder>() {
+    private val data: MutableList<Site> = siteList.toMutableList()
     override fun getItemCount(): Int {
-        return novelSiteList.size
+        return data.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,34 +30,44 @@ class SiteListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(novelSiteList[position])
+        holder.bind(data[position])
+    }
+
+    fun move(from: Int, to: Int) {
+        if (from == to || from !in data.indices || to !in data.indices) {
+            // 位置不正确就直接返回，
+            return
+        }
+        // ArrayList直接删除插入的话性能不行，但是无所谓了，
+        val novel = data.removeAt(from)
+        data.add(to, novel)
+        notifyItemMoved(from, to)
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.tvName
         val ivLogo: ImageView = itemView.ivLogo
         val cbEnabled: CheckBox = itemView.cbEnabled
-        private lateinit var data: Site
+        lateinit var site: Site
 
         init {
             cbEnabled.setOnCheckedChangeListener { _, checked: Boolean ->
-                if (data.enabled == checked) {
+                if (site.enabled == checked) {
                     return@setOnCheckedChangeListener
                 }
-                data.enabled = checked
-                itemListener.onEnabledChanged(data, checked)
+                site.enabled = checked
+                itemListener.onEnabledChanged(site)
             }
             itemView.setOnClickListener {
-                itemListener.onSiteSelect(data)
+                itemListener.onSiteSelect(site)
             }
             itemView.setOnLongClickListener {
-                cbEnabled.isChecked = !cbEnabled.isChecked
-                true
+                itemListener.onItemLongClick(this)
             }
         }
 
         fun bind(data: Site) {
-            this.data = data
+            this.site = data
             tvName.text = data.name
             Glide.with(ivLogo).load(data.logo).into(ivLogo)
             cbEnabled.isChecked = data.enabled
@@ -64,8 +75,9 @@ class SiteListAdapter(
     }
 
     interface ItemListener {
-        fun onEnabledChanged(site: Site, enabled: Boolean)
+        fun onEnabledChanged(site: Site)
         fun onSiteSelect(site: Site)
+        fun onItemLongClick(vh: ViewHolder): Boolean
     }
 
 }

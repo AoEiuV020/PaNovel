@@ -28,17 +28,42 @@ class SiteChoosePresenter : Presenter<SiteChooseActivity>() {
         }
     }
 
-    fun enabledChange(site: Site, enabled: Boolean) {
+    fun enabledChange(site: Site) {
         view?.doAsync({ e ->
-            val message = "${if (enabled) "启用" else "禁用"}网站失败，"
+            val message = "${if (site.enabled) "启用" else "禁用"}网站失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
                 view?.showError(message, e)
             }
         }) {
-            site.enabled = enabled
             DataManager.siteEnabledChange(site)
+        }
+    }
+
+    fun pinned(site: Site) {
+        view?.doAsync({ e ->
+            val message = "置顶网站失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.pinned(site)
+        }
+    }
+
+    fun cancelPinned(site: Site) {
+        view?.doAsync({ e ->
+            val message = "取消置顶网站失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.cancelPinned(site)
         }
     }
 }

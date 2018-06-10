@@ -4,13 +4,14 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import cc.aoeiuv020.panovel.data.entity.Site
+import java.util.*
 
 /**
  * Created by AoEiuV020 on 2018.05.24-14:20:59.
  */
 @Dao
 abstract class SiteDao {
-    @Query("select * from Site")
+    @Query("select * from Site order by pinnedTime desc, name asc")
     abstract fun list(): List<Site>
 
     /**
@@ -30,4 +31,7 @@ abstract class SiteDao {
 
     @Query("update Site set baseUrl = :baseUrl, logo = :logo where name = :name")
     abstract fun updateSiteInfo(name: String, baseUrl: String, logo: String)
+
+    @Query("update Site set pinnedTime = :pinnedTime where name = :name")
+    abstract fun updatePinnedTime(name: String, pinnedTime: Date)
 }

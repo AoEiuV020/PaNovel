@@ -195,5 +195,9 @@
     <string name="dot_notify_update">小红点提示有更新</string>
     <string name="dot_notify_update_summary">是则提示刷出更新的时间在阅读时间之后， 否则提示阅读进度没到最新章节</string>
     <string name="optimization_read">优化阅读</string>
+    <string name="enable">启用</string>
+    <string name="disable">禁用</string>
+    <string name="pinned">置顶</string>
+    <string name="select">选择</string>
 
 </resources>
