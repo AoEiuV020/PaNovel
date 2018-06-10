@@ -23,7 +23,6 @@ import android.view.*
 import android.widget.ImageView
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
-import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
@@ -65,7 +64,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         fun start(ctx: Context, novel: Novel, index: Int) {
             ctx.startActivity<NovelTextActivity>(
                     Novel.KEY_ID to novel.nId,
-                    "index" to index.toJson(App.gson)
+                    "index" to index.toJson()
             )
         }
     }
@@ -78,6 +77,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private lateinit var reader: INovelReader
     // 缓存传入的索引，阅读器准备好后跳到这一章，-1表示最后一章，
     private var index: Int? = null
+    private var text: Int? = null
     private var _novel: Novel? = null
     private var novel: Novel
         get() = _novel.notNullOrReport()
@@ -93,7 +93,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             // 不是很清楚要否必要存在state里，
             // 防止的是android恢复了intent的数据，初始化阅读器时就跳到intent持有的index章节了，
             // onCreate先读取state里的index，存在就无视intent,
-            putString("index", novel.readAtChapterIndex.toJson(App.gson))
+            putString("index", novel.readAtChapterIndex.toJson())
+            putString("text", novel.readAtTextIndex.toJson())
         }
     }
 
@@ -113,14 +114,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
         title = id.toString()
 
-        // TODO: 进来时就取消有新章节的通知，cancel notify,
-
         // 进度，读取顺序， savedInstanceState > intent > DataManager
         // intent传入的index，activity死了再开，应该会恢复这个intent, 不能让intent覆盖了死前的阅读进度，
-        // 用getSerializableExtra读Int不需要默认值，
+        // 用getString读Int不需要默认值，
         // 出现过存在savedInstanceState但是getString("index")为null的不明状况，干脆都加问号?,
-        index = savedInstanceState?.run { getString("index")?.toBean<Int>(App.gson) }
-                ?: intent.getStringExtra("index")?.toBean(App.gson)
+        index = getStringExtra("index", savedInstanceState)?.toBean()
+        text = getStringExtra("text", savedInstanceState)?.toBean()
 
         presenter = NovelTextPresenter(id)
 
@@ -457,8 +456,9 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
             // 如果有传入章节索引，就修改novel里存的阅读进度，
             novel.readAt(chapterIndex, chaptersAsc)
-            // 章节内进度改成本章开头，
-            novel.readAtTextIndex = 0
+            // 如果是从savedInstanceState恢复的，就有章节内进度text,
+            // 否则章节内进度改成开头，
+            novel.readAtTextIndex = text?.also { text = null } ?: 0
         }
         if (novel.readAtChapterIndex > chaptersAsc.lastIndex
                 || novel.readAtChapterIndex < 0) {
