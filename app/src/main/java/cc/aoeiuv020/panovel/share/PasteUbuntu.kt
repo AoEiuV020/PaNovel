@@ -1,7 +1,10 @@
 package cc.aoeiuv020.panovel.share
 
-import org.jsoup.Connection
-import org.jsoup.Jsoup
+import cc.aoeiuv020.base.jar.client
+import cc.aoeiuv020.base.jar.jsoupConnect
+import cc.aoeiuv020.panovel.util.notNullOrReport
+import okhttp3.FormBody
+import okhttp3.Request
 
 /**
  * 网上贴文本，免费还无限制，
@@ -10,7 +13,7 @@ import org.jsoup.Jsoup
  */
 internal class PasteUbuntu {
     companion object {
-        val homePage = "https://paste.ubuntu.com/"
+        const val homePage = "https://paste.ubuntu.com/"
     }
 
     fun check(url: String): Boolean {
@@ -21,19 +24,27 @@ internal class PasteUbuntu {
      * 上传文本，返回生成页面的地址，
      */
     fun upload(data: PasteUbuntuData): String {
-        val response = Jsoup.connect(homePage)
-                .followRedirects(false)
-                .maxBodySize(0)
-                .method(Connection.Method.POST)
-                .data(data.toMap())
+        val form = FormBody.Builder()
+                .apply {
+                    data.toMap().forEach { (name, value) ->
+                        add(name, value)
+                    }
+                }
+                .build()
+        val request = Request.Builder()
+                .url(homePage)
+                .post(form)
+                .build()
+        return client.newBuilder().followRedirects(false)
+                .build()
+                .newCall(request)
                 .execute()
-        return response.header("Location")
+                .header("Location")
+                .notNullOrReport()
     }
 
     fun download(url: String): String {
-        val root = Jsoup.connect(url)
-                .maxBodySize(0)
-                .get()
+        val root = jsoupConnect(url)
         return root.select("#contentColumn > div > div > div > table > tbody > tr > td.code > div > pre").first().text()
     }
 

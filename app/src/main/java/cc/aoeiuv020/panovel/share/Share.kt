@@ -76,7 +76,7 @@ object Share {
                 context.browse(url)
             }
         }
-        Glide.with(context).load(qrCode).into(layout.ivQrCode)
+        Glide.with(context.applicationContext).load(qrCode).into(layout.ivQrCode)
         context.alert {
             titleResource = R.string.share
             customView = layout

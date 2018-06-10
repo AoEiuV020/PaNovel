@@ -6,11 +6,11 @@ import android.content.Intent
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.base.jar.compilePattern
+import cc.aoeiuv020.base.jar.jsoupConnect
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.*
 import org.jetbrains.anko.*
-import org.jsoup.Jsoup
 import java.io.BufferedReader
 import java.net.URL
 
@@ -26,7 +26,7 @@ object Check : Pref, AnkoLogger {
     private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
     private var knownVersionName: String by Delegates.string("0")
     private fun getNewestVersionName(): String {
-        return Jsoup.connect(RELEASE_GITHUB).get().select("#js-repo-pjax-container " +
+        return jsoupConnect(RELEASE_GITHUB).select("#js-repo-pjax-container " +
                 "> div.container.new-discussion-timeline.experiment-repo-nav " +
                 "> div.repository-content " +
                 "> div.position-relative.border-top " +
