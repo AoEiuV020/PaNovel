@@ -87,8 +87,10 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
     override fun onNewIntent(intent: Intent) {
         debug {
-            "onNewIntent $intent"
+            "onNewIntent ${intent.data}"
         }
+        // 以防万一，从别的浏览器跳到这里时不要显示下拉刷新中，
+        srlRefresh.isRefreshing = false
         wvSite.loadUrl(intent.data.toString())
     }
 
@@ -102,7 +104,22 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
             }
             // 自定义协议之类的调用其他app打开，
             // 主要是为了支持QQ一键登录的wtloginmqq协议，拉起QQ，
-            return browse(url)
+            return try {
+                // wtloginmqq://ptlogin/qlogin?p=https%3A%2F%2Fssl.ptlogin2.qq.com%2Fjump%3Fu1%3Dhttps%253A%252F%252Flogin.book.qq.com%252Flogin%252Fqqptcallback%253Ftype%253Dwap%2526appid%253D13%2526areaid%253D1%2526auto%253D1%2526ticket%253D1%2526ajaxdm%253Dyuewen%2526returnurl%253Dhttps%25253A%25252F%25252Fm.qidian.com%25252Fuser%25253Ffrom%25253Dlogin%26pt_report%3D1%26style%3D9%26pt_ua%3D5447A8135284D842CEE5CFD29AF3FB09%26pt_browser%3DChrome&schemacallback=googlechrome%3A%2F%2F
+                // https://ssl.ptlogin2.qq.com/jump?u1=https%3A%2F%2Flogin.book.qq.com%2Flogin%2Fqqptcallback%3Ftype%3Dwap%26appid%3D13%26areaid%3D1%26auto%3D1%26ticket%3D1%26ajaxdm%3Dyuewen%26returnurl%3Dhttps%253A%252F%252Fm.qidian.com%252Fuser%253Ffrom%253Dlogin&pt_report=1&style=9&pt_ua=5447A8135284D842CEE5CFD29AF3FB09&pt_browser=Chrome
+                // schemacallback=googlechrome%3A%2F%2F
+                if (url.startsWith("wtloginmqq://")) {
+                    // 把schemacallback破坏掉，否则有可能会自动判断浏览器然后选择性的跳回调，直接跳到chrome,
+                    val newUrl = url.replace("schemacallback", "s")
+                    browse(newUrl)
+                } else {
+                    browse(url)
+                }
+            } catch (e: Exception) {
+                val message = "解析地址($url)失败，"
+                Reporter.post(message, e)
+                browse(url)
+            }
         }
     }
 
