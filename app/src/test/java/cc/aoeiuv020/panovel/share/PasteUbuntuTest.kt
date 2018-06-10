@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.share
 
-import cc.aoeiuv020.panovel.local.Settings
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -20,7 +19,7 @@ class PasteUbuntuTest {
 
     @Test
     fun upload() {
-        val link = paste.upload(PasteUbuntu.PasteUbuntuData(text, expiration = Settings.shareExpiration))
+        val link = paste.upload(PasteUbuntu.PasteUbuntuData(text, expiration = Expiration.DAY))
         println(link)
         assertTrue(link.matches(Regex("https://paste.ubuntu.com/p/\\w*/")))
         val receive = paste.download(link)

@@ -9,6 +9,7 @@ import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.util.VersionUtil
+import cc.aoeiuv020.panovel.util.safelyShow
 import kotlinx.android.synthetic.main.content_about.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.browse
@@ -50,7 +51,7 @@ class AboutFragment : Fragment() {
                     activity.browse(linkList[i])
                 }
                 yesButton { it.dismiss() }
-            }.show()
+            }.safelyShow()
         }
     }
 }

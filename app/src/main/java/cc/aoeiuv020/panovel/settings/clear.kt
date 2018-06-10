@@ -6,6 +6,7 @@ import android.preference.PreferenceFragment
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.util.safelyShow
 import org.jetbrains.anko.*
 
 /**
@@ -39,7 +40,7 @@ class CacheClearPreferenceFragment : PreferenceFragment(), AnkoLogger {
                 alert(p.title.toString(), getString(R.string.confirm_clear)) {
                     yesButton {
                         val dialog = indeterminateProgressDialog(getString(R.string.removing, p.title))
-                        dialog.show()
+                        dialog.safelyShow()
                         doAsync({ e ->
                             val message = "清除失败，"
                             Reporter.post(message, e)
@@ -51,7 +52,7 @@ class CacheClearPreferenceFragment : PreferenceFragment(), AnkoLogger {
                             }
                         }
                     }
-                }.show()
+                }.safelyShow()
             }
             true
         }

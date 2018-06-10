@@ -1,14 +1,15 @@
 package cc.aoeiuv020.panovel.local
 
 import android.content.Context
+import cc.aoeiuv020.base.jar.get
+import cc.aoeiuv020.base.jar.string
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
+import cc.aoeiuv020.panovel.util.safelyShow
 import com.google.gson.JsonObject
 import org.jetbrains.anko.*
-import org.jsoup.Jsoup
-import java.util.concurrent.TimeUnit
 
 /**
  * 来自开发者的消息，
@@ -25,11 +26,7 @@ object DevMessage : Pref, AnkoLogger {
             Reporter.post(message, e)
             error(message, e)
         }) {
-            val jsonObject: JsonObject = Jsoup.connect(MESSAGE_URL)
-                    .timeout(TimeUnit.SECONDS.toMillis(10).toInt())
-                    .execute()
-                    .body()
-                    .toBean()
+            val jsonObject: JsonObject = get(MESSAGE_URL).string().toBean()
             val message = jsonObject.get("message")?.asString
             if (message == null || message.isBlank() || message == cachedMessage) {
                 return@doAsync
@@ -40,7 +37,7 @@ object DevMessage : Pref, AnkoLogger {
                     title = jsonObject.get("title")?.asString ?: "来自开发者的消息"
                     this.message = message
                     yesButton { }
-                }.show()
+                }.safelyShow()
             }
         }
     }

@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.notNullOrReport
+import cc.aoeiuv020.panovel.util.safelyShow
 import cc.aoeiuv020.panovel.util.showKeyboard
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import kotlinx.android.synthetic.main.novel_item_list.*
@@ -95,7 +96,7 @@ class BookListFragment : Fragment(), IView, AnkoLogger {
                 }
             }
             etName.post { etName.showKeyboard() }
-        }.show()
+        }.safelyShow()
     }
 
     fun shareBookList(bookList: BookList) {
@@ -163,7 +164,7 @@ class BookListFragment : Fragment(), IView, AnkoLogger {
                 }
             }
             etName.post { etName.showKeyboard() }
-        }.show()
+        }.safelyShow()
     }
 
     fun showComplete(message: String) {

@@ -13,6 +13,7 @@ dependencies {
     implementation project(':baseJar')
     implementation project(':api')
     implementation project(':server')
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 }
 
 sourceCompatibility = "1.7"

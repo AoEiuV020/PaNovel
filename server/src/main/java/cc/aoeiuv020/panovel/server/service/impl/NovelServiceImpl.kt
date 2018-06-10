@@ -18,6 +18,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 import java.lang.reflect.Type
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -26,6 +27,10 @@ import java.lang.reflect.Type
 class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService {
     private val logger: Logger = LoggerFactory.getLogger(NovelServiceImpl::class.java.simpleName)
     private val client: OkHttpClient = OkHttpClient.Builder()
+            // 超时设置短一些，连不上就放弃，不是很重要，
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
             .build()
 
     private inline fun <reified T> post(url: String, any: Any): T =

@@ -24,7 +24,7 @@
 
     <header
         android:fragment="cc.aoeiuv020.panovel.settings.CacheClearPreferenceFragment"
-        android:title="@string/pref_cache_clear" />
+        android:title="@string/pref_clear" />
 
     <header
         android:fragment="cc.aoeiuv020.panovel.settings.DisclaimerFragment"

@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.server
 
+import cc.aoeiuv020.base.jar.get
+import cc.aoeiuv020.base.jar.string
 import cc.aoeiuv020.panovel.server.common.toBean
-import org.jsoup.Jsoup
-import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -34,11 +34,7 @@ class ServerAddress(
                     .toBean()
         }
 
-        fun getOnline(): ServerAddress = Jsoup.connect(ServerAddress.SERVER_INFO_ON_GITHUB)
-                .timeout(TimeUnit.SECONDS.toMillis(10).toInt())
-                .execute()
-                .body()
-                .toBean()
+        fun getOnline(): ServerAddress = get(ServerAddress.SERVER_INFO_ON_GITHUB).string().toBean()
     }
 
     val updateUploadUrl: String

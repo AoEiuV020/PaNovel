@@ -11,8 +11,10 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Site
 import kotlinx.android.synthetic.main.activity_site_choose.*
 import org.jetbrains.anko.ctx
+import org.jetbrains.anko.selector
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
+import java.util.*
 
 class SiteChooseActivity : AppCompatActivity(), IView {
     companion object {
@@ -24,12 +26,40 @@ class SiteChooseActivity : AppCompatActivity(), IView {
     private lateinit var presenter: SiteChoosePresenter
 
     private val itemListener = object : SiteListAdapter.ItemListener {
-        override fun onEnabledChanged(site: Site, enabled: Boolean) {
-            presenter.enabledChange(site, enabled)
+        override fun onEnabledChanged(site: Site) {
+            presenter.enabledChange(site)
         }
 
         override fun onSiteSelect(site: Site) {
             SingleSearchActivity.start(ctx, site.name)
+        }
+
+        override fun onItemLongClick(vh: SiteListAdapter.ViewHolder): Boolean {
+            val actions: List<Pair<Int, () -> Unit>> = listOf(
+                    R.string.enable to {
+                        vh.site.enabled = true
+                        vh.cbEnabled.isChecked = true
+                        presenter.enabledChange(vh.site)
+                    },
+                    R.string.disable to {
+                        vh.site.enabled = false
+                        vh.cbEnabled.isChecked = false
+                        presenter.enabledChange(vh.site)
+                    },
+                    R.string.pinned to {
+                        vh.site.pinnedTime = Date()
+                        (rvSiteList.adapter as SiteListAdapter).move(vh.layoutPosition, 0)
+                        presenter.pinned(vh.site)
+                    },
+                    R.string.cancel_pinned to {
+                        vh.site.pinnedTime = Date(0)
+                        presenter.cancelPinned(vh.site)
+                    }
+            )
+            selector(title = getString(R.string.select), items = actions.map { getString(it.first) }) { _, i ->
+                actions[i].second()
+            }
+            return true
         }
     }
 

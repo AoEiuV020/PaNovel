@@ -60,8 +60,8 @@ class AppDatabaseManager(context: Context) {
     fun listBookshelf(): List<Novel> = db.novelDao().listBookshelf()
 
     fun pinned(novel: Novel) = db.novelDao().updatePinnedTime(novel.nId, Date())
-
     fun cancelPinned(novel: Novel) = db.novelDao().updatePinnedTime(novel.nId, Date(0))
+    fun updatePinnedTime(site: Site) = db.siteDao().updatePinnedTime(site.name, site.pinnedTime)
 
     fun updateReadStatus(novel: Novel) = db.novelDao().updateReadStatus(novel.nId,
             novel.readAtChapterIndex, novel.readAtTextIndex,

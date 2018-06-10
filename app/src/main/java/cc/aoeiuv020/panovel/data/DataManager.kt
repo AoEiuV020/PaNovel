@@ -14,6 +14,7 @@ import okhttp3.Cookie
 import okhttp3.HttpUrl
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import java.util.*
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 
@@ -83,15 +84,17 @@ object DataManager : AnkoLogger {
 
     /**
      * 询问服务器是否有更新，
+     *
+     * @return 返回true表示有更新，
      */
-    fun askUpdate(novel: Novel) {
+    fun askUpdate(novel: Novel): Boolean {
         debug { "askUpdate: <${novel.run { "$site.$author.$name.$receiveUpdateTime.$checkUpdateTime" }}>" }
-        val result = server.askUpdate(novel) ?: return
+        val result = server.askUpdate(novel) ?: return false
         debug { "result: <${result.toJson()}}>" }
-        if (result.chaptersCount ?: 0 > novel.chaptersCount) {
+        return if (result.chaptersCount ?: 0 > novel.chaptersCount) {
+            // 只对比章节数，
             debug { "has update ${result.chaptersCount} > ${novel.chaptersCount}" }
-            // 如果有更新，也就是章节数比本地的多，就刷新章节列表，
-            refreshChapters(novel)
+            true
         } else {
             debug { "no update ${result.chaptersCount} <= ${novel.chaptersCount}" }
             // 如果没更新，就保存服务器上的更新时间，如果更大的话，
@@ -99,6 +102,7 @@ object DataManager : AnkoLogger {
                 // 不更新receiveUpdateTime，不准，有时别人比较晚收到同一个更新然后推上去被拿到，
                 checkUpdateTime = maxOf(checkUpdateTime, result.checkUpdateTime)
             }
+            false
         }
     }
 
@@ -287,6 +291,15 @@ object DataManager : AnkoLogger {
     fun pinned(novel: Novel) = app.pinned(novel)
 
     fun cancelPinned(novel: Novel) = app.cancelPinned(novel)
+    fun pinned(site: Site) {
+        site.pinnedTime = Date()
+        app.updatePinnedTime(site)
+    }
+
+    fun cancelPinned(site: Site) {
+        site.pinnedTime = Date(0)
+        app.updatePinnedTime(site)
+    }
 
     fun updateReadStatus(novel: Novel) = app.updateReadStatus(novel)
 
