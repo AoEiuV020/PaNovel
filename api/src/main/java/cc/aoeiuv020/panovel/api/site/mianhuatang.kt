@@ -60,7 +60,7 @@ class Mianhuatang : DslJsoupNovelContext() {init {
     contentPageTemplate = "/xs/%s.htm"
     content {
         document {
-            items("#zjneirong > p")
+            items("#zjneirong")
         }
     }
 }
