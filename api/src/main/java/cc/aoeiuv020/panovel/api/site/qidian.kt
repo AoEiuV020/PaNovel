@@ -69,9 +69,12 @@ class Qidian : DslJsoupNovelContext() {init {
         val bookId = findBookId(it)
         // 用到的接口需要cookies中的_csrfToken参数，
         // 如果没有，就额外拿一遍详情页，取其中返回的_csrfToken，
-        // TODO: 缓存cookies的话，_csrfToken不知道会不会过期，有必要测试下如果过期会拿到什么，至少一两天不会过期，
+        // _csrfToken这个cookie能坚持一年，不用考虑过期的事，而且okhttp会自动处理过期的cookie, 应该只有刚刚过期时的请求会出意外，
         val token = cookies["_csrfToken"]?.value() ?: run {
-            response(connect(getNovelDetailUrl(bookId))).headers().responseCookies()["_csrfToken"].notNull()
+            response(connect(getNovelDetailUrl(bookId)))
+                    // 不用的body也要close,
+                    .apply { body()?.close() }
+                    .headers().responseCookies()["_csrfToken"].notNull()
         }
         get {
             url = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
