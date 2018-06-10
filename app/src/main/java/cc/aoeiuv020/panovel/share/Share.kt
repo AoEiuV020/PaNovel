@@ -10,6 +10,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
+import cc.aoeiuv020.panovel.util.safelyShow
 import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.dialog_shared.view.*
@@ -80,6 +81,6 @@ object Share {
             titleResource = R.string.share
             customView = layout
             yesButton { }
-        }.show()
+        }.safelyShow()
     }
 }

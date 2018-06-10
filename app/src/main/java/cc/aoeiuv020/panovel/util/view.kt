@@ -3,6 +3,7 @@
 package cc.aoeiuv020.panovel.util
 
 import android.app.Activity
+import android.app.Dialog
 import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
@@ -22,13 +23,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.report.Reporter
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import kotlinx.android.synthetic.main.dialog_editor.view.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.cancelButton
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.yesButton
+import org.jetbrains.anko.*
 
 
 /**
@@ -95,7 +94,7 @@ fun Context.changeColor(initial: Int, callback: (color: Int) -> Unit) = alert {
         }
     }
     cancelButton { }
-}.show()
+}.safelyShow()
 
 
 fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = ColorPickerDialogBuilder.with(this)
@@ -108,7 +107,7 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
         .build().apply {
             // 去除对话框的灰背景，
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        }.show()
+        }.safelyShow()
 
 fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null, bigText: String? = null) {
     val intent = intentFor<MainActivity>()
@@ -198,3 +197,24 @@ fun Activity.setBrightnessFollowSystem() {
  * 展示的时候换成内置的图片，
  */
 val noCover: String get() = "https://www.snwx8.com/modules/article/images/nocover.jpg"
+
+/**
+ * 不希望展示对话框失败导致崩溃，
+ */
+fun Dialog.safelyShow() {
+    try {
+        show()
+    } catch (e: Exception) {
+        val message = "展示对话框失败，"
+        Reporter.post(message, e)
+    }
+}
+
+fun AlertBuilder<*>.safelyShow() {
+    try {
+        show()
+    } catch (e: Exception) {
+        val message = "展示对话框失败，"
+        Reporter.post(message, e)
+    }
+}

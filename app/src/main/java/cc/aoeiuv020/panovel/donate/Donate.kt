@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.ImageView
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.util.safelyShow
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.toast
@@ -75,7 +76,7 @@ sealed class Donate {
                         context.toast("你好像没有安装微信")
                     }
                 }
-            }.show()
+            }.safelyShow()
         }
     }
 

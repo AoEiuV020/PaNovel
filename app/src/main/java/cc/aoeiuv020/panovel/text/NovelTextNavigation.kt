@@ -12,10 +12,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.Margins
 import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.text.NovelTextNavigation.Direction.*
-import cc.aoeiuv020.panovel.util.hide
-import cc.aoeiuv020.panovel.util.setBrightness
-import cc.aoeiuv020.panovel.util.setBrightnessFollowSystem
-import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName
 import kotlinx.android.synthetic.main.dialog_seekbar.view.*
@@ -157,7 +154,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
                     negativeButton(R.string.set_default) {
                         view.resetFont()
                     }
-                }.show()
+                }.safelyShow()
             }
 
             tvTypesetting.setOnClickListener {
@@ -206,7 +203,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
                 }.create().apply {
                     // 去除对话框的灰背景，
                     window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-                }.show()
+                }.safelyShow()
             }
 
             // 设置保持亮屏，

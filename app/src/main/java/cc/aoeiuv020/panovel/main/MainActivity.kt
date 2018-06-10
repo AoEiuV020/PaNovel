@@ -40,6 +40,7 @@ import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.loading
+import cc.aoeiuv020.panovel.util.safelyShow
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_main.*
@@ -96,7 +97,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             title = getString(R.string.warning)
             message = getString(R.string.downgrade_warning_placeholder, from.name, to.name)
             okButton { }
-        }.show()
+        }.safelyShow()
     }
 
     override fun showUpgrading(from: VersionName, migration: Migration) {
@@ -107,7 +108,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         (migratingDialog ?: ProgressDialog(ctx).also { migratingDialog = it }).apply {
             setTitle(getString(R.string.migrating_title))
             setMessage(getString(R.string.migrating_message_placeholder, from.name, to.name, migration.message))
-            show()
+            safelyShow()
         }
     }
 
@@ -137,7 +138,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             neutralPressed(getString(R.string.ignore)) {
                 migrationPresenter.ignoreMigration(migration)
             }
-        }.show()
+        }.safelyShow()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -280,6 +281,10 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     }
 
     override fun onDestroy() {
+        migratingDialog?.dismiss()
+        if (::progressDialog.isInitialized) {
+            progressDialog.dismiss()
+        }
         ad_view.destroy()
         super.onDestroy()
     }
@@ -287,7 +292,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     private fun showExplain() {
         alert(assets.open("Explain.txt").reader().readText(), getString(R.string.explain)) {
             yesButton { }
-        }.show()
+        }.safelyShow()
     }
 
     private fun scan() {
@@ -314,7 +319,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
                     OpenManager.open(this@MainActivity, url, openListener)
                 }
             }
-        }.show()
+        }.safelyShow()
     }
 
     private fun subscript() {

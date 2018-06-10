@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.util.safelyShow
 import kotlinx.android.synthetic.main.activity_single_search.*
 import org.jetbrains.anko.*
 
@@ -104,7 +105,7 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
                 message = ctx.getString(R.string.message_cookies_removed)
         ) {
             okButton { }
-        }.show()
+        }.safelyShow()
     }
 
     fun getCurrentUrl(): String? = wvSite.url
@@ -139,7 +140,7 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
                 message = message + e.message
         ) {
             okButton { }
-        }.show()
+        }.safelyShow()
     }
 
     override fun onSupportNavigateUp(): Boolean {

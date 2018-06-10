@@ -17,6 +17,7 @@ import android.view.MenuItem
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.util.loading
+import cc.aoeiuv020.panovel.util.safelyShow
 import kotlinx.android.synthetic.main.activity_export.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.alert
@@ -119,7 +120,7 @@ class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
         alert(
                 message = result,
                 title = "导入完成"
-        ).show()
+        ).safelyShow()
     }
 
     fun showExportSuccess(result: String) {
@@ -127,7 +128,7 @@ class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
         alert(
                 message = result,
                 title = "导出完成"
-        ).show()
+        ).safelyShow()
     }
 
     fun showDefaultPath(defaultOldUri: String, defaultNewUri: String) {

@@ -8,10 +8,7 @@ import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.util.Delegates
-import cc.aoeiuv020.panovel.util.Pref
-import cc.aoeiuv020.panovel.util.SignatureUtil
-import cc.aoeiuv020.panovel.util.VersionUtil
+import cc.aoeiuv020.panovel.util.*
 import org.jetbrains.anko.*
 import org.jsoup.Jsoup
 import java.io.BufferedReader
@@ -111,13 +108,13 @@ object Check : Pref, AnkoLogger {
                         negativeButton("Github") {
                             ctx.browse(Check.RELEASE_GITHUB)
                         }
-                    }.show()
+                    }.safelyShow()
                 } else {
                     ctx.alert {
                         title = "已更新"
                         message = changeLog
                         yesButton { }
-                    }.show()
+                    }.safelyShow()
                 }
             }
         }
@@ -178,7 +175,7 @@ object Check : Pref, AnkoLogger {
                     negativeButton("Github") {
                         ctx.browse(Check.RELEASE_GITHUB)
                     }
-                }.show()
+                }.safelyShow()
             }
         }
     }

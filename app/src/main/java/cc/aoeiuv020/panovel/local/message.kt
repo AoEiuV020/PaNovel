@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
+import cc.aoeiuv020.panovel.util.safelyShow
 import com.google.gson.JsonObject
 import org.jetbrains.anko.*
 import org.jsoup.Jsoup
@@ -40,7 +41,7 @@ object DevMessage : Pref, AnkoLogger {
                     title = jsonObject.get("title")?.asString ?: "来自开发者的消息"
                     this.message = message
                     yesButton { }
-                }.show()
+                }.safelyShow()
             }
         }
     }

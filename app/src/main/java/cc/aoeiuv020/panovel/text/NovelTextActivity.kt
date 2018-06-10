@@ -641,7 +641,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }.setCancelable(false).create().also {
             // 去除对话框的灰背景，
             it.window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        }.show()
+        }.safelyShow()
     }
 
     private fun setBackground(color: Int, image: Uri?) {
@@ -678,7 +678,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                             listView.post {
                                 listView.setSelection(novel.readAtChapterIndex)
                             }
-                        }.show()
+                        }.safelyShow()
             }
         }
     }
@@ -770,7 +770,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     presenter.download(novel, index, etCount.text.toString().toIntOrNull() ?: 0)
                 }
                 cancelButton { }
-            }.show()
+            }.safelyShow()
             count == 0 -> presenter.download(novel, index, Int.MAX_VALUE)
             else -> presenter.download(novel, index, count)
         }

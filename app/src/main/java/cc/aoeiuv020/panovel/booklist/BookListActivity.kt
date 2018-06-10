@@ -22,6 +22,7 @@ import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
+import cc.aoeiuv020.panovel.util.safelyShow
 import cc.aoeiuv020.panovel.util.show
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_book_list.*
@@ -179,7 +180,7 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
                 }
                 .create().apply {
                     listView.isFastScrollEnabled = true
-                }.show()
+                }.safelyShow()
     }
 
 
