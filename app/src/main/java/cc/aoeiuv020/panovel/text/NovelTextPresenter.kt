@@ -8,7 +8,6 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.*
-import java.io.IOException
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -127,9 +126,7 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
     fun requestChapters(novel: Novel) {
         view?.doAsync({ e ->
             val message = "加载小说章节列表失败，"
-            if (e !is IOException) {
-                Reporter.post(message, e)
-            }
+            Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
                 view?.showError(message, e)
