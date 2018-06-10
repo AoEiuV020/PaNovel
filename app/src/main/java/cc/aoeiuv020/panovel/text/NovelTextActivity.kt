@@ -231,6 +231,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun setTextProgress(progress: Int) {
+        novel.readAtTextIndex = progress
         reader.textProgress = progress
     }
 
