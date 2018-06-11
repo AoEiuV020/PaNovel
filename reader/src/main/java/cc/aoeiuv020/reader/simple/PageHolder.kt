@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.simple_view_pager_item.view.*
 import org.jetbrains.anko.*
 import kotlin.properties.Delegates
 
-internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogger {
+internal class PageHolder(private val reader: SimpleReader) : AnkoLogger {
     // TODO 这个强转不能留，
     private val ctx = reader.ctx as Activity
     private val requester = reader.requester
@@ -22,7 +22,7 @@ internal class NovelTextViewHolder(private val reader: SimpleReader) : AnkoLogge
     private val textRecyclerView = itemView.textRecyclerView
     private val layoutManager: LinearLayoutManager = LinearLayoutManager(ctx)
     private val progressBar: ProgressBar = itemView.progressBar
-    val ntrAdapter = NovelTextRecyclerAdapter(reader)
+    val ntrAdapter = PageRecyclerAdapter(reader)
     private var textProgress: Int? = null
     private var index: Int by Delegates.notNull()
 
