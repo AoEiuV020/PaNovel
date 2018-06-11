@@ -1,9 +1,6 @@
 {
   "minVersion": "2.2.2",
     "data": {
-        "updateUploadUrl": "http://wildfly-panovel-server.7e14.starter-us-west-2.openshiftapps.com/panovel-server/novel/update",
-        "needRefreshNovelListUrl": "http://wildfly-panovel-server.7e14.starter-us-west-2.openshiftapps.com/panovel-server/novel/needRefreshNovelList",
-        "queryUrl": "http://wildfly-panovel-server.7e14.starter-us-west-2.openshiftapps.com/panovel-server/novel/query",
-        "touchUrl": "http://wildfly-panovel-server.7e14.starter-us-west-2.openshiftapps.com/panovel-server/novel/touch"
+        "updateUploadUrl": "http://panovel.aoeiuv020.cc/novel/update"
     }
 }
