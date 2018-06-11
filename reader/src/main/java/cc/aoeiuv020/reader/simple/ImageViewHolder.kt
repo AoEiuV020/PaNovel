@@ -3,6 +3,7 @@ package cc.aoeiuv020.reader.simple
 import android.content.Context
 import android.view.View
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.simple_image_item.view.*
 
 /**
@@ -10,14 +11,16 @@ import kotlinx.android.synthetic.main.simple_image_item.view.*
  */
 internal class ImageViewHolder(
         itemView: View,
-        prAdapter: PageRecyclerAdapter
+        @Suppress("UNUSED_PARAMETER") prAdapter: PageRecyclerAdapter
 ) : PageRecyclerAdapter.ViewHolder(itemView) {
     private val ctx: Context = itemView.context
     private val ivImage = itemView.ivImage
 
     fun setImage(src: String) {
-        Glide.with(ctx.applicationContext)
+        Glide.with(ctx)
                 .load(src)
+                .apply(RequestOptions().apply {
+                })
                 .into(ivImage)
     }
 }
