@@ -70,6 +70,11 @@ class Zhuaji : DslJsoupNovelContext() {init {
         }
 
     }
+
+    cookieFilter {
+        // 不知道哪里来的cookie，可能服务器在调试什么，加过这个cookie然后就再没有过期，现在有这个cookie直接导致500,
+        remove("PHPSESSID")
+    }
 }
 }
 

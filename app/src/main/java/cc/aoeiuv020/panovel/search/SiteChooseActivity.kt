@@ -36,14 +36,13 @@ class SiteChooseActivity : AppCompatActivity(), IView {
 
         override fun onItemLongClick(vh: SiteListAdapter.ViewHolder): Boolean {
             val actions: List<Pair<Int, () -> Unit>> = listOf(
-                    R.string.enable to {
-                        vh.site.enabled = true
-                        vh.cbEnabled.isChecked = true
-                        presenter.enabledChange(vh.site)
-                    },
-                    R.string.disable to {
-                        vh.site.enabled = false
-                        vh.cbEnabled.isChecked = false
+                    if (vh.site.enabled) {
+                        R.string.disable
+                    } else {
+                        R.string.enable
+                    } to {
+                        vh.site.enabled = !vh.site.enabled
+                        vh.cbEnabled.isChecked = vh.site.enabled
                         presenter.enabledChange(vh.site)
                     },
                     R.string.pinned to {

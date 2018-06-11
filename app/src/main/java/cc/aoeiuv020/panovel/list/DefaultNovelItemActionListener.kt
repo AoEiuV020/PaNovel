@@ -22,6 +22,7 @@ class DefaultNovelItemActionListener(
 ) : NovelItemActionListener, AnkoLogger {
     override val loggerTag: String
         get() = "ItemActionListener"
+
     fun on(action: ItemAction, vh: NovelViewHolder): Boolean {
         debug { "doing $action at ${vh.novel.name}" }
         when (action) {
@@ -139,17 +140,18 @@ class DefaultNovelItemActionListener(
                 onError(message, e)
             }
         }, ioExecutorService) {
-            DataManager.askUpdate(vh.novel)
-            try {
-                // 如果有更新，就刷新章节列表，
-                DataManager.refreshChapters(vh.novel)
-            } catch (e: Exception) {
-                // 刷新小说章节列表失败不要抛上去报询问服务器的错，
-                val message = "刷新小说《${vh.novel.name}》失败，"
-                Reporter.post(message, e)
-                error(message, e)
-                uiThread {
-                    onError(message, e)
+            if (DataManager.askUpdate(vh.novel)) {
+                try {
+                    // 如果有更新，就刷新章节列表，
+                    DataManager.refreshChapters(vh.novel)
+                } catch (e: Exception) {
+                    // 刷新小说章节列表失败不要抛上去报询问服务器的错，
+                    val message = "刷新小说《${vh.novel.name}》失败，"
+                    Reporter.post(message, e)
+                    error(message, e)
+                    uiThread {
+                        onError(message, e)
+                    }
                 }
             }
             // 刷新是否失败都要调用refreshed,
