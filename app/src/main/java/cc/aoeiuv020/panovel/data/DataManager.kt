@@ -157,19 +157,8 @@ object DataManager : AnkoLogger {
     }
 
     fun getNovel(id: Long): Novel = app.query(id)
-
-    fun requestDetail(id: Long): Novel {
-        val novel = app.query(id)
-        requestDetail(novel)
-        return novel
-    }
-
-    fun getNovelDetail(id: Long): Novel {
-        val novel = app.query(id)
-        // 确保存在详情页信息，
-        requireNovelDetail(novel)
-        return novel
-    }
+    fun getNovelManager(id: Long): NovelManager =
+            NovelManager(app.query(id), app, api, cache, server)
 
     fun getDetailUrl(novel: Novel): String =
             api.getDetailUrl(novel)

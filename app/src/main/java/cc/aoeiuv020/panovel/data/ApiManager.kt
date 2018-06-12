@@ -65,7 +65,6 @@ class ApiManager(ctx: Context) {
 
     fun updateNovelDetail(novel: Novel) {
         val novelDetail = context(novel).getNovelDetail(novel.detail)
-        "".split("\n\r")
         novel.name = novelDetail.novel.name
         novel.author = novelDetail.novel.author
         novel.detail = novelDetail.novel.extra

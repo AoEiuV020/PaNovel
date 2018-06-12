@@ -150,6 +150,11 @@ data class Novel(
     // chapters的非空版本，用的不多，
     val nChapters: String get() = chapters.notNullOrReport()
 
+    /**
+     * 打印日志经常要用，这三者决定一本小说，
+     */
+    val bookId: String get() = "$site.$author.$name"
+
     fun readAt(index: Int, chapters: List<NovelChapter>) {
         readAtChapterIndex = index
         if (index in chapters.indices) {

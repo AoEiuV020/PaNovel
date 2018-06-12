@@ -63,28 +63,12 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
             return
         }
 
-/*
-        chapterAdapter = NovelChaptersAdapter(this, novelItem)
-        rvNovel.setAdapter(chapterAdapter)
-        rvNovel.setLayoutManager(GridLayoutManager(this@NovelDetailActivity, 3))
-*/
 
         toolbar_layout.title = id.toString()
 
         fabRead.setOnClickListener {
             NovelTextActivity.start(this, id)
         }
-/*
-        fabStar.isChecked = Bookshelf.contains(novelItem)
-        fabStar.setOnClickListener {
-            fabStar.toggle()
-            if (fabStar.isChecked) {
-                Bookshelf.add(novelItem)
-            } else {
-                Bookshelf.remove(novelItem)
-            }
-        }
-*/
 
         srlRefresh.setOnRefreshListener {
             refresh()
@@ -151,8 +135,7 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         fabStar.isChecked = novel.bookshelf
         fabStar.setOnClickListener {
             fabStar.toggle()
-            novel.bookshelf = fabStar.isChecked
-            presenter.updateBookshelf(novel)
+            presenter.updateBookshelf(fabStar.isChecked)
         }
     }
 
