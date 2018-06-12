@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.data
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.irondb.Iron
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import java.io.File
 import java.nio.charset.Charset
@@ -13,8 +14,45 @@ import java.nio.charset.Charset
 class LocalManagerTest {
     private val local = LocalManager(Iron.db(File("/tmp/panovel/test/local")))
 
+    /**
+     * 本app以前导出的小说的导入测试，
+     */
     @Test
-    fun importText() {
+    fun panovel() {
+        javaClass.getResourceAsStream("/panovel.txt").notNull().use { input ->
+            local.importText(input, Charset.forName("UTF-8"))
+        }
+        assertNull(local.author)
+        assertNull(local.name)
+        assertNull(local.introduction)
+        val chapters = local.chapters.notNull()
+        assertEquals(22, chapters.size)
+        chapters.first().let {
+            assertEquals("有趣的书评同人小故事", it.name)
+            val content = local.getContent(it.extra)
+            assertEquals("感觉这些有趣的书评小故事被埋没下去好可惜，我会慢慢整理出来的。", content.first())
+            assertEquals("——————————————————————————————", content.last())
+            assertEquals(11, content.size)
+        }
+        chapters[2].let {
+            assertEquals("《黄山大傻之歌》完整版", it.name)
+            val content = local.getContent(it.extra)
+            assertEquals(0, content.size)
+        }
+        chapters.last().let {
+            assertEquals("第1989章 你们看，这是宋某的木头身躯", it.name)
+            val content = local.getContent(it.extra)
+            assertEquals("待天帝离开之后。", content.first())
+            assertEquals("“我这只是在装个逼。”什么子回道：“我当时还在和天庭的长生者纠缠着...", content.last())
+            assertEquals(3, content.size)
+        }
+    }
+
+    /**
+     * 知轩藏书的导入测试，
+     */
+    @Test
+    fun zxcs() {
         javaClass.getResourceAsStream("/zxcs.txt").notNull().use { input ->
             local.importText(input, Charset.forName("GBK"))
         }
