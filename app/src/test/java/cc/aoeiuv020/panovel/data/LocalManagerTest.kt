@@ -58,6 +58,10 @@ class LocalManagerTest {
         }
         assertEquals("卜非", local.author)
         assertEquals("与千年女鬼同居的日子", local.name)
+        val introduction = local.introduction.notNull()
+        assertEquals("为了赚点零花钱代人扫墓，结果一只女鬼跟着回了家，额滴个神呀，从此诡异的事情接二连三的发生在了自己身边。", introduction.first())
+        assertEquals("虽然这只女鬼长得俊俏又漂亮，可等知道她的真正身份之后，我和我的小伙伴顿时都惊呆了。", introduction.last())
+        assertEquals(4, introduction.size)
         val chapters = local.chapters.notNull()
         assertEquals(5, chapters.size)
         chapters.first().let {

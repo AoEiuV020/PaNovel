@@ -28,7 +28,8 @@ class LocalManager @VisibleForTesting constructor(
     private val contentTable = root.sub(KEY_CONTENT)
     var author: String? by root.delegate()
     var name: String? by root.delegate()
-    var introduction: String? by root.delegate()
+    // 简介也是和正文一样，一段一段的，
+    var introduction: List<String>? by root.delegate()
     // 处理后一定有要章节列表，
     var chapters: List<NovelChapter>? by root.delegate()
 
@@ -104,15 +105,18 @@ class LocalManager @VisibleForTesting constructor(
         // 找可能存在正文之前的作者信息和小说简介信息，
         // 固定找十个，找不到就算了，找到就提出来然后删除，
         // 知轩藏书的格式为，0:小说名，1:作者名, 2:内容简介，
-        // 最后一个符合的章节也要包括，返回的就是最后一个符合的章节的索引，
-        val infoIndex = chapters.take(10).indexOfLast {
+        // 最后一个符合的章节也要包括，
+        // 返回的是最后一个符合条件的章节的索引，
+        // 加一成为行数，
+        // 找不到返回 -1 + 1 == 0, 不影响后面take,
+        val infoLinesCount = chapters.take(10).indexOfLast {
             it.name.startsWith("作者：")
                     || it.name == "内容简介"
-        }
+        } + 1
         // 如果找不到，take(0),后面遍历什么都不做，
-        val infoList = chapters.take(maxOf(0, infoIndex))
+        val infoList = chapters.take(infoLinesCount)
         // 删除开头的小说信息，
-        repeat(infoIndex + 1) {
+        repeat(infoLinesCount) {
             chapters.removeAt(0)
         }
 
