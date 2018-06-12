@@ -4,7 +4,6 @@ import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.export.TextExporter
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.settings.ItemAction
@@ -30,7 +29,7 @@ class DefaultNovelItemActionListener(
             ReadContinue -> NovelTextActivity.start(vh.ctx, vh.novel)
             OpenDetail -> NovelDetailActivity.start(vh.ctx, vh.novel)
             RefineSearch -> FuzzySearchActivity.start(vh.ctx, vh.novel)
-            Export -> TextExporter.export(vh.ctx, vh.novel)
+            Export -> DataManager.exportText(vh.ctx, vh.novel)
         // TODO: 有点混乱不统一，改支之前考虑清楚，主要是有的操作需要更新vh界面，
             AddBookshelf -> vh.addBookshelf() // vh里再反过来调用onStarChanged，
             RemoveBookshelf -> vh.removeBookshelf() // vh里再反过来调用onStarChanged，

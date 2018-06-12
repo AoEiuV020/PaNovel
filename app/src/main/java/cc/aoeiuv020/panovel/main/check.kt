@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.local
+package cc.aoeiuv020.panovel.main
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -100,13 +100,13 @@ object Check : Pref, AnkoLogger {
                         title = "有更新"
                         message = changeLog
                         neutralPressed("忽略") {
-                            Check.knownVersionName = newestVersionName
+                            knownVersionName = newestVersionName
                         }
                         positiveButton("酷安") {
                             startCoolapk(ctx)
                         }
                         negativeButton("Github") {
-                            ctx.browse(Check.RELEASE_GITHUB)
+                            ctx.browse(RELEASE_GITHUB)
                         }
                     }.safelyShow()
                 } else {
@@ -159,7 +159,7 @@ object Check : Pref, AnkoLogger {
             error(message, e)
             Reporter.post(message, e)
         }) {
-            if (Check.checkSignature(ctx)) {
+            if (checkSignature(ctx)) {
                 return@doAsync
             }
             uiThread { ctx ->
@@ -167,13 +167,13 @@ object Check : Pref, AnkoLogger {
                     title = "签名不正确"
                     message = "你可能用了假app,"
                     neutralPressed("忽略") {
-                        Check.ignoreSignatureCheck = true
+                        ignoreSignatureCheck = true
                     }
                     positiveButton("酷安") {
                         startCoolapk(ctx)
                     }
                     negativeButton("Github") {
-                        ctx.browse(Check.RELEASE_GITHUB)
+                        ctx.browse(RELEASE_GITHUB)
                     }
                 }.safelyShow()
             }

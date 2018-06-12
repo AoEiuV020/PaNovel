@@ -5,6 +5,8 @@ import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.irondb.*
 import cc.aoeiuv020.panovel.api.NovelChapter
+import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.local.TextExporter
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.*
@@ -138,6 +140,10 @@ class LocalManager @VisibleForTesting constructor(
 
     fun clean() {
         root.drop()
+    }
+
+    fun exportText(ctx: Context, novel: Novel) {
+        TextExporter.export(ctx, novel)
     }
 
     companion object {

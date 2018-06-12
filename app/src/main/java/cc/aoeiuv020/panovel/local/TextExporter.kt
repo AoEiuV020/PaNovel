@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.export
+package cc.aoeiuv020.panovel.local
 
 import android.app.PendingIntent
 import android.content.Context
@@ -67,6 +67,7 @@ class TextExporter(
             }
             // System services not available to Activities before onCreate()
             val manager by lazy { NotificationManagerCompat.from(ctx) }
+
             fun start() {
                 // 以防万一，先删除可能存在的自己，其实不会存在，
                 handler.removeCallbacks(this)

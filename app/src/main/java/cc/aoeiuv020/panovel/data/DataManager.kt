@@ -420,4 +420,6 @@ object DataManager : AnkoLogger {
      * 按收到更新的时间倒序排列，
      */
     fun hasUpdateNovelList(): List<Novel> = app.hasUpdateNovelList()
+
+    fun exportText(ctx: Context, novel: Novel) = local.exportText(ctx, novel)
 }

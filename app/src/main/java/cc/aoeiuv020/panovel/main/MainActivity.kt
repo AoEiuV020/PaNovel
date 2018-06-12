@@ -28,8 +28,6 @@ import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
-import cc.aoeiuv020.panovel.local.Check
-import cc.aoeiuv020.panovel.local.DevMessage
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.migration.MigrationPresenter
 import cc.aoeiuv020.panovel.migration.MigrationView
