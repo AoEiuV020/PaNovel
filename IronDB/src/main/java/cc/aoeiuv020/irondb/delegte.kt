@@ -1,6 +1,6 @@
 package cc.aoeiuv020.irondb
 
-import cc.aoeiuv020.base.jar.type
+import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -13,6 +13,11 @@ import kotlin.reflect.KProperty
 @Suppress("unused")
 inline fun <reified T> Database.delegate(key: String? = null): ReadWriteProperty<Any, T?> =
         delegate(key, type<T>())
+
+//        delegate(key, cc.aoeiuv020.base.jar.type<T>())
+// 不明原因，使用cc.aoeiuv020.base.jar.type会导致查看kotlin bytecode抛异常，但是能正常编译，
+// https://youtrack.jetbrains.com/issue/KT-24889
+inline fun <reified T> type(): Type = object : TypeToken<T>() {}.type
 
 fun <T> Database.delegate(key: String?, type: Type): ReadWriteProperty<Any, T?> =
         DatabaseProperty(this, key, type)
