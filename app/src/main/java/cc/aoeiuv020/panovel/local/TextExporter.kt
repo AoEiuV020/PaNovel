@@ -132,13 +132,24 @@ class TextExporter(
                 exportingRunnable.set(export, skip, left)
                 exportingRunnable.start()
 
+                // 先导出小说信息，包括小说名，作者名，顶格输出，
+                output.appendln(novel.name)
+                output.appendln("作者：${novel.author}")
+                // 简介前空一行，
+                output.appendln()
+                output.appendln("内容简介")
+                // 简介内容段首空格，
+                novel.introduction.split("\n").forEach {
+                    output.appendln("　　$it")
+                }
+
                 val container = DataManager.novelContentsCached(novel)
                 chapters.forEach { chapter ->
-                    // 章节之间空一行，
-                    // 第一章前也空了一行，无所谓了，
+                    // 章节之间空两行，
+                    // 第一章前也空了两行，和小说信息分开，
                     output.appendln()
-                    output.write(chapter.name)
-                    output.newLine()
+                    output.appendln()
+                    output.appendln(chapter.name)
                     left--
                     if (container.contains(chapter.extra)) {
                         export++

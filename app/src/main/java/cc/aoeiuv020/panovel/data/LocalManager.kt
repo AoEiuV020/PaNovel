@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
+import android.support.annotation.UiThread
+import android.support.annotation.WorkerThread
 import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.TextExporter
@@ -15,6 +17,7 @@ class LocalManager(ctx: Context) {
     // 所有临时文件都保存在/data/data/cc.aoeiuv020.panovel/cache/local
     private val root = Iron.db(ctx.cacheDir).sub("local")
 
+    @WorkerThread
     @Suppress("unused")
     fun importText(input: InputStream, charset: Charset) =
             TextImporter(root.sub(KEY_IMPORTER)).apply {
@@ -22,6 +25,7 @@ class LocalManager(ctx: Context) {
             }
 
     // TODO: 统一导入导出的形式，
+    @UiThread
     fun exportText(ctx: Context, novel: Novel) =
             TextExporter.export(ctx, novel)
 

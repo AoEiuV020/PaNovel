@@ -15,11 +15,48 @@ class TextImporterTest {
     private val local = TextImporter(Iron.db(File("/tmp/panovel/test/local/importer")))
 
     /**
-     * 本app以前导出的小说的导入测试，
+     * 本app导出的小说的导入测试，
      */
     @Test
     fun panovel() {
         javaClass.getResourceAsStream("/panovel.txt").notNull().use { input ->
+            local.importText(input, Charset.forName("UTF-8"))
+        }
+        assertEquals("圣骑士的传说", local.author)
+        assertEquals("修真聊天群", local.name)
+        val introduction = local.introduction.notNull()
+        assertEquals("某天，宋书航意外加入了一个仙侠中二病资深患者的交流群，里面的群友们都以‘道友’相称，群名片都是各种府主、洞主、真人、天师。连群主走失的宠物犬都称为大妖犬离家出走。整天聊的是炼丹、闯秘境、炼功经验啥的。", introduction.first())
+        assertEquals("九洲一号群（VIP书友群，需验证）63769632", introduction.last())
+        assertEquals(7, introduction.size)
+        val chapters = local.chapters.notNull()
+        assertEquals(8, chapters.size)
+        chapters.first().let {
+            assertEquals("有趣的书评同人小故事", it.name)
+            val content = local.getContent(it.extra)
+            assertEquals("感觉这些有趣的书评小故事被埋没下去好可惜，我会慢慢整理出来的。", content.first())
+            assertEquals("——————————————————————————————", content.last())
+            assertEquals(11, content.size)
+        }
+        chapters[4].let {
+            assertEquals("第1929章 许多上了年份的东西，都是好东西", it.name)
+            val content = local.getContent(it.extra)
+            assertEquals(0, content.size)
+        }
+        chapters.last().let {
+            assertEquals("第1991章 看来胖球大佬没留后手", it.name)
+            val content = local.getContent(it.extra)
+            assertEquals("“这可是我怼了九幽胖球大佬后的战利品呀。”宋书航感慨道。", content.first())
+            assertEquals("胖球大佬弄出...", content.last())
+            assertEquals(4, content.size)
+        }
+    }
+
+    /**
+     * 本app以前导出的小说的导入测试，
+     */
+    @Test
+    fun panovelOld() {
+        javaClass.getResourceAsStream("/panovel-old.txt").notNull().use { input ->
             local.importText(input, Charset.forName("UTF-8"))
         }
         assertNull(local.author)
