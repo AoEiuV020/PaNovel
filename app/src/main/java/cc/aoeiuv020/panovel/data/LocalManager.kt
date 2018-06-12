@@ -11,6 +11,8 @@ import java.io.InputStream
 import java.nio.charset.Charset
 
 /**
+ * 统一管理本地文件，
+ *
  * Created by AoEiuV020 on 2018.06.12-20:16:51.
  */
 class LocalManager(ctx: Context) {

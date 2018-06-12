@@ -1,13 +1,11 @@
 package cc.aoeiuv020.panovel.local
 
-import android.content.Context
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.irondb.Database
 import cc.aoeiuv020.irondb.delegate
 import cc.aoeiuv020.irondb.read
 import cc.aoeiuv020.irondb.write
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.data.entity.Novel
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.*
@@ -16,9 +14,7 @@ import java.util.*
  * 负责导入本地小说的，
  *
  * 一次只处理一本，
- * 导入分两步，
- * 先处理后存在"/import"目录下，
- * 再考虑作者名小说名之类的插入数据库后再从"/import"移到统一的缓存中，
+ * 调用importText方法处理后可以从几个成员变量中拿到结果，
  *
  * Created by AoEiuV020 on 2018.06.12-14:17:19.
  */
@@ -32,6 +28,10 @@ class TextImporter constructor(
     var introduction: List<String>? by root.delegate()
     // 处理后一定有要章节列表，
     var chapters: List<NovelChapter>? by root.delegate()
+
+    fun getContent(extra: String): List<String> {
+        return contentTable.read<List<String>>(extra).notNull()
+    }
 
     /**
      * 导入普通.txt格式小说，
@@ -132,20 +132,11 @@ class TextImporter constructor(
         }
     }
 
-    fun getContent(extra: String): List<String> {
-        return contentTable.read<List<String>>(extra).notNull()
-    }
-
     fun clean() {
         root.drop()
     }
 
-    fun exportText(ctx: Context, novel: Novel) {
-        TextExporter.export(ctx, novel)
-    }
-
     companion object {
-        const val KEY_LOCAL = "local"
         const val KEY_CONTENT = "content"
     }
 }
