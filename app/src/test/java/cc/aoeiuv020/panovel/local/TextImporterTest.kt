@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.data
+package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.irondb.Iron
@@ -11,8 +11,8 @@ import java.nio.charset.Charset
 /**
  * Created by AoEiuV020 on 2018.06.12-17:27:05.
  */
-class LocalManagerTest {
-    private val local = LocalManager(Iron.db(File("/tmp/panovel/test/local")))
+class TextImporterTest {
+    private val local = TextImporter(Iron.db(File("/tmp/panovel/test/local/importer")))
 
     /**
      * 本app以前导出的小说的导入测试，
