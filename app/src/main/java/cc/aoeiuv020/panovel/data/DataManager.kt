@@ -31,6 +31,7 @@ object DataManager : AnkoLogger {
     lateinit var cookie: CookieManager
     lateinit var cache: CacheManager
     lateinit var server: ServerManager
+    lateinit var local: LocalManager
     @Synchronized
     fun init(ctx: Context) {
         if (!::app.isInitialized) {
@@ -47,6 +48,9 @@ object DataManager : AnkoLogger {
         }
         if (!::server.isInitialized) {
             server = ServerManager(ctx)
+        }
+        if (!::local.isInitialized) {
+            local = LocalManager(ctx)
         }
     }
 

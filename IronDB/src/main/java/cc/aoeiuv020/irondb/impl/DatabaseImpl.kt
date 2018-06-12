@@ -49,6 +49,19 @@ internal class DatabaseImpl(
         }
     }
 
+    override fun <T> use(key: String, block: (File) -> T): T {
+        val serializedKey = keySerializer.serialize(key)
+        // 以防万一，写入前确保文件夹存在，
+        base.run {
+            exists() || mkdirs()
+        }
+        val file = base.resolve(serializedKey)
+        // 锁住key,
+        return keyLocker.runInAcquire(serializedKey) {
+            block(file)
+        }
+    }
+
     /**
      * @return key不存在则返回null,
      */
@@ -68,6 +81,7 @@ internal class DatabaseImpl(
     }
 
     override fun drop() {
+        // 要不要释放keyLocker,
         base.deleteRecursively()
     }
 

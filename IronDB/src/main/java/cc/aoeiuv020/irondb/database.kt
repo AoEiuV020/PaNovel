@@ -1,6 +1,7 @@
 package cc.aoeiuv020.irondb
 
 import cc.aoeiuv020.base.jar.type
+import java.io.File
 import java.lang.reflect.Type
 
 /**
@@ -17,6 +18,8 @@ interface Database {
      * @return key不存在则返回null,
      */
     fun <T> read(key: String, type: Type): T?
+
+    fun <T> use(key: String, block: (File) -> T): T
 
     fun drop()
 
@@ -39,4 +42,3 @@ inline fun <reified T> Database.write(key: String, value: T) = write(key, value,
  */
 @Suppress("unused")
 inline fun <reified T> Database.read(key: String): T? = read(key, type<T>())
-

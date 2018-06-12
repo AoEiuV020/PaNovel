@@ -61,7 +61,6 @@ object Reporter : AnkoLogger {
 
     fun post(message: String, e: Throwable) {
         debug(message, e)
-        // 断网导致的问题也一并上报了，
         postException(IllegalStateException(message, e))
     }
 

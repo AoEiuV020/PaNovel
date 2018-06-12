@@ -19,10 +19,9 @@ abstract class OkHttpNovelContext : NovelContext() {
     // 子类可以继承自己的clientBuilder, 然后不能影响得到client, 要用lazy,
     protected open val client: OkHttpClient by lazy { clientBuilder.build() }
 
-    @Suppress("CAST_NEVER_SUCCEEDS")
     private val trustManager: X509TrustManager
         get() = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-                .apply { init(null as? KeyStore) }
+                .apply { init(null as KeyStore?) }
                 .trustManagers
                 .first {
                     it is X509TrustManager
