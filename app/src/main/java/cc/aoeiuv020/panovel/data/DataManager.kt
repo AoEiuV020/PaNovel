@@ -373,6 +373,8 @@ object DataManager : AnkoLogger {
         novel.chapters = actualCharset.name()
         app.updateDetail(novel)
         app.updateChapters(novel)
+        // 导入时就解析了一遍，缓存起来，不能白解析了，
+        cache.saveChapters(novel, info.chapters.notNullOrReport())
 
         debug {
             "importLocalNovel result: $novel"
