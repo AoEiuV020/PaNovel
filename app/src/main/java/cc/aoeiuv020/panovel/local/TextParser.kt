@@ -1,10 +1,13 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.*
+import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.divide
+import cc.aoeiuv020.base.jar.io.BufferedRandomAccessFile
+import cc.aoeiuv020.base.jar.io.readLines
+import cc.aoeiuv020.base.jar.trace
 import cc.aoeiuv020.panovel.api.NovelChapter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*
@@ -28,8 +31,7 @@ class TextParser(
         BufferedRandomAccessFile(file, "r").use { raf ->
             var beginPos = 0L
             var endPos = 0L
-            val input = ByteArrayOutputStream()
-            var line = raf.readLine(charset, input)
+            var line = raf.readLine(charset.name())
             var name: String? = null
             while (line != null) {
                 logger.trace {
@@ -63,7 +65,7 @@ class TextParser(
                     endPos = raf.filePointer
                 }
 
-                line = raf.readLine(charset, input)
+                line = raf.readLine(charset.name())
             }
             // 最后一章也要存，
             if (name != null) {
@@ -139,7 +141,7 @@ class TextParser(
                         it.first.toLong() to it.second.toLong()
                     }
                     BufferedRandomAccessFile(file, "r").use { raf ->
-                        info.introduction = raf.readLines(beginPos, endPos, charset).joinToString("\n") {
+                        info.introduction = raf.readLines(beginPos, endPos, charset.name()).joinToString("\n") {
                             it.trim()
                         }
                     }

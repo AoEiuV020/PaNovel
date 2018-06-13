@@ -1,5 +1,6 @@
-package cc.aoeiuv020.panovel.local;
+package cc.aoeiuv020.base.jar.io;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class BufferedRandomAccessFile extends RandomAccessFile {
     private int bufferlength;
     private int maxread;
     private int buffpos;
-    private StringBuilder sb;
+    private ByteArrayOutputStream input;
 
     public BufferedRandomAccessFile(File file, String mode) throws
             FileNotFoundException {
@@ -24,7 +25,7 @@ public class BufferedRandomAccessFile extends RandomAccessFile {
         bytebuffer = new byte[bufferlength];
         maxread = 0;
         buffpos = 0;
-        sb = new StringBuilder("0");
+        input = new ByteArrayOutputStream();
     }
 
     public int getbuffpos() {
@@ -43,8 +44,8 @@ public class BufferedRandomAccessFile extends RandomAccessFile {
         return bytebuffer[buffpos - 1];
     }
 
-    public String readLine2() throws IOException {
-        sb.delete(0, sb.length());
+    public String readLine(String charset) throws IOException {
+        input.reset();
         int c = -1;
         boolean eol = false;
         while (!eol) {
@@ -61,15 +62,15 @@ public class BufferedRandomAccessFile extends RandomAccessFile {
                     }
                     break;
                 default:
-                    sb.append((char) c);
+                    input.write(c);
                     break;
             }
         }
 
-        if ((c == -1) && (sb.length() == 0)) {
+        if ((c == -1) && (input.size() == 0)) {
             return null;
         }
-        return sb.toString();
+        return input.toString(charset);
     }
 
     @Override

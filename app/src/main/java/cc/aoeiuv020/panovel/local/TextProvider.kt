@@ -1,7 +1,8 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.base.jar.divide
-import cc.aoeiuv020.base.jar.readLines
+import cc.aoeiuv020.base.jar.io.BufferedRandomAccessFile
+import cc.aoeiuv020.base.jar.io.readLines
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.util.notNullOrReport
@@ -24,7 +25,7 @@ class TextProvider(
             it.first.toLong() to it.second.toLong()
         }
         return BufferedRandomAccessFile(file, "r").use { raf ->
-            raf.readLines(beginPos, endPos, charset).map {
+            raf.readLines(beginPos, endPos, charset.name()).map {
                 it.trim()
             }
         }
