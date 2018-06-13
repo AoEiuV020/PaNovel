@@ -162,4 +162,14 @@ class NovelManager(
         }
     }
 
+    fun cleanCache() {
+        cache.clean(novel)
+    }
+
+    fun cleanData() {
+        cleanCache()
+        provider.clean()
+        app.clean(novel)
+    }
+
 }

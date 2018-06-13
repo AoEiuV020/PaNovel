@@ -61,4 +61,8 @@ class TextProvider(
             novel.chapters = Charsets.UTF_8.name()
         }
     }
+
+    override fun clean() {
+        file.delete()
+    }
 }

@@ -27,10 +27,10 @@ import org.jetbrains.anko.AnkoLogger
 class BookshelfFragment : Fragment(), IView, AnkoLogger {
     private val novelListAdapter: NovelListAdapter by lazy {
         NovelListAdapter(initItem = {
-        // 以防万一加上问号?支持视图中没有小红点的情况，
-        // 显示小红点控件，包括代表正在刷新的圆形进度条，
+            // 以防万一加上问号?支持视图中没有小红点的情况，
+            // 显示小红点控件，包括代表正在刷新的圆形进度条，
             it.refreshingDot?.show()
-        // 隐藏用于添加书架的按钮，
+            // 隐藏用于添加书架的按钮，
             it.star?.hide()
         }, actionDoneListener = { action, vh ->
             when (action) {

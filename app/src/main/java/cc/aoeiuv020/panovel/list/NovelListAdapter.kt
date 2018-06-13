@@ -16,9 +16,16 @@ open class NovelListAdapter(
          * 初始化小说item时调用，用于书架列表隐藏添加书架按钮，
          */
         private val initItem: (NovelViewHolder) -> Unit = {},
-        private val actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
+        actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
         private val onError: (String, Throwable) -> Unit
 ) : RecyclerView.Adapter<NovelViewHolder>() {
+    private val actualActionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { action, vh ->
+        when (action) {
+        // CleanData固定删除元素，无视传入的listener,
+            ItemAction.CleanData -> remove(vh.layoutPosition)
+            else -> actionDoneListener(action, vh)
+        }
+    }
     @Suppress("PropertyName")
     protected open var _data: MutableList<NovelManager> = mutableListOf()
     var data: List<NovelManager>
@@ -53,7 +60,7 @@ open class NovelListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NovelViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return NovelViewHolder(itemView, dotColor, dotSize, initItem, actionDoneListener, onError)
+        return NovelViewHolder(itemView, dotColor, dotSize, initItem, actualActionDoneListener, onError)
     }
 
     override fun getItemCount(): Int = data.size

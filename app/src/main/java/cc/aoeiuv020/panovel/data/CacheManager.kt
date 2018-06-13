@@ -51,6 +51,11 @@ class CacheManager(ctx: Context) {
         root.drop()
     }
 
+    fun clean(novel: Novel) {
+        getChaptersDB(novel).drop()
+        getContentDB(novel).drop()
+    }
+
     companion object {
         const val KEY_NOVEL = "novel"
         const val KEY_CHAPTERS = "chapters"

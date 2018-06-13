@@ -36,23 +36,34 @@ class DefaultNovelItemActionListener(
             Refresh -> vh.refresh()
             Pinned -> pinned(vh)
             CancelPinned -> cancelPinned(vh)
+            CleanCache -> cleanCache(vh)
+            CleanData -> cleanData(vh)
             MoreAction -> {
-                val list = vh.ctx.resources.getStringArray(R.array.content_more_action).toList()
-                val actions = listOf(
-                        ReadContinue,
-                        ReadLastChapter,
-                        OpenDetail,
-                        RefineSearch,
-                        Export,
-                        AddBookshelf,
-                        RemoveBookshelf,
-                        Pinned,
-                        CancelPinned,
-                        Refresh
+                val list = listOf(
+                        R.string.read_continue to ReadContinue,
+                        R.string.read_last_chapter to ReadLastChapter,
+                        R.string.open_detail to OpenDetail,
+
+                        R.string.refine_search to RefineSearch,
+                        R.string.export to Export,
+                        if (vh.novel.bookshelf) {
+                            R.string.remove_bookshelf to RemoveBookshelf
+                        } else {
+                            R.string.add_bookshelf to AddBookshelf
+                        },
+                        R.string.pinned to Pinned,
+                        R.string.cancel_pinned to CancelPinned,
+
+                        R.string.clean_cache to CleanCache,
+                        R.string.clean_this_novel to CleanData,
+
+                        R.string.history to Refresh
                 )
-                vh.ctx.selector(vh.ctx.getString(R.string.title_more_action), list) { _, i ->
-                    on(actions[i], vh)
+                vh.ctx.selector(vh.ctx.getString(R.string.title_more_action),
+                        list.unzip().first.map { vh.ctx.getString(it) }) { _, i ->
+                    on(list[i].second, vh)
                 }
+
             }
         // 返回false不消费长按事件，
             None -> return false
@@ -186,6 +197,32 @@ class DefaultNovelItemActionListener(
             }
         }) {
             vh.novelManager.cancelPinned()
+        }
+    }
+
+    private fun cleanCache(vh: NovelViewHolder) {
+        doAsync({ e ->
+            val message = "清除小说缓存<${vh.novel.bookId}>失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            vh.ctx.runOnUiThread {
+                onError(message, e)
+            }
+        }) {
+            vh.novelManager.cleanCache()
+        }
+    }
+
+    private fun cleanData(vh: NovelViewHolder) {
+        doAsync({ e ->
+            val message = "清除小说数据<${vh.novel.bookId}>失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            vh.ctx.runOnUiThread {
+                onError(message, e)
+            }
+        }) {
+            vh.novelManager.cleanData()
         }
     }
 }

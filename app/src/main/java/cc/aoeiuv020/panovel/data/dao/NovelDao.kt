@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.data.dao
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import cc.aoeiuv020.panovel.data.entity.Novel
@@ -64,4 +65,7 @@ abstract class NovelDao {
 
     @Query("select * from Novel where bookshelf = 1 and receiveUpdateTime > readTime order by receiveUpdateTime desc")
     abstract fun hasUpdateNovelList(): List<Novel>
+
+    @Delete
+    abstract fun delete(novel: Novel)
 }

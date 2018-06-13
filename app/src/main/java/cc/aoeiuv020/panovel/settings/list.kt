@@ -40,6 +40,9 @@ enum class ItemAction {
     // 置顶，
     Pinned,
     CancelPinned,
+    // 删除缓存，删除所有相关数据，
+    CleanCache,
+    CleanData,
     // 什么都不做，
     None,
 }

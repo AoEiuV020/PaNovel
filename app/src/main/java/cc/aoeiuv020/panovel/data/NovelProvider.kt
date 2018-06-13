@@ -13,4 +13,5 @@ interface NovelProvider {
     fun requestNovelChapters(): List<NovelChapter>
     fun getDetailUrl(): String
     fun updateNovelDetail()
+    fun clean()
 }
