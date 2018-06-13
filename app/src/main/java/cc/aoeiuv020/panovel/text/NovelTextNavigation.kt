@@ -47,7 +47,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
 
     init {
         mPanelDefault.ivContents.setOnClickListener {
-            view.showContents()
+            view.presenter.loadContents()
         }
         mPanelDefault.ivSettings.setOnClickListener {
             showLayout(mPanelSettings)
@@ -57,8 +57,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
             isChecked = novel.bookshelf
             setOnClickListener {
                 toggle()
-                novel.bookshelf = isChecked
-                view.presenter.updateBookshelf(novel)
+                view.presenter.updateBookshelf(isChecked)
             }
         }
         mPanelDefault.ivColor.setOnClickListener {

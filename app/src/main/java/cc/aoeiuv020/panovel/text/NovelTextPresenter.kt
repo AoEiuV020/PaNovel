@@ -4,27 +4,31 @@ import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.*
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
  *
  * Created by AoEiuV020 on 2017.10.03-19:06:50.
  */
-class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(), AnkoLogger {
-    private var refresh = false
+class NovelTextPresenter(
+        id: Long
+) : Presenter<NovelTextActivity>(), AnkoLogger {
+    private val novelManager: NovelManager by lazy {
+        DataManager.getNovelManager(id)
+    }
+    private val novel: Novel get() = novelManager.novel
 
     fun start() {
         requestNovel()
     }
 
-    fun refreshChapterList(novel: Novel) {
-        refresh = true
-        requestChapters(novel)
+    fun refreshChapterList() {
+        requestChapters(true)
     }
 
     private fun requestNovel() {
@@ -36,18 +40,19 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                 view?.showNovelNotFound(message, e)
             }
         }) {
-            val novel = DataManager.getNovel(id)
+            // 初始化novelManager，
+            val novel = novelManager.novel
             uiThread {
                 view?.showNovel(novel)
             }
         }
     }
 
-    fun requestContent(novel: Novel, chapter: NovelChapter, refresh: Boolean): List<String> {
-        return DataManager.requestContent(novel, chapter, refresh)
+    fun requestContent(chapter: NovelChapter, refresh: Boolean): List<String> {
+        return novelManager.requestContent(chapter, refresh)
     }
 
-    fun download(novel: Novel, fromIndex: Int, count: Int) {
+    fun download(fromIndex: Int, count: Int) {
         view?.doAsync({ e ->
             val message = "下载失败，"
             Reporter.post(message, e)
@@ -56,8 +61,8 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                 view?.showError(message, e)
             }
         }) {
-            val chapters = DataManager.requestChapters(novel)
-            val cachedList = DataManager.novelContentsCached(novel)
+            val chapters = novelManager.requestChapters(false)
+            val cachedList = novelManager.novelContentsCached()
             val size = chapters.size
             val last = minOf(size - fromIndex, count) + fromIndex
             var exists = 0
@@ -96,11 +101,11 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                             ++exists
                         } else {
                             try {
-                                // 请求到方法返回前就已经缓存了，
-                                DataManager.requestContent(novel, chapter, false)
+                                // 方法返回前请求到正文就已经缓存了，
+                                novelManager.requestContent(chapter, false)
                                 ++downloads
                             } catch (e: Exception) {
-                                val message = "缓存<${novel.run { "$site.$author.$name" }}.$index>章节失败，"
+                                val message = "缓存<${novel.bookId}.$index>章节失败，"
                                 Reporter.post(message, e)
                                 error(message, e)
                                 ++errors
@@ -123,30 +128,25 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
         }
     }
 
-    fun requestChapters(novel: Novel) {
+    fun requestChapters(refresh: Boolean = false) {
         view?.doAsync({ e ->
-            val message = "加载小说章节列表失败，"
+            val message = "加载小说<${novel.bookId}>章节列表失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
                 view?.showError(message, e)
             }
         }, ioExecutorService) {
-            val list = if (refresh) {
-                refresh = false
-                DataManager.refreshChapters(novel)
-            } else {
-                DataManager.requestChapters(novel)
-            }
+            val list = novelManager.requestChapters(refresh)
             uiThread {
                 view?.showChaptersAsc(list)
             }
         }
     }
 
-    fun updateBookshelf(novel: Novel) {
+    fun updateBookshelf(checked: Boolean) {
         view?.doAsync({ e ->
-            val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.name}》失败，"
+            val message = "${if (novel.bookshelf) "添加" else "删除"}书架《${novel.bookId}》失败，"
             // 这应该是数据库操作出问题，正常情况不会出现才对，
             // 未知异常统一上报，
             Reporter.post(message, e)
@@ -155,13 +155,13 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
                 view?.showError(message, e)
             }
         }) {
-            DataManager.updateBookshelf(novel)
+            novelManager.updateBookshelf(checked)
         }
     }
 
     fun saveReadStatus(novel: Novel) {
         view?.doAsync({ e ->
-            val message = "保存阅读进度失败，"
+            val message = "保存<${novel.bookId}>阅读进度失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
@@ -171,10 +171,34 @@ class NovelTextPresenter(private val id: Long) : Presenter<NovelTextActivity>(),
             // 这里更新阅读时间，
             // 考虑到异步顺序不定，如果只有这一处更新阅读时间，可能来不及反应到书架上，
             // 因此得到打开小说时也更新一次阅读时间，
-            novel.readTime = Date()
-            DataManager.updateReadStatus(novel)
+            novelManager.saveReadStatus()
         }
+    }
 
+    fun getContentUrl(chapter: NovelChapter): String {
+        return novelManager.getContentUrl(chapter)
+    }
+
+    fun loadContents() {
+        view?.doAsync({ e ->
+            val message = "加载小说正文缓存列表失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            // 虽然给了异步，但还是要快，因为没给任何提示，
+            // 查询小说已经缓存的章节列表，
+            val cachedList = novelManager.novelContentsCached()
+            uiThread {
+                view?.showContents(cachedList)
+            }
+        }
+    }
+
+    fun getDetailUrl(): String {
+        return novelManager.getDetailUrl()
     }
 
 }

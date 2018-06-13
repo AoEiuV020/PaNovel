@@ -156,15 +156,8 @@ object DataManager : AnkoLogger {
                 novel.image, novel.introduction, novel.updateTime, novel.nChapters)
     }
 
-    fun getNovel(id: Long): Novel = app.query(id)
     fun getNovelManager(id: Long): NovelManager =
             NovelManager(app.query(id), app, api, cache, server)
-
-    fun getDetailUrl(novel: Novel): String =
-            api.getDetailUrl(novel)
-
-    fun getContentUrl(novel: Novel, chapter: NovelChapter): String =
-            api.getContentUrl(novel, chapter)
 
     fun allNovelContexts() = api.contexts
 
@@ -267,19 +260,6 @@ object DataManager : AnkoLogger {
      */
     fun getContent(novel: Novel, chapter: NovelChapter): List<String>? =
             cache.loadContent(novel, chapter)
-
-    fun requestContent(novel: Novel, chapter: NovelChapter, refresh: Boolean): List<String> {
-        // 指定刷新的话就不读缓存，
-        if (!refresh) {
-            cache.loadContent(novel, chapter)?.also {
-                return it
-            }
-        }
-        return api.getNovelContent(novel, chapter).also {
-            // 缓存起来，
-            cache.saveContent(novel, chapter, it)
-        }
-    }
 
     fun pinned(novel: Novel) = app.pinned(novel)
 
