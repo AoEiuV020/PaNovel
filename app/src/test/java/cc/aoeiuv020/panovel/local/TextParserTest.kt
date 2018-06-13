@@ -7,6 +7,7 @@ import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.File
 import java.nio.charset.Charset
 
 /**
@@ -14,12 +15,41 @@ import java.nio.charset.Charset
  */
 class TextParserTest {
     init {
-        System.setProperty("org.slf4j.simpleLogger.log.TextParser", "trace")
+        System.setProperty("org.slf4j.simpleLogger.log.TextParser", "debug")
     }
 
     @Rule
     @JvmField
     val folder = TemporaryFolder()
+
+    @Test
+    fun big() {
+        val file = File("/home/aoeiuv/tmp/panovel/txt/yqnng/novel.txt")
+        val charset = "GBK"
+        val local = TextParser(file, Charset.forName(charset))
+                .parse()
+        val expectedNovel = Novel(
+                site = ".txt",
+                author = "卜非",
+                name = "与千年女鬼同居的日子",
+                detail = file.absoluteFile.canonicalPath,
+                introduction = "为了赚点零花钱代人扫墓，结果一只女鬼跟着回了家，额滴个神呀，从此诡异的事情接二连三的发生在了自己身边。\n" +
+                        "红衣夜女杀人案、枯井中的无脸之人、河中的人形怪物……\n" +
+                        "更为奇怪的是，那些平时连想都不敢想的女神都主动凑了过来。\n" +
+                        "虽然这只女鬼长得俊俏又漂亮，可等知道她的真正身份之后，我和我的小伙伴顿时都惊呆了。",
+                chapters = charset
+        )
+        val novel = Novel(
+                site = local.type.suffix,
+                author = local.author.notNull("author"),
+                name = local.name.notNull("name"),
+                detail = file.absoluteFile.canonicalPath,
+                introduction = local.introduction.notNull("introduction"),
+                chapters = charset
+        )
+        assertEquals(expectedNovel, novel)
+
+    }
 
     /**
      * 本app导出的小说的导入测试，
