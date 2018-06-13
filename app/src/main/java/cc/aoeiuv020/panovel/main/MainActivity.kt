@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -325,7 +326,11 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
         neutralPressed(R.string.local_novel) {
             // 调文件管理器选择小说，
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                Intent(Intent.ACTION_OPEN_DOCUMENT)
+            } else {
+                Intent(Intent.ACTION_GET_CONTENT)
+            }
             intent.type = "*/*"
             startActivityForResult(intent, 1)
         }

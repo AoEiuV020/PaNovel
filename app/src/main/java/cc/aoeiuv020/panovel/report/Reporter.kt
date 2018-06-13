@@ -38,9 +38,9 @@ object Reporter : AnkoLogger {
     /**
      * requireNotNull,
      */
-    inline fun <reified T> notNullOrReport(t: T?): T {
+    fun <T> notNullOrReport(t: T?, value: String): T {
         if (t == null) {
-            val message = "<${T::class.java}>不可空，"
+            val message = "<$value>不可空，"
             val e = IllegalArgumentException(message)
             // 可能有重复上报，抛出去的异常可能再被捕获然后上报，但不嫌多，
             post(message, e)

@@ -1,18 +1,16 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.irondb.FileWrapper
-import cc.aoeiuv020.panovel.api.NovelChapter
 import java.nio.charset.Charset
-import java.util.*
 
 /**
  * 预览，导入前判断文件信息，
- * 是.txt还是.
+ * 是.txt还是.epub,
  *
  * Created by AoEiuV020 on 2018.06.13-16:08:19.
  */
 class Previewer(
-        private val fileWrapper: FileWrapper,
+        val fileWrapper: FileWrapper,
         private val uri: String
 ) {
 
@@ -28,7 +26,7 @@ class Previewer(
         return Charset.forName("GBK")
     }
 
-    fun preview(type: LocalNovelType, charset: Charset): Info {
+    fun preview(type: LocalNovelType, charset: Charset): LocalNovelInfo {
         return when (type) {
             LocalNovelType.TEXT -> fileWrapper.use {
                 TextParser(it, charset).parse()
@@ -37,11 +35,8 @@ class Previewer(
         }
     }
 
-    data class Info(
-            val type: LocalNovelType,
-            var author: String? = null,
-            var name: String? = null,
-            var introduction: String? = null,
-            var chapters: LinkedList<NovelChapter>? = null
-    )
+    fun clean() {
+        fileWrapper.delete()
+    }
+
 }

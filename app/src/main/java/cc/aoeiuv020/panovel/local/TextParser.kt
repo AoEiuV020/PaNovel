@@ -1,9 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.divide
-import cc.aoeiuv020.base.jar.readLine
-import cc.aoeiuv020.base.jar.readLines
+import cc.aoeiuv020.base.jar.*
 import cc.aoeiuv020.panovel.api.NovelChapter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -24,8 +21,8 @@ class TextParser(
     // 准备移到普通java模块，所以不能用安卓的AnkoLogger,
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
 
-    fun parse(): Previewer.Info {
-        val info = Previewer.Info(LocalNovelType.TEXT)
+    fun parse(): LocalNovelInfo {
+        val info = LocalNovelInfo(LocalNovelType.TEXT)
         // 考虑到频繁add以及最后有remove首尾的操作，用链表，
         val chapters = LinkedList<NovelChapter>()
         RandomAccessFile(file, "r").use { raf ->
@@ -34,7 +31,7 @@ class TextParser(
             var line = raf.readLine(charset)
             var name: String? = null
             while (line != null) {
-                logger.debug {
+                logger.trace {
                     "next line: line=$line, extra=$beginPos/$endPos"
                 }
                 if (false == line.firstOrNull()?.isWhitespace()) {

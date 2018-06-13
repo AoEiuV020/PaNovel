@@ -97,7 +97,6 @@ class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
         val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Intent(Intent.ACTION_OPEN_DOCUMENT)
         } else {
-            // TODO: 有必要测试一下api19以下的情况，
             Intent(Intent.ACTION_GET_CONTENT)
         }
         intent.type = "*/*"

@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
+import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
@@ -315,6 +316,9 @@ object DataManager : AnkoLogger {
      */
     @WorkerThread
     fun importLocalNovel(ctx: Context, uri: Uri): Novel {
+        debug {
+            "importLocalNovel from: $uri"
+        }
         // 传入的ctx用于弹对话框让用户传入可能需要的小说格式，编码，作者名，小说名，
         val previewer = ctx.contentResolver.openInputStream(uri).use { input ->
             // uri基本都有带文件路径，可以传进去用于判断小说文件类型，没有的话，就没有吧，让用户选择，
@@ -324,14 +328,49 @@ object DataManager : AnkoLogger {
         val defaultType = previewer.type() ?: LocalNovelType.TEXT
         // TODO: 这里让用户填文件类型，
         val actualType = defaultType
+        debug {
+            "importLocalNovel file type: ${actualType.suffix}"
+        }
 
         val defaultCharset = previewer.charset() ?: Charsets.UTF_8
         // TODO: 这里让用户填编码，但是应该只有.txt需要，
         val actualCharset = defaultCharset
+        debug {
+            "importLocalNovel file charset: $actualCharset"
+        }
 
         // 一次性得到可能能得到的作者名，小说名，简介，
         val info = previewer.preview(actualType, actualCharset)
+        debug {
+            "importLocalNovel parse: <${info.name}-${info.author}${info.type.suffix}, ${info.introduction}, ${info.chapters?.size}>"
+        }
+        // TODO: 这里让用户决定作者名，小说名，简介就算了，直接改info，
+        val suffix = info.type.suffix
+        val author = info.author.notNull("author")
+        val name = info.name.notNull("name")
 
-        TODO()
+        // 最终导入的小说就永久保存在这里了，
+        val file = previewer.fileWrapper.use { file ->
+            local.saveNovel(file, suffix, author, name)
+        }
+        // previewer用完了，
+        previewer.clean()
+
+        val novel = app.queryOrNewNovel(NovelMinimal(
+                site = suffix,
+                author = author,
+                name = name,
+                detail = file.absoluteFile.canonicalPath
+        ))
+        // 这里保存编码，如果是epub不需要编码也要随便给个值，毕竟是用这个判断是否需要请求小说详情，
+        novel.introduction = info.introduction ?: "(null)"
+        novel.chapters = actualCharset.name()
+        novel.bookshelf = true
+        app.db.novelDao().importLocalNovel(novel.nId, novel.detail, novel.chapters, novel.introduction, novel.bookshelf)
+
+        debug {
+            "importLocalNovel result: $novel"
+        }
+        return novel
     }
 }

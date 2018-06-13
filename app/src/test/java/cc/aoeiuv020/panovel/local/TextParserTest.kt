@@ -39,26 +39,28 @@ class TextParserTest {
                 site = ".txt",
                 author = "圣骑士的传说",
                 name = "修真聊天群",
-                detail = charset,
+                detail = file.absoluteFile.canonicalPath,
                 introduction = "某天，宋书航意外加入了一个仙侠中二病资深患者的交流群，里面的群友们都以‘道友’相称，群名片都是各种府主、洞主、真人、天师。连群主走失的宠物犬都称为大妖犬离家出走。整天聊的是炼丹、闯秘境、炼功经验啥的。\n" +
                         "突然有一天，潜水良久的他突然发现……群里每一个群员，竟然全部是修真者，能移山倒海、长生千年的那种！\n" +
                         "啊啊啊啊，世界观在一夜间彻底崩碎啦！\n" +
                         "书友群：九洲1号群:207572656\n" +
                         "九洲２号群:168114177\n" +
                         "九洲３号群:165210665（新）\n" +
-                        "九洲一号群（VIP书友群，需验证）63769632"
+                        "九洲一号群（VIP书友群，需验证）63769632",
+                chapters = charset
         )
         val novel = Novel(
                 site = local.type.suffix,
                 author = local.author.notNull("author"),
                 name = local.name.notNull("name"),
-                detail = charset,
-                introduction = local.introduction.notNull("introduction")
+                detail = file.absoluteFile.canonicalPath,
+                introduction = local.introduction.notNull("introduction"),
+                chapters = charset
         )
         assertEquals(expectedNovel, novel)
         val chapters = local.chapters.notNull("chapters")
         assertEquals(8, chapters.size)
-        val provider = TextProvider(novel, file)
+        val provider = TextProvider(novel)
         chapters.first().let {
             assertEquals("有趣的书评同人小故事", it.name)
             val content = provider.getNovelContent(it)
@@ -101,10 +103,11 @@ class TextParserTest {
                 site = local.type.suffix,
                 author = "author",
                 name = "name",
-                detail = charset,
-                introduction = "introduction"
+                detail = file.absoluteFile.canonicalPath,
+                introduction = "introduction",
+                chapters = charset
         )
-        val provider = TextProvider(novel, file)
+        val provider = TextProvider(novel)
         val chapters = local.chapters.notNull()
         assertEquals(22, chapters.size)
         chapters.first().let {
@@ -146,21 +149,23 @@ class TextParserTest {
                 site = ".txt",
                 author = "卜非",
                 name = "与千年女鬼同居的日子",
-                detail = charset,
+                detail = file.absoluteFile.canonicalPath,
                 introduction = "为了赚点零花钱代人扫墓，结果一只女鬼跟着回了家，额滴个神呀，从此诡异的事情接二连三的发生在了自己身边。\n" +
                         "红衣夜女杀人案、枯井中的无脸之人、河中的人形怪物……\n" +
                         "更为奇怪的是，那些平时连想都不敢想的女神都主动凑了过来。\n" +
-                        "虽然这只女鬼长得俊俏又漂亮，可等知道她的真正身份之后，我和我的小伙伴顿时都惊呆了。"
+                        "虽然这只女鬼长得俊俏又漂亮，可等知道她的真正身份之后，我和我的小伙伴顿时都惊呆了。",
+                chapters = charset
         )
         val novel = Novel(
                 site = local.type.suffix,
                 author = local.author.notNull("author"),
                 name = local.name.notNull("name"),
-                detail = charset,
-                introduction = local.introduction.notNull("introduction")
+                detail = file.absoluteFile.canonicalPath,
+                introduction = local.introduction.notNull("introduction"),
+                chapters = charset
         )
         assertEquals(expectedNovel, novel)
-        val provider = TextProvider(novel, file)
+        val provider = TextProvider(novel)
         val chapters = local.chapters.notNull()
         assertEquals(5, chapters.size)
         chapters.first().let {

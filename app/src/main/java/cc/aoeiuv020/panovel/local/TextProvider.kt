@@ -4,6 +4,7 @@ import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.readLines
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.charset.Charset
@@ -12,12 +13,13 @@ import java.nio.charset.Charset
  * Created by AoEiuV020 on 2018.06.13-15:36:18.
  */
 class TextProvider(
-        private val novel: Novel,
-        file: File
-) : LocalNovelProvider(file) {
+        private val novel: Novel
+) : LocalNovelProvider(novel) {
+    // 文件只读不写，不需要线程安全，
+    private val file = File(novel.detail)
 
     override fun getNovelContent(chapter: NovelChapter): List<String> {
-        val charset = Charset.forName(novel.detail)
+        val charset = Charset.forName(novel.chapters)
         val (beginPos, endPos) = chapter.extra.divide('/').let {
             it.first.toLong() to it.second.toLong()
         }
@@ -29,10 +31,15 @@ class TextProvider(
     }
 
     override fun requestNovelChapters(): List<NovelChapter> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return TextParser(file, Charset.forName(novel.chapters))
+                .parse().chapters.notNullOrReport()
     }
 
     override fun updateNovelDetail() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // 不真的刷新什么，
+        if (novel.chapters == null) {
+            // 按理说没用，编码是一开始就决定好了写死的，不会为空，
+            novel.chapters = Charsets.UTF_8.name()
+        }
     }
 }

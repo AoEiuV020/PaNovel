@@ -282,13 +282,21 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
      * 选择后修改当前背景图，但不保存，
      */
     private fun requestBackgroundImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent(Intent.ACTION_OPEN_DOCUMENT)
+        } else {
+            Intent(Intent.ACTION_GET_CONTENT)
+        }
         intent.type = "image/*"
         startActivityForResult(intent, 0)
     }
 
     fun requestFont() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent(Intent.ACTION_OPEN_DOCUMENT)
+        } else {
+            Intent(Intent.ACTION_GET_CONTENT)
+        }
         intent.type = "*/*"
         startActivityForResult(intent, 1)
     }
