@@ -18,9 +18,10 @@ import java.util.*
 class NovelManager(
         val novel: Novel,
         private val app: AppDatabaseManager,
-        private val api: ApiManager,
+        private val provider: NovelProvider,
         private val cache: CacheManager,
-        private val server: ServerManager
+        // server可空，本地小说不传入server，相关方法也都不调用，
+        private val server: ServerManager?
 ) : AnkoLogger {
 
     fun pinned() = app.pinned(novel)
@@ -37,7 +38,7 @@ class NovelManager(
      */
     fun askUpdate(): Boolean {
         debug { "askUpdate: <${novel.run { "$site.$author.$name.$receiveUpdateTime.$checkUpdateTime" }}>" }
-        val result = server.askUpdate(novel) ?: return false
+        val result = server?.askUpdate(novel) ?: return false
         debug { "result: <${result.toJson()}}>" }
         return if (result.chaptersCount ?: 0 > novel.chaptersCount) {
             // 只对比章节数，
@@ -63,7 +64,7 @@ class NovelManager(
     private fun updateReadStatus() = app.updateReadStatus(novel)
 
     fun getContentUrl(chapter: NovelChapter): String =
-            api.getContentUrl(novel, chapter)
+            provider.getContentUrl(chapter)
 
     fun novelContentsCached(): Collection<String> = cache.novelContentCached(novel)
 
@@ -80,7 +81,7 @@ class NovelManager(
                 return it
             }
         }
-        return api.getNovelContent(novel, chapter).also {
+        return provider.getNovelContent(chapter).also {
             // 缓存起来，
             cache.saveContent(novel, chapter, it)
         }
@@ -104,7 +105,7 @@ class NovelManager(
     private fun refreshChapters(): List<NovelChapter> {
         // 确保存在详情页信息，
         requireDetail()
-        val list = api.requestNovelChapters(novel)
+        val list = provider.requestNovelChapters()
         if (novel.readAtChapterName.isBlank()) {
             // 如果数据库中没有阅读进度章节，说明没阅读过，直接存第一章名字，
             // 也可能是导入的进度，所以不能直接写0, 要用readAtChapterIndex，
@@ -117,7 +118,7 @@ class NovelManager(
                 novel.updateTime, novel.checkUpdateTime, novel.receiveUpdateTime
         )
         cache.saveChapters(novel, list)
-        server.touchUpdate(novel)
+        server?.touchUpdate(novel)
         return list
     }
 
@@ -131,13 +132,13 @@ class NovelManager(
     }
 
     fun getDetailUrl(): String =
-            api.getDetailUrl(novel)
+            provider.getDetailUrl()
 
     /**
      * 请求小说详情，也就是刷新，
      */
     private fun refreshDetail() {
-        api.updateNovelDetail(novel)
+        provider.updateNovelDetail()
         // 写入数据库，包括名字作者和extra都以详情页返回结果为准，
         app.db.novelDao().updateNovelDetail(novel.nId,
                 novel.name, novel.author, novel.detail,
@@ -161,9 +162,9 @@ class NovelManager(
         app.db.novelDao().updateBookshelf(novel.nId, novel.bookshelf)
         // 向极光订阅/取消对应tag,
         if (novel.bookshelf) {
-            server.addTags(listOf(novel))
+            server?.addTags(listOf(novel))
         } else {
-            server.removeTags(listOf(novel))
+            server?.removeTags(listOf(novel))
         }
     }
 

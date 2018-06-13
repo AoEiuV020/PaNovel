@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.annotation.UiThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.irondb.Iron
+import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.TextExporter
 import cc.aoeiuv020.panovel.local.TextImporter
 import java.io.InputStream
@@ -15,6 +16,7 @@ import java.nio.charset.Charset
  * Created by AoEiuV020 on 2018.06.12-20:16:51.
  */
 class LocalManager(ctx: Context) {
+
     // 所有临时文件都保存在/data/data/cc.aoeiuv020.panovel/cache/local
     private val root = Iron.db(ctx.cacheDir).sub("local")
 
@@ -29,6 +31,10 @@ class LocalManager(ctx: Context) {
     @UiThread
     fun exportText(ctx: Context, novelManager: NovelManager) =
             TextExporter.export(ctx, novelManager)
+
+    fun getNovelProvider(novel: Novel): NovelProvider {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     companion object {
         const val KEY_IMPORTER = "importer"

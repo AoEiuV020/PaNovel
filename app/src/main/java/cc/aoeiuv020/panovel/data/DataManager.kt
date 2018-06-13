@@ -76,7 +76,12 @@ object DataManager : AnkoLogger {
     fun getNovelManager(id: Long): NovelManager =
             app.query(id).toManager()
 
-    private fun Novel.toManager() = NovelManager(this, app, api, cache, server)
+    private fun Novel.toManager() = if (site.startsWith(".")) {
+        // 网站名是点.开头的表示本地小说，让LocalManager提供数据，
+        NovelManager(this, app, local.getNovelProvider(this), cache, null)
+    } else {
+        NovelManager(this, app, api.getNovelProvider(this), cache, server)
+    }
 
     fun allNovelContexts() = api.contexts
 
