@@ -9,7 +9,11 @@ import java.util.*
  * Created by AoEiuV020 on 2018.06.13-19:12:58.
  */
 fun RandomAccessFile.readLine(charset: Charset): String? {
-    val input = ByteArrayOutputStream()
+    return readLine(charset, ByteArrayOutputStream())
+}
+
+fun RandomAccessFile.readLine(charset: Charset, input: ByteArrayOutputStream): String? {
+    input.reset()
     var c = -1
     var eol = false
 

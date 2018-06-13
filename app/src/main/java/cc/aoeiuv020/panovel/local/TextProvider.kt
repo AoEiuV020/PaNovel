@@ -6,7 +6,6 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import java.io.File
-import java.io.RandomAccessFile
 import java.nio.charset.Charset
 import java.util.*
 
@@ -24,7 +23,7 @@ class TextProvider(
         val (beginPos, endPos) = chapter.extra.divide('/').let {
             it.first.toLong() to it.second.toLong()
         }
-        return RandomAccessFile(file, "r").use { raf ->
+        return BufferedRandomAccessFile(file, "r").use { raf ->
             raf.readLines(beginPos, endPos, charset).map {
                 it.trim()
             }

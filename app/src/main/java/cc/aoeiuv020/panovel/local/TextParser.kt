@@ -4,8 +4,8 @@ import cc.aoeiuv020.base.jar.*
 import cc.aoeiuv020.panovel.api.NovelChapter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.RandomAccessFile
 import java.nio.charset.Charset
 import java.util.*
 
@@ -25,10 +25,11 @@ class TextParser(
         val info = LocalNovelInfo(LocalNovelType.TEXT)
         // 考虑到频繁add以及最后有remove首尾的操作，用链表，
         val chapters = LinkedList<NovelChapter>()
-        RandomAccessFile(file, "r").use { raf ->
+        BufferedRandomAccessFile(file, "r").use { raf ->
             var beginPos = 0L
             var endPos = 0L
-            var line = raf.readLine(charset)
+            val input = ByteArrayOutputStream()
+            var line = raf.readLine(charset, input)
             var name: String? = null
             while (line != null) {
                 logger.trace {
@@ -62,7 +63,7 @@ class TextParser(
                     endPos = raf.filePointer
                 }
 
-                line = raf.readLine(charset)
+                line = raf.readLine(charset, input)
             }
             // 最后一章也要存，
             if (name != null) {
@@ -137,7 +138,7 @@ class TextParser(
                     val (beginPos, endPos) = it.extra.divide('/').let {
                         it.first.toLong() to it.second.toLong()
                     }
-                    RandomAccessFile(file, "r").use { raf ->
+                    BufferedRandomAccessFile(file, "r").use { raf ->
                         info.introduction = raf.readLines(beginPos, endPos, charset).joinToString("\n") {
                             it.trim()
                         }

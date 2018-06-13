@@ -15,7 +15,7 @@ import java.nio.charset.Charset
  */
 class TextParserTest {
     init {
-        System.setProperty("org.slf4j.simpleLogger.log.TextParser", "debug")
+        System.setProperty("org.slf4j.simpleLogger.log.TextParser", "INFO")
     }
 
     @Rule
@@ -24,6 +24,8 @@ class TextParserTest {
 
     @Test
     fun big() {
+        // RandomAccessFile 6s 342ms,
+        // BufferedRandomAccessFile 1s 285ms,
         val file = File("/home/aoeiuv/tmp/panovel/txt/yqnng/novel.txt")
         val charset = "GBK"
         val local = TextParser(file, Charset.forName(charset))
