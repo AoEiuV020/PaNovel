@@ -29,7 +29,7 @@ class DefaultNovelItemActionListener(
             ReadContinue -> NovelTextActivity.start(vh.ctx, vh.novel)
             OpenDetail -> NovelDetailActivity.start(vh.ctx, vh.novel)
             RefineSearch -> FuzzySearchActivity.start(vh.ctx, vh.novel)
-            Export -> DataManager.exportText(vh.ctx, vh.novel)
+            Export -> DataManager.exportText(vh.ctx, vh.novelManager)
         // TODO: 有点混乱不统一，改支之前考虑清楚，主要是有的操作需要更新vh界面，
             AddBookshelf -> vh.addBookshelf() // vh里再反过来调用onStarChanged，
             RemoveBookshelf -> vh.removeBookshelf() // vh里再反过来调用onStarChanged，
@@ -94,7 +94,7 @@ class DefaultNovelItemActionListener(
     }
 
     override fun onStarChanged(vh: NovelViewHolder, star: Boolean) {
-        vh.novel.bookshelf = star
+        val novelManager = vh.novelManager
         doAsync({ e ->
             val message = "${if (star) "添加" else "删除"}书架《${vh.novel.name}》失败，"
             // 这应该是数据库操作出问题，正常情况不会出现才对，
@@ -105,47 +105,50 @@ class DefaultNovelItemActionListener(
                 onError(message, e)
             }
         }) {
-            DataManager.updateBookshelf(vh.novel)
+            novelManager.updateBookshelf(star)
         }
 
     }
 
-    override fun requireRefresh(vh: NovelViewHolder) {
+    override fun refreshChapters(vh: NovelViewHolder) {
+        val novelManager = vh.novelManager
         doAsync({ e ->
             val message = "刷新小说《${vh.novel.name}》失败，"
             Reporter.post(message, e)
             error(message, e)
             vh.ctx.runOnUiThread {
                 // 失败也停止显示正在刷新，
-                vh.refreshed(vh.novel)
+                vh.refreshed(novelManager)
                 onError(message, e)
             }
         }, ioExecutorService) {
-            DataManager.refreshChapters(vh.novel)
+            novelManager.requestChapters(true)
             uiThread {
-                vh.refreshed(vh.novel)
+                vh.refreshed(novelManager)
             }
         }
     }
 
     override fun askUpdate(vh: NovelViewHolder) {
+        // 缓存一下，以免异步过程vh被复用了，可能导致小红点不停转圈，
+        val novelManager = vh.novelManager
         doAsync({ e ->
-            val message = "询问服务器是否有更新小说《${vh.novel.name}》失败，"
+            val message = "询问服务器是否有更新小说《${novelManager.novel.name}》失败，"
             Reporter.post(message, e)
             error(message, e)
             vh.ctx.runOnUiThread {
                 // 失败也停止显示正在刷新，
-                vh.refreshed(vh.novel)
+                vh.refreshed(novelManager)
                 onError(message, e)
             }
         }, ioExecutorService) {
-            if (DataManager.askUpdate(vh.novel)) {
+            if (novelManager.askUpdate()) {
                 try {
                     // 如果有更新，就刷新章节列表，
-                    DataManager.refreshChapters(vh.novel)
+                    novelManager.requestChapters(true)
                 } catch (e: Exception) {
                     // 刷新小说章节列表失败不要抛上去报询问服务器的错，
-                    val message = "刷新小说《${vh.novel.name}》失败，"
+                    val message = "刷新小说《${novelManager.novel.name}》失败，"
                     Reporter.post(message, e)
                     error(message, e)
                     uiThread {
@@ -155,7 +158,7 @@ class DefaultNovelItemActionListener(
             }
             // 刷新是否失败都要调用refreshed,
             uiThread {
-                vh.refreshed(vh.novel)
+                vh.refreshed(novelManager)
             }
         }
     }
@@ -169,7 +172,7 @@ class DefaultNovelItemActionListener(
                 onError(message, e)
             }
         }) {
-            DataManager.pinned(vh.novel)
+            vh.novelManager.pinned()
         }
     }
 
@@ -182,7 +185,7 @@ class DefaultNovelItemActionListener(
                 onError(message, e)
             }
         }) {
-            DataManager.cancelPinned(vh.novel)
+            vh.novelManager.cancelPinned()
         }
     }
 }

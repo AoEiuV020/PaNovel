@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationManagerCompat
 import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.getBitmapFromVectorDrawable
@@ -27,12 +27,13 @@ class TextExporter(
     companion object {
         const val NAME_FOLDER = "Text"
 
-        fun export(ctx: Context, novel: Novel) {
-            TextExporter(ctx).exportExistsChapterToTextFile(novel)
+        fun export(ctx: Context, novelManager: NovelManager) {
+            TextExporter(ctx).exportExistsChapterToTextFile(novelManager)
         }
     }
 
-    fun exportExistsChapterToTextFile(novel: Novel) {
+    fun exportExistsChapterToTextFile(novelManager: NovelManager) {
+        val novel = novelManager.novel
         val exportingRunnable = object : Runnable {
             private val handler = Handler(Looper.getMainLooper())
             var export = 0
@@ -123,7 +124,7 @@ class TextExporter(
             // 文件File存起来，用于导出完成时展示结果，
             exportingRunnable.file = file
             file.outputStream().bufferedWriter().use { output ->
-                val chapters = DataManager.requestChapters(novel)
+                val chapters = novelManager.requestChapters(false)
                 val size = chapters.size
                 var export = 0
                 var skip = 0
@@ -154,7 +155,7 @@ class TextExporter(
                     if (container.contains(chapter.extra)) {
                         export++
                         // 判断过章节存在了，这个必须非空，除非导出过程删除了缓存，
-                        val content = DataManager.getContent(novel, chapter).notNullOrReport()
+                        val content = novelManager.getContent(chapter).notNullOrReport()
                         // 逐行写入，
                         content.forEach {
                             output.appendln("　　$it")

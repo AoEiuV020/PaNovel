@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
-import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
-import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
 import cc.aoeiuv020.panovel.util.notNullOrReport
@@ -54,61 +52,7 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun listBookshelf(): List<Novel> = app.listBookshelf()
-
-    fun updateBookshelf(novel: Novel) {
-        app.updateBookshelf(novel.nId, novel.bookshelf)
-        // 向极光订阅/取消对应tag,
-        if (novel.bookshelf) {
-            server.addTags(listOf(novel))
-        } else {
-            server.removeTags(listOf(novel))
-        }
-    }
-
-    fun refreshChapters(novel: Novel): List<NovelChapter> {
-        // 确保存在详情页信息，
-        requireNovelDetail(novel)
-        val list = api.requestNovelChapters(novel)
-        if (novel.readAtChapterName.isBlank()) {
-            // 如果数据库中没有阅读进度章节，说明没阅读过，直接存第一章名字，
-            // 也可能是导入的进度，所以不能直接写0, 要用readAtChapterIndex，
-            novel.readAtChapterName = list.getOrNull(novel.readAtChapterIndex)?.name ?: ""
-        }
-        // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
-        app.updateChapters(
-                novel.nId, novel.chaptersCount,
-                novel.readAtChapterName, novel.lastChapterName,
-                novel.updateTime, novel.checkUpdateTime, novel.receiveUpdateTime
-        )
-        cache.saveChapters(novel, list)
-        server.touchUpdate(novel)
-        return list
-    }
-
-    /**
-     * 询问服务器是否有更新，
-     *
-     * @return 返回true表示有更新，
-     */
-    fun askUpdate(novel: Novel): Boolean {
-        debug { "askUpdate: <${novel.run { "$site.$author.$name.$receiveUpdateTime.$checkUpdateTime" }}>" }
-        val result = server.askUpdate(novel) ?: return false
-        debug { "result: <${result.toJson()}}>" }
-        return if (result.chaptersCount ?: 0 > novel.chaptersCount) {
-            // 只对比章节数，
-            debug { "has update ${result.chaptersCount} > ${novel.chaptersCount}" }
-            true
-        } else {
-            debug { "no update ${result.chaptersCount} <= ${novel.chaptersCount}" }
-            // 如果没更新，就保存服务器上的更新时间，如果更大的话，
-            novel.apply {
-                // 不更新receiveUpdateTime，不准，有时别人比较晚收到同一个更新然后推上去被拿到，
-                checkUpdateTime = maxOf(checkUpdateTime, result.checkUpdateTime)
-            }
-            false
-        }
-    }
+    fun listBookshelf(): List<NovelManager> = app.listBookshelf().map { it.toManager() }
 
     /**
      * 收到更新推送, 主动更新一下看看是不是真的有更新，
@@ -121,7 +65,7 @@ object DataManager : AnkoLogger {
             // 章节数更多了表示确实有更新，
             // 不能太相信推送的数据，一切以本地自己刷新的为准，
             val oldCount = localNovel.chaptersCount
-            refreshChapters(localNovel)
+            localNovel.toManager().requestChapters(true)
             val newCount = localNovel.chaptersCount
             newCount > oldCount
         } else {
@@ -129,35 +73,10 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun requestChapters(novel: Novel): List<NovelChapter> {
-        // 确保存在详情页信息，
-        requireNovelDetail(novel)
-        // 先读取缓存，
-        cache.loadChapters(novel)?.also {
-            return it
-        }
-        return refreshChapters(novel)
-    }
-
-    private fun requireNovelDetail(novel: Novel) {
-        debug { "requireNovelDetail $novel" }
-        // chapters非空表示已经获取过小说详情了，
-        if (novel.chapters != null) {
-            return
-        }
-        requestDetail(novel)
-    }
-
-    private fun requestDetail(novel: Novel) {
-        api.updateNovelDetail(novel)
-        // 写入数据库，包括名字作者和extra都以详情页返回结果为准，
-        app.db.novelDao().updateNovelDetail(novel.nId,
-                novel.name, novel.author, novel.detail,
-                novel.image, novel.introduction, novel.updateTime, novel.nChapters)
-    }
-
     fun getNovelManager(id: Long): NovelManager =
-            NovelManager(app.query(id), app, api, cache, server)
+            app.query(id).toManager()
+
+    private fun Novel.toManager() = NovelManager(this, app, api, cache, server)
 
     fun allNovelContexts() = api.contexts
 
@@ -189,20 +108,20 @@ object DataManager : AnkoLogger {
     /**
      * @param author 作者名为空就不从数据库查询，
      */
-    fun search(site: String, name: String, author: String?): List<Novel> {
+    fun search(site: String, name: String, author: String?): List<NovelManager> {
         if (author != null) {
             // 如果有作者名，那结果只可能有一个，
             // 如果数据库里有了，就直接返回，
             app.query(site, author, name)?.also {
-                return listOf(it)
+                return listOf(it.toManager())
             }
         }
         val context = api.getNovelContextByName(site)
         val resultList = api.search(context, name)
-        return app.db.runInTransaction<List<Novel>> {
+        return app.db.runInTransaction<List<NovelManager>> {
             resultList.map {
                 // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
-                app.queryOrNewNovel(NovelMinimal(it))
+                app.queryOrNewNovel(NovelMinimal(it)).toManager()
             }
         }
     }
@@ -244,26 +163,16 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun getNovelFromUrl(site: String, url: String): Novel {
+    fun getNovelFromUrl(site: String, url: String): NovelManager {
         return api.getNovelFromUrl(getNovelContextByName(site), url).let {
             // 搜索结果查询数据库看是否有这本，有就取出，没有就新建一个插入数据库，
-            app.queryOrNewNovel(NovelMinimal(it))
+            app.queryOrNewNovel(NovelMinimal(it)).toManager()
         }
     }
 
     fun removeWebViewCookies() = cookie.removeCookies()
 
     fun removeNovelContextCookies(site: String) = api.removeCookies(getNovelContextByName(site))
-
-    /**
-     * 从缓存中读小说正文，没有就返回空，用于导入小说，
-     */
-    fun getContent(novel: Novel, chapter: NovelChapter): List<String>? =
-            cache.loadContent(novel, chapter)
-
-    fun pinned(novel: Novel) = app.pinned(novel)
-
-    fun cancelPinned(novel: Novel) = app.cancelPinned(novel)
     fun pinned(site: Site) {
         site.pinnedTime = Date()
         app.updatePinnedTime(site)
@@ -285,19 +194,20 @@ object DataManager : AnkoLogger {
 
     fun siteEnabledChange(site: Site) = app.siteEnabledChange(site)
 
-    fun history(historyCount: Int): List<Novel> = app.history(historyCount)
+    fun history(historyCount: Int): List<NovelManager> = app.history(historyCount).map { it.toManager() }
 
     fun getBookList(bookListId: Long): BookList = app.getBookList(bookListId)
 
     /**
      * 列表中的小说在该书单里的包含情况，
      */
-    fun inBookList(bookListId: Long, list: List<Novel>) = app.inBookList(bookListId, list)
-
-    fun addToBookList(bookListId: Long, novel: Novel) = app.addToBookList(bookListId, novel)
-    fun removeFromBookList(bookListId: Long, novel: Novel) = app.removeFromBookList(bookListId, novel)
+    fun inBookList(bookListId: Long, list: List<NovelManager>) =
+    // 多费一个map,
+            app.inBookList(bookListId, list.map { it.novel })
 
     fun getNovelFromBookList(bookListId: Long): List<Novel> = app.getNovelFromBookList(bookListId)
+    fun getNovelManagerFromBookList(bookListId: Long): List<NovelManager> =
+            getNovelFromBookList(bookListId).map { it.toManager() }
     fun getNovelMinimalFromBookList(bookListId: Long): List<NovelMinimal> = app.getNovelMinimalFromBookList(bookListId)
     fun allBookList() = app.allBookList()
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)
@@ -374,7 +284,7 @@ object DataManager : AnkoLogger {
      * 回调是收到极光的广播时调用，在ui线程的，
      */
     fun resetSubscript() =
-            server.setTags(listBookshelf())
+            server.setTags(app.listBookshelf())
 
     fun removeAllCookies() {
         removeWebViewCookies()
@@ -390,5 +300,5 @@ object DataManager : AnkoLogger {
      */
     fun hasUpdateNovelList(): List<Novel> = app.hasUpdateNovelList()
 
-    fun exportText(ctx: Context, novel: Novel) = local.exportText(ctx, novel)
+    fun exportText(ctx: Context, novelManager: NovelManager) = local.exportText(ctx, novelManager)
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.support.annotation.UiThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.irondb.Iron
-import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.TextExporter
 import cc.aoeiuv020.panovel.local.TextImporter
 import java.io.InputStream
@@ -28,8 +27,8 @@ class LocalManager(ctx: Context) {
 
     // TODO: 统一导入导出的形式，
     @UiThread
-    fun exportText(ctx: Context, novel: Novel) =
-            TextExporter.export(ctx, novel)
+    fun exportText(ctx: Context, novelManager: NovelManager) =
+            TextExporter.export(ctx, novelManager)
 
     companion object {
         const val KEY_IMPORTER = "importer"

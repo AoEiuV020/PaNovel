@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
 import java.util.*
@@ -20,8 +20,8 @@ open class NovelListAdapter(
         private val onError: (String, Throwable) -> Unit
 ) : RecyclerView.Adapter<NovelViewHolder>() {
     @Suppress("PropertyName")
-    protected open var _data: MutableList<Novel> = mutableListOf()
-    var data: List<Novel>
+    protected open var _data: MutableList<NovelManager> = mutableListOf()
+    var data: List<NovelManager>
         get() = _data
         set(value) {
             _data = value.toMutableList()
@@ -64,7 +64,7 @@ open class NovelListAdapter(
     }
 
 
-    fun addAll(list: List<Novel>) {
+    fun addAll(list: List<NovelManager>) {
         _data.addAll(list)
         // TODO: 要看看会不要自动滚到底部，不要滚，
         notifyItemRangeInserted(_data.size - list.size, list.size)

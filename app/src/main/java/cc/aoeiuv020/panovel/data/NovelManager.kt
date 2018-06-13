@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.data
 
+import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import org.jetbrains.anko.AnkoLogger
@@ -22,6 +23,38 @@ class NovelManager(
         private val server: ServerManager
 ) : AnkoLogger {
 
+    fun pinned() = app.pinned(novel)
+
+    fun cancelPinned() = app.cancelPinned(novel)
+
+    fun addToBookList(bookListId: Long) = app.addToBookList(bookListId, novel)
+    fun removeFromBookList(bookListId: Long) = app.removeFromBookList(bookListId, novel)
+
+    /**
+     * 询问服务器是否有更新，
+     *
+     * @return 返回true表示有更新，
+     */
+    fun askUpdate(): Boolean {
+        debug { "askUpdate: <${novel.run { "$site.$author.$name.$receiveUpdateTime.$checkUpdateTime" }}>" }
+        val result = server.askUpdate(novel) ?: return false
+        debug { "result: <${result.toJson()}}>" }
+        return if (result.chaptersCount ?: 0 > novel.chaptersCount) {
+            // 只对比章节数，
+            debug { "has update ${result.chaptersCount} > ${novel.chaptersCount}" }
+            true
+        } else {
+            debug { "no update ${result.chaptersCount} <= ${novel.chaptersCount}" }
+            // 如果没更新，就保存服务器上的更新时间，如果更大的话，
+            novel.apply {
+                // 不更新receiveUpdateTime，不准，有时别人比较晚收到同一个更新然后推上去被拿到，
+                checkUpdateTime = maxOf(checkUpdateTime, result.checkUpdateTime)
+            }
+            false
+        }
+    }
+
+
     fun saveReadStatus() {
         novel.readTime = Date()
         updateReadStatus()
@@ -33,6 +66,12 @@ class NovelManager(
             api.getContentUrl(novel, chapter)
 
     fun novelContentsCached(): Collection<String> = cache.novelContentCached(novel)
+
+    /**
+     * 从缓存中读小说正文，没有就返回空，用于导入小说，
+     */
+    fun getContent(chapter: NovelChapter): List<String>? =
+            cache.loadContent(novel, chapter)
 
     fun requestContent(chapter: NovelChapter, refresh: Boolean): List<String> {
         // 指定刷新的话就不读缓存，

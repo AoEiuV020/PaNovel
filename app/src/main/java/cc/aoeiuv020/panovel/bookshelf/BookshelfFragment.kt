@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.settings.ItemAction.Pinned
@@ -86,7 +86,7 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
         refresh()
     }
 
-    fun showNovelList(list: List<Novel>) {
+    fun showNovelList(list: List<NovelManager>) {
         novelListAdapter.data = list
         srlRefresh.isRefreshing = false
     }

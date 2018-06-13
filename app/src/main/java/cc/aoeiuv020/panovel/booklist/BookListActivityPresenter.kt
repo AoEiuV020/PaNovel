@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.booklist
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
@@ -39,14 +39,14 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
                 view?.showError(message, e)
             }
         }) {
-            val list = DataManager.getNovelFromBookList(bookListId)
+            val list = DataManager.getNovelManagerFromBookList(bookListId)
             uiThread {
                 view?.showNovelList(list)
             }
         }
     }
 
-    fun add(novel: Novel) {
+    fun add(novelManager: NovelManager) {
         view?.doAsync({ e ->
             val message = "添加小说到书单<$bookListId>失败，"
             Reporter.post(message, e)
@@ -55,11 +55,11 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
                 view?.showError(message, e)
             }
         }) {
-            DataManager.addToBookList(bookListId, novel)
+            novelManager.addToBookList(bookListId)
         }
     }
 
-    fun remove(novel: Novel) {
+    fun remove(novelManager: NovelManager) {
         view?.doAsync({ e ->
             val message = "从书单<$bookListId>删除小说失败，"
             Reporter.post(message, e)
@@ -68,7 +68,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
                 view?.showError(message, e)
             }
         }) {
-            DataManager.removeFromBookList(bookListId, novel)
+            novelManager.removeFromBookList(bookListId)
         }
     }
 
@@ -83,9 +83,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
         }) {
             val list = DataManager.history(50)
             val nameArray = list.map {
-                it.run {
-                    "$name.$author.$site"
-                }
+                it.novel.bookId
             }.toTypedArray()
             val containsArray = DataManager.inBookList(bookListId, list).toBooleanArray()
             uiThread {
@@ -105,9 +103,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
         }) {
             val list = DataManager.listBookshelf()
             val nameArray = list.map {
-                it.run {
-                    "$name.$author.$site"
-                }
+                it.novel.bookId
             }.toTypedArray()
             val containsArray = DataManager.inBookList(bookListId, list).toBooleanArray()
             uiThread {

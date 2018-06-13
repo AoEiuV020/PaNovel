@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.settings.ServerSettings
@@ -48,8 +48,9 @@ class NovelViewHolder(itemView: View,
     // 包括刷新小红点和加入书架的爱心的FrameLayout,
     val flDot: View? = itemView.flDot
     // 提供外面的加调方法使用，
-    lateinit var novel: Novel
+    lateinit var novelManager: NovelManager
         private set
+    val novel get() = novelManager.novel
     val ctx: Context = itemView.context
 
     init {
@@ -129,9 +130,9 @@ class NovelViewHolder(itemView: View,
         initItem(this)
     }
 
-    fun apply(novel: Novel, refreshTime: Date) {
+    fun apply(novelManager: NovelManager, refreshTime: Date) {
         debug { "apply <${novel.run { "$site.$author.$name.$checkUpdateTime" }}>, refreshTime = $refreshTime" }
-        show(novel)
+        show(novelManager)
 
         when {
             refreshingNovelSet.contains(novel.nId) -> refreshing()
@@ -142,13 +143,13 @@ class NovelViewHolder(itemView: View,
                 askUpdate()
             } else {
                 // 不能什么都不做，要调用refreshingDot?.refreshed明确隐藏进度条，
-                refreshed(novel)
+                refreshed(novelManager)
             }
         }
     }
 
-    private fun show(novel: Novel) {
-        this.novel = novel
+    private fun show(novelManager: NovelManager) {
+        this.novelManager = novelManager
         name?.text = novel.name
         author?.text = novel.author
         site?.text = novel.site
@@ -199,7 +200,7 @@ class NovelViewHolder(itemView: View,
         debug { "refresh ${name?.text}" }
         refreshing()
         refreshingNovelSet.add(novel.nId)
-        itemListener.requireRefresh(this)
+        itemListener.refreshChapters(this)
     }
 
     /**
@@ -217,7 +218,8 @@ class NovelViewHolder(itemView: View,
      * 刷新结束时调用，
      */
     @UiThread
-    fun refreshed(novel: Novel) {
+    fun refreshed(novelManager: NovelManager) {
+        val novel = novelManager.novel
         debug { "refreshed <${novel.run { "$site.$author.$name" }}>" }
         debug {
             "bind <${this.novel.run { "$site.$author.$name" }}>"
@@ -225,7 +227,7 @@ class NovelViewHolder(itemView: View,
         refreshingNovelSet.remove(novel.nId)
         if (novel.nId == this.novel.nId) {
             // 显示刷新结果，
-            show(novel)
+            show(novelManager)
         }
     }
 
