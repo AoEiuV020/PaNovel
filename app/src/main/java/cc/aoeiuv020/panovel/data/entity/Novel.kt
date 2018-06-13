@@ -155,7 +155,7 @@ data class Novel(
     /**
      * 打印日志经常要用，这三者决定一本小说，
      */
-    val bookId: String get() = "$site.$author.$name"
+    val bookId: String get() = "$name.$author.${site.removePrefix(".")}"
 
     fun readAt(index: Int, chapters: List<NovelChapter>) {
         readAtChapterIndex = index

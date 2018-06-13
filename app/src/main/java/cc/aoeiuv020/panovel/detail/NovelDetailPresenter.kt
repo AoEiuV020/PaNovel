@@ -49,6 +49,7 @@ class NovelDetailPresenter(
         view?.doAsync({ e ->
             val message = "获取小说<${novel.bookId}>详情页地址失败，"
             // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
+            // 本地小说就file协议的地址，打不开拉倒，
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {

@@ -2,6 +2,7 @@ package cc.aoeiuv020.irondb.impl
 
 import cc.aoeiuv020.irondb.DataSerializer
 import cc.aoeiuv020.irondb.Database
+import cc.aoeiuv020.irondb.FileWrapper
 import cc.aoeiuv020.irondb.KeySerializer
 import java.io.File
 import java.io.IOException
@@ -49,16 +50,31 @@ internal class DatabaseImpl(
         }
     }
 
-    override fun <T> use(key: String, block: (File) -> T): T {
+    override fun file(key: String): FileWrapper {
         val serializedKey = keySerializer.serialize(key)
-        // 以防万一，写入前确保文件夹存在，
-        base.run {
-            exists() || mkdirs()
-        }
+        return FileWrapperImpl(serializedKey)
+    }
+
+    inner class FileWrapperImpl(
+            private val serializedKey: String
+    ) : FileWrapper {
         val file = base.resolve(serializedKey)
-        // 锁住key,
-        return keyLocker.runInAcquire(serializedKey) {
-            block(file)
+        override fun <T> use(block: (File) -> T): T {
+            // 以防万一，写入前确保文件夹存在，
+            base.run {
+                exists() || mkdirs()
+            }
+            // 锁住key,
+            return keyLocker.runInAcquire(serializedKey) {
+                block(file)
+            }
+        }
+
+        override fun delete(): Boolean {
+            // 锁住key,
+            return keyLocker.runInAcquire(serializedKey) {
+                file.delete()
+            }
         }
     }
 

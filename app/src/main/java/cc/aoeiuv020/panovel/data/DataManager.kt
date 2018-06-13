@@ -2,11 +2,13 @@ package cc.aoeiuv020.panovel.data
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
+import cc.aoeiuv020.panovel.local.LocalNovelType
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -213,6 +215,7 @@ object DataManager : AnkoLogger {
     fun getNovelFromBookList(bookListId: Long): List<Novel> = app.getNovelFromBookList(bookListId)
     fun getNovelManagerFromBookList(bookListId: Long): List<NovelManager> =
             getNovelFromBookList(bookListId).map { it.toManager() }
+
     fun getNovelMinimalFromBookList(bookListId: Long): List<NovelMinimal> = app.getNovelMinimalFromBookList(bookListId)
     fun allBookList() = app.allBookList()
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)
@@ -306,4 +309,29 @@ object DataManager : AnkoLogger {
     fun hasUpdateNovelList(): List<Novel> = app.hasUpdateNovelList()
 
     fun exportText(ctx: Context, novelManager: NovelManager) = local.exportText(ctx, novelManager)
+
+    /**
+     * input要在里面close,
+     */
+    @WorkerThread
+    fun importLocalNovel(ctx: Context, uri: Uri): Novel {
+        // 传入的ctx用于弹对话框让用户传入可能需要的小说格式，编码，作者名，小说名，
+        val previewer = ctx.contentResolver.openInputStream(uri).use { input ->
+            // uri基本都有带文件路径，可以传进去用于判断小说文件类型，没有的话，就没有吧，让用户选择，
+            local.preview(input, uri.toString())
+        }
+
+        val defaultType = previewer.type() ?: LocalNovelType.TEXT
+        // TODO: 这里让用户填文件类型，
+        val actualType = defaultType
+
+        val defaultCharset = previewer.charset() ?: Charsets.UTF_8
+        // TODO: 这里让用户填编码，但是应该只有.txt需要，
+        val actualCharset = defaultCharset
+
+        // 一次性得到可能能得到的作者名，小说名，简介，
+        val info = previewer.preview(actualType, actualCharset)
+
+        TODO()
+    }
 }

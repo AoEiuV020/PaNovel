@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.open
 
 import android.content.Context
+import android.net.Uri
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
@@ -11,8 +12,6 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
 import org.jetbrains.anko.uiThread
-import java.net.MalformedURLException
-import java.net.URL
 
 /**
  * 应用内打开相关的，
@@ -20,44 +19,63 @@ import java.net.URL
  */
 object OpenManager : AnkoLogger {
     fun open(ctx: Context, str: String, openListener: OpenListener) {
-        try {
-            val url = URL(str).toString()
-            switch(ctx, url, openListener)
-        } catch (e: MalformedURLException) {
-            // 打开的不是网址，就直接精确搜索，
-            FuzzySearchActivity.start(ctx, str)
-        }
+        // Uri.parse没有检测，不会抛异常，不正常的uri会在getScheme返回null,
+        open(ctx, Uri.parse(str), openListener)
     }
 
-    private fun switch(ctx: Context, url: String, openListener: OpenListener) {
+    fun open(ctx: Context, uri: Uri, openListener: OpenListener) {
+        switch(ctx, uri, openListener)
+    }
+
+    private fun switch(ctx: Context, uri: Uri, openListener: OpenListener) {
         openListener.onLoading(ctx.getString(R.string.judging))
-        if (Share.check(url)) {
-            // 如果是书单分享的地址，直接添加书单，
-            openListener.onLoading(ctx.getString(R.string.book_list_downloading))
-            ctx.doAsync({ e ->
-                val message = "获取书单失败，"
-                Reporter.post(message, e)
-                error(message, e)
-                openListener.onError(message, e)
-            }) {
-                val count = Share.receiveBookList(url)
-                uiThread {
-                    openListener.onBookListReceived(count)
+        when {
+            uri.scheme == null -> {
+                // 打开的不是网址，就直接精确搜索，
+                FuzzySearchActivity.start(ctx, uri.toString())
+            }
+            !uri.scheme.startsWith("http") -> {
+                // 协议不是http或https的话统统当成本地小说打开，
+                openListener.onLoading(ctx.getString(R.string.local_novel_importing))
+                ctx.doAsync({ e ->
+                    val message = "导入本地小说失败，"
+                    Reporter.post(message, e)
+                    error(message, e)
+                    openListener.onError(message, e)
+                }) {
+                    val novel: Novel = DataManager.importLocalNovel(ctx, uri)
+                    uiThread {
+                        openListener.onLocalNovelImported(novel)
+                    }
                 }
             }
-        } else {
-            // 如果可以从地址得到小说对象，打开详情页，
-            ctx.doAsync({ e ->
-                val message = "不支持的地址或格式，"
-                Reporter.post(message, e)
-                error(message, e)
-                openListener.onError(message, e)
-            }) {
-                val novel = DataManager.getNovelFromUrl(url)
-                uiThread {
-                    openListener.onNovelOpened(novel)
+            Share.check(uri.toString()) -> {
+                // 如果是书单分享的地址，直接添加书单，
+                openListener.onLoading(ctx.getString(R.string.book_list_downloading))
+                ctx.doAsync({ e ->
+                    val message = "获取书单失败，"
+                    Reporter.post(message, e)
+                    error(message, e)
+                    openListener.onError(message, e)
+                }) {
+                    val count = Share.receiveBookList(uri.toString())
+                    uiThread {
+                        openListener.onBookListReceived(count)
+                    }
                 }
             }
+            else -> // 如果可以从地址得到小说对象，打开详情页，
+                ctx.doAsync({ e ->
+                    val message = "不支持的地址或格式，"
+                    Reporter.post(message, e)
+                    error(message, e)
+                    openListener.onError(message, e)
+                }) {
+                    val novel = DataManager.getNovelFromUrl(uri.toString())
+                    uiThread {
+                        openListener.onNovelOpened(novel)
+                    }
+                }
         }
     }
 
@@ -66,6 +84,6 @@ object OpenManager : AnkoLogger {
         fun onBookListReceived(count: Int)
         fun onError(message: String, e: Throwable)
         fun onNovelOpened(novel: Novel)
-
+        fun onLocalNovelImported(novel: Novel)
     }
 }

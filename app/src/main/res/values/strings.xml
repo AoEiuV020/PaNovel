@@ -199,5 +199,8 @@
     <string name="disable">禁用</string>
     <string name="pinned">置顶</string>
     <string name="select">选择</string>
+    <string name="local_novel">本地小说</string>
+    <string name="main_open_hint">输入小说详情页地址或分享的书单地址，</string>
+    <string name="local_novel_importing">正在导入本地小说…</string>
 
 </resources>

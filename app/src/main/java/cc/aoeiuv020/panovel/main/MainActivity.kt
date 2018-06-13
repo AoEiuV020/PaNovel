@@ -70,6 +70,12 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             NovelDetailActivity.start(ctx, novel)
         }
 
+        override fun onLocalNovelImported(novel: Novel) {
+            progressDialog.dismiss()
+            bookshelfFragment.refresh()
+            showMessage("导入小说<${novel.bookId}>")
+        }
+
         override fun onBookListReceived(count: Int) {
             progressDialog.dismiss()
             bookListFragment.refresh()
@@ -305,20 +311,25 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
     }
 
-    private fun open() {
-        alert {
-            titleResource = R.string.open
-            val layout = View.inflate(this@MainActivity, R.layout.dialog_editor, null)
-            customView = layout
-            val etName = layout.editText
-            yesButton {
-                val url = etName.text.toString()
-                if (url.isNotEmpty()) {
-                    OpenManager.open(this@MainActivity, url, openListener)
-                }
+    private fun open() = alert {
+        titleResource = R.string.open
+        val layout = View.inflate(this@MainActivity, R.layout.dialog_editor, null)
+        customView = layout
+        val etName = layout.editText
+        etName.hint = getString(R.string.main_open_hint)
+        yesButton {
+            val url = etName.text.toString()
+            if (url.isNotEmpty()) {
+                OpenManager.open(this@MainActivity, url, openListener)
             }
-        }.safelyShow()
-    }
+        }
+        neutralPressed(R.string.local_novel) {
+            // 调文件管理器选择小说，
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "*/*"
+            startActivityForResult(intent, 1)
+        }
+    }.safelyShow()
 
     private fun subscript() {
         doAsync({ e ->
@@ -337,8 +348,13 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        data?.extras?.getString("SCAN_RESULT")?.let {
-            OpenManager.open(this, it, openListener)
+        when (requestCode) {
+            0 -> data?.extras?.getString("SCAN_RESULT")?.let {
+                OpenManager.open(this, it, openListener)
+            }
+            1 -> data?.data?.let { uri ->
+                OpenManager.open(this, uri, openListener)
+            }
         }
     }
 

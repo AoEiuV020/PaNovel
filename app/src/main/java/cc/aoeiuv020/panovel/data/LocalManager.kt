@@ -5,10 +5,9 @@ import android.support.annotation.UiThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.local.Previewer
 import cc.aoeiuv020.panovel.local.TextExporter
-import cc.aoeiuv020.panovel.local.TextImporter
 import java.io.InputStream
-import java.nio.charset.Charset
 
 /**
  * 统一管理本地文件，
@@ -18,14 +17,20 @@ import java.nio.charset.Charset
 class LocalManager(ctx: Context) {
 
     // 所有临时文件都保存在/data/data/cc.aoeiuv020.panovel/cache/local
-    private val root = Iron.db(ctx.cacheDir).sub("local")
+    private val cache = Iron.db(ctx.cacheDir).sub(KEY_LOCAL)
+    private val files = Iron.db(ctx.filesDir).sub(KEY_LOCAL)
 
     @WorkerThread
-    @Suppress("unused")
-    fun importText(input: InputStream, charset: Charset) =
-            TextImporter(root.sub(KEY_IMPORTER)).apply {
-                importText(input, charset)
+    fun preview(input: InputStream, uri: String): Previewer {
+        // 为了支持各种输入流，先复制一遍，得到文件，之后所有操作基于文件，
+        val fileWrapper = cache.file(KEY_TEMP_FILE)
+        fileWrapper.use { file ->
+            file.outputStream().use { output ->
+                input.copyTo(output)
             }
+        }
+        return Previewer(fileWrapper, uri)
+    }
 
     // TODO: 统一导入导出的形式，
     @UiThread
@@ -37,8 +42,8 @@ class LocalManager(ctx: Context) {
     }
 
     companion object {
+        const val KEY_LOCAL = "local"
         const val KEY_IMPORTER = "importer"
-        @Suppress("unused")
-        const val KEY_TEXT = "text"
+        const val KEY_TEMP_FILE = "file.tmp"
     }
 }

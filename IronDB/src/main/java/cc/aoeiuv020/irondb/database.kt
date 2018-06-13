@@ -1,7 +1,6 @@
 package cc.aoeiuv020.irondb
 
 import cc.aoeiuv020.base.jar.type
-import java.io.File
 import java.lang.reflect.Type
 
 /**
@@ -19,7 +18,10 @@ interface Database {
      */
     fun <T> read(key: String, type: Type): T?
 
-    fun <T> use(key: String, block: (File) -> T): T
+    /**
+     * 封装文件的使用，确保线程安全，
+     */
+    fun file(key: String): FileWrapper
 
     fun drop()
 
