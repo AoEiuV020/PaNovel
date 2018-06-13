@@ -131,7 +131,7 @@ class NovelViewHolder(itemView: View,
     }
 
     fun apply(novelManager: NovelManager, refreshTime: Date) {
-        debug { "apply <${novel.run { "$site.$author.$name.$checkUpdateTime" }}>, refreshTime = $refreshTime" }
+        debug { "apply <${novelManager.novel.run { "$site.$author.$name.$checkUpdateTime" }}>, refreshTime = $refreshTime" }
         show(novelManager)
 
         when {
@@ -169,6 +169,7 @@ class NovelViewHolder(itemView: View,
         }
         star?.isChecked = novel.bookshelf
         // 显示“x分钟前”，
+        // TODO: 本地小说不显示这个，
         checkUpdate?.text = DateUtils.getRelativeTimeSpanString(novel.checkUpdateTime.time, System.currentTimeMillis(), TimeUnit.SECONDS.toMillis(1))
         readAt?.text = novel.readAtChapterName
         val hasNew = if (ListSettings.dotNotifyUpdate) {

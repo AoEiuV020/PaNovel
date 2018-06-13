@@ -60,11 +60,8 @@ abstract class NovelDao {
     abstract fun cleanHistory()
 
     @Query("update Novel set detail = :detail where id = :id")
-    abstract fun updateDetail(id: Long, detail: String)
+    abstract fun updateDetailOnly(id: Long, detail: String)
 
     @Query("select * from Novel where bookshelf = 1 and receiveUpdateTime > readTime order by receiveUpdateTime desc")
     abstract fun hasUpdateNovelList(): List<Novel>
-
-    @Query("update Novel set detail = :detail, chapters = :chapters, introduction = :introduction, bookshelf = :bookshelf where id = :id")
-    abstract fun importLocalNovel(id: Long, detail: String, chapters: String?, introduction: String, bookshelf: Boolean)
 }

@@ -112,11 +112,7 @@ class NovelManager(
             novel.readAtChapterName = list.getOrNull(novel.readAtChapterIndex)?.name ?: ""
         }
         // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
-        app.updateChapters(
-                novel.nId, novel.chaptersCount,
-                novel.readAtChapterName, novel.lastChapterName,
-                novel.updateTime, novel.checkUpdateTime, novel.receiveUpdateTime
-        )
+        app.updateChapters(novel)
         cache.saveChapters(novel, list)
         server?.touchUpdate(novel)
         return list
@@ -140,9 +136,7 @@ class NovelManager(
     private fun refreshDetail() {
         provider.updateNovelDetail()
         // 写入数据库，包括名字作者和extra都以详情页返回结果为准，
-        app.db.novelDao().updateNovelDetail(novel.nId,
-                novel.name, novel.author, novel.detail,
-                novel.image, novel.introduction, novel.updateTime, novel.nChapters)
+        app.updateDetail(novel)
     }
 
     /**

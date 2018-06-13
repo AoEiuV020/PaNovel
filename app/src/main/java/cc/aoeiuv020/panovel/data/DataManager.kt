@@ -10,6 +10,8 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
 import cc.aoeiuv020.panovel.local.LocalNovelType
+import cc.aoeiuv020.panovel.local.TextParser
+import cc.aoeiuv020.panovel.local.TextProvider
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -266,7 +268,7 @@ object DataManager : AnkoLogger {
             // 加入书架，
             novel.bookshelf = true
             // 不调用方法updateBookshelf，因为这个方法包含订阅更新推送，
-            app.updateBookshelf(novel.nId, novel.bookshelf)
+            app.updateBookshelf(novel)
             // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
             updateReadStatus(novel)
             novel
@@ -340,7 +342,9 @@ object DataManager : AnkoLogger {
         }
 
         // 一次性得到可能能得到的作者名，小说名，简介，
-        val info = previewer.preview(actualType, actualCharset)
+        val info = previewer.fileWrapper.use { file ->
+            TextParser(file, actualCharset).parse()
+        }
         debug {
             "importLocalNovel parse: <${info.name}-${info.author}${info.type.suffix}, ${info.introduction}, ${info.chapters?.size}>"
         }
@@ -362,11 +366,13 @@ object DataManager : AnkoLogger {
                 name = name,
                 detail = file.absoluteFile.canonicalPath
         ))
-        // 这里保存编码，如果是epub不需要编码也要随便给个值，毕竟是用这个判断是否需要请求小说详情，
-        novel.introduction = info.introduction ?: "(null)"
-        novel.chapters = actualCharset.name()
         novel.bookshelf = true
-        app.db.novelDao().importLocalNovel(novel.nId, novel.detail, novel.chapters, novel.introduction, novel.bookshelf)
+        app.updateBookshelf(novel)
+        TextProvider(novel).update(info)
+        // 这里保存编码，如果是epub不需要编码也要随便给个值，毕竟是用这个判断是否需要请求小说详情，
+        novel.chapters = actualCharset.name()
+        app.updateDetail(novel)
+        app.updateChapters(novel)
 
         debug {
             "importLocalNovel result: $novel"

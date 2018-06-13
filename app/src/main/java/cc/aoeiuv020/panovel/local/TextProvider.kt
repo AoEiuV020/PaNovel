@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.util.notNullOrReport
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.charset.Charset
+import java.util.*
 
 /**
  * Created by AoEiuV020 on 2018.06.13-15:36:18.
@@ -30,9 +31,27 @@ class TextProvider(
         }
     }
 
+    fun update(info: LocalNovelInfo) {
+        novel.apply {
+            introduction = info.introduction ?: "(null)"
+            checkUpdateTime = Date()
+        }
+        // 不会为空，
+        val list = info.chapters ?: return
+        novel.apply {
+            chaptersCount = list.size
+            if (readAtChapterIndex == 0) {
+                // 阅读至第一章代表没阅读过，保存第一章的章节名，
+                readAtChapterName = list.firstOrNull()?.name ?: "(null)"
+            }
+            lastChapterName = list.lastOrNull()?.name ?: "(null)"
+        }
+    }
+
     override fun requestNovelChapters(): List<NovelChapter> {
         return TextParser(file, Charset.forName(novel.chapters))
-                .parse().chapters.notNullOrReport()
+                .parse().also { update(it) }
+                .chapters.notNullOrReport()
     }
 
     override fun updateNovelDetail() {
