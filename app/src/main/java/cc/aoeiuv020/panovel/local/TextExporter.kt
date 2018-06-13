@@ -119,7 +119,11 @@ class TextExporter(
                     ?: ctx.filesDir
                             .resolve(NAME_FOLDER)
                             .apply { exists() || mkdirs() }
-            val fileName = novel.run { "$name.$author.$site.txt" }
+            val fileName = if (novel.site.startsWith(".")) {
+                novel.run { "$name.$author.txt" }
+            } else {
+                novel.run { "$name.$author.$site.txt" }
+            }
             val file = baseFile.resolve(fileName)
             // 文件File存起来，用于导出完成时展示结果，
             exportingRunnable.file = file
