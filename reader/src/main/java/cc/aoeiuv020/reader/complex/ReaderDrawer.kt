@@ -33,7 +33,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     private var backgroundImage: Bitmap? = null
     var chapterIndex = 0
     var pageIndex = 0
-    private var sdf = SimpleDateFormat(reader.config.dateFormat)
+    private var sdf = try {
+        SimpleDateFormat(reader.config.dateFormat)
+    } catch (e: Exception) {
+        SimpleDateFormat("HH:mm")
+    }
 
     init {
         reader.config.listeners.add(object : ConfigChangedListener {
