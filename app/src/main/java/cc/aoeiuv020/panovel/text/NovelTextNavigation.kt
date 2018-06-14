@@ -47,7 +47,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
 
     init {
         mPanelDefault.ivContents.setOnClickListener {
-            view.showContents()
+            view.presenter.loadContents()
         }
         mPanelDefault.ivSettings.setOnClickListener {
             showLayout(mPanelSettings)
@@ -57,8 +57,7 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
             isChecked = novel.bookshelf
             setOnClickListener {
                 toggle()
-                novel.bookshelf = isChecked
-                view.presenter.updateBookshelf(novel)
+                view.presenter.updateBookshelf(isChecked)
             }
         }
         mPanelDefault.ivColor.setOnClickListener {
@@ -204,6 +203,8 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
                     // 去除对话框的灰背景，
                     window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 }.safelyShow()
+                // 弹对话框时退出全屏，
+                view.hide()
             }
 
             // 设置保持亮屏，

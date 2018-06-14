@@ -11,6 +11,7 @@ import android.view.MenuItem
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
@@ -170,7 +171,7 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
         refresh()
     }
 
-    fun addResult(list: List<Novel>) {
+    fun addResult(list: List<NovelManager>) {
         // 插入有时会导致下滑，原因不明，保存状态解决，
         val state = rvNovel.layoutManager.onSaveInstanceState()
         novelListAdapter.addAll(list)

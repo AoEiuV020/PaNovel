@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -28,8 +29,6 @@ import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
 import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
-import cc.aoeiuv020.panovel.local.Check
-import cc.aoeiuv020.panovel.local.DevMessage
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.migration.MigrationPresenter
 import cc.aoeiuv020.panovel.migration.MigrationView
@@ -70,6 +69,12 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     private val openListener: OpenManager.OpenListener = object : OpenManager.OpenListener {
         override fun onNovelOpened(novel: Novel) {
             NovelDetailActivity.start(ctx, novel)
+        }
+
+        override fun onLocalNovelImported(novel: Novel) {
+            progressDialog.dismiss()
+            bookshelfFragment.refresh()
+            showMessage("导入小说<${novel.bookId}>")
         }
 
         override fun onBookListReceived(count: Int) {
@@ -307,20 +312,29 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
     }
 
-    private fun open() {
-        alert {
-            titleResource = R.string.open
-            val layout = View.inflate(this@MainActivity, R.layout.dialog_editor, null)
-            customView = layout
-            val etName = layout.editText
-            yesButton {
-                val url = etName.text.toString()
-                if (url.isNotEmpty()) {
-                    OpenManager.open(this@MainActivity, url, openListener)
-                }
+    private fun open() = alert {
+        titleResource = R.string.open
+        val layout = View.inflate(this@MainActivity, R.layout.dialog_editor, null)
+        customView = layout
+        val etName = layout.editText
+        etName.hint = getString(R.string.main_open_hint)
+        yesButton {
+            val url = etName.text.toString()
+            if (url.isNotEmpty()) {
+                OpenManager.open(this@MainActivity, url, openListener)
             }
-        }.safelyShow()
-    }
+        }
+        neutralPressed(R.string.local_novel) {
+            // 调文件管理器选择小说，
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                Intent(Intent.ACTION_OPEN_DOCUMENT)
+            } else {
+                Intent(Intent.ACTION_GET_CONTENT)
+            }
+            intent.type = "*/*"
+            startActivityForResult(intent, 1)
+        }
+    }.safelyShow()
 
     private fun subscript() {
         doAsync({ e ->
@@ -339,8 +353,13 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        data?.extras?.getString("SCAN_RESULT")?.let {
-            OpenManager.open(this, it, openListener)
+        when (requestCode) {
+            0 -> data?.extras?.getString("SCAN_RESULT")?.let {
+                OpenManager.open(this, it, openListener)
+            }
+            1 -> data?.data?.let { uri ->
+                OpenManager.open(this, uri, openListener)
+            }
         }
     }
 

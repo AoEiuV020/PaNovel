@@ -9,16 +9,16 @@ import java.util.*
 
 internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : PagerAdapter(), AnkoLogger {
     private val chapters get() = simpleReader.chapterList
-    private val unusedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
-    private val usedHolders: LinkedList<NovelTextViewHolder> = LinkedList()
-    private var current: NovelTextViewHolder? = null
+    private val unusedHolders: LinkedList<PageHolder> = LinkedList()
+    private val usedHolders: LinkedList<PageHolder> = LinkedList()
+    private var current: PageHolder? = null
 
-    override fun isViewFromObject(view: View, obj: Any) = (obj as NovelTextViewHolder).itemView === view
+    override fun isViewFromObject(view: View, obj: Any) = (obj as PageHolder).itemView === view
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val holder = if (unusedHolders.isNotEmpty()) {
             unusedHolders.pop()
         } else {
-            NovelTextViewHolder(simpleReader)
+            PageHolder(simpleReader)
         }.also { usedHolders.push(it) }
         val chapter = chapters[position]
         debug {
@@ -33,7 +33,7 @@ internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : P
     override fun setPrimaryItem(container: ViewGroup, position: Int, obj: Any) {
         super.setPrimaryItem(container, position, obj)
         debug { "viewpager current position $position" }
-        current = obj as? NovelTextViewHolder
+        current = obj as? PageHolder
     }
 
     fun getCurrentTextCount(): Int? = current?.getTextCount()
@@ -50,7 +50,7 @@ internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : P
         debug {
             "destroy $position"
         }
-        val holder = obj as NovelTextViewHolder
+        val holder = obj as PageHolder
         val view = holder.itemView
         container.removeView(view)
         holder.destroy()

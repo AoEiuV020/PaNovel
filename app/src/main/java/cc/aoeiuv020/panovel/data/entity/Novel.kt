@@ -40,6 +40,8 @@ data class Novel(
          * 网站名，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
          * 不外键到网站表，那张表不稳定，
+         *
+         * 点.开头的表示本地小说，带上格式，比如".txt"".epub",
          */
         var site: String,
         /**
@@ -149,6 +151,11 @@ data class Novel(
     val nId: Long get() = id.notNullOrReport()
     // chapters的非空版本，用的不多，
     val nChapters: String get() = chapters.notNullOrReport()
+
+    /**
+     * 打印日志经常要用，这三者决定一本小说，
+     */
+    val bookId: String get() = "$name.$author.${site.removePrefix(".")}"
 
     fun readAt(index: Int, chapters: List<NovelChapter>) {
         readAtChapterIndex = index

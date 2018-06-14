@@ -21,7 +21,7 @@ class KeyLocker {
         semaphoreMap[key]?.release()
     }
 
-    fun <T> runInAcquire(key: String, block: () -> T?): T? = try {
+    fun <T> runInAcquire(key: String, block: () -> T): T = try {
         acquire(key)
         block()
     } finally {

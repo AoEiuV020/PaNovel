@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.local
+package cc.aoeiuv020.panovel.main
 
 import android.content.Context
 import cc.aoeiuv020.base.jar.get

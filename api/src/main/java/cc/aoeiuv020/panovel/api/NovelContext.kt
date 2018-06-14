@@ -194,6 +194,7 @@ abstract class NovelContext {
 
     /**
      * 获取小说章节文本内容，
+     * 正文段不包括开头的空格，
      *
      * @param extra [NovelChapter.extra]
      */

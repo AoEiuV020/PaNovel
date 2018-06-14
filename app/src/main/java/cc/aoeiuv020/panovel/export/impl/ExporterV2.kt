@@ -144,7 +144,7 @@ class ExporterV2 : DefaultExporter() {
     // 书架只导出一个文件，
     private fun exportBookshelf(file: File): Int {
         val list = DataManager.listBookshelf().map {
-            NovelWithProgress(it)
+            NovelWithProgress(it.novel)
         }
         file.writeText(list.toJson())
         return list.size

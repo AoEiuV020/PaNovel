@@ -10,6 +10,6 @@ interface NovelItemActionListener {
     fun onItemClick(vh: NovelViewHolder)
     fun onItemLongClick(vh: NovelViewHolder): Boolean
     fun onStarChanged(vh: NovelViewHolder, star: Boolean)
-    fun requireRefresh(vh: NovelViewHolder)
+    fun refreshChapters(vh: NovelViewHolder)
     fun askUpdate(vh: NovelViewHolder)
 }

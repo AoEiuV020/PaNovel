@@ -91,13 +91,13 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY.toLong())
     }
 
-    protected fun hide() {
+    fun hide() {
         debug { "hide" }
         fullscreen_content_controls.visibility = View.GONE
         fullScreen()
     }
 
-    open protected fun show() {
+    protected open fun show() {
         debug { "show" }
         flContent.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or

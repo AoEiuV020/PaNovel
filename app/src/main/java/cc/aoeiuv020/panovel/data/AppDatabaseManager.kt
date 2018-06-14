@@ -25,14 +25,15 @@ class AppDatabaseManager(context: Context) {
                 // 如果detail不一致，以晚得到的，也就是传入的参数detail为准，
                 // 以防万一数据库中的detail无效时，可以通过再次模糊搜索，刷新detail,
                 it.detail = detail
-                db.novelDao().updateDetail(it.nId, it.detail)
+                db.novelDao().updateDetailOnly(it.nId, it.detail)
             }
         } ?: Novel(site = site, author = author, name = name, detail = detail).also {
-                    // 数据库里没有，需要插入，
-                    // 插入后确保novel要有这个id,
-                    it.id = db.novelDao().insert(it)
-                }
+            // 数据库里没有，需要插入，
+            // 插入后确保novel要有这个id,
+            it.id = db.novelDao().insert(it)
+        }
     }
+
 
     fun queryOrNewSite(name: String, baseUrl: String, logo: String, enabled: Boolean): Site = db.runInTransaction<Site> {
         db.siteDao().query(name) ?: Site(
@@ -47,15 +48,22 @@ class AppDatabaseManager(context: Context) {
     fun query(site: String, author: String, name: String): Novel? =
             db.novelDao().query(site, author, name)
 
-    fun updateChapters(
-            id: Long, chaptersCount: Int,
-            readAtChapterName: String, lastChapterName: String,
-            updateTime: Date, checkUpdateTime: Date, receiveUpdateTime: Date
-    ) = db.novelDao().updateChapters(id, chaptersCount, readAtChapterName, lastChapterName,
-            updateTime, checkUpdateTime, receiveUpdateTime)
+    fun updateDetail(novel: Novel) = db.novelDao().updateNovelDetail(
+            novel.nId,
+            novel.name, novel.author, novel.detail,
+            novel.image, novel.introduction, novel.updateTime, novel.nChapters
+    )
 
-    fun updateBookshelf(id: Long, bookshelf: Boolean) =
-            db.novelDao().updateBookshelf(id, bookshelf)
+    fun updateChapters(
+            novel: Novel
+    ) = db.novelDao().updateChapters(
+            novel.nId, novel.chaptersCount,
+            novel.readAtChapterName, novel.lastChapterName,
+            novel.updateTime, novel.checkUpdateTime, novel.receiveUpdateTime
+    )
+
+    fun updateBookshelf(novel: Novel) =
+            db.novelDao().updateBookshelf(novel.nId, novel.bookshelf)
 
     fun listBookshelf(): List<Novel> = db.novelDao().listBookshelf()
 
@@ -131,4 +139,5 @@ class AppDatabaseManager(context: Context) {
     fun cleanHistory() = db.novelDao().cleanHistory()
     fun updateSiteInfo(site: Site) = db.siteDao().updateSiteInfo(site.name, site.baseUrl, site.logo)
     fun hasUpdateNovelList(): List<Novel> = db.novelDao().hasUpdateNovelList()
+    fun clean(novel: Novel) = db.novelDao().delete(novel)
 }

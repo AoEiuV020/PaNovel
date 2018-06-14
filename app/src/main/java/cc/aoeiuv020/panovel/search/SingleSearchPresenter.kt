@@ -62,6 +62,7 @@ class SingleSearchPresenter(
             // TODO: 打开前可以考虑先拉一下cookie,
             val novel = try {
                 DataManager.getNovelFromUrl(site, currentUrl)
+                        .novel
             } catch (e: Exception) {
                 throw IllegalArgumentException("不支持的地址，", e)
             }

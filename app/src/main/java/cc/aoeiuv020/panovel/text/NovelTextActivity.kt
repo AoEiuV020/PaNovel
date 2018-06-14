@@ -26,7 +26,6 @@ import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.main.MainActivity
@@ -145,10 +144,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         initReader(novel)
         navigation = NovelTextNavigation(this, novel, nav_view)
         try {
-            urlTextView.text = DataManager.getDetailUrl(novel)
+            urlTextView.text = presenter.getDetailUrl()
         } catch (e: Exception) {
             val message = "获取小说《${novel.name}》<${novel.site}, ${novel.detail}>详情页地址失败，"
             // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
+            // 但就算失败了在这里也没什么关系，
             Reporter.post(message, e)
             error(message, e)
             showError(message, e)
@@ -168,12 +168,12 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
         cancelNotify(novel.nId.toInt())
 
-        presenter.requestChapters(novel)
+        presenter.requestChapters()
     }
 
     private val contentRequester: TextRequester = object : TextRequester {
         override fun request(index: Int, refresh: Boolean): List<String> {
-            return presenter.requestContent(novel, chaptersAsc[index], refresh)
+            return presenter.requestContent(chaptersAsc[index], refresh)
         }
     }
 
@@ -282,13 +282,21 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
      * 选择后修改当前背景图，但不保存，
      */
     private fun requestBackgroundImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent(Intent.ACTION_OPEN_DOCUMENT)
+        } else {
+            Intent(Intent.ACTION_GET_CONTENT)
+        }
         intent.type = "image/*"
         startActivityForResult(intent, 0)
     }
 
     fun requestFont() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent(Intent.ACTION_OPEN_DOCUMENT)
+        } else {
+            Intent(Intent.ACTION_GET_CONTENT)
+        }
         intent.type = "*/*"
         startActivityForResult(intent, 1)
     }
@@ -413,7 +421,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         if (index in chaptersAsc.indices) {
             val chapter = chaptersAsc[index]
             title = "${novel.name} - ${chapter.name}"
-            urlTextView.text = DataManager.getContentUrl(novel, chapter)
+            urlTextView.text = presenter.getContentUrl(chapter)
         }
     }
 
@@ -425,6 +433,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     /**
      * 给定id找不到小说也就不用继续了，
+     * 按理说不会到这里，
      */
     @Suppress("UNUSED_PARAMETER")
     fun showNovelNotFound(message: String, e: Throwable) {
@@ -520,7 +529,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 "save status: <${novel.run { "$readAtChapterIndex.$readAtChapterName/$readAtTextIndex" }}"
             }
         }
-        presenter.refreshChapterList(novel)
+        presenter.refreshChapterList()
     }
 
     /**
@@ -642,6 +651,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             // 去除对话框的灰背景，
             it.window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.safelyShow()
+        // 弹对话框时退出全屏，
+        hide()
     }
 
     private fun setBackground(color: Int, image: Uri?) {
@@ -656,31 +667,17 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         NovelDetailActivity.start(this, novel)
     }
 
-    fun showContents() {
-        doAsync({ e ->
-            val message = "加载小说正文缓存列表失败，"
-            Reporter.post(message, e)
-            error(message, e)
-            runOnUiThread {
-                showError(message, e)
-            }
-        }) {
-            // 虽然给了异步，但还是要快，因为没给任何提示，
-            // 查询小说已经缓存的章节列表，
-            val cachedList = DataManager.novelContentsCached(novel)
-            uiThread {
-                AlertDialog.Builder(it)
-                        .setTitle(R.string.contents)
-                        .setAdapter(NovelContentsAdapter(it, novel, chaptersAsc, cachedList)) { _, index ->
-                            selectChapter(index)
-                        }.create().apply {
-                            listView.isFastScrollEnabled = true
-                            listView.post {
-                                listView.setSelection(novel.readAtChapterIndex)
-                            }
-                        }.safelyShow()
-            }
-        }
+    fun showContents(cachedList: Collection<String>) {
+        AlertDialog.Builder(ctx)
+                .setTitle(R.string.contents)
+                .setAdapter(NovelContentsAdapter(ctx, novel, chaptersAsc, cachedList)) { _, index ->
+                    selectChapter(index)
+                }.create().apply {
+                    listView.isFastScrollEnabled = true
+                    listView.post {
+                        listView.setSelection(novel.readAtChapterIndex)
+                    }
+                }.safelyShow()
     }
 
     /**
@@ -764,15 +761,15 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     setText(50.toString())
                 }
                 neutralPressed(R.string.all) {
-                    presenter.download(novel, index, Int.MAX_VALUE)
+                    presenter.download(index, Int.MAX_VALUE)
                 }
                 yesButton {
-                    presenter.download(novel, index, etCount.text.toString().toIntOrNull() ?: 0)
+                    presenter.download(index, etCount.text.toString().toIntOrNull() ?: 0)
                 }
                 cancelButton { }
             }.safelyShow()
-            count == 0 -> presenter.download(novel, index, Int.MAX_VALUE)
-            else -> presenter.download(novel, index, count)
+            count == 0 -> presenter.download(index, Int.MAX_VALUE)
+            else -> presenter.download(index, count)
         }
     }
 

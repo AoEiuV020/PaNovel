@@ -21,6 +21,7 @@ kotlin + mvp + room
 [JPush](https://github.com/jpush)
 [Zip4j](https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j)
 [AspectRatioImageView](https://github.com/santalu/aspect-ratio-imageview)
+[jchardet](http://jchardet.sourceforge.net/index.html)
 
 ![img](screenshots/bookshelf.jpg)
 ![img](screenshots/genre.jpg)

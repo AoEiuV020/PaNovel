@@ -14,7 +14,7 @@ import org.jetbrains.anko.debug
 /**
  * Created by AoEiuV020 on 2018.05.23-20:25:48.
  */
-class CookieManager(ctx: Context) : AnkoLogger {
+class CookieManager(@Suppress("UNUSED_PARAMETER") ctx: Context) : AnkoLogger {
     private val cookieManager = CookieManager.getInstance()
 
     fun putCookie(domain: String, cookiePair: String) {

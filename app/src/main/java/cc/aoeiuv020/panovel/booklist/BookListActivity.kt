@@ -14,8 +14,8 @@ import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.data.entity.BookList
-import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.list.NovelViewHolder
 import cc.aoeiuv020.panovel.report.Reporter
@@ -59,7 +59,7 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
         // 长按弹出删除菜单，只要这个就够了，
         // TODO: 改成支持滑动删除感觉更好，
         val list = listOf(R.string.remove to {
-            presenter.remove(vh.novel)
+            presenter.remove(vh.novelManager)
             this@BookListActivity.novelListAdapter.remove(vh.layoutPosition)
         })
         selector(getString(R.string.action), list.unzip().first.map { getString(it) }) { _, i ->
@@ -159,12 +159,12 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
         refresh()
     }
 
-    fun showNovelList(list: List<Novel>) {
+    fun showNovelList(list: List<NovelManager>) {
         novelListAdapter.data = list
         srlRefresh.isRefreshing = false
     }
 
-    fun selectToAdd(list: List<Novel>, nameArray: Array<String>, containsArray: BooleanArray) {
+    fun selectToAdd(list: List<NovelManager>, nameArray: Array<String>, containsArray: BooleanArray) {
         AlertDialog.Builder(this)
                 .setTitle(R.string.contents)
                 .setMultiChoiceItems(nameArray,

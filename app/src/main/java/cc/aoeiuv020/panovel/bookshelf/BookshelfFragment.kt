@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.settings.ItemAction.Pinned
@@ -27,10 +27,10 @@ import org.jetbrains.anko.AnkoLogger
 class BookshelfFragment : Fragment(), IView, AnkoLogger {
     private val novelListAdapter: NovelListAdapter by lazy {
         NovelListAdapter(initItem = {
-        // 以防万一加上问号?支持视图中没有小红点的情况，
-        // 显示小红点控件，包括代表正在刷新的圆形进度条，
+            // 以防万一加上问号?支持视图中没有小红点的情况，
+            // 显示小红点控件，包括代表正在刷新的圆形进度条，
             it.refreshingDot?.show()
-        // 隐藏用于添加书架的按钮，
+            // 隐藏用于添加书架的按钮，
             it.star?.hide()
         }, actionDoneListener = { action, vh ->
             when (action) {
@@ -86,7 +86,7 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
         refresh()
     }
 
-    fun showNovelList(list: List<Novel>) {
+    fun showNovelList(list: List<NovelManager>) {
         novelListAdapter.data = list
         srlRefresh.isRefreshing = false
     }

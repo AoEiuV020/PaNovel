@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.export
+package cc.aoeiuv020.panovel.local
 
 import android.app.PendingIntent
 import android.content.Context
@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationManagerCompat
 import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.getBitmapFromVectorDrawable
@@ -27,12 +27,13 @@ class TextExporter(
     companion object {
         const val NAME_FOLDER = "Text"
 
-        fun export(ctx: Context, novel: Novel) {
-            TextExporter(ctx).exportExistsChapterToTextFile(novel)
+        fun export(ctx: Context, novelManager: NovelManager) {
+            TextExporter(ctx).exportExistsChapterToTextFile(novelManager)
         }
     }
 
-    fun exportExistsChapterToTextFile(novel: Novel) {
+    fun exportExistsChapterToTextFile(novelManager: NovelManager) {
+        val novel = novelManager.novel
         val exportingRunnable = object : Runnable {
             private val handler = Handler(Looper.getMainLooper())
             var export = 0
@@ -67,6 +68,7 @@ class TextExporter(
             }
             // System services not available to Activities before onCreate()
             val manager by lazy { NotificationManagerCompat.from(ctx) }
+
             fun start() {
                 // 以防万一，先删除可能存在的自己，其实不会存在，
                 handler.removeCallbacks(this)
@@ -117,12 +119,16 @@ class TextExporter(
                     ?: ctx.filesDir
                             .resolve(NAME_FOLDER)
                             .apply { exists() || mkdirs() }
-            val fileName = novel.run { "$name.$author.$site.txt" }
+            val fileName = if (novel.site.startsWith(".")) {
+                novel.run { "$name.$author.txt" }
+            } else {
+                novel.run { "$name.$author.$site.txt" }
+            }
             val file = baseFile.resolve(fileName)
             // 文件File存起来，用于导出完成时展示结果，
             exportingRunnable.file = file
             file.outputStream().bufferedWriter().use { output ->
-                val chapters = DataManager.requestChapters(novel)
+                val chapters = novelManager.requestChapters(false)
                 val size = chapters.size
                 var export = 0
                 var skip = 0
@@ -131,18 +137,29 @@ class TextExporter(
                 exportingRunnable.set(export, skip, left)
                 exportingRunnable.start()
 
+                // 先导出小说信息，包括小说名，作者名，顶格输出，
+                output.appendln(novel.name)
+                output.appendln("作者：${novel.author}")
+                // 简介前空一行，
+                output.appendln()
+                output.appendln("内容简介")
+                // 简介内容段首空格，
+                novel.introduction.split("\n").forEach {
+                    output.appendln("　　$it")
+                }
+
                 val container = DataManager.novelContentsCached(novel)
                 chapters.forEach { chapter ->
-                    // 章节之间空一行，
-                    // 第一章前也空了一行，无所谓了，
+                    // 章节之间空两行，
+                    // 第一章前也空了两行，和小说信息分开，
                     output.appendln()
-                    output.write(chapter.name)
-                    output.newLine()
+                    output.appendln()
+                    output.appendln(chapter.name)
                     left--
                     if (container.contains(chapter.extra)) {
                         export++
                         // 判断过章节存在了，这个必须非空，除非导出过程删除了缓存，
-                        val content = DataManager.getContent(novel, chapter).notNullOrReport()
+                        val content = novelManager.getContent(chapter).notNullOrReport()
                         // 逐行写入，
                         content.forEach {
                             output.appendln("　　$it")

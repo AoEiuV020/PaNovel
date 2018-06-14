@@ -18,6 +18,11 @@ interface Database {
      */
     fun <T> read(key: String, type: Type): T?
 
+    /**
+     * 封装文件的使用，确保线程安全，
+     */
+    fun file(key: String): FileWrapper
+
     fun drop()
 
     /**
@@ -39,4 +44,3 @@ inline fun <reified T> Database.write(key: String, value: T) = write(key, value,
  */
 @Suppress("unused")
 inline fun <reified T> Database.read(key: String): T? = read(key, type<T>())
-

@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
 import java.util.*
@@ -16,12 +16,19 @@ open class NovelListAdapter(
          * 初始化小说item时调用，用于书架列表隐藏添加书架按钮，
          */
         private val initItem: (NovelViewHolder) -> Unit = {},
-        private val actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
+        actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
         private val onError: (String, Throwable) -> Unit
 ) : RecyclerView.Adapter<NovelViewHolder>() {
+    private val actualActionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { action, vh ->
+        when (action) {
+        // CleanData固定删除元素，无视传入的listener,
+            ItemAction.CleanData -> remove(vh.layoutPosition)
+            else -> actionDoneListener(action, vh)
+        }
+    }
     @Suppress("PropertyName")
-    protected open var _data: MutableList<Novel> = mutableListOf()
-    var data: List<Novel>
+    protected open var _data: MutableList<NovelManager> = mutableListOf()
+    var data: List<NovelManager>
         get() = _data
         set(value) {
             _data = value.toMutableList()
@@ -53,7 +60,7 @@ open class NovelListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NovelViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return NovelViewHolder(itemView, dotColor, dotSize, initItem, actionDoneListener, onError)
+        return NovelViewHolder(itemView, dotColor, dotSize, initItem, actualActionDoneListener, onError)
     }
 
     override fun getItemCount(): Int = data.size
@@ -64,7 +71,7 @@ open class NovelListAdapter(
     }
 
 
-    fun addAll(list: List<Novel>) {
+    fun addAll(list: List<NovelManager>) {
         _data.addAll(list)
         // TODO: 要看看会不要自动滚到底部，不要滚，
         notifyItemRangeInserted(_data.size - list.size, list.size)
