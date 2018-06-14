@@ -5,19 +5,23 @@ import android.content.Context
 import android.net.Uri
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
-import cc.aoeiuv020.base.jar.notNull
+import android.view.View
 import cc.aoeiuv020.panovel.App
+import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
 import cc.aoeiuv020.panovel.local.LocalNovelType
 import cc.aoeiuv020.panovel.local.TextParser
 import cc.aoeiuv020.panovel.local.TextProvider
 import cc.aoeiuv020.panovel.util.notNullOrReport
+import cc.aoeiuv020.panovel.util.safelyShow
+import kotlinx.android.synthetic.main.dialog_editor.view.*
 import okhttp3.Cookie
 import okhttp3.HttpUrl
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
+import org.jetbrains.anko.*
+import java.nio.charset.UnsupportedCharsetException
 import java.util.*
+import java.util.concurrent.TimeUnit
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 
@@ -313,6 +317,34 @@ object DataManager : AnkoLogger {
 
     fun exportText(ctx: Context, novelManager: NovelManager) = local.exportText(ctx, novelManager)
 
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+    fun input(ctx: Context, title: Int, default: String): String? {
+        // TODO: 考虑试试kotlin的协程，
+        val thread = Thread.currentThread()
+        var result: String? = null
+        synchronized(thread) {
+            ctx.runOnUiThread {
+                ctx.alert {
+                    titleResource = title
+                    val layout = View.inflate(ctx, R.layout.dialog_editor, null)
+                    customView = layout
+                    val etName = layout.editText
+                    etName.setText(default)
+                    yesButton {
+                        result = etName.text.toString()
+                        thread.interrupt()
+                    }
+                }.safelyShow()
+            }
+            // 就等一分钟，
+            try {
+                TimeUnit.MINUTES.sleep(1)
+            } catch (_: InterruptedException) {
+            }
+        }
+        return result
+    }
+
     /**
      * input要在里面close,
      */
@@ -327,16 +359,28 @@ object DataManager : AnkoLogger {
             local.preview(input, uri.toString())
         }
 
+        fun interrupt(message: String): Nothing = throw IllegalStateException(message)
+
         val defaultType = previewer.type() ?: LocalNovelType.TEXT
-        // TODO: 这里让用户填文件类型，
-        val actualType = defaultType
+        // TODO: 暂且只支持.txt,
+        val actualType = LocalNovelType.TEXT
+/*
+        val actualType = LocalNovelType.values().firstOrNull {
+            it.suffix == input(ctx, title = R.string.input_file_type, default = defaultType.suffix)
+        } ?: interrupt("没有文件类型，")
+*/
         debug {
             "importLocalNovel file type: ${actualType.suffix}"
         }
 
         val defaultCharset = previewer.charset() ?: Charsets.UTF_8
-        // TODO: 这里让用户填编码，但是应该只有.txt需要，
-        val actualCharset = defaultCharset
+        val actualCharset = input(ctx, title = R.string.input_charset, default = defaultCharset.name())?.let {
+            try {
+                charset(it)
+            } catch (e: UnsupportedCharsetException) {
+                null
+            }
+        } ?: interrupt("没有文件编码，")
         debug {
             "importLocalNovel file charset: $actualCharset"
         }
@@ -348,10 +392,11 @@ object DataManager : AnkoLogger {
         debug {
             "importLocalNovel parse: <${info.name}-${info.author}${info.type.suffix}, ${info.introduction}, ${info.chapters?.size}>"
         }
-        // TODO: 这里让用户决定作者名，小说名，简介就算了，直接改info，
         val suffix = info.type.suffix
-        val author = info.author.notNull("author")
-        val name = info.name.notNull("name")
+        val author = input(ctx, title = R.string.input_author, default = info.author ?: "(null)")
+                ?: interrupt("没有作者名，")
+        val name = input(ctx, title = R.string.input_name, default = info.name ?: "(null)")
+                ?: interrupt("没有小说名，")
 
         // 最终导入的小说就永久保存在这里了，
         val file = previewer.fileWrapper.use { file ->

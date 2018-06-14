@@ -204,5 +204,9 @@
     <string name="local_novel_importing">正在导入本地小说…</string>
     <string name="clean_cache">清除缓存</string>
     <string name="clean_this_novel">清除小说</string>
+    <string name="input_file_type">输入文件类型</string>
+    <string name="input_charset">输入文件编码</string>
+    <string name="input_author">输入作者名</string>
+    <string name="input_name">输入小说名</string>
 
 </resources>
