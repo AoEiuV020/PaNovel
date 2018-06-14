@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.irondb.FileWrapper
+import org.mozilla.intl.chardet.nsPSMDetector
 import java.nio.charset.Charset
 
 /**
@@ -21,9 +22,10 @@ class Previewer(
         null
     }
 
-    fun charset(): Charset? {
-        // TODO: 暂且只支持“知轩藏书”的GBK,
-        return Charset.forName("GBK")
+    fun charset(): String? {
+        return fileWrapper.use { file ->
+            FileCharsetDetector().guessFileEncoding(file, nsPSMDetector.SIMPLIFIED_CHINESE)
+        }
     }
 
     fun preview(type: LocalNovelType, charset: Charset): LocalNovelInfo {

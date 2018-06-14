@@ -361,6 +361,7 @@ object DataManager : AnkoLogger {
 
         fun interrupt(message: String): Nothing = throw IllegalStateException(message)
 
+        @Suppress("UNUSED_VARIABLE")
         val defaultType = previewer.type() ?: LocalNovelType.TEXT
         // TODO: 暂且只支持.txt,
         val actualType = LocalNovelType.TEXT
@@ -373,8 +374,8 @@ object DataManager : AnkoLogger {
             "importLocalNovel file type: ${actualType.suffix}"
         }
 
-        val defaultCharset = previewer.charset() ?: Charsets.UTF_8
-        val actualCharset = input(ctx, title = R.string.input_charset, default = defaultCharset.name())?.let {
+        val defaultCharset = previewer.charset() ?: "(null)"
+        val actualCharset = input(ctx, title = R.string.input_charset, default = defaultCharset)?.let {
             try {
                 charset(it)
             } catch (e: UnsupportedCharsetException) {
