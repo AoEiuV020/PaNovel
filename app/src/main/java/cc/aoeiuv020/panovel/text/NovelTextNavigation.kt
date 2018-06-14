@@ -203,6 +203,8 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
                     // 去除对话框的灰背景，
                     window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 }.safelyShow()
+                // 弹对话框时退出全屏，
+                view.hide()
             }
 
             // 设置保持亮屏，

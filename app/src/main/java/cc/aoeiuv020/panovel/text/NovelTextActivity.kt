@@ -651,6 +651,8 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             // 去除对话框的灰背景，
             it.window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.safelyShow()
+        // 弹对话框时退出全屏，
+        hide()
     }
 
     private fun setBackground(color: Int, image: Uri?) {
