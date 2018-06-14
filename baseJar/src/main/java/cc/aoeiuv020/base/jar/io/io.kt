@@ -10,6 +10,7 @@ fun BufferedRandomAccessFile.readLines(beginPos: Long, endPos: Long, charset: St
     seek(beginPos)
     val list = LinkedList<String>()
     while (filePointer < endPos) {
+        @Suppress("DEPRECATION")
         readLine(charset)?.let {
             list.add(it)
         }

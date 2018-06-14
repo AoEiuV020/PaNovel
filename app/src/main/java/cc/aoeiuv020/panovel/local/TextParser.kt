@@ -28,12 +28,14 @@ class TextParser(
         val info = LocalNovelInfo(LocalNovelType.TEXT)
         // 考虑到频繁add以及最后有remove首尾的操作，用链表，
         val chapters = LinkedList<NovelChapter>()
+        // 用两个输入流实属无奈，除了要记录文件指针就只能处理byte流，但是bytes转String太费时，而且是只有非默认编码费时，原因不明，
+        // 两个输入流加速效果，从 37s 到 14s,
         BufferedRandomAccessFile(file, "r").use { raf ->
             var beginPos = 0L
             var endPos = 0L
-            var line = raf.readLine(charset.name())
             var name: String? = null
-            while (line != null) {
+            file.inputStream().reader(charset).buffered().forEachLine { line ->
+                raf.skipLine()
                 logger.trace {
                     "next line: line=$line, extra=$beginPos/$endPos"
                 }
@@ -51,7 +53,7 @@ class TextParser(
                         // 保存章节信息，extra存两个指针位置，
                         // 以防万一，不能让endPos比beginPos大，
                         endPos = maxOf(beginPos, endPos)
-                        chapters.add(NovelChapter(name, extra = "$beginPos/$endPos"))
+                        chapters.add(NovelChapter(name!!, extra = "$beginPos/$endPos"))
                     }
                     name = line
                     // 记录章节名所在行后的位置，作为章节内容的开始，
@@ -64,15 +66,13 @@ class TextParser(
                     // 有下一行会继续走这里，继续延后endPos,
                     endPos = raf.filePointer
                 }
-
-                line = raf.readLine(charset.name())
             }
             // 最后一章也要存，
             if (name != null) {
                 // 第一个章节名出现前的正文通通无视，
                 // 保存章节信息，extra存两个指针位置，
                 endPos = maxOf(beginPos, endPos)
-                chapters.add(NovelChapter(name, extra = "$beginPos/$endPos"))
+                chapters.add(NovelChapter(name!!, extra = "$beginPos/$endPos"))
             }
         }
         // chapters中有很多没用的，比如广告链接，开头可能存在的小说名，作者名，
