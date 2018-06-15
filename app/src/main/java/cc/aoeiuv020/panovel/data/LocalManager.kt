@@ -158,6 +158,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
         // TODO: 考虑试试kotlin的协程，
         val thread = Thread.currentThread()
         var result: String? = null
+        var sleeping = false
         synchronized(thread) {
             ctx.runOnUiThread {
                 ctx.alert {
@@ -168,13 +169,18 @@ class LocalManager(ctx: Context) : AnkoLogger {
                     etName.setText(default)
                     yesButton {
                         result = etName.text.toString()
-                        thread.interrupt()
+                        if (sleeping) {
+                            // 如果已经超时，中断就不知道会影响到什么了，
+                            thread.interrupt()
+                        }
                     }
                 }.safelyShow()
             }
             // 就等一分钟，
             try {
+                sleeping = true
                 TimeUnit.MINUTES.sleep(1)
+                sleeping = false
             } catch (_: InterruptedException) {
             }
         }
