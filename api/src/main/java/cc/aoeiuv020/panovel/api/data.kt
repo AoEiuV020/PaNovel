@@ -54,7 +54,7 @@ data class NovelDetail(
 ) : Data()
 
 /**
- * 小说目录，
+ * 小说章节，
  * @param extra 只要网站Context能用这个请求到本章节正文就可以，同一本小说不同extra也可以，不同网站的不同小说相同的extra也没问题，
  * @param update 本章节更新时间，没有就null， 可以用于更新通知显示个时间，
  */

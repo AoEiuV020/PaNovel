@@ -9,7 +9,6 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
     implementation project(':baseJar')
     implementation 'net.sourceforge.jchardet:jchardet:1.0'
-    api project(':data')
     implementation project(':IronDB')
 }
 

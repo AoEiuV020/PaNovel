@@ -5,7 +5,6 @@ import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.io.BufferedRandomAccessFile
 import cc.aoeiuv020.base.jar.io.readLines
 import cc.aoeiuv020.base.jar.trace
-import cc.aoeiuv020.panovel.api.NovelChapter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -27,7 +26,7 @@ class TextParser(
     override fun parse(): LocalNovelInfo {
         val info = LocalNovelInfo(LocalNovelType.TEXT)
         // 考虑到频繁add以及最后有remove首尾的操作，用链表，
-        val chapters = LinkedList<NovelChapter>()
+        val chapters = LinkedList<LocalNovelChapter>()
         // 用两个输入流实属无奈，除了要记录文件指针就只能处理byte流，但是bytes转String太费时，而且是只有非默认编码费时，原因不明，
         // 两个输入流加速效果，从 37s 到 14s,
         BufferedRandomAccessFile(file, "r").use { raf ->
@@ -53,7 +52,7 @@ class TextParser(
                         // 保存章节信息，extra存两个指针位置，
                         // 以防万一，不能让endPos比beginPos大，
                         endPos = maxOf(beginPos, endPos)
-                        chapters.add(NovelChapter(name!!, extra = "$beginPos/$endPos"))
+                        chapters.add(LocalNovelChapter(name!!, extra = "$beginPos/$endPos"))
                     }
                     name = line
                     // 记录章节名所在行后的位置，作为章节内容的开始，
@@ -72,7 +71,7 @@ class TextParser(
                 // 第一个章节名出现前的正文通通无视，
                 // 保存章节信息，extra存两个指针位置，
                 endPos = maxOf(beginPos, endPos)
-                chapters.add(NovelChapter(name!!, extra = "$beginPos/$endPos"))
+                chapters.add(LocalNovelChapter(name!!, extra = "$beginPos/$endPos"))
             }
         }
         // chapters中有很多没用的，比如广告链接，开头可能存在的小说名，作者名，

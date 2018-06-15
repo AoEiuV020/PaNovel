@@ -35,6 +35,7 @@ class TextProvider(
         return TextParser(file, Charset.forName(novel.chapters))
                 .parse().also { update(novel, it) }
                 .chapters.notNullOrReport()
+                .map { NovelChapter(name = it.name, extra = it.extra) }
     }
 
     override fun updateNovelDetail() {

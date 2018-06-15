@@ -8,6 +8,7 @@ import android.support.annotation.WorkerThread
 import android.view.View
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
 import cc.aoeiuv020.panovel.local.LocalNovelType
@@ -425,7 +426,8 @@ object DataManager : AnkoLogger {
         app.updateDetail(novel)
         app.updateChapters(novel)
         // 导入时就解析了一遍，缓存起来，不能白解析了，
-        cache.saveChapters(novel, info.chapters.notNullOrReport())
+        // 统一转换成api模块的章节格式再存，
+        cache.saveChapters(novel, info.chapters.notNullOrReport().map { NovelChapter(name = it.name, extra = it.extra) })
 
         debug {
             "importLocalNovel result: $novel"
