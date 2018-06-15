@@ -8,5 +8,6 @@ data class LocalNovelInfo(
         var author: String? = null,
         var name: String? = null,
         var introduction: String? = null,
-        var chapters: LinkedList<NovelChapter>? = null
+        var chapters: LinkedList<NovelChapter>? = null,
+        var requester: String? = null
 )

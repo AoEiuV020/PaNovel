@@ -20,11 +20,11 @@ import java.util.*
 class TextParser(
         private val file: File,
         private val charset: Charset
-) {
+) : LocalNovelParser {
     // 准备移到普通java模块，所以不能用安卓的AnkoLogger,
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
 
-    fun parse(): LocalNovelInfo {
+    override fun parse(): LocalNovelInfo {
         val info = LocalNovelInfo(LocalNovelType.TEXT)
         // 考虑到频繁add以及最后有remove首尾的操作，用链表，
         val chapters = LinkedList<NovelChapter>()
@@ -133,6 +133,7 @@ class TextParser(
 
         // 保存结果，
         info.chapters = chapters
+        info.requester = charset.name()
         infoList.forEach {
             when {
                 it.name.startsWith("作者：") -> info.author = it.name.removePrefix("作者：")

@@ -14,6 +14,11 @@ class Previewer(
         val fileWrapper: FileWrapper,
         private val uri: String
 ) {
+    val type: LocalNovelType? = if (uri.contains(LocalNovelType.TEXT.suffix)) {
+        LocalNovelType.TEXT
+    } else {
+        null
+    }
 
     // 先根据uri中可能存在的文件后缀判断，
     fun type() = if (uri.contains(LocalNovelType.TEXT.suffix)) {
@@ -22,9 +27,18 @@ class Previewer(
         null
     }
 
-    fun charset(): String? {
-        return fileWrapper.use { file ->
-            FileCharsetDetector().guessFileEncoding(file, nsPSMDetector.SIMPLIFIED_CHINESE)
+    /**
+     * 建议的编码，
+     * 返回null表示不需要编码，比如epub，
+     * 返回非null表示作为建议编码等待用户决定编码，
+     */
+    fun charset(type: LocalNovelType): String? {
+        return when (type) {
+            LocalNovelType.TEXT -> fileWrapper.use { file ->
+                FileCharsetDetector().guessFileEncoding(file, nsPSMDetector.SIMPLIFIED_CHINESE)
+                        ?: "unknown"
+            }
+            LocalNovelType.EPUB -> null
         }
     }
 

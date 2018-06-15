@@ -6,12 +6,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "org.slf4j:slf4j-api:$slf4j_version"
     testImplementation "org.slf4j:slf4j-simple:$slf4j_version"
-    api "org.jsoup:jsoup:$jsoup_version"
     implementation "com.google.code.gson:gson:$gson_version"
     implementation project(':baseJar')
-    implementation "com.jayway.jsonpath:json-path:$json_path_version"
-    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation 'net.sourceforge.jchardet:jchardet:1.0'
     api project(':data')
+    implementation project(':IronDB')
 }
 
 sourceCompatibility = "1.7"

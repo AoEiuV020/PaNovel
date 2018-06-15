@@ -362,7 +362,7 @@ object DataManager : AnkoLogger {
         fun interrupt(message: String): Nothing = throw IllegalStateException(message)
 
         @Suppress("UNUSED_VARIABLE")
-        val defaultType = previewer.type() ?: LocalNovelType.TEXT
+        val defaultType = previewer.type ?: LocalNovelType.TEXT
         // TODO: 暂且只支持.txt,
         val actualType = LocalNovelType.TEXT
 /*
@@ -374,22 +374,27 @@ object DataManager : AnkoLogger {
             "importLocalNovel file type: ${actualType.suffix}"
         }
 
-        val defaultCharset = previewer.charset() ?: "(null)"
-        val actualCharset = input(ctx, title = R.string.input_charset, default = defaultCharset)?.let {
-            try {
-                charset(it)
-            } catch (e: UnsupportedCharsetException) {
-                null
-            }
-        } ?: interrupt("没有文件编码，")
-        debug {
-            "importLocalNovel file charset: $actualCharset"
-        }
-
         // 一次性得到可能能得到的作者名，小说名，简介，
-        val info = previewer.fileWrapper.use { file ->
-            TextParser(file, actualCharset).parse()
-        }
+        val parser = previewer.charset(actualType)?.let { defaultCharset ->
+            val actualCharset = input(ctx, title = R.string.input_charset, default = defaultCharset)?.let {
+                try {
+                    charset(it)
+                } catch (e: UnsupportedCharsetException) {
+                    null
+                }
+            } ?: interrupt("没有文件编码，")
+            debug {
+                "importLocalNovel file charset: $actualCharset"
+            }
+            actualCharset
+        }?.let { actualCharset ->
+            previewer.fileWrapper.use { file ->
+                TextParser(file, actualCharset)
+            }
+        } ?: TODO()
+
+        val info = parser.parse()
+
         debug {
             "importLocalNovel parse: <${info.name}-${info.author}${info.type.suffix}, ${info.introduction}, ${info.chapters?.size}>"
         }
@@ -414,9 +419,9 @@ object DataManager : AnkoLogger {
         ))
         novel.bookshelf = true
         app.updateBookshelf(novel)
-        TextProvider(novel).update(info)
-        // 这里保存编码，如果是epub不需要编码也要随便给个值，毕竟是用这个判断是否需要请求小说详情，
-        novel.chapters = actualCharset.name()
+        TextProvider.update(novel, info)
+        // 这里保存编码，如果是epub不需要编码也要随便给个值，毕竟是用这个是否空判断是否需要请求小说详情，
+        novel.chapters = info.requester ?: "null"
         app.updateDetail(novel)
         app.updateChapters(novel)
         // 导入时就解析了一遍，缓存起来，不能白解析了，

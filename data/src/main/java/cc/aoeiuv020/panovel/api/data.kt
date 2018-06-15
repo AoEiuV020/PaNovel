@@ -35,10 +35,7 @@ data class NovelItem(
         val name: String,
         val author: String,
         val extra: String
-) : Data() {
-    constructor(context: NovelContext, name: String, author: String, extra: String)
-            : this(context.site.name, name, author, extra)
-}
+) : Data()
 
 /**
  * 小说详情页，
