@@ -1,7 +1,8 @@
-package cc.aoeiuv020.panovel.local;
+package cc.aoeiuv020.panovel.local.util;
 
 import org.mozilla.intl.chardet.nsDetector;
 import org.mozilla.intl.chardet.nsICharsetDetectionObserver;
+import org.mozilla.intl.chardet.nsPSMDetector;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -14,6 +15,13 @@ import java.io.IOException;
  */
 @SuppressWarnings("all")
 public class FileCharsetDetector {
+    public static final int ALL = nsPSMDetector.ALL;
+    public static final int JAPANESE = nsPSMDetector.JAPANESE;
+    public static final int CHINESE = nsPSMDetector.CHINESE;
+    public static final int SIMPLIFIED_CHINESE = nsPSMDetector.SIMPLIFIED_CHINESE;
+    public static final int TRADITIONAL_CHINESE = nsPSMDetector.TRADITIONAL_CHINESE;
+    public static final int KOREAN = nsPSMDetector.KOREAN;
+    public static final int NO_OF_LANGUAGES = nsPSMDetector.NO_OF_LANGUAGES;
     private boolean found = false;
     private String encoding = null;
 
@@ -25,8 +33,8 @@ public class FileCharsetDetector {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public String guessFileEncoding(File file) throws FileNotFoundException, IOException {
-        return guessFileEncoding(file, new nsDetector());
+    public static String guessFileEncoding(File file) throws FileNotFoundException, IOException {
+        return new FileCharsetDetector().guessFileEncoding(file, new nsDetector());
     }
 
     /**
@@ -48,8 +56,8 @@ public class FileCharsetDetector {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public String guessFileEncoding(File file, int languageHint) throws FileNotFoundException, IOException {
-        return guessFileEncoding(file, new nsDetector(languageHint));
+    public static String guessFileEncoding(File file, int languageHint) throws FileNotFoundException, IOException {
+        return new FileCharsetDetector().guessFileEncoding(file, new nsDetector(languageHint));
     }
 
     /**

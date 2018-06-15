@@ -99,6 +99,8 @@ data class Novel(
          * 用于请求小说章节列表的extra, 获取小说详情后不可空，
          * 不能给默认值，要留着判断是否需要请求小说详情页，
          * [cc.aoeiuv020.panovel.api.NovelDetail.extra]
+         *
+         * 对于本地线文本小说就是编码，
          */
         var chapters: String? = null,
 

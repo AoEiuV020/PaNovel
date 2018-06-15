@@ -1,7 +1,9 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.local.text.TextParser
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Rule
@@ -29,7 +31,7 @@ class TextParserTest {
         val file = File("/home/aoeiuv/tmp/panovel/txt/yqnng/novel.txt")
         val charset = "GBK"
         val local = TextParser(file, Charset.forName(charset))
-                .parse()
+        local.parse()
         val expectedNovel = Novel(
                 site = ".txt",
                 author = "卜非",
@@ -65,8 +67,8 @@ class TextParserTest {
                 input.copyTo(output)
             }
             TextParser(file, Charset.forName(charset))
-                    .parse()
         }
+        local.parse()
         val expectedNovel = Novel(
                 site = ".txt",
                 author = "圣骑士的传说",
@@ -95,19 +97,19 @@ class TextParserTest {
         val provider = TextProvider(novel)
         chapters.first().let {
             assertEquals("有趣的书评同人小故事", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals("感觉这些有趣的书评小故事被埋没下去好可惜，我会慢慢整理出来的。", content.first())
             assertEquals("——————————————————————————————", content.last())
             assertEquals(11, content.size)
         }
         chapters[4].let {
             assertEquals("第1929章 许多上了年份的东西，都是好东西", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals(0, content.size)
         }
         chapters.last().let {
             assertEquals("第1991章 看来胖球大佬没留后手", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals("“这可是我怼了九幽胖球大佬后的战利品呀。”宋书航感慨道。", content.first())
             assertEquals("胖球大佬弄出...", content.last())
             assertEquals(4, content.size)
@@ -126,8 +128,8 @@ class TextParserTest {
                 input.copyTo(output)
             }
             TextParser(file, Charset.forName(charset))
-                    .parse()
         }
+        local.parse()
         assertNull(local.author)
         assertNull(local.name)
         assertNull(local.introduction)
@@ -144,19 +146,19 @@ class TextParserTest {
         assertEquals(22, chapters.size)
         chapters.first().let {
             assertEquals("有趣的书评同人小故事", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals("感觉这些有趣的书评小故事被埋没下去好可惜，我会慢慢整理出来的。", content.first())
             assertEquals("——————————————————————————————", content.last())
             assertEquals(11, content.size)
         }
         chapters[2].let {
             assertEquals("《黄山大傻之歌》完整版", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals(0, content.size)
         }
         chapters.last().let {
             assertEquals("第1989章 你们看，这是宋某的木头身躯", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals("待天帝离开之后。", content.first())
             assertEquals("“我这只是在装个逼。”什么子回道：“我当时还在和天庭的长生者纠缠着...", content.last())
             assertEquals(3, content.size)
@@ -175,8 +177,8 @@ class TextParserTest {
                 input.copyTo(output)
             }
             TextParser(file, Charset.forName(charset))
-                    .parse()
         }
+        local.parse()
         val expectedNovel = Novel(
                 site = ".txt",
                 author = "卜非",
@@ -202,19 +204,19 @@ class TextParserTest {
         assertEquals(5, chapters.size)
         chapters.first().let {
             assertEquals("第一卷 红衣夜女", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals(0, content.size)
         }
         chapters[1].let {
             assertEquals("第1章 女鬼来了", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals("黄昏时分，燕京郊区，西山墓园边的一块规划坟地。", content.first())
             assertEquals("矮坟不大，上面的泥土还散发着一股新鲜的气息，像是最近才翻盖的一般。几根小草从矮坟中冒出了头。", content.last())
             assertEquals(6, content.size)
         }
         chapters.last().let {
             assertEquals("第82章 报仇", it.name)
-            val content = provider.getNovelContent(it)
+            val content = provider.getNovelContent(NovelChapter(name = it.name, extra = it.extra))
             assertEquals("红衣女鬼终于被搞定了，可是，刘浪的心却再也无法平静了。", content.first())
             assertEquals("这阴阳书就是破除韩家诅咒的关键。", content.last())
             assertEquals(5, content.size)

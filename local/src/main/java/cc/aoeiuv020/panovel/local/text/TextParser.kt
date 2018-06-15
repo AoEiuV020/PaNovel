@@ -1,10 +1,13 @@
-package cc.aoeiuv020.panovel.local
+package cc.aoeiuv020.panovel.local.text
 
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.io.BufferedRandomAccessFile
 import cc.aoeiuv020.base.jar.io.readLines
 import cc.aoeiuv020.base.jar.trace
+import cc.aoeiuv020.panovel.local.LocalNovelChapter
+import cc.aoeiuv020.panovel.local.LocalNovelParser
+import cc.aoeiuv020.panovel.local.LocalNovelType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -20,13 +23,16 @@ class TextParser(
         private val file: File,
         private val charset: Charset
 ) : LocalNovelParser {
-    // 准备移到普通java模块，所以不能用安卓的AnkoLogger,
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
+    override val type: LocalNovelType = LocalNovelType.TEXT
+    override var author: String? = null
+    override var name: String? = null
+    override var introduction: String? = null
+    // 考虑到频繁add以及最后有remove首尾的操作，用链表，事后转成api模块的NovelChapter时顺便转成ArrayList,
+    override var chapters: MutableList<LocalNovelChapter> = LinkedList()
+    override val requester: String = charset.name()
 
-    override fun parse(): LocalNovelInfo {
-        val info = LocalNovelInfo(LocalNovelType.TEXT)
-        // 考虑到频繁add以及最后有remove首尾的操作，用链表，
-        val chapters = LinkedList<LocalNovelChapter>()
+    override fun parse() {
         // 用两个输入流实属无奈，除了要记录文件指针就只能处理byte流，但是bytes转String太费时，而且是只有非默认编码费时，原因不明，
         // 两个输入流加速效果，从 37s 到 14s,
         BufferedRandomAccessFile(file, "r").use { raf ->
@@ -119,38 +125,33 @@ class TextParser(
         // 返回的是最后一个符合条件的章节的索引，
         // 加一成为行数，
         // 找不到返回 -1 + 1 == 0, 不影响后面take,
-        val infoLinesCount = chapters.take(10).indexOfLast {
+        val inesCount = chapters.take(10).indexOfLast {
             it.name.startsWith("作者：")
                     || it.name == "内容简介"
         } + 1
         // 如果找不到，take(0),后面遍历什么都不做，
-        val infoList = chapters.take(infoLinesCount)
+        val ist = chapters.take(inesCount)
         // 删除开头的小说信息，
-        repeat(infoLinesCount) {
+        repeat(inesCount) {
             chapters.removeAt(0)
         }
 
-        // 保存结果，
-        info.chapters = chapters
-        info.requester = charset.name()
-        infoList.forEach {
+        ist.forEach {
             when {
-                it.name.startsWith("作者：") -> info.author = it.name.removePrefix("作者：")
+                it.name.startsWith("作者：") -> author = it.name.removePrefix("作者：")
                 it.name == "内容简介" -> {
                     val (beginPos, endPos) = it.extra.divide('/').let {
                         it.first.toLong() to it.second.toLong()
                     }
                     BufferedRandomAccessFile(file, "r").use { raf ->
-                        info.introduction = raf.readLines(beginPos, endPos, charset.name()).joinToString("\n") {
+                        introduction = raf.readLines(beginPos, endPos, charset.name()).joinToString("\n") {
                             it.trim()
                         }
                     }
                 }
             // 小说名只赋值一次，
-                info.name == null -> info.name = it.name
+                name == null -> name = it.name
             }
         }
-
-        return info
     }
 }
