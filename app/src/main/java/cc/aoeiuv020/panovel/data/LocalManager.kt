@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
+import android.content.DialogInterface
 import android.net.Uri
 import android.support.annotation.UiThread
 import android.support.annotation.WorkerThread
@@ -153,15 +154,15 @@ class LocalManager(ctx: Context) : AnkoLogger {
     }
 
 
-    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     private fun input(ctx: Context, title: Int, default: String): String? {
         // TODO: 考虑试试kotlin的协程，
         val thread = Thread.currentThread()
         var result: String? = null
         var sleeping = false
         synchronized(thread) {
+            var dialog: DialogInterface? = null
             ctx.runOnUiThread {
-                ctx.alert {
+                dialog = ctx.alert {
                     titleResource = title
                     val layout = View.inflate(ctx, R.layout.dialog_editor, null)
                     customView = layout
@@ -174,13 +175,20 @@ class LocalManager(ctx: Context) : AnkoLogger {
                             thread.interrupt()
                         }
                     }
+                    onCancelled {
+                        if (sleeping) {
+                            thread.interrupt()
+                        }
+                    }
                 }.safelyShow()
             }
-            // 就等一分钟，
             try {
                 sleeping = true
+                // 就等一分钟，
                 TimeUnit.MINUTES.sleep(1)
                 sleeping = false
+                // dialog可以异步dismiss,
+                dialog?.dismiss()
             } catch (_: InterruptedException) {
             }
         }

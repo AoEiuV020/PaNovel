@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.BaseBundle
@@ -210,11 +211,10 @@ fun Dialog.safelyShow() {
     }
 }
 
-fun AlertBuilder<*>.safelyShow() {
-    try {
-        show()
-    } catch (e: Exception) {
-        val message = "展示对话框失败，"
-        Reporter.post(message, e)
-    }
+fun AlertBuilder<*>.safelyShow(): DialogInterface? = try {
+    show()
+} catch (e: Exception) {
+    val message = "展示对话框失败，"
+    Reporter.post(message, e)
+    null
 }
