@@ -1,11 +1,8 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
-import android.content.DialogInterface
-import android.net.Uri
 import android.support.annotation.UiThread
 import android.support.annotation.WorkerThread
-import android.view.View
 import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.irondb.Iron
@@ -17,12 +14,11 @@ import cc.aoeiuv020.panovel.local.Previewer
 import cc.aoeiuv020.panovel.local.TextExporter
 import cc.aoeiuv020.panovel.local.TextProvider
 import cc.aoeiuv020.panovel.util.notNullOrReport
-import cc.aoeiuv020.panovel.util.safelyShow
-import kotlinx.android.synthetic.main.dialog_editor.view.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 import java.io.File
+import java.io.InputStream
 import java.nio.charset.UnsupportedCharsetException
-import java.util.concurrent.TimeUnit
 
 /**
  * 统一管理本地文件，
@@ -38,28 +34,26 @@ class LocalManager(ctx: Context) : AnkoLogger {
     private val files = Iron.db(ctx.filesDir).sub(KEY_LOCAL)
 
     @WorkerThread
-    fun importLocalNovel(ctx: Context, uri: Uri): Pair<Novel, List<NovelChapter>> {
+    fun importLocalNovel(input: InputStream, uri: String, requestInput: (Int, String) -> String?): Pair<Novel, List<NovelChapter>> {
         debug {
             "importLocalNovel from: $uri"
         }
-        return ctx.contentResolver.openInputStream(uri).use { input ->
-            // 锁住临时文件，一次只能导入一本小说，
-            cache.file(KEY_TEMP_FILE).use { file ->
-                file.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-                // uri基本都有带文件路径，可以传进去用于判断小说文件类型，没有的话，就没有吧，让用户选择，
-                importLocalNovel(ctx, uri, Previewer(file, uri.toString())).also {
-                    // 临时文件用完就删，
-                    file.delete()
-                }
+        // 锁住临时文件，一次只能导入一本小说，
+        return cache.file(KEY_TEMP_FILE).use { file ->
+            file.outputStream().use { output ->
+                input.copyTo(output)
+            }
+            // uri基本都有带文件路径，可以传进去用于判断小说文件类型，没有的话，就没有吧，让用户选择，
+            importLocalNovel(uri, Previewer(file, uri), requestInput).also {
+                // 临时文件用完就删，
+                file.delete()
             }
         }
     }
 
 
     @WorkerThread
-    private fun importLocalNovel(ctx: Context, uri: Uri, previewer: Previewer): Pair<Novel, List<NovelChapter>> {
+    private fun importLocalNovel(uri: String, previewer: Previewer, requestInput: (Int, String) -> String?): Pair<Novel, List<NovelChapter>> {
         // 传入的ctx用于弹对话框让用户传入可能需要的小说格式，编码，作者名，小说名，
 
         @Suppress("UNUSED_VARIABLE")
@@ -79,7 +73,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
         if (actualType == LocalNovelType.TEXT) {
             // 只有纯文本小说需要指定编码，
             val defaultCharset = previewer.guessCharset() ?: "unknown"
-            val actualCharset = input(ctx, title = R.string.input_charset, default = defaultCharset)?.let {
+            val actualCharset = requestInput(R.string.input_charset, defaultCharset)?.let {
                 try {
                     charset(it)
                 } catch (e: UnsupportedCharsetException) {
@@ -102,14 +96,14 @@ class LocalManager(ctx: Context) : AnkoLogger {
         val suffix = parser.type.suffix
         val defaultName = try {
             // 提取uri最后一节，一般是就是文件名，当成默认的作者名和小说名，
-            uri.toString().pick("/([^/]+)$").first()
+            uri.pick("/([^/]+)$").first()
         } catch (e: Exception) {
             "null"
         }
-        val author = input(ctx, title = R.string.input_author, default = parser.author
+        val author = requestInput(R.string.input_author, parser.author
                 ?: defaultName)
                 ?: interrupt("没有作者名，")
-        val name = input(ctx, title = R.string.input_name, default = parser.name
+        val name = requestInput(R.string.input_name, parser.name
                 ?: defaultName)
                 ?: interrupt("没有小说名，")
 
@@ -152,49 +146,6 @@ class LocalManager(ctx: Context) : AnkoLogger {
             to
         }
     }
-
-
-    private fun input(ctx: Context, title: Int, default: String): String? {
-        // TODO: 考虑试试kotlin的协程，
-        val thread = Thread.currentThread()
-        var result: String? = null
-        var sleeping = false
-        synchronized(thread) {
-            var dialog: DialogInterface? = null
-            ctx.runOnUiThread {
-                dialog = ctx.alert {
-                    titleResource = title
-                    val layout = View.inflate(ctx, R.layout.dialog_editor, null)
-                    customView = layout
-                    val etName = layout.editText
-                    etName.setText(default)
-                    yesButton {
-                        result = etName.text.toString()
-                        if (sleeping) {
-                            // 如果已经超时，中断就不知道会影响到什么了，
-                            thread.interrupt()
-                        }
-                    }
-                    onCancelled {
-                        if (sleeping) {
-                            thread.interrupt()
-                        }
-                    }
-                }.safelyShow()
-            }
-            try {
-                sleeping = true
-                // 就等一分钟，
-                TimeUnit.MINUTES.sleep(1)
-                sleeping = false
-                // dialog可以异步dismiss,
-                dialog?.dismiss()
-            } catch (_: InterruptedException) {
-            }
-        }
-        return result
-    }
-
 
     companion object {
         const val KEY_LOCAL = "local"

@@ -309,13 +309,12 @@ object DataManager : AnkoLogger {
 
     fun exportText(ctx: Context, novelManager: NovelManager) = local.exportText(ctx, novelManager)
 
-    /**
-     * input要在里面close,
-     */
     @WorkerThread
-    fun importLocalNovel(ctx: Context, uri: Uri): Novel {
+    fun importLocalNovel(ctx: Context, uri: Uri, requestInput: (Int, String) -> String?): Novel {
 
-        val (novel, chapterList) = local.importLocalNovel(ctx, uri)
+        val (novel, chapterList) = ctx.contentResolver.openInputStream(uri).use { input ->
+            local.importLocalNovel(input, uri.toString(), requestInput)
+        }
         app.queryOrNewNovel(NovelMinimal(novel)).let { exists ->
             // 如果同bookId的小说已经存在，就覆盖全部字段，
             // 只需要保留一个id,

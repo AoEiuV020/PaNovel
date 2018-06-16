@@ -13,6 +13,7 @@ import android.graphics.Canvas
 import android.os.BaseBundle
 import android.os.Build
 import android.os.Bundle
+import android.support.annotation.WorkerThread
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
@@ -29,6 +30,7 @@ import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import org.jetbrains.anko.*
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -217,4 +219,53 @@ fun AlertBuilder<*>.safelyShow(): DialogInterface? = try {
     val message = "展示对话框失败，"
     Reporter.post(message, e)
     null
+}
+
+/**
+ * 在异步线程调用，在ui线程弹对话框并等待用户输入，
+ */
+@WorkerThread
+fun uiInput(ctx: Context,
+            title: Int,
+            default: String,
+        // 默认就等一分钟，
+            timeout: Long = TimeUnit.MINUTES.toMillis(1)
+): String? {
+    // TODO: 考虑试试kotlin的协程，
+    val thread = Thread.currentThread()
+    var result: String? = null
+    var sleeping = false
+    synchronized(thread) {
+        var dialog: DialogInterface? = null
+        ctx.runOnUiThread {
+            dialog = ctx.alert {
+                titleResource = title
+                val layout = View.inflate(ctx, R.layout.dialog_editor, null)
+                customView = layout
+                val etName = layout.editText
+                etName.setText(default)
+                yesButton {
+                    result = etName.text.toString()
+                    if (sleeping) {
+                        // 如果已经超时，中断就不知道会影响到什么了，
+                        thread.interrupt()
+                    }
+                }
+                onCancelled {
+                    if (sleeping) {
+                        thread.interrupt()
+                    }
+                }
+            }.safelyShow()
+        }
+        try {
+            sleeping = true
+            Thread.sleep(timeout)
+            sleeping = false
+            // dialog可以异步dismiss,
+            dialog?.dismiss()
+        } catch (_: InterruptedException) {
+        }
+    }
+    return result
 }

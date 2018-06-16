@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.share.Share
+import cc.aoeiuv020.panovel.util.uiInput
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
@@ -43,7 +44,9 @@ object OpenManager : AnkoLogger {
                     error(message, e)
                     openListener.onError(message, e)
                 }) {
-                    val novel: Novel = DataManager.importLocalNovel(ctx, uri)
+                    val novel: Novel = DataManager.importLocalNovel(ctx, uri) { title, default ->
+                        uiInput(ctx, title, default)
+                    }
                     uiThread {
                         openListener.onLocalNovelImported(novel)
                     }
