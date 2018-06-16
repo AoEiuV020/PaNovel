@@ -9,6 +9,7 @@ import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.util.noCover
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -85,7 +86,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
         val info = previewer.parse(actualType)
 
         debug {
-            "importLocalNovel parse: <${info.name}-${info.author}${actualType.suffix}, ${info.introduction}, ${info.chapters.size}>"
+            "importLocalNovel parse: <${info.name}-${info.author}${actualType.suffix}, ${info.image}, ${info.introduction}, ${info.chapters.size}>"
         }
         val suffix = actualType.suffix
         val defaultName = try {
@@ -107,7 +108,9 @@ class LocalManager(ctx: Context) : AnkoLogger {
                 site = suffix,
                 author = author,
                 name = name,
+                image = info.image ?: noCover,
                 detail = file.absoluteFile.canonicalPath,
+                introduction = info.introduction ?: "(null)",
                 // 刚导入的小说一定要放在书架上，否则找不到，
                 bookshelf = true,
                 // 这里保存纯文本小说的编码，如果是epub不需要编码也要随便给个值，毕竟是用这个是否空判断是否需要请求小说详情，

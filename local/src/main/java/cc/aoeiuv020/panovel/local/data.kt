@@ -6,6 +6,10 @@ package cc.aoeiuv020.panovel.local
 data class LocalNovelInfo(
         val author: String?,
         val name: String?,
+        /**
+         * 小说封面，
+         */
+        val image: String?,
         val introduction: String?,
         /**
          * 章节列表不能null, 解析前可以给个空LinkedList，

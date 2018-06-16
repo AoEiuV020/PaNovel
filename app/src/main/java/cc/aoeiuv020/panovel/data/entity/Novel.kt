@@ -94,7 +94,7 @@ data class Novel(
         /**
          * 简介，获取后如果小说没有简介，留空白或者字符串null，不可空，
          */
-        var introduction: String = "",
+        var introduction: String = "(null)",
         /**
          * 用于请求小说章节列表的extra, 获取小说详情后不可空，
          * 不能给默认值，要留着判断是否需要请求小说详情页，
@@ -110,12 +110,12 @@ data class Novel(
          * 最新章节名, 刷新章节列表时更新，
          * 这个章节名只用于展示，所以可以给个默认空字符串，
          */
-        var lastChapterName: String = "",
+        var lastChapterName: String = "(null)",
         /**
          * 阅读进度章节名, 阅读后更新，
          * 这个章节名只用于展示，所以可以给个默认空字符串，
          */
-        var readAtChapterName: String = "",
+        var readAtChapterName: String = "(null)",
         /**
          * 上次阅读时间，在阅读后更新，
          * 时间只用于对比和展示，没阅读过就是默认最小时间，

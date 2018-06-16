@@ -36,6 +36,7 @@ class TextParser(
     override fun parse(): LocalNovelInfo {
         var author: String? = null
         var name: String? = null
+        var image: String? = null
         var introduction: String? = null
         // 考虑到频繁add以及最后有remove首尾的操作，用链表，事后转成api模块的NovelChapter时顺便转成ArrayList,
         val chapters: MutableList<LocalNovelChapter> = LinkedList()
@@ -131,6 +132,7 @@ class TextParser(
         // 找不到返回 -1 + 1 == 0, 不影响后面take,
         val inesCount = chapters.take(10).indexOfLast {
             it.name.startsWith("作者：")
+                    || it.name.startsWith("封面：")
                     || it.name == "内容简介"
         } + 1
         // 如果找不到，take(0),后面遍历什么都不做，
@@ -143,6 +145,8 @@ class TextParser(
         ist.forEach {
             when {
                 it.name.startsWith("作者：") -> author = it.name.removePrefix("作者：")
+            // 封面这个不是知轩藏书有的格式，自己app导出的有，
+                it.name.startsWith("封面：") -> image = it.name.removePrefix("封面：")
                 it.name == "内容简介" -> {
                     val (beginPos, endPos) = it.extra.divide('/').let {
                         it.first.toLong() to it.second.toLong()
@@ -157,6 +161,6 @@ class TextParser(
                 name == null -> name = it.name
             }
         }
-        return LocalNovelInfo(author, name, introduction, chapters, requester)
+        return LocalNovelInfo(author, name, image, introduction, chapters, requester)
     }
 }

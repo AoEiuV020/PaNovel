@@ -59,7 +59,6 @@ class LocalNovelProvider(
         // 因为要在导入时和刷新章节列表时调用，所以写在伴生对象里，
         fun update(novel: Novel, info: LocalNovelInfo) {
             novel.apply {
-                introduction = info.introduction ?: "(null)"
                 checkUpdateTime = Date()
             }
             val list = info.chapters
