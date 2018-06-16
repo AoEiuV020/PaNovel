@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.data
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.util.*
@@ -87,8 +88,8 @@ class NovelManager(
         }
     }
 
-
-    fun requestChapters(refresh: Boolean): List<NovelChapter> = if (refresh) {
+    // 指定刷新且是网络书源才读缓存，
+    fun requestChapters(refresh: Boolean): List<NovelChapter> = if (refresh && provider !is LocalNovelProvider) {
         refreshChapters()
     } else {
         requireChapters()

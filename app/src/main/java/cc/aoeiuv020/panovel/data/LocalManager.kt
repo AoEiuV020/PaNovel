@@ -86,7 +86,9 @@ class LocalManager(ctx: Context) : AnkoLogger {
             }
         }
 
-        val parser = previewer.getParser()
+        val context = previewer.getContext()
+        context.prepare()
+        val parser = context.parser
         // 一次性得到可能能得到的作者名，小说名，简介，
         parser.parse()
 

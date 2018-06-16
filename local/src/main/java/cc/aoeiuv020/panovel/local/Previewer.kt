@@ -42,7 +42,7 @@ class Previewer(
         return FileCharsetDetector.guessFileEncoding(file, FileCharsetDetector.SIMPLIFIED_CHINESE)
     }
 
-    fun getParser(): LocalNovelParser {
+    fun getContext(): LocalNovelContext {
         val type = type.notNull("type")
         return when (type) {
             LocalNovelType.TEXT -> {
@@ -50,7 +50,7 @@ class Previewer(
                 TextContext(file, charset)
             }
             LocalNovelType.EPUB -> TODO()
-        }.parser
+        }
     }
 
 }

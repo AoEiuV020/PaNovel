@@ -20,6 +20,9 @@ class TextProvider(
     // 再怎么刷新也不会变，
     // 但还是统一留着准备直接读写可能改变的外部小说，
     override fun requestNovelChapters(): List<NovelChapter> {
+        // 章节列表需要事先准备，
+        // 不重复解析，
+        context.prepare()
         val parser = context.parser
         // 每次刷新章节列表都重新解析一遍，
         parser.parse()
