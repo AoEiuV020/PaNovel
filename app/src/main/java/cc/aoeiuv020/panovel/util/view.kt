@@ -204,13 +204,14 @@ val noCover: String get() = "https://www.snwx8.com/modules/article/images/nocove
 /**
  * 不希望展示对话框失败导致崩溃，
  */
-fun Dialog.safelyShow() {
+fun Dialog.safelyShow(): DialogInterface {
     try {
         show()
     } catch (e: Exception) {
         val message = "展示对话框失败，"
         Reporter.post(message, e)
     }
+    return this
 }
 
 fun AlertBuilder<*>.safelyShow(): DialogInterface? = try {
@@ -222,14 +223,64 @@ fun AlertBuilder<*>.safelyShow(): DialogInterface? = try {
 }
 
 /**
+ * 异步线程弹单选框并等待用户选择，
+ *
+ * @return 返回用户选择的元素序号，取消就返回null,
+ */
+@WorkerThread
+fun Context.uiSelect(
+        // 要选择的是什么，展示在对话框标题，
+        name: String,
+        items: Array<String>,
+        default: Int,
+        // 默认就等一分钟，
+        timeout: Long = TimeUnit.MINUTES.toMillis(1)
+): Int? {
+    val thread = Thread.currentThread()
+    var result: Int? = null
+    var sleeping = false
+    synchronized(thread) {
+        var dialog: DialogInterface? = null
+        runOnUiThread {
+            dialog = AlertDialog.Builder(ctx).apply {
+                setTitle(ctx.getString(R.string.select_placeholder, name))
+                setSingleChoiceItems(items, default) { dialog, which ->
+                    dialog.dismiss()
+                    result = which
+                    if (sleeping) {
+                        // 如果已经超时，中断就不知道会影响到什么了，
+                        thread.interrupt()
+                    }
+                }
+                setOnCancelListener {
+                    if (sleeping) {
+                        thread.interrupt()
+                    }
+                }
+            }.create().safelyShow()
+        }
+        try {
+            sleeping = true
+            Thread.sleep(timeout)
+            sleeping = false
+            // dialog可以异步dismiss,
+            dialog?.dismiss()
+        } catch (_: InterruptedException) {
+        }
+    }
+    return result
+}
+
+/**
  * 在异步线程调用，在ui线程弹对话框并等待用户输入，
  */
 @WorkerThread
-fun uiInput(ctx: Context,
-            title: Int,
-            default: String,
+fun Context.uiInput(
+        // 要输入的是什么，展示在对话框标题，
+        name: String,
+        default: String,
         // 默认就等一分钟，
-            timeout: Long = TimeUnit.MINUTES.toMillis(1)
+        timeout: Long = TimeUnit.MINUTES.toMillis(1)
 ): String? {
     // TODO: 考虑试试kotlin的协程，
     val thread = Thread.currentThread()
@@ -237,9 +288,9 @@ fun uiInput(ctx: Context,
     var sleeping = false
     synchronized(thread) {
         var dialog: DialogInterface? = null
-        ctx.runOnUiThread {
-            dialog = ctx.alert {
-                titleResource = title
+        runOnUiThread {
+            dialog = alert {
+                title = ctx.getString(R.string.input_placeholder, name)
                 val layout = View.inflate(ctx, R.layout.dialog_editor, null)
                 customView = layout
                 val etName = layout.editText

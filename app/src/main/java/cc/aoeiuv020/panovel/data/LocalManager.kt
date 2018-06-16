@@ -6,13 +6,9 @@ import android.support.annotation.WorkerThread
 import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.irondb.Iron
-import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.local.LocalNovelProvider
-import cc.aoeiuv020.panovel.local.LocalNovelType
-import cc.aoeiuv020.panovel.local.Previewer
-import cc.aoeiuv020.panovel.local.TextExporter
+import cc.aoeiuv020.panovel.local.*
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -34,7 +30,9 @@ class LocalManager(ctx: Context) : AnkoLogger {
     private val files = Iron.db(ctx.filesDir).sub(KEY_LOCAL)
 
     @WorkerThread
-    fun importLocalNovel(input: InputStream, uri: String, requestInput: (Int, String) -> String?): Pair<Novel, List<NovelChapter>> {
+    fun importLocalNovel(input: InputStream, uri: String,
+                         requestInput: (ImportRequireValue, String) -> String?
+    ): Pair<Novel, List<NovelChapter>> {
         debug {
             "importLocalNovel from: $uri"
         }
@@ -53,27 +51,24 @@ class LocalManager(ctx: Context) : AnkoLogger {
 
 
     @WorkerThread
-    private fun importLocalNovel(uri: String, previewer: Previewer, requestInput: (Int, String) -> String?): Pair<Novel, List<NovelChapter>> {
-        // 传入的ctx用于弹对话框让用户传入可能需要的小说格式，编码，作者名，小说名，
-
+    private fun importLocalNovel(uri: String, previewer: Previewer,
+                                 requestInput: (ImportRequireValue, String
+                                 ) -> String?): Pair<Novel, List<NovelChapter>> {
         @Suppress("UNUSED_VARIABLE")
+        // defaultType要作为单选框的默认值，必须是存在的type,
         val defaultType = previewer.guessType() ?: LocalNovelType.TEXT
-        // TODO: 暂且只支持.txt,
-        val actualType = LocalNovelType.TEXT
-        previewer.type = actualType
-/*
+        val actualTypeSuffix = requestInput(ImportRequireValue.TYPE, defaultType.suffix)
+                ?: interrupt("没有文件类型，")
         val actualType = LocalNovelType.values().firstOrNull {
-            it.suffix == input(ctx, title = R.string.input_file_type, default = defaultType.suffix)
-        } ?: interrupt("没有文件类型，")
-*/
+            it.suffix == actualTypeSuffix
+        } ?: interrupt("不支持的文件类型，")
         debug {
             "importLocalNovel file type: ${actualType.suffix}"
         }
-
         if (actualType == LocalNovelType.TEXT) {
             // 只有纯文本小说需要指定编码，
             val defaultCharset = previewer.guessCharset() ?: "unknown"
-            val actualCharset = requestInput(R.string.input_charset, defaultCharset)?.let {
+            val actualCharset = requestInput(ImportRequireValue.CHARSET, defaultCharset)?.let {
                 try {
                     charset(it)
                 } catch (e: UnsupportedCharsetException) {
@@ -87,7 +82,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
         }
 
         // 一次性得到可能能得到的作者名，小说名，简介，
-        val info = previewer.parse()
+        val info = previewer.parse(actualType)
 
         debug {
             "importLocalNovel parse: <${info.name}-${info.author}${actualType.suffix}, ${info.introduction}, ${info.chapters.size}>"
@@ -99,10 +94,10 @@ class LocalManager(ctx: Context) : AnkoLogger {
         } catch (e: Exception) {
             "null"
         }
-        val author = requestInput(R.string.input_author, info.author
+        val author = requestInput(ImportRequireValue.AUTHOR, info.author
                 ?: defaultName)
                 ?: interrupt("没有作者名，")
-        val name = requestInput(R.string.input_name, info.name
+        val name = requestInput(ImportRequireValue.NAME, info.name
                 ?: defaultName)
                 ?: interrupt("没有小说名，")
 

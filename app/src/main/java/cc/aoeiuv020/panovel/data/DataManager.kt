@@ -8,6 +8,7 @@ import android.support.annotation.WorkerThread
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
+import cc.aoeiuv020.panovel.local.ImportRequireValue
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -309,9 +310,11 @@ object DataManager : AnkoLogger {
 
     fun exportText(ctx: Context, novelManager: NovelManager) = local.exportText(ctx, novelManager)
 
+    /**
+     * @param requestInput 有的需要让用户输入决定，比如编码，作者名，小说名，还有文件类型，
+     */
     @WorkerThread
-    fun importLocalNovel(ctx: Context, uri: Uri, requestInput: (Int, String) -> String?): Novel {
-
+    fun importLocalNovel(ctx: Context, uri: Uri, requestInput: (ImportRequireValue, String) -> String?): Novel {
         val (novel, chapterList) = ctx.contentResolver.openInputStream(uri).use { input ->
             local.importLocalNovel(input, uri.toString(), requestInput)
         }

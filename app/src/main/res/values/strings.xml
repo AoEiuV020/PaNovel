@@ -204,9 +204,13 @@
     <string name="local_novel_importing">正在导入本地小说…</string>
     <string name="clean_cache">清除缓存</string>
     <string name="clean_this_novel">清除小说</string>
-    <string name="input_file_type">输入文件类型</string>
-    <string name="input_charset">输入文件编码</string>
-    <string name="input_author">输入作者名</string>
-    <string name="input_name">输入小说名</string>
+    <string name="file_type">文件类型</string>
+    <string name="file_charset">文件编码</string>
+    <string name="author">作者名</string>
+    <string name="name">小说名</string>
+    <string name="input_placeholder">请输入%s</string>
+    <string name="select_placeholder">请选择%s</string>
+    <string name="select_item_text">.txt纯文本小说</string>
+    <string name="select_item_epub">.epub格式电子书</string>
 
 </resources>

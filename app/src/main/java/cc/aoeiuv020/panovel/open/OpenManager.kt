@@ -5,10 +5,13 @@ import android.net.Uri
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.local.ImportRequireValue
+import cc.aoeiuv020.panovel.local.LocalNovelType
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.uiInput
+import cc.aoeiuv020.panovel.util.uiSelect
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
@@ -44,8 +47,31 @@ object OpenManager : AnkoLogger {
                     error(message, e)
                     openListener.onError(message, e)
                 }) {
-                    val novel: Novel = DataManager.importLocalNovel(ctx, uri) { title, default ->
-                        uiInput(ctx, title, default)
+                    val novel: Novel = DataManager.importLocalNovel(ctx, uri) { value, default ->
+                        if (value == ImportRequireValue.TYPE) {
+                            val types = LocalNovelType.values()
+                            val items = types.map {
+                                when (it) {
+                                    LocalNovelType.TEXT -> R.string.select_item_text
+                                    LocalNovelType.EPUB -> R.string.select_item_epub
+                                }.let { ctx.getString(it) }
+                            }.toTypedArray()
+                            val defaultIndex = types.indexOfFirst {
+                                it.suffix == default
+                            }
+                            ctx.uiSelect(ctx.getString(R.string.file_type), items, defaultIndex)?.let { selectIndex ->
+                                types[selectIndex].suffix
+                            }
+                        } else {
+                            val name = when (value) {
+                            // 输入文件类型不会走这里，
+                                ImportRequireValue.TYPE -> R.string.file_type
+                                ImportRequireValue.CHARSET -> R.string.file_charset
+                                ImportRequireValue.AUTHOR -> R.string.author
+                                ImportRequireValue.NAME -> R.string.name
+                            }.let { ctx.getString(it) }
+                            ctx.uiInput(name, default)
+                        }
                     }
                     uiThread {
                         openListener.onLocalNovelImported(novel)

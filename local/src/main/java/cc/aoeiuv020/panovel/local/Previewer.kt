@@ -21,7 +21,6 @@ class Previewer(
          */
         private val uri: String = file.toURI().toString()
 ) {
-    var type: LocalNovelType? = null
     var charset: Charset? = null
 
     /**
@@ -42,8 +41,7 @@ class Previewer(
         return FileCharsetDetector.guessFileEncoding(file, FileCharsetDetector.SIMPLIFIED_CHINESE)
     }
 
-    fun parse(): LocalNovelInfo {
-        val type = type.notNull("type")
+    fun parse(type: LocalNovelType): LocalNovelInfo {
         return when (type) {
             LocalNovelType.TEXT -> {
                 val charset = charset.notNull("charset")
