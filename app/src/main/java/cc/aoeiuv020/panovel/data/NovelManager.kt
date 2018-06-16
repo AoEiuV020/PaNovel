@@ -64,7 +64,7 @@ class NovelManager(
     private fun updateReadStatus() = app.updateReadStatus(novel)
 
     fun getContentUrl(chapter: NovelChapter): String =
-            provider.getContentUrl(chapter)
+            provider.getContentUrl(chapter.extra)
 
     fun novelContentsCached(): Collection<String> = cache.novelContentCached(novel)
 
@@ -81,7 +81,7 @@ class NovelManager(
                 return it
             }
         }
-        return provider.getNovelContent(chapter).also {
+        return provider.getNovelContent(chapter.extra).also {
             // 缓存起来，
             cache.saveContent(novel, chapter, it)
         }

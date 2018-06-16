@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.NovelProvider
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.io.File
@@ -15,7 +14,11 @@ abstract class LocalNovelProvider(
     protected val file = File(novel.detail)
     protected abstract val context: LocalNovelContext
 
-    override fun getContentUrl(chapter: NovelChapter): String {
+    override fun getNovelContent(extra: String): List<String> {
+        return context.getNovelContext(extra)
+    }
+
+    override fun getContentUrl(extra: String): String {
         return getDetailUrl()
     }
 

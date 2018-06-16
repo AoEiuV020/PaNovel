@@ -1,8 +1,5 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.divide
-import cc.aoeiuv020.base.jar.io.BufferedRandomAccessFile
-import cc.aoeiuv020.base.jar.io.readLines
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.text.TextContext
@@ -18,18 +15,6 @@ class TextProvider(
     // novel.chapters存文件编码，导入时就要判断过确实存在并合法，
     private val charset: Charset = Charset.forName(novel.nChapters)
     override val context: LocalNovelContext = TextContext(file, charset)
-
-    override fun getNovelContent(chapter: NovelChapter): List<String> {
-        val charset = Charset.forName(novel.chapters)
-        val (beginPos, endPos) = chapter.extra.divide('/').let {
-            it.first.toLong() to it.second.toLong()
-        }
-        return BufferedRandomAccessFile(file, "r").use { raf ->
-            raf.readLines(beginPos, endPos, charset.name()).map {
-                it.trim()
-            }
-        }
-    }
 
     // 虽然如果小说文件是复制到app内部后再解析阅读的，
     // 再怎么刷新也不会变，
