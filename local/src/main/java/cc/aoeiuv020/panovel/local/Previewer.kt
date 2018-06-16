@@ -1,8 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.base.jar.notNull
-import cc.aoeiuv020.panovel.local.text.FileCharsetDetector
-import cc.aoeiuv020.panovel.local.text.TextParser
 import java.io.File
 import java.nio.charset.Charset
 

@@ -1,12 +1,9 @@
-package cc.aoeiuv020.panovel.local.text
+package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.io.BufferedRandomAccessFile
 import cc.aoeiuv020.base.jar.io.readLines
-import cc.aoeiuv020.panovel.local.LocalNovelChapter
-import cc.aoeiuv020.panovel.local.LocalNovelInfo
-import cc.aoeiuv020.panovel.local.LocalNovelParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File

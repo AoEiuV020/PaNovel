@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.local.text;
+package cc.aoeiuv020.panovel.local;
 
 import org.mozilla.intl.chardet.nsDetector;
 import org.mozilla.intl.chardet.nsICharsetDetectionObserver;
