@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.base.jar.notNull
-import cc.aoeiuv020.panovel.local.text.TextContext
-import cc.aoeiuv020.panovel.local.util.FileCharsetDetector
+import cc.aoeiuv020.panovel.local.text.FileCharsetDetector
+import cc.aoeiuv020.panovel.local.text.TextParser
 import java.io.File
 import java.nio.charset.Charset
 
@@ -42,15 +42,14 @@ class Previewer(
         return FileCharsetDetector.guessFileEncoding(file, FileCharsetDetector.SIMPLIFIED_CHINESE)
     }
 
-    fun getContext(): LocalNovelContext {
+    fun parse(): LocalNovelInfo {
         val type = type.notNull("type")
         return when (type) {
             LocalNovelType.TEXT -> {
                 val charset = charset.notNull("charset")
-                TextContext(file, charset)
+                TextParser(file, charset)
             }
             LocalNovelType.EPUB -> TODO()
-        }
+        }.parse()
     }
-
 }

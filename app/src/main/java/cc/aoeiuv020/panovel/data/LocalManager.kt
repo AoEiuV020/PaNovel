@@ -9,10 +9,10 @@ import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import cc.aoeiuv020.panovel.local.LocalNovelType
 import cc.aoeiuv020.panovel.local.Previewer
 import cc.aoeiuv020.panovel.local.TextExporter
-import cc.aoeiuv020.panovel.local.TextProvider
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
@@ -86,26 +86,23 @@ class LocalManager(ctx: Context) : AnkoLogger {
             }
         }
 
-        val context = previewer.getContext()
-        context.prepare()
-        val parser = context.parser
         // 一次性得到可能能得到的作者名，小说名，简介，
-        parser.parse()
+        val info = previewer.parse()
 
         debug {
-            "importLocalNovel parse: <${parser.name}-${parser.author}${parser.type.suffix}, ${parser.introduction}, ${parser.chapters.size}>"
+            "importLocalNovel parse: <${info.name}-${info.author}${actualType.suffix}, ${info.introduction}, ${info.chapters.size}>"
         }
-        val suffix = parser.type.suffix
+        val suffix = actualType.suffix
         val defaultName = try {
             // 提取uri最后一节，一般是就是文件名，当成默认的作者名和小说名，
             uri.pick("/([^/]+)$").first()
         } catch (e: Exception) {
             "null"
         }
-        val author = requestInput(R.string.input_author, parser.author
+        val author = requestInput(R.string.input_author, info.author
                 ?: defaultName)
                 ?: interrupt("没有作者名，")
-        val name = requestInput(R.string.input_name, parser.name
+        val name = requestInput(R.string.input_name, info.name
                 ?: defaultName)
                 ?: interrupt("没有小说名，")
 
@@ -119,12 +116,23 @@ class LocalManager(ctx: Context) : AnkoLogger {
                 // 刚导入的小说一定要放在书架上，否则找不到，
                 bookshelf = true,
                 // 这里保存纯文本小说的编码，如果是epub不需要编码也要随便给个值，毕竟是用这个是否空判断是否需要请求小说详情，
-                chapters = parser.requester ?: "null"
+                chapters = info.requester ?: "null"
         )
-        TextProvider.update(novel, parser)
-        return novel to parser.chapters.notNullOrReport().map { NovelChapter(name = it.name, extra = it.extra) }
+        // 更新novel对象中关于章节数据，不能白解析了，
+        LocalNovelProvider.update(novel, info)
+        return novel to info.chapters.notNullOrReport().map { NovelChapter(name = it.name, extra = it.extra) }
     }
 
+    /**
+     * 导入的小说决定好了小说名和作者名就可以移到内部指定位置，以后就读这个文件了，
+     */
+    private fun saveNovel(from: File, suffix: String, author: String, name: String): File {
+        val fileName = "$name-$author$suffix"
+        return files.file(fileName).use { to ->
+            from.copyTo(to, overwrite = true)
+            to
+        }
+    }
 
     // TODO: 统一导入导出的形式，
     @UiThread
@@ -132,21 +140,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
             TextExporter.export(ctx, novelManager)
 
     fun getNovelProvider(novel: Novel): NovelProvider {
-        return when (LocalNovelType.values().first { it.suffix == novel.site }) {
-            LocalNovelType.TEXT -> TextProvider(novel)
-            LocalNovelType.EPUB -> TODO()
-        }
-    }
-
-    /**
-     * 导入的小说决定好了小说名和作者名就可以移到内部指定位置，以后就读这个文件了，
-     */
-    fun saveNovel(from: File, suffix: String, author: String, name: String): File {
-        val fileName = "$name-$author$suffix"
-        return files.file(fileName).use { to ->
-            from.copyTo(to, overwrite = true)
-            to
-        }
+        return LocalNovelProvider(novel)
     }
 
     companion object {

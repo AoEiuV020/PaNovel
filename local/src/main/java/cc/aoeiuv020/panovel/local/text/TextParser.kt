@@ -4,10 +4,9 @@ import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.io.BufferedRandomAccessFile
 import cc.aoeiuv020.base.jar.io.readLines
-import cc.aoeiuv020.base.jar.trace
 import cc.aoeiuv020.panovel.local.LocalNovelChapter
+import cc.aoeiuv020.panovel.local.LocalNovelInfo
 import cc.aoeiuv020.panovel.local.LocalNovelParser
-import cc.aoeiuv020.panovel.local.LocalNovelType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -24,43 +23,51 @@ class TextParser(
         private val charset: Charset
 ) : LocalNovelParser {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
-    override val type: LocalNovelType = LocalNovelType.TEXT
-    override var author: String? = null
-    override var name: String? = null
-    override var introduction: String? = null
-    // 考虑到频繁add以及最后有remove首尾的操作，用链表，事后转成api模块的NovelChapter时顺便转成ArrayList,
-    override var chapters: MutableList<LocalNovelChapter> = LinkedList()
-    override val requester: String = charset.name()
 
-    override fun parse() {
+    override fun getNovelContent(extra: String): List<String> {
+        val (beginPos, endPos) = extra.divide('/').let {
+            it.first.toLong() to it.second.toLong()
+        }
+        return BufferedRandomAccessFile(file, "r").use { raf ->
+            // map去掉段首空格，顺便转成随机访问的ArrayList,
+            raf.readLines(beginPos, endPos, charset.name()).map {
+                it.trim()
+            }
+        }
+    }
+
+    override fun parse(): LocalNovelInfo {
+        var author: String? = null
+        var name: String? = null
+        var introduction: String? = null
+        // 考虑到频繁add以及最后有remove首尾的操作，用链表，事后转成api模块的NovelChapter时顺便转成ArrayList,
+        val chapters: MutableList<LocalNovelChapter> = LinkedList()
+        val requester: String = charset.name()
         // 用两个输入流实属无奈，除了要记录文件指针就只能处理byte流，但是bytes转String太费时，而且是只有非默认编码费时，原因不明，
         // 两个输入流加速效果，从 37s 到 14s,
         BufferedRandomAccessFile(file, "r").use { raf ->
             var beginPos = 0L
             var endPos = 0L
-            var name: String? = null
+            var chapterName: String? = null
             file.inputStream().reader(charset).buffered().forEachLine { line ->
                 raf.skipLine()
-                logger.trace {
-                    "next line: line=$line, extra=$beginPos/$endPos"
-                }
                 if (false == line.firstOrNull()?.isWhitespace()) {
                     logger.debug {
-                        "add chapter: name=$name, extra=$beginPos/$endPos"
+                        "add chapter: chapterName=$chapterName, extra=$beginPos/$endPos"
                     }
                     // 行开头不是空格的都当成章节名，事后再过滤小说信息和广告，
                     // 第一个章节之前的内容存为0,
                     // 可能空内容，允许，卷名也单独一章空列表，
 
                     // 开始新章节前，把之前的章节名和内容插入列表中，
-                    if (name != null) {
+                    if (chapterName != null) {
                         // 第一个章节名出现前的正文通通无视，
                         // 保存章节信息，extra存两个指针位置，
                         // 以防万一，不能让endPos比beginPos大，
                         endPos = maxOf(beginPos, endPos)
-                        chapters.add(LocalNovelChapter(name!!, extra = "$beginPos/$endPos"))
+                        chapters.add(LocalNovelChapter(chapterName!!, extra = "$beginPos/$endPos"))
                     }
-                    name = line
+                    chapterName = line
                     // 记录章节名所在行后的位置，作为章节内容的开始，
                     beginPos = raf.filePointer
                     // 以防万一，空内容的话可能不走下面的else, 不能让endPos比beginPos大，
@@ -73,11 +80,11 @@ class TextParser(
                 }
             }
             // 最后一章也要存，
-            if (name != null) {
+            if (chapterName != null) {
                 // 第一个章节名出现前的正文通通无视，
                 // 保存章节信息，extra存两个指针位置，
                 endPos = maxOf(beginPos, endPos)
-                chapters.add(LocalNovelChapter(name!!, extra = "$beginPos/$endPos"))
+                chapters.add(LocalNovelChapter(chapterName!!, extra = "$beginPos/$endPos"))
             }
         }
         // chapters中有很多没用的，比如广告链接，开头可能存在的小说名，作者名，
@@ -153,5 +160,6 @@ class TextParser(
                 name == null -> name = it.name
             }
         }
+        return LocalNovelInfo(author, name, introduction, chapters, requester)
     }
 }
