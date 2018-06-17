@@ -15,6 +15,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.io.File
 import java.io.InputStream
+import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 
 /**
@@ -66,9 +67,11 @@ class LocalManager(ctx: Context) : AnkoLogger {
         debug {
             "importLocalNovel file type: ${actualType.suffix}"
         }
-        if (actualType == LocalNovelType.TEXT) {
-            // 只有纯文本小说需要指定编码，
-            val defaultCharset = previewer.guessCharset() ?: "unknown"
+        val actualCharset: Charset? = if (actualType == LocalNovelType.TEXT
+                || actualType == LocalNovelType.EPUB) {
+            // 纯文本小说和epub电子书都需要指定编码，
+            // 目前只打算支持这各种小说，这个if没什么必要，但是留着，
+            val defaultCharset = previewer.guessCharset(actualType) ?: "unknown"
             val actualCharset = requestInput(ImportRequireValue.CHARSET, defaultCharset)?.let {
                 try {
                     charset(it)
@@ -76,14 +79,16 @@ class LocalManager(ctx: Context) : AnkoLogger {
                     interrupt("不支持的文件编码<$it>，")
                 }
             } ?: interrupt("没有文件编码，")
-            previewer.charset = actualCharset
             debug {
                 "importLocalNovel file charset: $actualCharset"
             }
+            actualCharset
+        } else {
+            null
         }
 
         // 一次性得到可能能得到的作者名，小说名，简介，
-        val info = previewer.parse(actualType)
+        val info = previewer.parse(actualType, actualCharset)
 
         debug {
             "importLocalNovel parse: <${info.name}-${info.author}${actualType.suffix}, ${info.image}, ${info.introduction}, ${info.chapters.size}>"
@@ -114,7 +119,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
                 introduction = info.introduction ?: "(null)",
                 // 刚导入的小说一定要放在书架上，否则找不到，
                 bookshelf = true,
-                // 这里保存纯文本小说的编码，如果是epub不需要编码也要随便给个值，毕竟是用这个是否空判断是否需要请求小说详情，
+                // 这里保存纯文本小说的编码，epub也需要指定编码，
                 chapters = info.requester ?: "null"
         )
         // 更新novel对象中关于章节数据，不能白解析了，
