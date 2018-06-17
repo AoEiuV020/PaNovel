@@ -20,7 +20,7 @@ class LocalNovelProvider(
             ?: interrupt("本地小说类型<${novel.site}>不支持")
     private val parser = when (type) {
         LocalNovelType.TEXT -> TextParser(file, charset(novel.nChapters))
-        LocalNovelType.EPUB -> TODO()
+        LocalNovelType.EPUB -> EpubParser(file)
     }
 
     override fun requestNovelChapters(): List<NovelChapter> {

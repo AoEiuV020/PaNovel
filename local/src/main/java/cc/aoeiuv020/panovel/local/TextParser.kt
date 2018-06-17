@@ -16,9 +16,9 @@ import java.util.*
  * Created by AoEiuV020 on 2018.06.13-16:50:06.
  */
 class TextParser(
-        private val file: File,
+        file: File,
         private val charset: Charset
-) : LocalNovelParser {
+) : LocalNovelParser(file) {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
 
     override fun getNovelContent(extra: String): List<String> {

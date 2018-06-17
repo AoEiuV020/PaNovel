@@ -45,7 +45,7 @@ class Previewer(
                 val charset = charset.notNull("charset")
                 TextParser(file, charset)
             }
-            LocalNovelType.EPUB -> TODO()
+            LocalNovelType.EPUB -> EpubParser(file)
         }.parse()
     }
 }
