@@ -1,5 +1,5 @@
 dependencies {
-    api "org.jsoup:jsoup:$jsoup_version"
+    implementation "org.jsoup:jsoup:$jsoup_version"
     implementation "com.google.code.gson:gson:$gson_version"
     implementation project(':baseJar')
     implementation "com.jayway.jsonpath:json-path:$json_path_version"
