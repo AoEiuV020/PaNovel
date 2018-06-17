@@ -2,6 +2,8 @@ package cc.aoeiuv020.panovel.local
 
 import net.sf.jazzlib.ZipFile
 import nl.siegmann.epublib.epub.EpubReader
+import org.jsoup.Jsoup
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
@@ -10,12 +12,16 @@ import org.junit.Test
 class EpubParserTest: ParserTest(EpubParser::class) {
 
     @Test
-    fun parse() {
+    fun epublibTest() {
         val file = getFile("/home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub") ?: return
         val zipFile = ZipFile(file)
         val book =  EpubReader().readEpub(zipFile)
-        book.contents.forEach {
-            println(it)
+        assertEquals("[和ヶ原聡司].打工吧！魔王大人17", book.title)
+        book.metadata.descriptions.forEach {
+            val str = Jsoup.parse(it).body().text().replace(' ', '\n')
+            println(str)
         }
+        val contents = book.contents
+        assertEquals(13, contents.size)
     }
 }

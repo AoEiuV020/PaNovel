@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.compileRegex
+import cc.aoeiuv020.base.jar.ownLinesString
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern

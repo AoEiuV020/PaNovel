@@ -2,9 +2,6 @@
 
 package cc.aoeiuv020.panovel.api
 
-import java.net.MalformedURLException
-import java.net.URL
-
 /**
  * Created by AoEiuV020 on 2017.10.02-16:01:09.
  */
@@ -16,21 +13,6 @@ import java.net.URL
 const val firstIntPattern: String = "/(\\d+)"
 const val firstTwoIntPattern: String = "/(\\d+/\\d+)"
 const val firstThreeIntPattern: String = "/(\\d+/\\d+/\\d+)"
-
-/**
- * 地址仅路径，斜杆/开头，
- */
-fun path(url: String): String = try {
-    URL(url).path
-} catch (e: MalformedURLException) {
-    url
-}
-
-inline fun <T> tryOrNul(block: () -> T?): T? = try {
-    block()
-} catch (e: Exception) {
-    null
-}
 
 /**
  * 倒序删除重复章节，有的网站章节列表开头有倒叙的最新章节，

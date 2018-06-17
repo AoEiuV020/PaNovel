@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.textListSplitWhitespace
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 
 /**

@@ -3,6 +3,8 @@ package cc.aoeiuv020.panovel.api.site
 import org.junit.Test
 
 /**
+ * 这网站经常timeout,
+ *
  * Created by AoEiuV020 on 2018.06.06-18:51:31.
  */
 class Bqg5200Test : BaseNovelContextText(Bqg5200::class) {

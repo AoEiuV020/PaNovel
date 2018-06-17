@@ -2,7 +2,7 @@
 
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.base.jar.*
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
