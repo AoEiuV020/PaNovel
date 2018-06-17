@@ -55,7 +55,7 @@ fun Element.textList(): List<String> {
         override fun head(node: Node?, depth: Int) {
             if (node is TextNode) {
                 node.ownTextList().toCollection(list)
-            } else if (node is Element && node.tagName() == "img") {
+            } else if (node is Element && node.isImage()) {
                 imgText(node)?.let { list.add(it) }
             }
         }
@@ -80,7 +80,7 @@ fun Element.textListSplitWhitespace(): List<String> {
         override fun head(node: Node?, depth: Int) {
             if (node is TextNode) {
                 node.ownTextListSplitWhitespace().toCollection(list)
-            } else if (node is Element && node.tagName() == "img") {
+            } else if (node is Element && node.isImage()) {
                 imgText(node)?.let { list.add(it) }
             }
         }
@@ -90,13 +90,18 @@ fun Element.textListSplitWhitespace(): List<String> {
     return list.toList()
 }
 
+// svg中有image标签，
+fun Element.isImage() = tagName() == "img" || tagName() == "image"
+
 fun imgText(img: Element): String? {
     // 延迟加载可能把地址放在data-original,
     return (img.absDataOriginal().takeIf(String::isNotBlank)
-            ?: img.absSrc().takeIf(String::isNotBlank))
-            ?.let {
-                "![img]($it)"
-            }
+            ?: img.absSrc().takeIf(String::isNotBlank)
+            // svg中的image标签有这个属性，
+            ?: img.absXlinkHref().takeIf(String::isNotBlank)
+            )?.let {
+        "![img]($it)"
+    }
 }
 
 /**
@@ -148,6 +153,9 @@ fun Element.absSrc(): String = absUrl("src")
 fun Element.absDataOriginal(): String = absUrl("data-original")
 fun Element.href(): String = attr("href")
 fun Element.absHref(): String = absUrl("href")
+fun Element.xlinkHref(): String = attr("xlink:href")
+fun Element.absXlinkHref(): String = absUrl("xlink:href")
+
 /**
  * 地址仅路径，斜杆/开头，
  */

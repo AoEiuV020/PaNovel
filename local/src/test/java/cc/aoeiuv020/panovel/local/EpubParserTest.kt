@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
+import cc.aoeiuv020.base.jar.absXlinkHref
 import cc.aoeiuv020.base.jar.textList
 import net.sf.jazzlib.ZipFile
 import nl.siegmann.epublib.epub.EpubReader
@@ -18,25 +19,35 @@ class EpubParserTest : ParserTest(EpubParser::class) {
     fun url() {
         val file = getFile("/home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub") ?: return
         listOf(
-                "file:/home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub",
-                "file:///home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub",
-                "file://localhost/home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub"
+                "file:$file",
+                "file://$file",
+                "file://localhost$file"
         ).forEach {
             // file协议三种数量的斜杆/都能支持，
             // 默认URL.toString是一个斜杆/的，
             assertEquals(file.toURI().toURL(), URL(it))
         }
         val coverUrl = URL("jar:${file.toURI()}!/cover1.jpeg")
-        assertEquals("jar:file:/home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub!/cover1.jpeg", coverUrl.toString())
+        assertEquals("jar:file:$file!/cover1.jpeg", coverUrl.toString())
         assertNull(coverUrl.authority)
         assertEquals("", coverUrl.host)
-        assertEquals("file:/home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub!/cover1.jpeg", coverUrl.path)
+        assertEquals("file:$file!/cover1.jpeg", coverUrl.path)
         assertEquals(coverUrl.path, coverUrl.file)
         // 如果文件不存在，openString会抛FileNotFoundException，
         coverUrl.openStream().use { input ->
             // 图片第一个字符，
             assertEquals(0xff, input.read())
         }
+
+        val html = """
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="100%" height="100%" viewBox="0 0 546 751" preserveAspectRatio="none">
+                <image width="100%" height="100%" xlink:href="cover1.jpeg"/>
+            </svg>
+            """
+        val image = Jsoup.parse(html, "jar:${file.toURI()}!/a/s/d")
+                .select("image").first()
+        // Jsoup可以正确处理jar协议地址，
+        assertEquals("jar:${file.toURI()}!/a/s/cover1.jpeg", image.absXlinkHref())
     }
 
     @Test
@@ -49,8 +60,13 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         // readEpub时就已经用传入的编码解析了META-INF/container.xml得到的记录所有信息的content.opf,
         val book = EpubReader().readEpubLazy(zipFile, charset)
 
+        book.coverPage.let {
+            // 封面也是一个单独页面，一般只包含一张图片，
+            assertEquals("titlepage.xhtml", it.href)
+        }
+
         book.opfResource.let {
-            String(it.data)
+            assertEquals("content.opf", it.href)
         }
 
         book.coverImage.let {
