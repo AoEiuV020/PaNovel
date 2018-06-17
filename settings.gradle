@@ -1,1 +1,1 @@
-include ':app', ':RefreshRecyclerView', ':api', ':pager', ':pagertest', ':server', ':baseJar', ':refresher', ':IronDB', ':IronDB', ':local', ':data', 'reader'
+include ':app', ':RefreshRecyclerView', ':api', ':pager', ':pagertest', ':server', ':baseJar', ':refresher', ':IronDB', ':IronDB', ':local', 'reader'
