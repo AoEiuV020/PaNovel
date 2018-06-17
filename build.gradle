@@ -45,6 +45,7 @@ allprojects {
     }
 }
 
+// java模块，
 ["api", "local", "baseJar", "IronDB", "refresher", "server"].forEach { name ->
     project(name) {
         apply plugin: 'java-library'
@@ -79,6 +80,7 @@ allprojects {
     }
 }
 
+// android模块，
 ["pager", "reader"].forEach { name ->
     project(name) {
         apply plugin: 'com.android.library'
@@ -111,6 +113,14 @@ allprojects {
             }
         }
 
+        dependencies {
+            testImplementation "junit:junit:$junit_version"
+            androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+                exclude group: 'com.android.support', module: 'support-annotations'
+            })
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+            implementation "org.jetbrains.anko:anko-commons:$anko_version"
+        }
 
         task sourcesJar(type: Jar) {
             from android.sourceSets.main.java.srcDirs
@@ -132,6 +142,14 @@ allprojects {
         artifacts {
             archives sourcesJar
             archives javadocJar
+        }
+    }
+}
+
+// app模块，
+['app', 'pagertest'].forEach {name ->
+    project(name) {
+        dependencies {
         }
     }
 }
