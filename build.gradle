@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        applicationModules = ['app', 'pagertest']
+        applicationModules = ['app']
         javaModules = ["api", "local", "baseJar", "IronDB", "refresher", "server"]
         androidModules = ["pager", "reader"]
         compile_version = 27
@@ -46,7 +46,7 @@ allprojects {
 }
 
 // app模块，
-// 可能导致AndroidStudio3.1.3右侧gradle面板的任务崩溃，原因和细节不明，
+// 多个app模块可能导致AndroidStudio3.1.3右侧gradle面板的任务崩溃，原因和细节不明，
 // 不影响AndroidStudio的run, 和gradlew命令行，
 applicationModules.forEach { name ->
     project(name) {
