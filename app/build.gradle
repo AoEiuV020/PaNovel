@@ -55,6 +55,7 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
     // testImplementation不行，找不到类，原因不明，
+    // 不记得试过androidTestImplementation没有，
     debugImplementation "android.arch.persistence.room:testing:$room_version"
     implementation project(':IronDB')
     implementation 'com.github.santalu:aspect-ratio-imageview:1.0.4'
