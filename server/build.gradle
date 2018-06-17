@@ -1,7 +1,3 @@
-apply plugin: 'java-library'
-apply plugin: 'kotlin'
-apply plugin: 'maven'
-
 dependencies {
     testImplementation "junit:junit:$junit_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
@@ -11,23 +7,4 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
     implementation project(':baseJar')
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
-}
-
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    javadoc.failOnError false
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
 }
