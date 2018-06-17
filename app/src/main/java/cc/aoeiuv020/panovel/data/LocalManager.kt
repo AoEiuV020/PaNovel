@@ -109,6 +109,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
                 author = author,
                 name = name,
                 image = info.image ?: noCover,
+                // detail存文件全路径，不存url, file协议的url支持不只一种形式，主要是斜杆/的差别，
                 detail = file.absoluteFile.canonicalPath,
                 introduction = info.introduction ?: "(null)",
                 // 刚导入的小说一定要放在书架上，否则找不到，

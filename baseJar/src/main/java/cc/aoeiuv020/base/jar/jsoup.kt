@@ -160,5 +160,6 @@ fun TextNode.textNotBlank(): String? = this.text().trim().takeIf(String::isNotBl
 
 fun Element.ownTextList(): List<String> = this.textNodes().flatMap { it.ownTextList() }
 fun Element.ownLinesString(): String = ownTextListSplitWhitespace().joinToString("\n")
+fun Element.linesString(): String = textListSplitWhitespace().joinToString("\n")
 fun TextNode.ownLinesString(): String = ownTextListSplitWhitespace().joinToString("\n")
 fun Node.text(): String = (this as TextNode).text()
