@@ -46,7 +46,7 @@ allprojects {
 }
 
 // app模块，
-// 可能导致AndroidStudio3.1.3右侧gradle面板的任务:assembleDebug崩溃，原因和细节不明，
+// 可能导致AndroidStudio3.1.3右侧gradle面板的任务崩溃，原因和细节不明，
 // 不影响AndroidStudio的run, 和gradlew命令行，
 ['app', 'pagertest'].forEach { name ->
     project(name) {
@@ -54,6 +54,41 @@ allprojects {
         apply plugin: 'kotlin-android'
         apply plugin: 'kotlin-android-extensions'
         apply plugin: 'kotlin-kapt'
+        android {
+            compileSdkVersion compile_version
+            defaultConfig {
+                minSdkVersion min_version
+                targetSdkVersion target_version
+                multiDexEnabled true
+                testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                setProperty("archivesBaseName", "$rootProject.name-$versionName")
+                vectorDrawables.useSupportLibrary = true
+            }
+            buildTypes {
+                release {
+                    minifyEnabled true
+                    useProguard true
+                    shrinkResources true
+                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                }
+            }
+            applicationVariants.all { variant ->
+                if (variant.buildType.name == 'release') {
+                    variant.mergeAssets.doLast {
+                        delete(fileTree(dir: variant.mergeAssets.outputDir, includes: ['admob_test_device_list']))
+                    }
+                    variant.assemble.doLast {
+                        copy {
+                            from variant.mappingFile
+                            into "${rootDir}/proguard"
+                            rename { String fileName ->
+                                "$rootProject.name-mapping-$versionName-${variant.name}.txt"
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         dependencies {
             implementation "com.android.support:support-v4:$support_version"
@@ -62,6 +97,7 @@ allprojects {
             androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
                 exclude group: 'com.android.support', module: 'support-annotations'
             })
+            implementation 'com.android.support:multidex:1.0.3'
             testImplementation 'org.mockito:mockito-core:2.15.0'
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
             implementation "org.jetbrains.anko:anko-commons:$anko_version"
