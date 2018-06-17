@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.settings
 
-import cc.aoeiuv020.pager.IMargins
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.SubPref
+import cc.aoeiuv020.reader.ItemMargins
 
 /**
  * Created by AoEiuV020 on 2018.05.26-20:36:04.
@@ -10,7 +10,7 @@ import cc.aoeiuv020.panovel.util.SubPref
 
 class Margins(subName: String, enabled: Boolean,
               left: Int, top: Int, right: Int, bottom: Int
-) : SubPref(ReaderSettings, subName), IMargins {
+) : SubPref(ReaderSettings, subName), ItemMargins {
     // 保存在App.ctx.packageName + "_ReaderSettings" + "_$name"
     /**
      * 对应的东西是否显示，

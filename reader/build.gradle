@@ -2,7 +2,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
-    api project(':pager')
+    implementation project(':pager')
     implementation project(':baseJar')
     implementation "com.github.bumptech.glide:glide:$glide_version"
 }
