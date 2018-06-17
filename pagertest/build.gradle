@@ -1,6 +1,4 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+
 android {
     compileSdkVersion compile_version
     defaultConfig {
@@ -23,10 +21,6 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:$support_version"
-    testImplementation "junit:junit:$junit_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "org.jetbrains.anko:anko-commons:$anko_version"
-    implementation project(path: ':pager')
+    implementation project(':pager')
     implementation project(':reader')
 }

@@ -45,6 +45,32 @@ allprojects {
     }
 }
 
+// app模块，
+// 可能导致AndroidStudio3.1.3右侧gradle面板的任务:assembleDebug崩溃，原因和细节不明，
+// 不影响AndroidStudio的run, 和gradlew命令行，
+['app', 'pagertest'].forEach { name ->
+    project(name) {
+        apply plugin: 'com.android.application'
+        apply plugin: 'kotlin-android'
+        apply plugin: 'kotlin-android-extensions'
+        apply plugin: 'kotlin-kapt'
+
+        dependencies {
+            implementation "com.android.support:support-v4:$support_version"
+            implementation "com.android.support:appcompat-v7:$support_version"
+            testImplementation "junit:junit:$junit_version"
+            androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+                exclude group: 'com.android.support', module: 'support-annotations'
+            })
+            testImplementation 'org.mockito:mockito-core:2.15.0'
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+            implementation "org.jetbrains.anko:anko-commons:$anko_version"
+            implementation "org.slf4j:slf4j-api:$slf4j_version"
+            debugRuntimeOnly "org.slf4j:slf4j-android:$slf4j_version"
+        }
+    }
+}
+
 // java模块，
 ["api", "local", "baseJar", "IronDB", "refresher", "server"].forEach { name ->
     project(name) {
@@ -83,7 +109,6 @@ allprojects {
 // android模块，
 ["pager", "reader"].forEach { name ->
     project(name) {
-        apply plugin: 'com.android.library'
         apply plugin: 'com.android.library'
         apply plugin: 'kotlin-android'
         apply plugin: 'kotlin-android-extensions'
@@ -128,7 +153,7 @@ allprojects {
         }
 
         task javadoc(type: Javadoc) {
-            failOnError  false
+            failOnError false
             source = android.sourceSets.main.java.sourceFiles
             classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
             classpath += configurations.compile
@@ -142,14 +167,6 @@ allprojects {
         artifacts {
             archives sourcesJar
             archives javadocJar
-        }
-    }
-}
-
-// app模块，
-['app', 'pagertest'].forEach {name ->
-    project(name) {
-        dependencies {
         }
     }
 }
