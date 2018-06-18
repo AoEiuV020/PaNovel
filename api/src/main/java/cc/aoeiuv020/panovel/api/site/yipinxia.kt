@@ -62,7 +62,7 @@ class Yipinxia : DslJsoupNovelContext() {init {
     contentPageTemplate = "/shu/%s.html"
     content {
         document {
-            items("#booktext", block = ownLinesSplitWhitespace())
+            items("#booktext")
         }
     }
 }
