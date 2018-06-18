@@ -81,15 +81,15 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         list.take(count).forEach {
             println(it)
         }
-        val first = list.first()
-        assertEquals(firstName, first.name)
-        assertEquals(firstExtra, first.extra)
-        compareUpdate(firstUpdate, first.update)
         val newList = list.takeLastWhile {
             // 至少打印最后一章，
             println(it)
             it.name != lastName || it.extra != lastExtra
         }
+        val first = list.first()
+        assertEquals(firstName, first.name)
+        assertEquals(firstExtra, first.extra)
+        compareUpdate(firstUpdate, first.update)
         val last = list[list.size - newList.size - 1]
         assertEquals(lastName, last.name)
         assertEquals(lastExtra, last.extra)
