@@ -5,15 +5,15 @@ set -e
 old=$PWD
 cd $(dirname $0)
 project=$(pwd)
-buildGradleFile="$project/app/build.gradle"
+buildGradleFile="$project/build.gradle"
 
-versionCode=$(cat $buildGradleFile |grep versionCode |awk '{print $2'})
+versionCode=$(sed -n 's/\s*version_code\s*=\s*\(\S*\)/\1/p' $buildGradleFile)
 versionCode=$(expr $versionCode + 1)
 
-sed -i "s/versionCode\\s*[0-9]*/versionCode $versionCode/" $buildGradleFile
+sed -i "s/version_code\\s*=\\s*\\d*/version_code = $versionCode/" $buildGradleFile
 
 versionName=$1
-sed -i "s/versionName\\s*\".*\"/versionName \"$versionName\"/" $buildGradleFile
+sed -i "s/version_name\\s*=\\s*\".*\"/version_name = \"$versionName\"/" $buildGradleFile
 changeLogFile=app/src/main/assets/ChangeLog.txt
 sed -i "1G" $changeLogFile
 sed -i "2i$versionName:" $changeLogFile
