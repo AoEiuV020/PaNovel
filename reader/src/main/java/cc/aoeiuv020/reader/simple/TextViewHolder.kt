@@ -16,7 +16,7 @@ internal class TextViewHolder internal constructor(
     private val ctx: Context = itemView.context
     private val divider: View = itemView.divider
     private val textView: TextView = itemView.textView
-    private fun setText(string: String) {
+    fun setText(string: String) {
         divider.setHeight(ctx.dip(prAdapter.mLineSpacing) + ctx.dip(prAdapter.mParagraphSpacing))
         textView.apply {
             prAdapter.debug { "initMargin <${prAdapter.mLeftSpacing}, ${prAdapter.mRightSpacing}>" }
@@ -44,13 +44,4 @@ internal class TextViewHolder internal constructor(
             }
         }
     }
-
-    fun setChapterName(chapterName: String) {
-        setText(chapterName)
-    }
-
-    fun setNovelText(text: String) {
-        setText("　　$text")
-    }
-
 }
