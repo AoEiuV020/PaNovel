@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.local
 
 import java.io.File
+import java.net.URL
 
 /**
  * 调用parse方法解析后能拿出其他数据，
@@ -14,4 +15,7 @@ abstract class LocalNovelParser(
     abstract fun parse(): LocalNovelInfo
 
     abstract fun getNovelContent(extra: String): List<String>
+
+    // 封面默认存完整url, 但是epub要存包内相对路径，否则针对临时文件解析的封面不可用，
+    open fun getCoverImage(extra: String): URL = URL(extra)
 }

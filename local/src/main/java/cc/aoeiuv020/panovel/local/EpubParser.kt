@@ -41,7 +41,8 @@ class EpubParser(
         // 一般来说都是存在第一个非空白title的，
         name = book.metadata?.titles?.firstOrNull { it.isNotBlank() }?.trim()
         // 封面好像有可能只有coverPage没有coverImage，不管，无视，空安全就好，
-        image = book.coverImage?.href?.let { URL(url, it).toString() }
+        // 封面只保存相对路径，这样解析临时文件后移动临时文件依然可用，
+        image = book.coverImage?.href
         // descriptions中存的一般是html,
         val introductionInDescriptions = book.metadata?.descriptions?.flatMap {
             Jsoup.parse(it).body().textList()
@@ -114,5 +115,9 @@ class EpubParser(
                             || it == "『还在连载中...』"
                 }
 */
+    }
+
+    override fun getCoverImage(extra: String): URL {
+        return URL(url, extra)
     }
 }

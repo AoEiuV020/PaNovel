@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.NovelProvider
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.io.File
+import java.net.URL
 import java.util.*
 
 /**
@@ -42,6 +43,10 @@ class LocalNovelProvider(
 
     override fun getDetailUrl(): String {
         return file.toURI().toString()
+    }
+
+    override fun getCoverImage(extra: String): URL {
+        return parser.getCoverImage(extra)
     }
 
     override fun updateNovelDetail() {

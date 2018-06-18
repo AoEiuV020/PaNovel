@@ -144,6 +144,10 @@ class EpubParserTest : ParserTest(EpubParser::class) {
                 .select("image").first()
         // Jsoup可以正确处理jar协议地址，
         assertEquals("jar:${file.toURI()}!/a/s/cover1.jpeg", image.absXlinkHref())
+
+        val httpUrl = URL(coverUrl, "http://example.com/a/s/d")
+        // 改协议也正常，
+        assertEquals("http://example.com/a/s/d", httpUrl.toString())
     }
 
     @Test

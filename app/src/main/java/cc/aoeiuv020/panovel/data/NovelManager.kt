@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import java.net.URL
 import java.util.*
 
 /**
@@ -171,6 +172,10 @@ class NovelManager(
         cleanCache()
         provider.clean()
         app.clean(novel)
+    }
+
+    fun getCoverImage(): URL {
+        return provider.getCoverImage(novel.image)
     }
 
 }
