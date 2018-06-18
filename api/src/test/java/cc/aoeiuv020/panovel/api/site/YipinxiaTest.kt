@@ -38,6 +38,10 @@ class YipinxiaTest : BaseNovelContextText(Yipinxia::class) {
                 "大司命看着空空如也的对面愣了好久，才愤怒的咆哮道，“好个卑鄙无耻的小贼，居然骗我会横贯八方然后逃走！”",
                 "“啊。”三人走后不久，虞子期也是惨叫一声，随后便再次一动不动起来，云中君冷冷的看了天明等人逃跑的方向一眼，不知在想什么。",
                 52)
+        content("2/1554",
+                "![img](http://www.yipinxia.net/files/article/attachment/0/2/1554/1439.gif)",
+                "![img](http://www.yipinxia.net/files/article/attachment/0/2/1554/1439.gif)",
+                1)
     }
 
 }

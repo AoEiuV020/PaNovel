@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.api
 import cc.aoeiuv020.panovel.data.NovelProvider
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.util.noCover
+import java.net.URL
 import java.util.*
 
 /**
@@ -65,5 +66,9 @@ class ApiNovelProvider(
 
     override fun clean() {
         // 一般网站的小说没什么要清除的，
+    }
+
+    override fun getCoverImage(extra: String): URL {
+        return context.getCoverImage(extra)
     }
 }

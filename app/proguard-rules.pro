@@ -85,6 +85,20 @@
 -dontwarn cn.jiguang.**
 -keep class cn.jiguang.** { *; }
 
+# epublib, https://stackoverflow.com/a/33286911/5615186
+-dontwarn org.kobjects.**
+-dontwarn org.ksoap2.**
+-dontwarn org.kxml2.**
+-dontwarn org.xmlpull.v1.**
+-keep class org.kobjects.** { *; }
+-keep class org.ksoap2.** { *; }
+-keep class org.kxml2.** { *; }
+-keep class org.xmlpull.** { *; }
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontoptimize
+-dontpreverify
+
 
 #apk 包内所有 class 的内部结构
 -dump class_files.txt

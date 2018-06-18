@@ -2,7 +2,6 @@ package cc.aoeiuv020.reader
 
 import android.graphics.Typeface
 import android.net.Uri
-import cc.aoeiuv020.pager.IMargins
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import kotlin.reflect.KProperty
 
@@ -14,12 +13,12 @@ class ReaderConfig(
         textSize: Int,
         lineSpacing: Int,
         paragraphSpacing: Int,
-        contentMargins: IMargins,
-        paginationMargins: IMargins,
-        bookNameMargins: IMargins,
-        chapterNameMargins: IMargins,
-        timeMargins: IMargins,
-        batteryMargins: IMargins,
+        contentMargins: ItemMargins,
+        paginationMargins: ItemMargins,
+        bookNameMargins: ItemMargins,
+        chapterNameMargins: ItemMargins,
+        timeMargins: ItemMargins,
+        batteryMargins: ItemMargins,
         messageSize: Int,
         dateFormat: String,
         textColor: Int,
@@ -41,13 +40,13 @@ class ReaderConfig(
     var lineSpacing: Int by ConfigDelegate(lineSpacing, LineSpacing)
     var paragraphSpacing: Int  by ConfigDelegate(paragraphSpacing, ParagraphSpacing)
 
-    var contentMargins: IMargins by ConfigDelegate(contentMargins, ContentMargins)
+    var contentMargins: ItemMargins by ConfigDelegate(contentMargins, ContentMargins)
 
-    var paginationMargins: IMargins by ConfigDelegate(paginationMargins, PaginationMargins)
-    var timeMargins: IMargins by ConfigDelegate(timeMargins, TimeMargins)
-    var batteryMargins: IMargins by ConfigDelegate(batteryMargins, BatteryMargins)
-    var bookNameMargins: IMargins by ConfigDelegate(bookNameMargins, BookNameMargins)
-    var chapterNameMargins: IMargins by ConfigDelegate(chapterNameMargins, ChapterNameMargins)
+    var paginationMargins: ItemMargins by ConfigDelegate(paginationMargins, PaginationMargins)
+    var timeMargins: ItemMargins by ConfigDelegate(timeMargins, TimeMargins)
+    var batteryMargins: ItemMargins by ConfigDelegate(batteryMargins, BatteryMargins)
+    var bookNameMargins: ItemMargins by ConfigDelegate(bookNameMargins, BookNameMargins)
+    var chapterNameMargins: ItemMargins by ConfigDelegate(chapterNameMargins, ChapterNameMargins)
     var messageSize: Int by ConfigDelegate(messageSize, MessageSize)
     var dateFormat: String by ConfigDelegate(dateFormat, DateFormat)
 

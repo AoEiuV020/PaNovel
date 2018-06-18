@@ -10,6 +10,7 @@ import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cn.jpush.android.api.JPushInterface
+import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
@@ -63,6 +64,12 @@ class App : MultiDexApplication(), AnkoLogger {
 
         initJpush()
 
+        initGlide()
+
+    }
+
+    private fun initGlide() {
+        Glide.get(ctx).registry
     }
 
     private fun initDataSources() {

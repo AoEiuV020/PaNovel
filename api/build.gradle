@@ -1,17 +1,7 @@
-apply plugin: 'java-library'
-apply plugin: 'kotlin'
-
 dependencies {
-    testImplementation "junit:junit:$junit_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "org.slf4j:slf4j-api:$slf4j_version"
-    testImplementation "org.slf4j:slf4j-simple:$slf4j_version"
-    api "org.jsoup:jsoup:$jsoup_version"
+    implementation "org.jsoup:jsoup:$jsoup_version"
     implementation "com.google.code.gson:gson:$gson_version"
     implementation project(':baseJar')
     implementation "com.jayway.jsonpath:json-path:$json_path_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 }
-
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"

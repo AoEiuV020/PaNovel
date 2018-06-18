@@ -137,9 +137,10 @@ class TextExporter(
                 exportingRunnable.set(export, skip, left)
                 exportingRunnable.start()
 
-                // 先导出小说信息，包括小说名，作者名，顶格输出，
+                // 先导出小说信息，包括小说名，作者名，封面，顶格输出，
                 output.appendln(novel.name)
                 output.appendln("作者：${novel.author}")
+                output.appendln("封面：${novel.image}")
                 // 简介前空一行，
                 output.appendln()
                 output.appendln("内容简介")

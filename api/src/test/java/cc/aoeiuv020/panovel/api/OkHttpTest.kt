@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api
 
+import cc.aoeiuv020.base.jar.baseClientBuilder
 import cc.aoeiuv020.base.jar.info
 import cc.aoeiuv020.base.jar.notNull
 import okhttp3.*
@@ -93,7 +94,7 @@ class OkHttpTest {
 
     @Test
     fun cookie() {
-        val client = OkHttpClient.Builder()
+        val client = baseClientBuilder
                 .cookieJar(cookieJar)
                 .addInterceptor {
                     val response = it.proceed(it.request())

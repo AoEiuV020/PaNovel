@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package cc.aoeiuv020.base.jar
 
 /**
@@ -9,3 +11,10 @@ inline fun <reified T : Any> T?.notNull(): T =
 fun <T : Any> T?.notNull(value: String): T = requireNotNull(this) {
     "Required $value was null."
 }
+
+inline fun <T> tryOrNul(block: () -> T?): T? = try {
+    block()
+} catch (e: Exception) {
+    null
+}
+

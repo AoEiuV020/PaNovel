@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.data
 
 import cc.aoeiuv020.panovel.api.NovelChapter
+import java.net.URL
 
 /**
  * 负责提供小说相关数据，
@@ -14,4 +15,6 @@ interface NovelProvider {
     fun getDetailUrl(): String
     fun updateNovelDetail()
     fun clean()
+    // 封面也要看上下文获取，比如epub内部，
+    fun getCoverImage(extra: String): URL
 }

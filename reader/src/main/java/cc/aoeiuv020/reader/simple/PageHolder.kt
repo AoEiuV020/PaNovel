@@ -58,7 +58,7 @@ internal class PageHolder(private val reader: SimpleReader) : AnkoLogger {
             error(message, e)
             showError(message, e)
         }, reader.ioExecutorService) {
-            val novelText = requester.request(index, refresh)
+            val novelText = requester.requestChapter(index, refresh)
             uiThread {
                 showText(novelText)
             }

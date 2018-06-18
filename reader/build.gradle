@@ -1,37 +1,8 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-
-android {
-    compileSdkVersion compile_version
-    defaultConfig {
-        minSdkVersion min_version
-        targetSdkVersion target_version
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
 dependencies {
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
-    testImplementation "junit:junit:$junit_version"
-    implementation "org.jetbrains.anko:anko-commons:$anko_version"
-    api project(':pager')
+    implementation project(':pager')
     implementation project(':baseJar')
     implementation "com.github.bumptech.glide:glide:$glide_version"
 }

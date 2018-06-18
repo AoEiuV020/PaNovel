@@ -5,14 +5,11 @@ import android.content.IntentFilter
 import android.graphics.*
 import android.support.v4.util.LruCache
 import android.text.TextPaint
-import cc.aoeiuv020.pager.IMargins
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
-import cc.aoeiuv020.reader.ConfigChangedListener
-import cc.aoeiuv020.reader.ReaderConfigName
+import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.ReaderConfigName.*
-import cc.aoeiuv020.reader.TextRequester
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
@@ -65,7 +62,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                         pager?.bgColor = reader.config.backgroundColor
                     }
                     ContentMargins -> {
-                        pager?.margins = reader.config.contentMargins
+                        pager?.margins = reader.config.contentMargins.toIMargins()
                     }
                     DateFormat -> {
                         // 这个不支持在阅读时改，到不了这里，
@@ -228,7 +225,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
      * 哪个大就贴哪个，
      * 刚好50是居中，
      */
-    private fun drawMessage(canvas: Canvas, text: String, margins: IMargins, isBattery: Boolean = false) {
+    private fun drawMessage(canvas: Canvas, text: String, margins: ItemMargins, isBattery: Boolean = false) {
         val textHeight = messagePaint.textSize
         val textWidth = messagePaint.measureText(text)
         val x: Float = if (margins.left > margins.right) {
@@ -326,7 +323,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 pager?.refresh()
             }
         }, reader.ioExecutorService) {
-            val text = requester.request(requestIndex, refresh)
+            val text = requester.requestChapter(requestIndex, refresh)
             val pages = typesetting(reader.chapterList[requestIndex], text)
             pagesCache.put(requestIndex, pages)
             requestingList.remove(requestIndex)
@@ -348,7 +345,8 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         val textHeight = textPaint.textSize.toInt()
         (listOf(chapter) + list).forEachIndexed { index, str ->
-            val paragraph = if (index == 0) str else "　　" + str
+            // 不支持图片，得到段就直接转成String,
+            val paragraph = if (index == 0) str else requester.requestParagraph(str).toString()
             var start = 0
             var count: Int
             while (start < paragraph.length) {

@@ -2,16 +2,21 @@
 
 buildscript {
     ext {
+        applicationModules = ['app']
+        javaModules = ["api", "local", "baseJar", "IronDB", "refresher", "server"]
+        androidModules = ["pager", "reader"]
         compile_version = 27
         min_version = 16
         target_version = 25
+        version_code = 63
+        version_name = "3.1.3"
         support_version = '27.1.1'
-        kotlin_version = '1.2.30'
+        kotlin_version = '1.2.41'
         anko_version = '0.10.1'
         junit_version = '4.12'
         slf4j_version = '1.7.25'
         jsoup_version = '1.10.3'
-        constraint_layout_version = '1.1.1'
+        constraint_layout_version = '1.1.2'
         glide_version = '4.1.1'
         rxjava_version = '2.1.3'
         rxandroid_version = '2.0.1'
@@ -26,20 +31,178 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha18'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-        classpath 'com.google.gms:google-services:3.2.1'
+        classpath 'com.google.gms:google-services:4.0.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
 allprojects {
+    group = 'com.github.AoEiuV020'
     repositories {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+    }
+}
+
+// app模块，
+// 多个app模块可能导致AndroidStudio3.1.3右侧gradle面板的任务崩溃，原因和细节不明，
+// 不影响AndroidStudio的run, 和gradlew命令行，
+applicationModules.forEach { name ->
+    project(name) {
+        apply plugin: 'com.android.application'
+        apply plugin: 'kotlin-android'
+        apply plugin: 'kotlin-android-extensions'
+        apply plugin: 'kotlin-kapt'
+        android {
+            compileSdkVersion compile_version
+            defaultConfig {
+                minSdkVersion min_version
+                targetSdkVersion target_version
+                versionCode version_code
+                versionName version_name
+                multiDexEnabled true
+                testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                setProperty("archivesBaseName", "$rootProject.name-$versionName")
+                vectorDrawables.useSupportLibrary = true
+            }
+            buildTypes {
+                release {
+                    minifyEnabled true
+                    useProguard true
+                    shrinkResources true
+                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                }
+            }
+            applicationVariants.all { variant ->
+                if (variant.buildType.name == 'release') {
+                    variant.mergeAssets.doLast {
+                        delete(fileTree(dir: variant.mergeAssets.outputDir, includes: ['admob_test_device_list']))
+                    }
+                    variant.assemble.doLast {
+                        copy {
+                            from variant.mappingFile
+                            into "${rootDir}/proguard"
+                            rename { String fileName ->
+                                "$rootProject.name-mapping-$versionName-${variant.name}.txt"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        dependencies {
+            implementation "com.android.support:support-v4:$support_version"
+            implementation "com.android.support:appcompat-v7:$support_version"
+            testImplementation "junit:junit:$junit_version"
+            androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+                exclude group: 'com.android.support', module: 'support-annotations'
+            })
+            implementation 'com.android.support:multidex:1.0.3'
+            testImplementation 'org.mockito:mockito-core:2.15.0'
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+            implementation "org.jetbrains.anko:anko-commons:$anko_version"
+            implementation "org.slf4j:slf4j-api:$slf4j_version"
+            debugRuntimeOnly "org.slf4j:slf4j-android:$slf4j_version"
+        }
+    }
+}
+
+// java模块，
+javaModules.forEach { name ->
+    project(name) {
+        apply plugin: 'java-library'
+        apply plugin: 'kotlin'
+        apply plugin: 'maven'
+
+        dependencies {
+            testImplementation "junit:junit:$junit_version"
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+            implementation "org.slf4j:slf4j-api:$slf4j_version"
+            testImplementation "org.slf4j:slf4j-simple:$slf4j_version"
+        }
+
+        sourceCompatibility = "1.7"
+        targetCompatibility = "1.7"
+
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            javadoc.failOnError false
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        artifacts {
+            archives sourcesJar
+            archives javadocJar
+        }
+    }
+}
+
+// android模块，
+androidModules.forEach { name ->
+    project(name) {
+        apply plugin: 'com.android.library'
+        apply plugin: 'kotlin-android'
+        apply plugin: 'kotlin-android-extensions'
+        apply plugin: 'com.github.dcendents.android-maven'
+
+        android {
+            compileSdkVersion compile_version
+            defaultConfig {
+                minSdkVersion min_version
+                targetSdkVersion target_version
+                versionCode 1
+                versionName "1.0"
+
+                testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+            }
+
+            buildTypes {
+                release {
+                    minifyEnabled false
+                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                }
+            }
+        }
+
+        dependencies {
+            testImplementation "junit:junit:$junit_version"
+            androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+                exclude group: 'com.android.support', module: 'support-annotations'
+            })
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+            implementation "org.jetbrains.anko:anko-commons:$anko_version"
+        }
+
+        task sourcesJar(type: Jar) {
+            from android.sourceSets.main.java.srcDirs
+            classifier = 'sources'
+        }
+
+        task javadoc(type: Javadoc) {
+            failOnError false
+            source = android.sourceSets.main.java.sourceFiles
+            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+            classpath += configurations.compile
+        }
+
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        artifacts {
+            archives sourcesJar
+            archives javadocJar
+        }
     }
 }
 

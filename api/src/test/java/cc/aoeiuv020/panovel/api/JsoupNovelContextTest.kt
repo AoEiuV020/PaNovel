@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api
 
-import cc.aoeiuv020.panovel.api.base.JsoupNovelContext
+import cc.aoeiuv020.base.jar.textListSplitWhitespace
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import org.junit.Assert.assertEquals
@@ -25,7 +25,7 @@ class JsoupNovelContextTest {
     }
 
     private fun Elements.testList(): List<String> = flatMap {
-        JsoupNovelContext.textListSplitWhitespace(it)
+        it.textListSplitWhitespace()
     }
 
     @Test
@@ -65,7 +65,7 @@ class JsoupNovelContextTest {
         val whitespaceRegex = Regex("[\\p{javaWhitespace}\\p{javaSpaceChar}]+")
         val str = "    中年男子下意识的接住魂晶，这东西能够让卡片使更好的修炼魂力，可以说是硬通货，属于最高等的金钱。"
         str.split(whitespaceRegex).let {
-            assertEquals(2, it)
+            assertEquals(2, it.size)
             assertTrue(it[0].isEmpty())
             assertEquals("中年男子下意识的接住魂晶，这东西能够让卡片使更好的修炼魂力，可以说是硬通货，属于最高等的金钱。", it[1])
         }

@@ -4,8 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cc.aoeiuv020.base.jar.matches
-import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.reader.Image
 import cc.aoeiuv020.reader.R
 import org.jetbrains.anko.AnkoLogger
 
@@ -50,16 +49,16 @@ internal class PageRecyclerAdapter(
                 if (position == 0) {
                     holder.setChapterName(chapterName)
                 } else {
-                    holder.setNovelText(data[index])
+                    val line = reader.requester.requestParagraph(data[index])
+                    holder.setNovelText(line.toString())
                 }
             }
             is ImageViewHolder -> {
-                holder.setImage(data[index].pick(imagePattern).first())
+                val line = reader.requester.requestParagraph(data[index])
+                holder.setImage(line as Image)
             }
         }
     }
-
-    private val imagePattern = "^!\\[img\\]\\((.*)\\)$"
 
     /**
      * 数量多出一个展示章节名，
@@ -77,8 +76,8 @@ internal class PageRecyclerAdapter(
             // 章节名，
             return ItemType.TEXT.ordinal
         }
-        val line = data[index]
-        return if (line.matches(imagePattern)) {
+        val line = reader.requester.requestParagraph(data[index])
+        return if (line is Image) {
             // 是图片，
             ItemType.IMAGE
         } else {

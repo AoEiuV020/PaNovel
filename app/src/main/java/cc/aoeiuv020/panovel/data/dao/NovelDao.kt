@@ -1,9 +1,6 @@
 package cc.aoeiuv020.panovel.data.dao
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Delete
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.util.*
 
@@ -68,4 +65,7 @@ abstract class NovelDao {
 
     @Delete
     abstract fun delete(novel: Novel)
+
+    @Update
+    abstract fun update(novel: Novel)
 }

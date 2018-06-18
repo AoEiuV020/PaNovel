@@ -5,23 +5,16 @@ import android.content.Context
 import android.net.Uri
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
-import android.view.View
 import cc.aoeiuv020.panovel.App
-import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
-import cc.aoeiuv020.panovel.local.LocalNovelType
-import cc.aoeiuv020.panovel.local.TextParser
-import cc.aoeiuv020.panovel.local.TextProvider
+import cc.aoeiuv020.panovel.local.ImportRequireValue
 import cc.aoeiuv020.panovel.util.notNullOrReport
-import cc.aoeiuv020.panovel.util.safelyShow
-import kotlinx.android.synthetic.main.dialog_editor.view.*
 import okhttp3.Cookie
 import okhttp3.HttpUrl
-import org.jetbrains.anko.*
-import java.nio.charset.UnsupportedCharsetException
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 import java.util.*
-import java.util.concurrent.TimeUnit
 import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 
@@ -317,111 +310,23 @@ object DataManager : AnkoLogger {
 
     fun exportText(ctx: Context, novelManager: NovelManager) = local.exportText(ctx, novelManager)
 
-    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-    fun input(ctx: Context, title: Int, default: String): String? {
-        // TODO: 考虑试试kotlin的协程，
-        val thread = Thread.currentThread()
-        var result: String? = null
-        synchronized(thread) {
-            ctx.runOnUiThread {
-                ctx.alert {
-                    titleResource = title
-                    val layout = View.inflate(ctx, R.layout.dialog_editor, null)
-                    customView = layout
-                    val etName = layout.editText
-                    etName.setText(default)
-                    yesButton {
-                        result = etName.text.toString()
-                        thread.interrupt()
-                    }
-                }.safelyShow()
-            }
-            // 就等一分钟，
-            try {
-                TimeUnit.MINUTES.sleep(1)
-            } catch (_: InterruptedException) {
-            }
-        }
-        return result
-    }
-
     /**
-     * input要在里面close,
+     * @param requestInput 有的需要让用户输入决定，比如编码，作者名，小说名，还有文件类型，
      */
     @WorkerThread
-    fun importLocalNovel(ctx: Context, uri: Uri): Novel {
-        debug {
-            "importLocalNovel from: $uri"
+    fun importLocalNovel(ctx: Context, uri: Uri, requestInput: (ImportRequireValue, String) -> String?): Novel {
+        val (novel, chapterList) = ctx.contentResolver.openInputStream(uri).use { input ->
+            local.importLocalNovel(input, uri.toString(), requestInput)
         }
-        // 传入的ctx用于弹对话框让用户传入可能需要的小说格式，编码，作者名，小说名，
-        val previewer = ctx.contentResolver.openInputStream(uri).use { input ->
-            // uri基本都有带文件路径，可以传进去用于判断小说文件类型，没有的话，就没有吧，让用户选择，
-            local.preview(input, uri.toString())
+        app.queryOrNewNovel(NovelMinimal(novel)).let { exists ->
+            // 如果同bookId的小说已经存在，就覆盖全部字段，
+            // 只需要保留一个id,
+            novel.id = exists.id
+            app.updateAll(novel)
         }
-
-        fun interrupt(message: String): Nothing = throw IllegalStateException(message)
-
-        @Suppress("UNUSED_VARIABLE")
-        val defaultType = previewer.type() ?: LocalNovelType.TEXT
-        // TODO: 暂且只支持.txt,
-        val actualType = LocalNovelType.TEXT
-/*
-        val actualType = LocalNovelType.values().firstOrNull {
-            it.suffix == input(ctx, title = R.string.input_file_type, default = defaultType.suffix)
-        } ?: interrupt("没有文件类型，")
-*/
-        debug {
-            "importLocalNovel file type: ${actualType.suffix}"
-        }
-
-        val defaultCharset = previewer.charset() ?: "(null)"
-        val actualCharset = input(ctx, title = R.string.input_charset, default = defaultCharset)?.let {
-            try {
-                charset(it)
-            } catch (e: UnsupportedCharsetException) {
-                null
-            }
-        } ?: interrupt("没有文件编码，")
-        debug {
-            "importLocalNovel file charset: $actualCharset"
-        }
-
-        // 一次性得到可能能得到的作者名，小说名，简介，
-        val info = previewer.fileWrapper.use { file ->
-            TextParser(file, actualCharset).parse()
-        }
-        debug {
-            "importLocalNovel parse: <${info.name}-${info.author}${info.type.suffix}, ${info.introduction}, ${info.chapters?.size}>"
-        }
-        val suffix = info.type.suffix
-        val author = input(ctx, title = R.string.input_author, default = info.author ?: "(null)")
-                ?: interrupt("没有作者名，")
-        val name = input(ctx, title = R.string.input_name, default = info.name ?: "(null)")
-                ?: interrupt("没有小说名，")
-
-        // 最终导入的小说就永久保存在这里了，
-        val file = previewer.fileWrapper.use { file ->
-            local.saveNovel(file, suffix, author, name)
-        }
-        // previewer用完了，
-        previewer.clean()
-
-        val novel = app.queryOrNewNovel(NovelMinimal(
-                site = suffix,
-                author = author,
-                name = name,
-                detail = file.absoluteFile.canonicalPath
-        ))
-        novel.bookshelf = true
-        app.updateBookshelf(novel)
-        TextProvider(novel).update(info)
-        // 这里保存编码，如果是epub不需要编码也要随便给个值，毕竟是用这个判断是否需要请求小说详情，
-        novel.chapters = actualCharset.name()
-        app.updateDetail(novel)
-        app.updateChapters(novel)
-        // 导入时就解析了一遍，缓存起来，不能白解析了，
-        cache.saveChapters(novel, info.chapters.notNullOrReport())
-
+        // 导入时已经解析了一遍章节列表，缓存起来，不能白解析了，
+        // 统一转换成api模块的章节格式再存，
+        cache.saveChapters(novel, chapterList)
         debug {
             "importLocalNovel result: $novel"
         }

@@ -1,14 +1,4 @@
-apply plugin: 'java-library'
-apply plugin: 'kotlin'
-
 dependencies {
-    testImplementation "junit:junit:$junit_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "org.slf4j:slf4j-api:$slf4j_version"
-    testImplementation "org.slf4j:slf4j-simple:$slf4j_version"
     implementation "com.google.code.gson:gson:$gson_version"
     implementation project(':baseJar')
 }
-
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"

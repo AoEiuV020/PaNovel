@@ -58,9 +58,13 @@ open class NovelListAdapter(
         else -> R.layout.novel_item_big
     }
 
+    // 保存正在刷新的小说的id，避免重复刷新，以及view复用导致一直显示正在刷新中，
+    // 一个列表共用一个，多个列表多个，
+    private val refreshingNovelSet = mutableSetOf<Long>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NovelViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return NovelViewHolder(itemView, dotColor, dotSize, initItem, actualActionDoneListener, onError)
+        return NovelViewHolder(itemView, dotColor, dotSize, refreshingNovelSet, initItem, actualActionDoneListener, onError)
     }
 
     override fun getItemCount(): Int = data.size

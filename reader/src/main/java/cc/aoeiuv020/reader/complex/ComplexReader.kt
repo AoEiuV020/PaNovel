@@ -6,6 +6,7 @@ import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.reader.BaseNovelReader
 import cc.aoeiuv020.reader.ReaderConfig
 import cc.aoeiuv020.reader.TextRequester
+import cc.aoeiuv020.reader.toIMargins
 import org.jetbrains.anko.AnkoLogger
 
 /**
@@ -43,7 +44,7 @@ class ComplexReader(override var ctx: Context, novel: String, private val parent
         pageView.fullScreenClickNextPage = config.fullScreenClickNextPage
         pageView.bgColor = config.backgroundColor
         pageView.animMode = config.animationMode.toAnimMode()
-        pageView.margins = config.contentMargins
+        pageView.margins = config.contentMargins.toIMargins()
         pageView.drawer = drawer
         pageView.actionListener = object : Pager.ActionListener {
             override fun onCenterClick() {
