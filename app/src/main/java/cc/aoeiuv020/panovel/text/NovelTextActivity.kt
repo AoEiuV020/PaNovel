@@ -21,6 +21,7 @@ import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.view.*
 import android.widget.ImageView
+import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.IView
@@ -38,11 +39,13 @@ import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import kotlinx.android.synthetic.main.dialog_select_color_scheme.view.*
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
+import java.net.URL
 import java.util.concurrent.TimeUnit
 
 
@@ -172,7 +175,29 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     private val contentRequester: TextRequester = object : TextRequester {
-        override fun request(index: Int, refresh: Boolean): List<String> {
+        // MayBeConstant是个bug, 1.2.50修复，
+        // https://youtrack.jetbrains.com/issue/KT-23756
+        @Suppress("MayBeConstant")
+        private val imagePattern = "^!\\[img\\]\\((.*)\\)$"
+
+        override fun requestParagraph(string: String): Any {
+            return try {
+                // 是图片就返回阅读器识别的Image类对象，
+                Image(URL(string.pick(imagePattern).first()))
+            } catch (e: Exception) {
+                // 则否加上段首空格，
+                "　　$string"
+            }
+        }
+
+        override fun requestImage(image: Image, view: ImageView) {
+            Glide.with(ctx.applicationContext)
+                    .asDrawable()
+                    .load(image.url)
+                    .into(view)
+        }
+
+        override fun requestChapter(index: Int, refresh: Boolean): List<String> {
             return presenter.requestContent(chaptersAsc[index], refresh)
         }
     }

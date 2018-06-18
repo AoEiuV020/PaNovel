@@ -323,7 +323,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 pager?.refresh()
             }
         }, reader.ioExecutorService) {
-            val text = requester.request(requestIndex, refresh)
+            val text = requester.requestChapter(requestIndex, refresh)
             val pages = typesetting(reader.chapterList[requestIndex], text)
             pagesCache.put(requestIndex, pages)
             requestingList.remove(requestIndex)
@@ -345,7 +345,8 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         val textHeight = textPaint.textSize.toInt()
         (listOf(chapter) + list).forEachIndexed { index, str ->
-            val paragraph = if (index == 0) str else "　　" + str
+            // 不支持图片，得到段就直接转成String,
+            val paragraph = if (index == 0) str else requester.requestParagraph(str).toString()
             var start = 0
             var count: Int
             while (start < paragraph.length) {

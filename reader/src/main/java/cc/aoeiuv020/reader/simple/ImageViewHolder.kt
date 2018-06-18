@@ -3,8 +3,7 @@ package cc.aoeiuv020.reader.simple
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import cc.aoeiuv020.reader.Image
 import kotlinx.android.synthetic.main.simple_image_item.view.*
 import org.jetbrains.anko.dip
 
@@ -18,7 +17,7 @@ internal class ImageViewHolder(
     private val ctx: Context = itemView.context
     private val ivImage = itemView.ivImage
 
-    fun setImage(src: String) {
+    fun setImage(image: Image) {
         ivImage.apply {
             post {
                 layoutParams = (layoutParams as ViewGroup.MarginLayoutParams).apply {
@@ -30,10 +29,6 @@ internal class ImageViewHolder(
             }
 
         }
-        Glide.with(ctx)
-                .load(src)
-                .apply(RequestOptions().apply {
-                })
-                .into(ivImage)
+        prAdapter.reader.requester.requestImage(image, ivImage)
     }
 }

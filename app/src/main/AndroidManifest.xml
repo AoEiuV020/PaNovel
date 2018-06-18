@@ -23,6 +23,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <!--suppress DeprecatedClassUsageInspection -->
+        <meta-data
+            android:name="cc.aoeiuv020.panovel.util.JarGlideModule"
+            android:value="GlideModule" />
+
         <activity
             android:name=".detail.NovelDetailActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslateStatusBar" />
