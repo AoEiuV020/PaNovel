@@ -78,6 +78,9 @@ object Check : Pref, AnkoLogger {
         }) {
             val currentVersionName = VersionUtil.getAppVersionName(ctx)
             val newestVersionName = getNewestVersionName()
+            info {
+                "checkVersion $currentVersionName/$newestVersionName"
+            }
             val hasUpdate = VersionUtil.compare(newestVersionName, currentVersionName) > 0
                     && VersionUtil.compare(newestVersionName, knownVersionName) > 0
             val changeLog = when {
