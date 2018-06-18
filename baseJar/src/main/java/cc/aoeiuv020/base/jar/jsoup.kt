@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package cc.aoeiuv020.base.jar
 
 import okhttp3.Call
@@ -26,6 +28,23 @@ fun jsoupParse(call: Call): Document {
 }
 
 fun jsoupConnect(url: String): Document = jsoupParse(get(url))
+
+fun Element.findAll(predicate: (Element) -> Boolean): List<Element> {
+    val list = LinkedList<Element>()
+    NodeTraversor(object : NodeVisitor {
+        override fun tail(node: Node?, depth: Int) {
+        }
+
+        override fun head(node: Node?, depth: Int) {
+            if (node is Element && predicate(node)) {
+                list.add(node)
+            }
+        }
+
+    }).traverse(this)
+    // 转成RandomAccess的ArrayList,
+    return list.toList()
+}
 
 /**
  * 匹配空白符和空格符，

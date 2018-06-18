@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -52,13 +52,18 @@ abstract class ParserTest(clazz: KClass<out LocalNovelParser>) {
     }
 
     protected fun chapters(parser: LocalNovelParser,
-                           author: String?, name: String?, introduction: String?
+                           author: String? = null, name: String? = null,
+                           requester: String? = null,
+                           image: String? = null,
+                           introduction: String? = null
     ): List<LocalNovelChapter> {
         val info = parser.parse()
 
-        Assert.assertEquals(author, info.author)
-        Assert.assertEquals(name, info.name)
-        Assert.assertEquals(introduction, info.introduction)
+        assertEquals(author, info.author)
+        assertEquals(name, info.name)
+        assertEquals(image, info.image)
+        assertEquals(requester, info.requester)
+        assertEquals(introduction, info.introduction)
 
         return info.chapters
     }

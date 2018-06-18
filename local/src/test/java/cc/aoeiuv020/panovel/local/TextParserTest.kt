@@ -18,6 +18,8 @@ class TextParserTest : ParserTest(TextParser::class) {
                 parser,
                 author = "卜非",
                 name = "与千年女鬼同居的日子",
+                requester = charset,
+                image = null,
                 introduction = "为了赚点零花钱代人扫墓，结果一只女鬼跟着回了家，额滴个神呀，从此诡异的事情接二连三的发生在了自己身边。\n" +
                         "红衣夜女杀人案、枯井中的无脸之人、河中的人形怪物……\n" +
                         "更为奇怪的是，那些平时连想都不敢想的女神都主动凑了过来。\n" +
@@ -37,6 +39,8 @@ class TextParserTest : ParserTest(TextParser::class) {
                 parser,
                 author = "圣骑士的传说",
                 name = "修真聊天群",
+                requester = charset,
+                image = null,
                 introduction = "某天，宋书航意外加入了一个仙侠中二病资深患者的交流群，里面的群友们都以‘道友’相称，群名片都是各种府主、洞主、真人、天师。连群主走失的宠物犬都称为大妖犬离家出走。整天聊的是炼丹、闯秘境、炼功经验啥的。\n" +
                         "突然有一天，潜水良久的他突然发现……群里每一个群员，竟然全部是修真者，能移山倒海、长生千年的那种！\n" +
                         "啊啊啊啊，世界观在一夜间彻底崩碎啦！\n" +
@@ -78,6 +82,8 @@ class TextParserTest : ParserTest(TextParser::class) {
                 parser,
                 author = null,
                 name = null,
+                requester = charset,
+                image = null,
                 introduction = null
         )
         assertEquals(22, chapters.size)
@@ -114,6 +120,8 @@ class TextParserTest : ParserTest(TextParser::class) {
                 parser,
                 author = "卜非",
                 name = "与千年女鬼同居的日子",
+                requester = charset,
+                image = null,
                 introduction = "为了赚点零花钱代人扫墓，结果一只女鬼跟着回了家，额滴个神呀，从此诡异的事情接二连三的发生在了自己身边。\n" +
                         "红衣夜女杀人案、枯井中的无脸之人、河中的人形怪物……\n" +
                         "更为奇怪的是，那些平时连想都不敢想的女神都主动凑了过来。\n" +

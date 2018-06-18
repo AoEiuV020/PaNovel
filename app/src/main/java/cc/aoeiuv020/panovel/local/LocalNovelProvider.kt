@@ -31,11 +31,12 @@ class LocalNovelProvider(
         }
     }
 
-    override fun getNovelContent(extra: String): List<String> {
-        return parser.getNovelContent(extra)
+    override fun getNovelContent(chapter: NovelChapter): List<String> {
+        // epub章节内容开头可能是章节名，过滤掉不要，
+        return parser.getNovelContent(chapter.extra).dropWhile { it == chapter.name }
     }
 
-    override fun getContentUrl(extra: String): String {
+    override fun getContentUrl(chapter: NovelChapter): String {
         return getDetailUrl()
     }
 
