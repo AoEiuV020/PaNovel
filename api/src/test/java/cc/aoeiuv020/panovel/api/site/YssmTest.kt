@@ -33,6 +33,7 @@ class YssmTest : BaseNovelContextText(Yssm::class) {
                 "最终章", "294/294596/1514872", null,
                 11)
         // https://www.yssm.org/uctxt/57/57794/
+        // 开始的缓存最新章节列表可能不准，缺一章，
         chapters("57/57794",
                 "第1章 驱逐之人", "57/57794/278290", null,
                 "第3743章 另外的‘仙’缘", "57/57794/850773", null,

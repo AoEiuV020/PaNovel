@@ -67,22 +67,49 @@ fun Elements.textListSplitWhitespace(): List<String> = flatMap { it.textListSpli
 fun Element.textList(): List<String> {
     // 用LinkedList方便频繁添加，
     val list = LinkedList<String>()
+    val line = StringBuilder()
     NodeTraversor(object : NodeVisitor {
-        override fun tail(node: Node?, depth: Int) {
-        }
-
         override fun head(node: Node?, depth: Int) {
             if (node is TextNode) {
-                node.ownTextList().toCollection(list)
-            } else if (node is Element && node.isImage()) {
-                imgText(node)?.let { list.add(it) }
+                if (preserveWhitespace(node.parentNode())) {
+                    // 如果是需要保持空格的标签中的文本，按换行符拆成多行，
+                    node.ownTextList().toCollection(list)
+                } else {
+                    // 如果是普通的标签中的文本，缓存起来，不算一行，
+                    line.append(node.text())
+                }
+            } else if (node is Element) {
+                // 添加图片，按自己的格式，
+                if (node.isImage()) {
+                    imgText(node)?.let { list.add(it) }
+                }
+                // 如果需要换行，把存起来的line处理掉，
+                if (line.isNotBlank() && (node.isBr() || node.isBlock)) {
+                    list.add(line.toString().trim())
+                    line.delete(0, line.length)
+                }
             }
         }
 
+        override fun tail(node: Node?, depth: Int) {
+        }
     }).traverse(this)
+    if (line.isNotBlank()) {
+        list.add(line.toString().trim())
+        line.delete(0, line.length)
+    }
     // 转成RandomAccess的ArrayList,
     return list.toList()
 }
+
+private fun preserveWhitespace(node: Node?): Boolean {
+    // looks only at this element and one level up, to prevent recursion & needless stack searches
+    if (node != null && node is Element) {
+        return node.tag().preserveWhitespace() || node.parent() != null && node.parent().tag().preserveWhitespace()
+    }
+    return false
+}
+
 
 /**
  * 用所有空格或空白符分割元素里的文字，
@@ -93,17 +120,18 @@ fun Element.textListSplitWhitespace(): List<String> {
     // 用LinkedList方便频繁添加，
     val list = LinkedList<String>()
     NodeTraversor(object : NodeVisitor {
-        override fun tail(node: Node?, depth: Int) {
-        }
-
+        private val line = StringBuilder()
         override fun head(node: Node?, depth: Int) {
             if (node is TextNode) {
+                // 完全分割所有空白，不需要被分割的span之类也会被分割，
                 node.ownTextListSplitWhitespace().toCollection(list)
             } else if (node is Element && node.isImage()) {
                 imgText(node)?.let { list.add(it) }
             }
         }
 
+        override fun tail(node: Node?, depth: Int) {
+        }
     }).traverse(this)
     // 转成RandomAccess的ArrayList,
     return list.toList()
@@ -112,6 +140,9 @@ fun Element.textListSplitWhitespace(): List<String> {
 // svg中有image标签，
 fun Element.isImage() = tagName() == "img" || tagName() == "image"
 
+fun Element.isBr() = tagName() == "br"
+
+// 按markdown格式添加图片字符串，
 fun imgText(img: Element): String? {
     // 延迟加载可能把地址放在data-original,
     return (img.absDataOriginal().takeIf(String::isNotBlank)
