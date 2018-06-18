@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit
 class NovelViewHolder(itemView: View,
                       dotColor: Int,
                       dotSize: Float,
+                      private val refreshingNovelSet: MutableSet<Long>,
                       initItem: (NovelViewHolder) -> Unit = {},
                       actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
                       onError: (String, Throwable) -> Unit
@@ -243,10 +244,5 @@ class NovelViewHolder(itemView: View,
     fun addBookshelf() {
         star?.isChecked = true
         itemListener.onStarChanged(this, true)
-    }
-
-    companion object {
-        // 保存正在刷新的小说的id，避免重复刷新，以及view复用导致一直显示正在刷新中，
-        val refreshingNovelSet = mutableSetOf<Long>()
     }
 }
