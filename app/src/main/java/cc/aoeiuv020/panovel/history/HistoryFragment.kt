@@ -88,6 +88,7 @@ class HistoryFragment : Fragment(), IView {
     }
 
     fun showError(message: String, e: Throwable) {
+        srlRefresh.isRefreshing = false
         (activity as? MainActivity)?.showError(message, e)
     }
 }
