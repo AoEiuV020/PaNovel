@@ -87,6 +87,11 @@ class HistoryFragment : Fragment(), IView {
         novelListAdapter.hasUpdate(hasUpdateList)
     }
 
+    fun askUpdateError(message: String, e: Throwable) {
+        // 询问服务器更新出错不展示，
+        srlRefresh.isRefreshing = false
+    }
+
     fun showError(message: String, e: Throwable) {
         srlRefresh.isRefreshing = false
         (activity as? MainActivity)?.showError(message, e)

@@ -37,7 +37,7 @@ class BookshelfPresenter : Presenter<BookshelfFragment>() {
             Reporter.post(message, e)
             error(message, e)
             view?.activity?.runOnUiThread {
-                view?.showError(message, e)
+                view?.askUpdateError(message, e)
             }
         }) {
             val resultList = DataManager.askUpdate(novelList)

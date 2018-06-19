@@ -52,7 +52,7 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
-                view?.showError(message, e)
+                view?.askUpdateError(message, e)
             }
         }) {
             val resultList = DataManager.askUpdate(novelList)

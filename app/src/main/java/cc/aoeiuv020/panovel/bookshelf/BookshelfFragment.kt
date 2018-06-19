@@ -104,6 +104,11 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
         novelListAdapter.hasUpdate(hasUpdateList)
     }
 
+    fun askUpdateError(message: String, e: Throwable) {
+        // 询问服务器更新出错不展示，
+        srlRefresh.isRefreshing = false
+    }
+
     fun showError(message: String, e: Throwable) {
         // 按理说到这里已经不会是正在刷新的状态了，
         // 鬼知道发生了什么，反正这里就是npe了一次，导入旧版备份数据后回到书架时崩溃，

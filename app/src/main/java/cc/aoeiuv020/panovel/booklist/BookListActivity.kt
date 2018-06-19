@@ -176,6 +176,11 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
         novelListAdapter.hasUpdate(hasUpdateList)
     }
 
+    fun askUpdateError(message: String, e: Throwable) {
+        // 询问服务器更新出错不展示，
+        srlRefresh.isRefreshing = false
+    }
+
     fun selectToAdd(list: List<NovelManager>, nameArray: Array<String>, containsArray: BooleanArray) {
         AlertDialog.Builder(this)
                 .setTitle(R.string.contents)
