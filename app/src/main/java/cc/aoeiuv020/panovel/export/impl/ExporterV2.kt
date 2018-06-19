@@ -101,6 +101,7 @@ class ExporterV2 : DefaultExporter() {
                 "lastTextColor" -> editor.putInt(key, value.asInt)
                 "textSize" -> editor.putInt(key, value.asInt)
                 "dateFormat" -> editor.putString(key, value.asString)
+                "segmentIndentation" -> editor.putString(key, value.asString)
                 "enabled" -> editor.putBoolean(key, value.asBoolean)
                 "notifyNovelUpdate" -> editor.putBoolean(key, value.asBoolean)
                 "askUpdate" -> editor.putBoolean(key, value.asBoolean)
