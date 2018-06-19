@@ -217,6 +217,7 @@ object DataManager : AnkoLogger {
     fun getNovelManagerFromBookList(bookListId: Long): List<NovelManager> =
             getNovelFromBookList(bookListId).map { it.toManager() }
 
+    // 不包括本地小说，
     fun getNovelMinimalFromBookList(bookListId: Long): List<NovelMinimal> = app.getNovelMinimalFromBookList(bookListId)
     fun allBookList() = app.allBookList()
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)

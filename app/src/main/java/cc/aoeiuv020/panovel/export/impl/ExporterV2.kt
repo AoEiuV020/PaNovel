@@ -157,6 +157,7 @@ class ExporterV2 : DefaultExporter() {
             // 书单名允许重复，所以拼接上id，
             val fileName = "${bookList.id}|${bookList.name}"
             // 只取小说必须的几个参数，相关数据类不能被混淆，
+            // 不包括本地小说，
             val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
             folder.resolve(fileName).writeText(novelList.toJson())
             novelList.size

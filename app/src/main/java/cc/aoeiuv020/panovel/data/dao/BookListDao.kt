@@ -15,7 +15,8 @@ abstract class BookListDao {
     @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId")
     abstract fun queryNovel(bookListId: Long): List<Novel>
 
-    @Query("select Novel.site, Novel.author, Novel.name, Novel.detail  from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId")
+    // 小数点.开头的是本地小说，不要，
+    @Query("select Novel.site, Novel.author, Novel.name, Novel.detail  from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId and Novel.site not like '.%'")
     abstract fun queryNovelMinimal(bookListId: Long): List<NovelMinimal>
 
     @Query("update Novel set bookshelf = 0 where id in (select novelId from BookListItem where bookListId = :bookListId)")

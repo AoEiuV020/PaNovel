@@ -36,9 +36,7 @@ object Share {
     }
 
     fun shareBookList(bookList: BookList, shareExpiration: Expiration): String {
-        val novelList = DataManager.getNovelFromBookList(bookList.nId).map {
-            NovelMinimal(it)
-        }
+        val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
         val bookListBean = BookListBean(bookList.name, novelList, VERSION)
         return paste.upload(PasteUbuntu.PasteUbuntuData(bookListBean.toJson(App.gson), expiration = shareExpiration))
     }
