@@ -46,6 +46,22 @@ class BookListActivityPresenter(private val bookListId: Long) : Presenter<BookLi
         }
     }
 
+    fun askUpdate(novelList: List<NovelManager>) {
+        view?.doAsync({ e ->
+            val message = "询问服务器小说列表更新失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            val resultList = DataManager.askUpdate(novelList)
+            uiThread {
+                view?.showAskUpdateResult(resultList)
+            }
+        }
+    }
+
     fun add(novelManager: NovelManager) {
         view?.doAsync({ e ->
             val message = "添加小说到书单<$bookListId>失败，"
