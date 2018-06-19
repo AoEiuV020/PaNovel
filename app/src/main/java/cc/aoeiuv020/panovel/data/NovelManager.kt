@@ -50,19 +50,19 @@ class NovelManager(
     /**
      * 从缓存中读小说正文，没有就返回空，用于导入小说，
      */
-    fun getContent(chapter: NovelChapter): List<String>? =
-            cache.loadContent(novel, chapter)
+    fun getContent(extra: String): List<String>? =
+            cache.loadContent(novel, extra)
 
     fun requestContent(chapter: NovelChapter, refresh: Boolean): List<String> {
         // 指定刷新的话就不读缓存，
         if (!refresh) {
-            cache.loadContent(novel, chapter)?.also {
+            cache.loadContent(novel, chapter.extra)?.also {
                 return it
             }
         }
         return provider.getNovelContent(chapter).also {
             // 缓存起来，
-            cache.saveContent(novel, chapter, it)
+            cache.saveContent(novel, chapter.extra, it)
         }
     }
 

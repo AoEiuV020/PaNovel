@@ -52,11 +52,6 @@
     <string name="remove">删除</string>
     <string name="rename">重命名</string>
     <string name="share">分享</string>
-    <string name="export_exists_chapter_to_text_file">导出已有章节到.txt</string>
-    <string name="exporting_placeholder">导出中 已导出%d章 跳过%d章 剩余%d章</string>
-    <string name="export_complete_placeholder">导出完成 已导出%d章 跳过%d章</string>
-    <string name="export_complete_big_placeholder">已导出至：%s</string>
-    <string name="export_error_placeholder">导出失败 已导出%d章 跳过%d章 剩余%d章</string>
     <string name="typesetting">排版</string>
     <string name="margin_value_placeholder">%d%%</string>
     <string name="margin_name_placeholder">%s间距</string>
@@ -213,5 +208,8 @@
     <string name="select_item_text">.txt纯文本小说</string>
     <string name="select_item_epub">.epub格式电子书</string>
     <string name="segment_indentation">段首缩进</string>
+    <string name="exporting_title_placeholder">正在导出《%s》</string>
+    <string name="export_title_complete_placeholder">导出《%s》完成</string>
+    <string name="export_complete_big_placeholder">已导出至：%s</string>
 
 </resources>

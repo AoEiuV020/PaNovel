@@ -10,11 +10,9 @@ import java.net.URL
  */
 abstract class LocalNovelParser(
         protected val file: File
-) {
+) : ContentProvider {
 
     abstract fun parse(): LocalNovelInfo
-
-    abstract fun getNovelContent(extra: String): List<String>
 
     // 封面默认存完整url, 但是epub要存包内相对路径，否则针对临时文件解析的封面不可用，
     open fun getCoverImage(extra: String): URL = URL(extra)

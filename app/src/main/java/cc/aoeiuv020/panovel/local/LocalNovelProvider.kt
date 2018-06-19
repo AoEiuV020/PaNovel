@@ -34,6 +34,7 @@ class LocalNovelProvider(
 
     override fun getNovelContent(chapter: NovelChapter): List<String> {
         // epub章节内容开头可能是章节名，过滤掉不要，
+        // 按理说是内容比章节名更适合保留着，但是不方便统一处理，
         return parser.getNovelContent(chapter.extra).dropWhile { it == chapter.name }
     }
 

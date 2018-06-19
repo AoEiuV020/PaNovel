@@ -34,12 +34,12 @@ class CacheManager(ctx: Context) {
         return getChaptersDB(novel).read(novel.nChapters)
     }
 
-    fun saveContent(novel: Novel, chapter: NovelChapter, text: List<String>) {
-        getContentDB(novel).write(chapter.extra, text)
+    fun saveContent(novel: Novel, extra: String, text: List<String>) {
+        getContentDB(novel).write(extra, text)
     }
 
-    fun loadContent(novel: Novel, chapter: NovelChapter): List<String>? {
-        return getContentDB(novel).read(chapter.extra)
+    fun loadContent(novel: Novel, extra: String): List<String>? {
+        return getContentDB(novel).read(extra)
     }
 
 

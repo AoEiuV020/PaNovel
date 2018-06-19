@@ -1,14 +1,16 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
-import android.support.annotation.UiThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.local.ImportRequireValue
+import cc.aoeiuv020.panovel.local.LocalNovelProvider
+import cc.aoeiuv020.panovel.local.LocalNovelType
+import cc.aoeiuv020.panovel.local.Previewer
 import cc.aoeiuv020.panovel.util.noCover
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import org.jetbrains.anko.AnkoLogger
@@ -142,11 +144,6 @@ class LocalManager(ctx: Context) : AnkoLogger {
             to
         }
     }
-
-    // TODO: 统一导入导出的形式，
-    @UiThread
-    fun exportText(ctx: Context, novelManager: NovelManager) =
-            TextExporter.export(ctx, novelManager)
 
     fun getNovelProvider(novel: Novel): NovelProvider {
         return LocalNovelProvider(novel)

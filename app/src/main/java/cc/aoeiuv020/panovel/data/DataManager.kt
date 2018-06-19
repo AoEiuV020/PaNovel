@@ -310,8 +310,6 @@ object DataManager : AnkoLogger {
      */
     fun hasUpdateNovelList(): List<Novel> = app.hasUpdateNovelList()
 
-    fun exportText(ctx: Context, novelManager: NovelManager) = local.exportText(ctx, novelManager)
-
     /**
      * @param requestInput 有的需要让用户输入决定，比如编码，作者名，小说名，还有文件类型，
      */
