@@ -85,10 +85,10 @@ class NovelManager(
         // 确保存在详情页信息，
         requireDetail()
         val list = provider.requestNovelChapters()
-        if (novel.readAtChapterName.isBlank()) {
+        if (novel.readAtChapterName == Novel.VALUE_NULL) {
             // 如果数据库中没有阅读进度章节，说明没阅读过，直接存第一章名字，
             // 也可能是导入的进度，所以不能直接写0, 要用readAtChapterIndex，
-            novel.readAtChapterName = list.getOrNull(novel.readAtChapterIndex)?.name ?: ""
+            novel.readAtChapterName = list.getOrNull(novel.readAtChapterIndex)?.name ?: Novel.VALUE_NULL
         }
         // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
         app.updateChapters(novel)
