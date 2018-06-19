@@ -179,6 +179,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         // https://youtrack.jetbrains.com/issue/KT-23756
         @Suppress("MayBeConstant")
         private val imagePattern = "^!\\[img\\]\\((.*)\\)$"
+        private val intent = ReaderSettings.segmentIndentation
 
         override fun requestParagraph(string: String): Any {
             return try {
@@ -186,7 +187,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 Image(URL(string.pick(imagePattern).first()))
             } catch (e: Exception) {
                 // 则否加上段首空格，
-                "　　$string"
+                "$intent$string"
             }
         }
 

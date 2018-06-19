@@ -16,6 +16,10 @@ object ReaderSettings : Pref {
         get() = "Reader"
 
     /**
+     * 段首缩进，
+     */
+    val segmentIndentation: String by Delegates.string("　　")
+    /**
      * 自动保存阅读进度的间隔，单位秒，
      */
     var autoSaveReadStatus: Int by Delegates.int(60)
