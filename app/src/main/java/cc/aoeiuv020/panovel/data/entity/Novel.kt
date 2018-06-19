@@ -159,6 +159,8 @@ data class Novel(
      */
     val bookId: String get() = "$name.$author.${site.removePrefix(".")}"
 
+    val isLocalNovel: Boolean get() = site.startsWith(".")
+
     fun readAt(index: Int, chapters: List<NovelChapter>) {
         readAtChapterIndex = index
         if (index in chapters.indices) {

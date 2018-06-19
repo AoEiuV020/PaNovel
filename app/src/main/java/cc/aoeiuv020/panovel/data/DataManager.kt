@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
 import cc.aoeiuv020.panovel.local.ImportRequireValue
+import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -332,4 +333,36 @@ object DataManager : AnkoLogger {
         }
         return novel
     }
+
+    /**
+     * 返回有更新的小说的id,
+     */
+    fun askUpdate(list: List<NovelManager>): List<Long> {
+        debug { "askUpdate ${list.map { it.novel.bookId }}" }
+        // 用无视服务器端返回的顺序，方便改成只返回部分数据，
+        // 连接不上服务器时返回emptyMap，
+        val resultMap: Map<Long, QueryResponse> = server.askUpdate(list.mapNotNull {
+            // 本地小说不询问更新，
+            if (it.novel.isLocalNovel) null else it.novel
+        })
+        return list.mapNotNull {
+            val novel = it.novel
+            // 不在返回map里的无视，如果连接不上服务器就全都无视，
+            val result = resultMap[novel.nId] ?: return@mapNotNull null
+            if (result.chaptersCount > novel.chaptersCount) {
+                // 只对比章节数，如果更大就是有更新，返回，最后通知刷新列表，开始刷新小说，
+                debug { "${novel.bookId} has update ${result.chaptersCount} > ${novel.chaptersCount}" }
+                novel.nId
+            } else {
+                debug { "${novel.bookId} no update ${result.chaptersCount} <= ${novel.chaptersCount}" }
+                // 如果没更新，就保存服务器上的更新时间，如果更大的话，
+                novel.apply {
+                    // 不更新receiveUpdateTime，不准，有时别人比较晚收到同一个更新然后推上去被拿到，
+                    checkUpdateTime = maxOf(checkUpdateTime, result.checkUpdateTime)
+                }
+                null
+            }
+        }
+    }
+
 }

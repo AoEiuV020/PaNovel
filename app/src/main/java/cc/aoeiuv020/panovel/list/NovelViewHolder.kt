@@ -13,7 +13,6 @@ import cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
-import cc.aoeiuv020.panovel.settings.ServerSettings
 import cc.aoeiuv020.panovel.text.CheckableImageView
 import cc.aoeiuv020.panovel.util.noCover
 import com.bumptech.glide.Glide
@@ -30,6 +29,7 @@ class NovelViewHolder(itemView: View,
                       dotColor: Int,
                       dotSize: Float,
                       private val refreshingNovelSet: MutableSet<Long>,
+                      private val shouldRefreshSet: MutableSet<Long>,
                       initItem: (NovelViewHolder) -> Unit = {},
                       actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
                       onError: (String, Throwable) -> Unit
@@ -136,16 +136,13 @@ class NovelViewHolder(itemView: View,
         show(novelManager)
 
         when {
+        // 比如询问服务器告知该小说有更新，就在这里刷新，
+            shouldRefreshSet.remove(novel.nId) -> refresh()
             refreshingNovelSet.contains(novel.nId) -> refreshing()
         // 手动刷新后需要联网更新，
             refreshTime > novel.checkUpdateTime -> refresh()
-            else -> if (ServerSettings.askUpdate) {
-                // 询问服务器是否有更新，
-                askUpdate()
-            } else {
-                // 不能什么都不做，要调用refreshingDot?.refreshed明确隐藏进度条，
-                refreshed(novelManager)
-            }
+        // 不能什么都不做，要调用refreshingDot?.refreshed明确隐藏进度条，
+            else -> refreshed(novelManager)
         }
     }
 
@@ -203,17 +200,6 @@ class NovelViewHolder(itemView: View,
         refreshing()
         refreshingNovelSet.add(novel.nId)
         itemListener.refreshChapters(this)
-    }
-
-    /**
-     * 询问服务器是否有更新，
-     */
-    @UiThread
-    private fun askUpdate() {
-        debug { "askUpdate ${name?.text}" }
-        refreshing()
-        refreshingNovelSet.add(novel.nId)
-        itemListener.askUpdate(this)
     }
 
     /**

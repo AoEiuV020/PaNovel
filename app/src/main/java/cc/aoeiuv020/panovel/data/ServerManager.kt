@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.server.UpdateManager
 import cc.aoeiuv020.panovel.server.common.md5
+import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.jpush.ExampleUtil
 import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
 import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
@@ -105,6 +106,7 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
         TagAliasOperatorHelper.getInstance().handleAction(App.ctx, sequence.getAndIncrement(), bean)
     }
 
-    fun askUpdate(novel: Novel): ServerNovel? = UpdateManager.query(novel.toServer())
     fun touchUpdate(novel: Novel) = UpdateManager.touch(novel.toServer())
+    fun askUpdate(list: List<Novel>): Map<Long, QueryResponse> =
+            UpdateManager.queryList(list.map { it.nId to it.toServer() }.toMap())
 }

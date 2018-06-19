@@ -140,40 +140,6 @@ class DefaultNovelItemActionListener(
         }
     }
 
-    override fun askUpdate(vh: NovelViewHolder) {
-        // 缓存一下，以免异步过程vh被复用了，可能导致小红点不停转圈，
-        val novelManager = vh.novelManager
-        doAsync({ e ->
-            val message = "询问服务器是否有更新小说《${novelManager.novel.name}》失败，"
-            Reporter.post(message, e)
-            error(message, e)
-            vh.ctx.runOnUiThread {
-                // 失败也停止显示正在刷新，
-                vh.refreshed(novelManager)
-                onError(message, e)
-            }
-        }, ioExecutorService) {
-            if (novelManager.askUpdate()) {
-                try {
-                    // 如果有更新，就刷新章节列表，
-                    novelManager.requestChapters(true)
-                } catch (e: Exception) {
-                    // 刷新小说章节列表失败不要抛上去报询问服务器的错，
-                    val message = "刷新小说《${novelManager.novel.name}》失败，"
-                    Reporter.post(message, e)
-                    error(message, e)
-                    uiThread {
-                        onError(message, e)
-                    }
-                }
-            }
-            // 刷新是否失败都要调用refreshed,
-            uiThread {
-                vh.refreshed(novelManager)
-            }
-        }
-    }
-
     private fun pinned(vh: NovelViewHolder) {
         doAsync({ e ->
             val message = "置顶小说《${vh.novel.name}》失败，"

@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.common.toJson
 import cc.aoeiuv020.panovel.server.dal.model.MobRequest
 import cc.aoeiuv020.panovel.server.dal.model.MobResponse
+import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import okhttp3.MediaType
@@ -69,9 +70,9 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
         return post(serverAddress.needRefreshNovelListUrl, count)
     }
 
-    override fun queryList(novelList: List<Novel>): List<Novel> {
-        logger.debug { "queryList $novelList" }
-        return post(serverAddress.queryListUrl, novelList)
+    override fun queryList(novelMap: Map<Long, Novel>): Map<Long, QueryResponse> {
+        logger.debug { "queryList ${novelMap.map { "${it.key}=<${it.value.run { "$site.$author.$name" }}>" }}" }
+        return post(serverAddress.queryListUrl, novelMap)
     }
 
     override fun touch(novel: Novel): Boolean {

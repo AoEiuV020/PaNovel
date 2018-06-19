@@ -62,9 +62,21 @@ open class NovelListAdapter(
     // 一个列表共用一个，多个列表多个，
     private val refreshingNovelSet = mutableSetOf<Long>()
 
+    // 用于服务器告知有更新时暂存，展示时再刷新，
+    private val shouldRefreshSet = mutableSetOf<Long>()
+
+    fun hasUpdate(hasUpdateList: List<Long>) {
+        hasUpdateList.forEach {
+            shouldRefreshSet.add(it)
+        }
+        // 刷新列表，开始刷新展示中的viewHolder对应的小说，
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NovelViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return NovelViewHolder(itemView, dotColor, dotSize, refreshingNovelSet, initItem, actualActionDoneListener, onError)
+        return NovelViewHolder(itemView, dotColor, dotSize, refreshingNovelSet, shouldRefreshSet
+                , initItem, actualActionDoneListener, onError)
     }
 
     override fun getItemCount(): Int = data.size

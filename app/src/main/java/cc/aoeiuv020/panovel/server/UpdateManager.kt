@@ -12,6 +12,8 @@ import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.server.common.bookId
+import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
@@ -85,20 +87,12 @@ object UpdateManager : AnkoLogger {
         }
     }
 
-    fun query(novel: Novel): Novel? {
-        debug { "query ：<${novel.run { "$site.$author.$name" }}>" }
-        return try {
-            val service = getService() ?: return null
-            service.queryList(listOf(novel)).first().also {
-                debug { "查询小说<${novel.run { "$site.$author.$name" }}>更新返回: $it" }
-            }
-        } catch (e: Exception) {
-            val message = "查询小说<${novel.run { "$site.$author.$name" }}>失败，"
-            error(message, e)
-            Reporter.post(message, e)
-            null
+    fun queryList(novelMap: Map<Long, Novel>): Map<Long, QueryResponse> {
+        debug { "queryList ：${novelMap.map { "${it.key}=${it.value.bookId}" }}" }
+        val service = getService() ?: return emptyMap()
+        return service.queryList(novelMap).also {
+            debug { "查询小说更新返回: $it" }
         }
-
     }
 
     fun touch(novel: Novel) {

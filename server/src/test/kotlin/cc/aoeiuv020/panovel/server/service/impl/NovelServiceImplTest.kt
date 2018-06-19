@@ -15,6 +15,7 @@ class NovelServiceImplTest {
     init {
         System.setProperty("org.slf4j.simpleLogger.log.NovelServiceImpl", "trace")
     }
+
     private lateinit var service: NovelServiceImpl
     @Before
     fun setUp() {
@@ -51,8 +52,14 @@ class NovelServiceImplTest {
             chaptersCount = 12
             receiveUpdateTime = Date()
         }
-        val novelList = listOf(novel)
-        val result = service.queryList(novelList).first()
+        val novelMap = mapOf(8L to novel)
+        val resultMap = service.queryList(novelMap)
+        val result = novelMap.mapNotNull { (id, novel) ->
+            val response = resultMap[id] ?: return@mapNotNull null
+            println(response)
+            novel.checkUpdateTime = response.checkUpdateTime
+            novel
+        }.first()
         requireNotNull(result)
         assertEquals(novel.site, result.site)
         assertEquals(novel.author, result.author)

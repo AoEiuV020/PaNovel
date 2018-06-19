@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.server.service
 
+import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 
 /**
@@ -9,7 +10,7 @@ import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 interface NovelService {
     fun uploadUpdate(novel: Novel): Boolean
     fun needRefreshNovelList(count: Int): List<Novel>
-    fun queryList(novelList: List<Novel>): List<Novel>
+    fun queryList(novelMap: Map<Long, Novel>): Map<Long, QueryResponse>
     fun touch(novel: Novel): Boolean
     fun minVersion(): String
 }
