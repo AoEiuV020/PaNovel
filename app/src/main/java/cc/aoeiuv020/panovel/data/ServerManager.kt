@@ -23,8 +23,6 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
     private val sequence: AtomicInteger = AtomicInteger()
 
     init {
-        // 初始化这个负责上传更新的，
-        UpdateManager.create(ctx)
         // 初始化，其中有用到Handler，要在主线程初始化，
         TagAliasOperatorHelper.getInstance()
     }

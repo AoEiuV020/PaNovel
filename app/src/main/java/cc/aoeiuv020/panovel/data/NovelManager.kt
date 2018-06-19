@@ -4,8 +4,11 @@ import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
+import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.error
 import java.net.URL
 import java.util.*
 
@@ -116,7 +119,14 @@ class NovelManager(
         // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
         app.updateChapters(novel)
         cache.saveChapters(novel, list)
-        server?.touchUpdate(novel)
+        // 这里异步，不影响刷新结果返回的时间，
+        doAsync({ e ->
+            val message = "上传<${novel.bookId}>刷新结果失败,"
+            Reporter.post(message, e)
+            error(message, e)
+        }) {
+            server?.touchUpdate(novel)
+        }
         return list
     }
 

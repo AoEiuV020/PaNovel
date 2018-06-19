@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 interface NovelService {
     fun uploadUpdate(novel: Novel): Boolean
     fun needRefreshNovelList(count: Int): List<Novel>
-    fun query(novel: Novel): Novel
+    fun queryList(novelList: List<Novel>): List<Novel>
     fun touch(novel: Novel): Boolean
+    fun minVersion(): String
 }

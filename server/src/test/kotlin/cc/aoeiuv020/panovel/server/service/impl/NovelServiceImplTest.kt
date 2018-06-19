@@ -24,10 +24,10 @@ class NovelServiceImplTest {
     @Test
     fun uploadUpdate() {
         val novel = Novel().apply {
-            site = "Site"
-            author = "Author"
-            name = "Name"
-            detail = "Detail"
+            site = "起点中文"
+            author = "圣骑士的传说"
+            name = "修真聊天群"
+            detail = "3602691"
             chaptersCount = 12
             receiveUpdateTime = Date()
         }
@@ -44,14 +44,15 @@ class NovelServiceImplTest {
     @Test
     fun queryTest() {
         val novel = Novel().apply {
-            site = "Site"
-            author = "Author"
-            name = "Name"
-            detail = "Detail"
+            site = "起点中文"
+            author = "圣骑士的传说"
+            name = "修真聊天群"
+            detail = "3602691"
             chaptersCount = 12
             receiveUpdateTime = Date()
         }
-        val result = service.query(novel)
+        val novelList = listOf(novel)
+        val result = service.queryList(novelList).first()
         requireNotNull(result)
         assertEquals(novel.site, result.site)
         assertEquals(novel.author, result.author)
@@ -76,7 +77,7 @@ class NovelServiceImplTest {
 
     @Test
     fun needRefreshNovelList() {
-        service.needRefreshNovelList(0).forEach { novel ->
+        service.needRefreshNovelList(10).forEach { novel ->
             println("<${novel.run { "$site.$author.$name" }}>")
         }
     }

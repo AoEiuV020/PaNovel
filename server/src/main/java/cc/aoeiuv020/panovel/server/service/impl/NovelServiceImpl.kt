@@ -69,13 +69,17 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
         return post(serverAddress.needRefreshNovelListUrl, count)
     }
 
-    override fun query(novel: Novel): Novel {
-        logger.debug { "query $novel" }
-        return post(serverAddress.queryUrl, novel)
+    override fun queryList(novelList: List<Novel>): List<Novel> {
+        logger.debug { "queryList $novelList" }
+        return post(serverAddress.queryListUrl, novelList)
     }
 
     override fun touch(novel: Novel): Boolean {
         logger.debug { "touch $novel" }
         return post(serverAddress.touchUrl, novel)
+    }
+
+    override fun minVersion(): String {
+        return post(serverAddress.minVersionUrl, Any())
     }
 }
