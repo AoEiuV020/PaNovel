@@ -61,6 +61,8 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
         }
 
         presenter.attach(this)
+        // MainActivity有在切回书架时刷新书架，所以这里不需要把refresh放在onStart里，以免重复刷新，
+        refresh()
     }
 
     override fun onDestroyView() {
@@ -71,7 +73,6 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
 
     override fun onStart() {
         super.onStart()
-        refresh()
     }
 
     fun refresh() {

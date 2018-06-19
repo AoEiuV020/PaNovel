@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
+import org.jetbrains.anko.AnkoLogger
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -18,7 +19,7 @@ open class NovelListAdapter(
         private val initItem: (NovelViewHolder) -> Unit = {},
         actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
         private val onError: (String, Throwable) -> Unit
-) : RecyclerView.Adapter<NovelViewHolder>() {
+) : RecyclerView.Adapter<NovelViewHolder>(), AnkoLogger {
     private val actualActionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { action, vh ->
         when (action) {
         // CleanData固定删除元素，无视传入的listener,
