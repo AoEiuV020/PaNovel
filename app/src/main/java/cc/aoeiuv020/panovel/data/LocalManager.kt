@@ -15,6 +15,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.io.File
 import java.io.InputStream
+import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 
@@ -95,17 +96,21 @@ class LocalManager(ctx: Context) : AnkoLogger {
         }
         val suffix = actualType.suffix
         val defaultName = try {
-            // 提取uri最后一节，一般是就是文件名，当成默认的作者名和小说名，
-            uri.pick("/([^/]+)$").first()
+            // Uri先解码，因为可能系统文件管理器给的uri中文件路径是经过encode的，
+            // 有问题也无所谓，只是个默认值，
+            URLDecoder.decode(uri, Charsets.UTF_8.name())
+                    // 提取uri最后一节，一般是就是文件名，当成默认的作者名和小说名，
+                    .pick("/([^/]+)$").first()
         } catch (e: Exception) {
             "null"
         }
-        val author = requestInput(ImportRequireValue.AUTHOR, info.author
-                ?: defaultName)
-                ?: interrupt("没有作者名，")
         val name = requestInput(ImportRequireValue.NAME, info.name
                 ?: defaultName)
                 ?: interrupt("没有小说名，")
+        val author = requestInput(ImportRequireValue.AUTHOR, info.author
+        // 没有作者名就用小说名顶一下，当成默认值给用户改，
+                ?: name)
+                ?: interrupt("没有作者名，")
 
         // 最终导入的小说就永久保存在这里了，
         val file = saveNovel(previewer.file, suffix, author, name)
