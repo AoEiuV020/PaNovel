@@ -108,6 +108,12 @@ class EpubExporter(
             root.title(name)
             val div = root.body().appendElement("div")
                     .text("")
+            // 如果第一行不是章节名，就添加一行章节名，
+            // 正常正文应该是不包括章节名的，也就是会调用这个的，
+            if (content.firstOrNull() != name) {
+                div.appendElement("h2")
+                        .text(name)
+            }
             content.forEach { line ->
                 try {
                     val extra = line.pick(imagePattern).first()
