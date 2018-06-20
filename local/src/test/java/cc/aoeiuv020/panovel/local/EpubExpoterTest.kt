@@ -1,10 +1,11 @@
 package cc.aoeiuv020.panovel.local
 
-import org.jsoup.nodes.Document
+import cc.aoeiuv020.base.jar.textList
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
-import java.net.URL
 import java.nio.charset.Charset
 
 /**
@@ -43,14 +44,14 @@ class EpubExporterTest : ParserTest(EpubParser::class) {
                 author = null,
                 name = "Re：从零开始的异世界生活-第十一卷-迷糊动漫",
                 requester = charset,
-                image = "OEBPS/Images/Cover.jpg",
+                image = "OEBPS/Cover.jpg",
                 introduction = null
         )
         assertEquals(12, chapters.size)
         chapters.first().let {
             assertEquals("封面", it.name)
             val content = parser.getNovelContent(it.extra)
-            assertEquals("![img](jar:${file.toURI()}!/OEBPS/Images/Cover.jpg)", content.first())
+            assertEquals("![img](jar:${tmpFile.toURI()}!/OEBPS/image0.jpg)", content.first())
             assertEquals(content.first(), content.last())
             assertEquals(1, content.size)
         }
@@ -65,20 +66,18 @@ class EpubExporterTest : ParserTest(EpubParser::class) {
             assertEquals("第十一卷 后记", it.name)
             val content = parser.getNovelContent(it.extra)
             assertEquals("后记", content.first())
-            assertEquals("![img](jar:${file.toURI()}!/OEBPS/Images/97172.jpg)", content.last())
+            assertEquals("![img](jar:${tmpFile.toURI()}!/OEBPS/image20.jpg)", content.last())
             assertEquals(24, content.size)
         }
     }
 
     @Test
     fun jsoup() {
-        val file = getFile("/home/aoeiuv/tmp/panovel/epub/yidm/Re：从零开始的异世界生活_第十一卷.epub") ?: return
-        val rootUrl = URL("jar:${file.toURI()}!/")
-        val url = URL(rootUrl, "a/s")
-        val root = Document.createShell(url.toString())
-        val div = root.body().appendElement("div")
-        div.appendElement("p")
-                .text("TEXT")
-        println(root.outerHtml())
+        val img = Element("img").attr("src", "a.jpg")
+        // jsoup生成的img标签没有封闭，
+        assertEquals("""<img src="a.jpg">""", img.outerHtml())
+        Jsoup.parse(img.outerHtml(), "http://a.s").textList().forEach {
+            println(it)
+        }
     }
 }

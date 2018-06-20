@@ -51,10 +51,12 @@ class TextExporter(
                 contentProvider.getNovelContent(chapter.extra).forEach {
                     try {
                         // 是图片要判断一下是否是网络图片，是就保存，否则过滤，
+                        // TODO: 考虑改成从ContentProvider拿图片URL,
                         if (URL(it.pick(imagePattern).first()).isHttp()) {
                             // 也要缩进，否则会被当成一章，
                             output.appendln("$intent$it")
                         } else {
+                            // 是图片但不是网络图片就直接跳过，
                         }
                     } catch (e: Exception) {
                         // 不是图片就直接保存，

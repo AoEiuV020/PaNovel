@@ -1,26 +1,26 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.divide
-import cc.aoeiuv020.base.jar.error
-import cc.aoeiuv020.base.jar.lastDivide
+import cc.aoeiuv020.base.jar.*
 import nl.siegmann.epublib.domain.Author
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.Resource
-import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubWriter
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.net.URL
 
 /**
+ * TODO: 其他阅读器无法识别，
+ *
  * Created by AoEiuV020 on 2018.06.19-22:53:24.
  */
 class EpubExporter(
         private val file: File
 ) : LocalNovelExporter {
+    private val imagePattern = "^!\\[img\\]\\((.*)\\)$"
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
     override fun export(info: LocalNovelInfo, contentProvider: ContentProvider, progressCallback: (Int, Int) -> Unit) {
         val book = Book()
@@ -50,7 +50,7 @@ class EpubExporter(
                 addTitle(it)
                 logger.debug { "添加标题<$it>" }
             }
-            info.introduction?.also { intro ->
+            info.introduction?.let { intro ->
                 try {
                     intro.split('\n').map(String::trim).filter(String::isNotEmpty)
                             .takeIf(List<*>::isNotEmpty)
@@ -58,13 +58,14 @@ class EpubExporter(
                                 // 没考虑简介有图片的情况，
                                 div.appendElement("p")
                                         .text("$indent$it")
-                            }?.also { div ->
-                                addDescription(div.outerHtml())
                             }
                 } catch (e: Exception) {
                     // 按理说不会有失败，
                     logger.error(e) { "导出简介失败，" }
+                    null
                 }
+            }?.also { div ->
+                addDescription(div.outerHtml())
             }
         }
         info.image?.let {
@@ -78,12 +79,12 @@ class EpubExporter(
                     try {
                         url.toString().lastDivide('/').second
                     } catch (_: Exception) {
-                        // 失败填充无意义后辍的名字，
-                        "cover.img"
+                        // 失败填充默认jpg一般没问题，
+                        "cover.jpg"
                     }
                 }
                 val resource = url.openStream().use { input ->
-                    Resource(input, "$IMAGE_PATH/$fileName")
+                    Resource(input, fileName)
                 }
                 logger.debug {
                     "添加封面<$url, ${resource.href}>"
@@ -95,38 +96,59 @@ class EpubExporter(
             }
         }
 
-        book.tableOfContents.apply {
-            chapters.forEachIndexed { index, chapter ->
-                val name = chapter.name
-                val content = contentProvider.getNovelContent(chapter.extra)
-                val fileName = "chapter_$index.html"
-                val root = Document.createShell(("file://$OPS_PATH/$TEXT_PATH/$fileName"))
-                val div = root.body().appendElement("div")
-                content.forEach { line ->
+        var imageIndex = 0
+        chapters.forEachIndexed { index, chapter ->
+            val name = chapter.name
+            val content = contentProvider.getNovelContent(chapter.extra)
+            val fileName = "chapter$index.html"
+            val root = Document.createShell(("file://$OPS_PATH/$fileName"))
+            val div = root.body().appendElement("div")
+                    .text("")
+            content.forEach { line ->
+                try {
+                    val extra = line.pick(imagePattern).first()
+                    // TODO: 考虑改成从ContentProvider拿图片URL,
+                    val url = URL(extra)
+                    val resource = url.openStream().use { input ->
+                        val suffix = try {
+                            // 从url中拿文件后辍，
+                            url.toString().lastDivide('.').second
+                        } catch (e: Exception) {
+                            // 失败填充默认jpg一般没问题，
+                            "jpg"
+                        }
+                        Resource(input, "image${imageIndex++}.$suffix")
+                    }
+                    book.addResource(resource)
+                    div.appendElement("p")
+                            .appendElement("img")
+                            .attr("src", resource.href)
+                            // jsoup没有内容的标签不封闭，以防万一加上text就封闭了，
+                            .text("")
+                } catch (e: Exception) {
+                    // 不是图片就直接保存p标签，
                     div.appendElement("p")
                             .text("$indent$line")
                 }
-                val bytes = ("""
-                <?xml version="1.0" encoding="utf-8" standalone="no"?>
-                <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-                "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-                """.trimIndent() + '\n' + root.outerHtml()).toByteArray(Charsets.UTF_8)
-                val resource = Resource(bytes, "$TEXT_PATH/$fileName")
-                book.addResource(resource)
-                val toc = TOCReference(name, resource)
-                addTOCReference(toc)
             }
+            val bytes = (root.outerHtml()).toByteArray(Charsets.UTF_8)
+            val resource = Resource(bytes, fileName)
+            book.addSection(name, resource)
+            if (index == 0) {
+                book.guide.coverPage = resource
+            }
+            progressCallback(index, total)
         }
 
         // EpubWriter不带缓冲，加个缓冲，不确定有多大效果，
         file.outputStream().buffered().use { output ->
             EpubWriter().write(book, output)
         }
+
+        progressCallback(total, total)
     }
 
     companion object {
-        const val IMAGE_PATH = "Images"
-        const val TEXT_PATH = "Text"
         const val OPS_PATH = "OEBPS"
     }
 }
