@@ -105,6 +105,7 @@ class EpubExporter(
             val name = chapter.name
             val fileName = "chapter$index.html"
             val root = Document.createShell(("file://$OPS_PATH/$fileName"))
+            root.title(name)
             val div = root.body().appendElement("div")
                     .text("")
             content.forEach { line ->
