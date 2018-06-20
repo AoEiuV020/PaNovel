@@ -158,7 +158,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
         urlBar.setOnClickListener {
             // urlTextView只显示完整地址，以便点击打开，
-            browse(urlTextView.text.toString())
+            // 只支持打开网络地址，本地小说不支持调用其他app打开，
+            urlTextView.text?.takeIf { it.startsWith("http") }
+                    ?.also { browse(it.toString()) }
+                    ?: showError("本地小说不支持外部打开，")
         }
         if (ReaderSettings.autoSaveReadStatus > 0) {
             // 启动自动保存阅读进度循环，
@@ -451,9 +454,13 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
     }
 
-    fun showError(message: String, e: Throwable) {
+    fun showError(message: String, e: Throwable? = null) {
         progressDialog.dismiss()
-        alertError(alertDialog, message, e)
+        if (e == null) {
+            alert(alertDialog, message)
+        } else {
+            alertError(alertDialog, message, e)
+        }
         show()
     }
 

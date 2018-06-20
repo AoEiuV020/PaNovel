@@ -68,7 +68,10 @@ class NovelDetailPresenter(
     fun browse() {
         try {
             val url = novelManager.getDetailUrl()
-            view?.browse(url)
+            // 只支持打开网络地址，本地小说不支持调用其他app打开，
+            url.takeIf { it.startsWith("http") }
+                    ?.also { view?.browse(it) }
+                    ?: view?.showError("本地小说不支持外部打开，")
         } catch (e: Exception) {
             val message = "获取小说《${novel.name}》<${novel.site}, ${novel.detail}>详情页地址失败，"
             // 按理说每个网站的extra都是设计好的，可以得到完整地址的，
