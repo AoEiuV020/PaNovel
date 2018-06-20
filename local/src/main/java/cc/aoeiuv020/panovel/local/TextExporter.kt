@@ -43,7 +43,7 @@ class TextExporter(
 
             chapters.forEachIndexed { index, chapter ->
                 progressCallback(index, total)
-                val content = contentProvider.getNovelContent(chapter.extra)
+                val content = contentProvider.getNovelContent(chapter)
                 // 空章节不导出，
                 if (content.isEmpty()) return@forEachIndexed
 

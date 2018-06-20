@@ -117,24 +117,17 @@ class EpubParser(
         return LocalNovelInfo(author, name, image, introduction, chapters, requester)
     }
 
-    // 章节内容开头可能是章节名，不过滤了，完整读取epub中的章节内容，改成展示前对比过滤一下，
-    override fun getNovelContent(extra: String): List<String> {
-        val chapter = URL(rootUrl, extra)
-        return chapter.openStream().use { input ->
+    override fun getNovelContent(chapter: LocalNovelChapter): List<String> {
+        val extra = chapter.extra
+        val chapterUrl = URL(rootUrl, extra)
+        logger.debug { "getContent: $chapterUrl" }
+        return chapterUrl.openStream().use { input ->
             // 本章地址作为baseUri, 才能正确得到引用的资源，比如图片，
             // ![img](jar:file:/home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub!/OPS/images/17-007.jpg)
-            Jsoup.parse(input, charset.name(), chapter.toString())
+            Jsoup.parse(input, charset.name(), chapterUrl.toString())
         }.body().textList()
-        // 爱下电子书网站的广告，不想过滤，epub就应该完整保留，
-/*
-                .dropLastWhile {
-                    it == "书迷楼最快更新，无弹窗阅读请收藏书迷楼(.com)。"
-                            || it.all { it == '=' }
-                            || it.startsWith("手机访问:https?://")
-                            || it.startsWith("关注更新请访问:https?://")
-                            || it == "『还在连载中...』"
-                }
-*/
+                // 章节内容开头可能是章节名，过滤掉，正文不包括章节名，
+                .dropWhile { it == chapter.name }
     }
 
     override fun getCoverImage(extra: String): URL {

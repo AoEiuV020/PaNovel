@@ -99,11 +99,12 @@ class EpubExporter(
         var imageIndex = 0
         chapters.forEachIndexed { index, chapter ->
             progressCallback(index, total)
-            val content = contentProvider.getNovelContent(chapter.extra)
+            val content = contentProvider.getNovelContent(chapter)
             // 空章节不导出，
             if (content.isEmpty()) return@forEachIndexed
             val name = chapter.name
             val fileName = "chapter$index.html"
+            // jsoup处理太费时？
             val root = Document.createShell(("file://$OPS_PATH/$fileName"))
             root.title(name)
             val div = root.body().appendElement("div")

@@ -50,21 +50,21 @@ class EpubExporterTest : ParserTest(EpubParser::class) {
         assertEquals(12, chapters.size)
         chapters.first().let {
             assertEquals("封面", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("![img](jar:${tmpFile.toURI()}!/OEBPS/image0.jpg)", content.first())
-            assertEquals(content.first(), content.last())
+            assertEquals( content.first(), content.last())
             assertEquals(1, content.size)
         }
         chapters[1].let {
             assertEquals("书名", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("Re：从零开始的异世界生活", content.first())
             assertEquals("插画: 大塚真一郎", content.last())
             assertEquals(4, content.size)
         }
         chapters.last().let {
             assertEquals("第十一卷 后记", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("后记", content.first())
             assertEquals("![img](jar:${tmpFile.toURI()}!/OEBPS/image20.jpg)", content.last())
             assertEquals(24, content.size)
@@ -77,7 +77,7 @@ class EpubExporterTest : ParserTest(EpubParser::class) {
         // jsoup生成的img标签没有封闭，
         assertEquals("""<img src="a.jpg">""", img.outerHtml())
         Jsoup.parse(img.outerHtml(), "http://a.s").textList().forEach {
-            println(it)
+            assertEquals("![img](http://a.s/a.jpg)", it)
         }
     }
 }

@@ -73,7 +73,7 @@ class NovelExporter(
             // System services not available to Activities before onCreate()
             val manager by lazy { NotificationManagerCompat.from(ctx) }
             var isDone = false
-            NovelExporter(LocalNovelType.TEXT, file) { current, total ->
+            NovelExporter(type, file) { current, total ->
                 if (current == total) {
                     // 以防万一，多一个isDone判断避免结束会调顺序出问题时不能通知结束，
                     isDone = true
@@ -118,10 +118,10 @@ class NovelExporter(
         }
         val contentProvider = object : ContentProvider {
             val container = DataManager.novelContentsCached(novel)
-            override fun getNovelContent(extra: String): List<String> {
-                return if (container.contains(extra)) {
+            override fun getNovelContent(chapter: LocalNovelChapter): List<String> {
+                return if (container.contains(chapter.extra)) {
                     // 判断过章节存在了，这个必须非空，除非导出过程删除了缓存，
-                    novelManager.getContent(extra).notNullOrReport()
+                    novelManager.getContent(chapter.extra).notNullOrReport()
                 } else {
                     listOf()
                 }

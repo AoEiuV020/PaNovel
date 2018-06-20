@@ -32,21 +32,21 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         assertEquals(12, chapters.size)
         chapters.first().let {
             assertEquals("封面", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("![img](jar:${file.toURI()}!/OEBPS/Images/Cover.jpg)", content.first())
             assertEquals(content.first(), content.last())
             assertEquals(1, content.size)
         }
         chapters[1].let {
             assertEquals("书名", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("Re：从零开始的异世界生活", content.first())
             assertEquals("插画: 大塚真一郎", content.last())
             assertEquals(4, content.size)
         }
         chapters.last().let {
             assertEquals("第十一卷 后记", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("后记", content.first())
             assertEquals("![img](jar:${file.toURI()}!/OEBPS/Images/97172.jpg)", content.last())
             assertEquals(24, content.size)
@@ -76,24 +76,24 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         assertEquals(13, chapters.size)
         chapters.first().let {
             assertEquals("封面", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("![img](jar:${file.toURI()}!/cover1.jpeg)", content.first())
             assertEquals(content.first(), content.last())
             assertEquals(1, content.size)
         }
         chapters[1].let {
             assertEquals("制作信息", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("![img](jar:${file.toURI()}!/OPS/images/17-007.jpg)", content.first())
             assertEquals("------------------------------------------------------------------------", content.last())
             assertEquals(11, content.size)
         }
         chapters.last().let {
             assertEquals("作者，后记 ——AND YOU——", it.name)
-            val content = parser.getNovelContent(it.extra)
-            assertEquals(it.name, content.first())
+            val content = parser.getNovelContent(it)
+            assertEquals("真的是，让各位久等了。我有这个自觉。", content.first())
             assertEquals("那就再会啦！", content.last())
-            assertEquals(18, content.size)
+            assertEquals(17, content.size)
         }
     }
 
@@ -116,24 +116,24 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         assertEquals(1653, chapters.size)
         chapters.first().let {
             assertEquals("书籍信息", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("大圣传", content.first())
             assertEquals("『手机请访问:m.ixdzs.com』", content.last())
             assertEquals(8, content.size)
         }
         chapters[1].let {
             assertEquals("第一章 青牛开口", it.name)
-            val content = parser.getNovelContent(it.extra)
-            assertEquals(it.name, content.first())
+            val content = parser.getNovelContent(it)
+            assertEquals("? 漆黑的天幕下，连绵的山峦，如趴伏的巨兽，静静的等待破晓。", content.first())
             assertEquals("书迷楼最快更新，无弹窗阅读请收藏书迷楼(.com)。", content.last())
-            assertEquals(133, content.size)
+            assertEquals(132, content.size)
         }
         chapters.last().let {
             assertEquals("第十四章 愿望", it.name)
-            val content = parser.getNovelContent(it.extra)
-            assertEquals(it.name, content.first())
+            val content = parser.getNovelContent(it)
+            assertEquals("“你到底是谁？！”", content.first())
             assertEquals("========================================", content.last())
-            assertEquals(70, content.size)
+            assertEquals(69, content.size)
         }
     }
 
