@@ -98,8 +98,11 @@ class EpubExporter(
 
         var imageIndex = 0
         chapters.forEachIndexed { index, chapter ->
-            val name = chapter.name
+            progressCallback(index, total)
             val content = contentProvider.getNovelContent(chapter.extra)
+            // 空章节不导出，
+            if (content.isEmpty()) return@forEachIndexed
+            val name = chapter.name
             val fileName = "chapter$index.html"
             val root = Document.createShell(("file://$OPS_PATH/$fileName"))
             val div = root.body().appendElement("div")
@@ -137,7 +140,6 @@ class EpubExporter(
             if (index == 0) {
                 book.guide.coverPage = resource
             }
-            progressCallback(index, total)
         }
 
         // EpubWriter不带缓冲，加个缓冲，不确定有多大效果，

@@ -42,13 +42,18 @@ class TextExporter(
             }
 
             chapters.forEachIndexed { index, chapter ->
+                progressCallback(index, total)
+                val content = contentProvider.getNovelContent(chapter.extra)
+                // 空章节不导出，
+                if (content.isEmpty()) return@forEachIndexed
+
                 // 章节之间空两行，
                 // 第一章前也空了两行，和小说信息分开，
                 output.appendln()
                 output.appendln()
                 output.appendln(chapter.name)
 
-                contentProvider.getNovelContent(chapter.extra).forEach {
+                content.forEach {
                     try {
                         // 是图片要判断一下是否是网络图片，是就保存，否则过滤，
                         // TODO: 考虑改成从ContentProvider拿图片URL,
@@ -64,7 +69,6 @@ class TextExporter(
                     }
                 }
 
-                progressCallback(index, total)
             }
             // 导出结束，必要的，index比size小1,
             progressCallback(total, total)
