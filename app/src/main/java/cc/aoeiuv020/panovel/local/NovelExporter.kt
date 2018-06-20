@@ -15,6 +15,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.runOnUiThread
 import java.io.File
+import java.net.URL
 
 /**
  * Created by AoEiuV020 on 2018.05.28-18:53:01.
@@ -30,10 +31,11 @@ class NovelExporter(
 
         fun export(ctx: Context, type: LocalNovelType, novelManager: NovelManager) {
             val novel = novelManager.novel
+            // 本地小说的site就是后缀，不要重复了，
             val fileName = if (novel.site.startsWith(".")) {
-                novel.run { "$name.$author.txt" }
+                novel.run { "$name.$author${type.suffix}" }
             } else {
-                novel.run { "$name.$author.$site.txt" }
+                novel.run { "$name.$author.$site${type.suffix}" }
             }
             // 尝试导出到sd卡，没有就导出到私有目录，虽然这样的导出好像没什么意义，
             val filesDir = ctx.getExternalFilesDir(null)
@@ -105,15 +107,14 @@ class NovelExporter(
                 name = novel.name,
                 image = novel.image,
                 introduction = novel.introduction,
-                chapters = novelManager.requestChapters(false).map { LocalNovelChapter(name = it.name, extra = it.extra) },
+                chapters = novelManager.requestChapters(false).map {
+                    LocalNovelChapter(name = it.name, extra = it.extra)
+                },
                 requester = novel.chapters
         )
         val exporter = when (type) {
             LocalNovelType.TEXT -> TextExporter(file)
-            LocalNovelType.EPUB -> TODO()
-        }
-        val chapters = novelManager.requestChapters(false).map {
-            LocalNovelChapter(name = it.name, extra = it.extra)
+            LocalNovelType.EPUB -> EpubExporter(file)
         }
         val contentProvider = object : ContentProvider {
             val container = DataManager.novelContentsCached(novel)
@@ -125,7 +126,11 @@ class NovelExporter(
                     listOf()
                 }
             }
+
+            override fun getCoverImage(extra: String): URL {
+                return novelManager.getCoverImage()
+            }
         }
-        exporter.export(info, chapters, contentProvider, progressCallback)
+        exporter.export(info, contentProvider, progressCallback)
     }
 }

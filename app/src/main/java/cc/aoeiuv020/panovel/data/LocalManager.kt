@@ -63,7 +63,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
         // defaultType要作为单选框的默认值，必须是存在的type,
         val defaultType = previewer.guessType() ?: LocalNovelType.TEXT
         val actualTypeSuffix = requestInput(ImportRequireValue.TYPE, defaultType.suffix)
-                ?: interrupt("没有文件类型，")
+                ?: interrupt("没有选择文件类型，")
         val actualType = LocalNovelType.values().firstOrNull {
             it.suffix == actualTypeSuffix
         } ?: interrupt("不支持的文件类型，")

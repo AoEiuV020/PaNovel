@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.list
 
+import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
@@ -11,6 +12,7 @@ import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ItemAction.*
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.text.NovelTextActivity
+import cc.aoeiuv020.panovel.util.uiSelect
 import org.jetbrains.anko.*
 
 /**
@@ -202,7 +204,20 @@ class DefaultNovelItemActionListener(
                 onError(message, e)
             }
         }, ioExecutorService) {
-            NovelExporter.export(vh.ctx, LocalNovelType.TEXT, vh.novelManager)
+            val ctx = vh.ctx
+            val types = LocalNovelType.values()
+            val items = types.map {
+                when (it) {
+                    LocalNovelType.TEXT -> R.string.select_item_text
+                    LocalNovelType.EPUB -> R.string.select_item_epub
+                }.let { ctx.getString(it) }
+            }.toTypedArray()
+            val defaultIndex = 1
+            val type = ctx.uiSelect(ctx.getString(R.string.file_type), items, defaultIndex)?.let { selectIndex ->
+                types[selectIndex]
+            } ?: interrupt("没有选择文件类型，")
+
+            NovelExporter.export(vh.ctx, type, vh.novelManager)
         }
     }
 

@@ -11,9 +11,10 @@ class TextExporter(
         private val file: File
 ) : LocalNovelExporter {
     private val imagePattern = "^!\\[img\\]\\((.*)\\)$"
-    override fun export(info: LocalNovelInfo, chapters: List<LocalNovelChapter>, contentProvider: ContentProvider, progressCallback: (Int, Int) -> Unit) {
+    override fun export(info: LocalNovelInfo, contentProvider: ContentProvider, progressCallback: (Int, Int) -> Unit) {
         file.outputStream().bufferedWriter().use { output ->
 
+            val chapters = info.chapters
             val total = chapters.size
             // 段首缩进不能没有，否则影响导入，
             // contentProvider提供的正文行都不带缩进，
