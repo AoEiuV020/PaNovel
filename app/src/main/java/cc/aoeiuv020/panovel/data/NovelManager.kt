@@ -158,8 +158,8 @@ class NovelManager(
         app.clean(novel)
     }
 
-    fun getCoverImage(): URL {
-        return provider.getCoverImage(novel.image)
+    fun getImage(extra: String): URL {
+        return provider.getImage(extra)
     }
 
 }

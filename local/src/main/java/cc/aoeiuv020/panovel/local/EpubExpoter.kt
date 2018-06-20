@@ -10,7 +10,6 @@ import org.jsoup.nodes.Element
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.net.URL
 
 /**
  * TODO: 其他阅读器无法识别，
@@ -70,7 +69,7 @@ class EpubExporter(
         }
         info.image?.let {
             try {
-                val url = contentProvider.getCoverImage(it)
+                val url = contentProvider.getImage(it)
                 // info.image或者url中一般有图片文件名，
                 // 但不可控，万一就出现重名的呢，
                 val fileName = try {
@@ -104,7 +103,6 @@ class EpubExporter(
             if (content.isEmpty()) return@forEachIndexed
             val name = chapter.name
             val fileName = "chapter$index.html"
-            // jsoup处理太费时？
             val root = Document.createShell(("file://$OPS_PATH/$fileName"))
             root.title(name)
             val div = root.body().appendElement("div")
@@ -118,9 +116,9 @@ class EpubExporter(
             content.forEach { line ->
                 try {
                     val extra = line.pick(imagePattern).first()
-                    // TODO: 考虑改成从ContentProvider拿图片URL,
-                    val url = URL(extra)
-                    val resource = url.openStream().use { input ->
+                    val url = contentProvider.getImage(extra)
+                    // 如果打开图片输入流返回空，直接抛异常到下面的catch打印普通文本，
+                    val resource = contentProvider.openImage(url).notNull().use { input ->
                         val suffix = try {
                             // 从url中拿文件后辍，
                             url.toString().lastDivide('.').second

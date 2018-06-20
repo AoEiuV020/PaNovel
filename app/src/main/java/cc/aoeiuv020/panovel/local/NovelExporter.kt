@@ -5,16 +5,21 @@ import android.content.Context
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.util.getBitmapFromVectorDrawable
 import cc.aoeiuv020.panovel.util.notNullOrReport
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.runOnUiThread
 import java.io.File
+import java.io.InputStream
 import java.net.URL
 
 /**
@@ -25,9 +30,12 @@ class NovelExporter(
         private val file: File,
         private val progressCallback: (Int, Int) -> Unit
 ) : AnkoLogger {
-    companion object {
+    companion object : AnkoLogger {
         private const val TEXT_FOLDER = "Text"
         private const val EPUB_FOLDER = "Epub"
+
+        override val loggerTag: String
+            get() = "NovelExporter"
 
         fun export(ctx: Context, type: LocalNovelType, novelManager: NovelManager) {
             val novel = novelManager.novel
@@ -74,6 +82,7 @@ class NovelExporter(
             val manager by lazy { NotificationManagerCompat.from(ctx) }
             var isDone = false
             NovelExporter(type, file) { current, total ->
+                debug { "exporting $current/$total" }
                 if (current == total) {
                     // 以防万一，多一个isDone判断避免结束会调顺序出问题时不能通知结束，
                     isDone = true
@@ -127,8 +136,25 @@ class NovelExporter(
                 }
             }
 
-            override fun getCoverImage(extra: String): URL {
-                return novelManager.getCoverImage()
+            override fun getImage(extra: String): URL {
+                return novelManager.getImage(extra)
+            }
+
+            private fun URL.isHttp() = protocol.startsWith("http")
+
+            override fun openImage(url: URL): InputStream? {
+                return if (url.isHttp()) {
+                    Glide.with(App.ctx)
+                            .asFile()
+                            .load(url.toString())
+                            .apply(RequestOptions().onlyRetrieveFromCache(true))
+                            .submit()
+                            .get()
+                            .inputStream()
+                } else {
+                    url.openStream()
+                }
+
             }
         }
         exporter.export(info, contentProvider, progressCallback)

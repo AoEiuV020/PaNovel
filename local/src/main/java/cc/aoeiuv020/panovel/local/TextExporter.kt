@@ -27,9 +27,10 @@ class TextExporter(
             output.appendln("作者：${info.author}")
             try {
                 // 只保留网络连接协议的封面，这样的封面换个设备还能用，
-                URL(info.image).takeIf { it.isHttp() }?.let {
-                    output.appendln("封面：$it")
-                }
+                info.image?.let { contentProvider.getImage(it) }
+                        ?.takeIf { it.isHttp() }?.let {
+                            output.appendln("封面：$it")
+                        }
             } catch (_: Exception) {
                 // 无视任何错误，大不了不添加封面，
             }
@@ -56,12 +57,12 @@ class TextExporter(
                 content.forEach {
                     try {
                         // 是图片要判断一下是否是网络图片，是就保存，否则过滤，
-                        // TODO: 考虑改成从ContentProvider拿图片URL,
-                        if (URL(it.pick(imagePattern).first()).isHttp()) {
+                        if (contentProvider.getImage(it.pick(imagePattern).first()).isHttp()) {
                             // 也要缩进，否则会被当成一章，
                             output.appendln("$intent$it")
                         } else {
-                            // 是图片但不是网络图片就直接跳过，
+                            // 是图片但不是网络图片就留个单词image表示这里有张图片，
+                            output.appendln("$intent[image]")
                         }
                     } catch (e: Exception) {
                         // 不是图片就直接保存，

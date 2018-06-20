@@ -130,7 +130,7 @@ class EpubParser(
                 .dropWhile { it == chapter.name }
     }
 
-    override fun getCoverImage(extra: String): URL {
+    override fun getImage(extra: String): URL {
         return URL(rootUrl, extra)
     }
 

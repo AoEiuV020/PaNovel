@@ -46,8 +46,8 @@ class LocalNovelProvider(
         return file.toURI().toString()
     }
 
-    override fun getCoverImage(extra: String): URL {
-        return parser.getCoverImage(extra)
+    override fun getImage(extra: String): URL {
+        return parser.getImage(extra)
     }
 
     override fun updateNovelDetail() {
