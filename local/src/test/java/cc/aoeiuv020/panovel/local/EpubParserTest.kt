@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
+import cc.aoeiuv020.base.jar.absSrc
 import cc.aoeiuv020.base.jar.absXlinkHref
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.textList
@@ -16,6 +17,93 @@ import java.nio.charset.Charset
  */
 class EpubParserTest : ParserTest(EpubParser::class) {
     @Test
+    fun toc() {
+        val file = getFile("/home/aoeiuv/tmp/panovel/epub/[和ヶ原聡司].打工吧！魔王大人16.epub") ?: return
+        val charset = "UTF-8"
+        val parser = EpubParser(file, Charset.forName(charset))
+        val chapters = chapters(
+                parser,
+                author = "和ヶ原聡司",
+                name = "[和ヶ原聡司].打工吧！魔王大人16",
+                requester = charset,
+                image = "cover.jpeg",
+                introduction = "为了搜索「大魔王撒旦的遗产」，把一切生活用品从三坪大的魔王城搬到异世界安特．伊苏拉。 " +
+                        "比起通勤时间，一边对独自一人留在VillaoRosa笹冢201号室过夜的独居生活感到寂寞，一边参加着正式员工登录职训的魔王。 " +
+                        "其间，从一起参加职训的蓬松发型女性那里收到了不带有任何含意的友情巧克力。比起艾契丝的食欲，这个消息反而在女性阵容里掀起一堆波涛。 " +
+                        "另一方面，在安特．伊苏拉，为了得到大魔王的遗产的其中一项「亚多拉梅基努斯魔枪」，铃乃、莱拉、艾伯特、卢马克出发前往北大陆。" +
+                        "在跟日本成吉思汗相似的店里，被称作「围栏长」的北大陆代表正在等着…?平民派奇幻故事第16集"
+        )
+        // 原版的epublib解析这本缺了三章，
+        // 改进支持相对路径"OPS/../text/chapter1.html",
+        assertEquals(11, chapters.size)
+    }
+
+    @Test
+    fun exported() {
+        val file = getFile("/home/aoeiuv/tmp/panovel/epub/[和ヶ原聡司].打工吧！魔王大人16.epub") ?: return
+        println(file.toURI())
+        val charset = "UTF-8"
+        val parser = EpubParser(file, Charset.forName(charset))
+        val chapters = chapters(
+                parser,
+                author = "和ヶ原聡司",
+                name = "[和ヶ原聡司].打工吧！魔王大人16",
+                requester = charset,
+                image = "cover.jpeg",
+                introduction = "为了搜索「大魔王撒旦的遗产」，把一切生活用品从三坪大的魔王城搬到异世界安特．" +
+                        "伊苏拉。 比起通勤时间，一边对独自一人留在VillaoRosa笹冢201号室过夜的独居生活感到寂寞，" +
+                        "一边参加着正式员工登录职训的魔王。 其间，从一起参加职训的蓬松发型女性那里收到了不带有任何含意的友情巧克力。" +
+                        "比起艾契丝的食欲，这个消息反而在女性阵容里掀起一堆波涛。 另一方面，在安特．伊苏拉，为了得到大魔王的遗产的其中一项" +
+                        "「亚多拉梅基努斯魔枪」，铃乃、莱拉、艾伯特、卢马克出发前往北大陆。在跟日本成吉思汗相似的店里，" +
+                        "被称作「围栏长」的北大陆代表正在等着…?平民派奇幻故事第16集"
+        )
+        parser.getNovelContent(chapters.first()).forEach {
+            assertEquals("![img](jar:${file.toURI()}!/cover.jpeg)", it)
+        }
+        parser.getImage("cover.jpeg")
+                .openStream()
+                .read()
+                .let { assertEquals(0xff, it) }
+    }
+
+    @Test
+    fun yidm() {
+        val file = getFile("/home/aoeiuv/tmp/panovel/epub/yidm/Re：从零开始的异世界生活_第十一卷.epub") ?: return
+        val charset = "UTF-8"
+        val parser = EpubParser(file, Charset.forName(charset))
+        val chapters = chapters(
+                parser,
+                author = null,
+                name = "Re：从零开始的异世界生活-第十一卷-迷糊动漫",
+                requester = charset,
+                image = "OEBPS/Images/Cover.jpg",
+                introduction = null
+        )
+        assertEquals(12, chapters.size)
+        chapters.first().let {
+            assertEquals("封面", it.name)
+            val content = parser.getNovelContent(it)
+            assertEquals("![img](jar:${file.toURI()}!/OEBPS/Images/Cover.jpg)", content.first())
+            assertEquals(content.first(), content.last())
+            assertEquals(1, content.size)
+        }
+        chapters[1].let {
+            assertEquals("书名", it.name)
+            val content = parser.getNovelContent(it)
+            assertEquals("Re：从零开始的异世界生活", content.first())
+            assertEquals("插画: 大塚真一郎", content.last())
+            assertEquals(4, content.size)
+        }
+        chapters.last().let {
+            assertEquals("第十一卷 后记", it.name)
+            val content = parser.getNovelContent(it)
+            assertEquals("后记", content.first())
+            assertEquals("![img](jar:${file.toURI()}!/OEBPS/Images/97172.jpg)", content.last())
+            assertEquals(24, content.size)
+        }
+    }
+
+    @Test
     fun lightNovel() {
         val file = getFile("/home/aoeiuv/tmp/panovel/epub/打工吧！魔王大人17.epub") ?: return
         val charset = "UTF-8"
@@ -25,7 +113,7 @@ class EpubParserTest : ParserTest(EpubParser::class) {
                 author = "和ヶ原 聡司",
                 name = "[和ヶ原聡司].打工吧！魔王大人17",
                 requester = charset,
-                image = "jar:${file.toURI()}!/cover1.jpeg",
+                image = "cover1.jpeg",
                 introduction = "魔王大人，在正式职员录用考试中落选！\n" +
                         "之后由于木崎的调动命令，职员们乱成一团！！\n" +
                         "众望所归的广播剧也预定在2017年6月7日发售！！！\n" +
@@ -38,24 +126,24 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         assertEquals(13, chapters.size)
         chapters.first().let {
             assertEquals("封面", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("![img](jar:${file.toURI()}!/cover1.jpeg)", content.first())
             assertEquals(content.first(), content.last())
             assertEquals(1, content.size)
         }
         chapters[1].let {
             assertEquals("制作信息", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("![img](jar:${file.toURI()}!/OPS/images/17-007.jpg)", content.first())
             assertEquals("------------------------------------------------------------------------", content.last())
             assertEquals(11, content.size)
         }
         chapters.last().let {
             assertEquals("作者，后记 ——AND YOU——", it.name)
-            val content = parser.getNovelContent(it.extra)
-            assertEquals(it.name, content.first())
+            val content = parser.getNovelContent(it)
+            assertEquals("真的是，让各位久等了。我有这个自觉。", content.first())
             assertEquals("那就再会啦！", content.last())
-            assertEquals(18, content.size)
+            assertEquals(17, content.size)
         }
     }
 
@@ -70,7 +158,7 @@ class EpubParserTest : ParserTest(EpubParser::class) {
                 author = "说梦者",
                 name = "大圣传",
                 requester = charset,
-                image = "jar:${file.toURI()}!/cover.jpg",
+                image = "cover.jpg",
                 introduction = "大圣传\n" +
                         "妖魔中的至高无上者，名为“大圣”。"
         )
@@ -78,24 +166,24 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         assertEquals(1653, chapters.size)
         chapters.first().let {
             assertEquals("书籍信息", it.name)
-            val content = parser.getNovelContent(it.extra)
+            val content = parser.getNovelContent(it)
             assertEquals("大圣传", content.first())
             assertEquals("『手机请访问:m.ixdzs.com』", content.last())
-            assertEquals(9, content.size)
+            assertEquals(8, content.size)
         }
         chapters[1].let {
             assertEquals("第一章 青牛开口", it.name)
-            val content = parser.getNovelContent(it.extra)
-            assertEquals(it.name, content.first())
+            val content = parser.getNovelContent(it)
+            assertEquals("? 漆黑的天幕下，连绵的山峦，如趴伏的巨兽，静静的等待破晓。", content.first())
             assertEquals("书迷楼最快更新，无弹窗阅读请收藏书迷楼(.com)。", content.last())
-            assertEquals(133, content.size)
+            assertEquals(132, content.size)
         }
         chapters.last().let {
             assertEquals("第十四章 愿望", it.name)
-            val content = parser.getNovelContent(it.extra)
-            assertEquals(it.name, content.first())
+            val content = parser.getNovelContent(it)
+            assertEquals("“你到底是谁？！”", content.first())
             assertEquals("========================================", content.last())
-            assertEquals(70, content.size)
+            assertEquals(69, content.size)
         }
     }
 
@@ -127,6 +215,7 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         assertEquals(coverUrl, URL(url, "/cover1.jpeg"))
         assertNull(coverUrl.authority)
         assertEquals("", coverUrl.host)
+        // path带文件路径真不爽，总觉得有矛盾，转到根目录还要包括path,
         assertEquals("file:$file!/cover1.jpeg", coverUrl.path)
         assertEquals(coverUrl.path, coverUrl.file)
         // 如果文件不存在，openString会抛FileNotFoundException，
@@ -135,19 +224,43 @@ class EpubParserTest : ParserTest(EpubParser::class) {
             assertEquals(0xff, input.read())
         }
 
-        val html = """
+        val image = Jsoup.parse("""
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="100%" height="100%" viewBox="0 0 546 751" preserveAspectRatio="none">
                 <image width="100%" height="100%" xlink:href="cover1.jpeg"/>
             </svg>
-            """
-        val image = Jsoup.parse(html, "jar:${file.toURI()}!/a/s/d")
+            """, "jar:${file.toURI()}!/a/s/d")
                 .select("image").first()
         // Jsoup可以正确处理jar协议地址，
         assertEquals("jar:${file.toURI()}!/a/s/cover1.jpeg", image.absXlinkHref())
 
+        val imageParent = Jsoup.parse("""
+                <img src="../Image/Cover.jpg"/>
+            """, "jar:${file.toURI()}!/a/s/d")
+                .select("img").first()
+        // Jsoup不能正确处理上级目录的决定路径，
+        assertEquals("jar:/${file.toURI()}!/a/Image/Cover.jpg", imageParent.attr("abs:src"))
+        // 自己实现封装URL处理，
+        assertEquals("jar:${file.toURI()}!/a/Image/Cover.jpg", imageParent.absSrc())
+
         val httpUrl = URL(coverUrl, "http://example.com/a/s/d")
         // 改协议也正常，
         assertEquals("http://example.com/a/s/d", httpUrl.toString())
+
+        val parentUrl = URL(URL(coverUrl, "a/s"), "../../../Images/aa.jpg")
+        // 能正确处理上一级，
+        assertEquals("jar:${file.toURI()}!/Images/aa.jpg", parentUrl.toString())
+
+    }
+
+    @Test
+    fun yidmTest() {
+        val file = getFile("/home/aoeiuv/tmp/panovel/epub/yidm/Re：从零开始的异世界生活_第十一卷.epub") ?: return
+        val charset = "UTF-8"
+        val zipFile = ZipFile(file)
+        val book = EpubReader().readEpubLazy(zipFile, charset)
+
+        // epublib3.1不支持从cdata中拿文本，自己fork的改改，应该是要支持的，
+        assertEquals("Re：从零开始的异世界生活-第十一卷-迷糊动漫", book.metadata.titles.single())
     }
 
     @Test

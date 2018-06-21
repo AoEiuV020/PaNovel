@@ -100,7 +100,7 @@ private class UrlStreamFetcher(
             callback.onLoadFailed(e)
             return
         }
-        // 不清楚流程，但是以防万一，模仿HttpUrlFetcher把成功的加调放在外面，
+        // 不清楚流程，但是以防万一，模仿HttpUrlFetcher把成功的回调放在外面，
         callback.onDataReady(inputStream)
     }
 }

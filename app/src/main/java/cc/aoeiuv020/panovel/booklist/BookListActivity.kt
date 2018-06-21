@@ -21,6 +21,7 @@ import cc.aoeiuv020.panovel.list.NovelViewHolder
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
+import cc.aoeiuv020.panovel.settings.ServerSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.safelyShow
 import cc.aoeiuv020.panovel.util.show
@@ -161,6 +162,22 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
 
     fun showNovelList(list: List<NovelManager>) {
         novelListAdapter.data = list
+        if (ServerSettings.askUpdate) {
+            presenter.askUpdate(list)
+        } else {
+            srlRefresh.isRefreshing = false
+        }
+    }
+
+    fun showAskUpdateResult(hasUpdateList: List<Long>) {
+        srlRefresh.isRefreshing = false
+        // 就算是空列表也要传进去，更新一下刷新时间，
+        // 空列表可能是因为连不上服务器，
+        novelListAdapter.hasUpdate(hasUpdateList)
+    }
+
+    fun askUpdateError(message: String, e: Throwable) {
+        // 询问服务器更新出错不展示，
         srlRefresh.isRefreshing = false
     }
 

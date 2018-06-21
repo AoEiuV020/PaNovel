@@ -36,7 +36,7 @@ class KuxiaoshuoTest : BaseNovelContextText(Kuxiaoshuo::class) {
                 1106)
         chapters("1_1947", "楔子：身世之谜，时空灰烬", "1_1947/16176821", null,
                 "第1770章 求情", "1_1947/151847211", "2018-06-09 00:00:00",
-                1777)
+                1778)
     }
 
     @Test

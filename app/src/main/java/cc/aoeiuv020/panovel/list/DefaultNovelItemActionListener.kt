@@ -1,15 +1,18 @@
 package cc.aoeiuv020.panovel.list
 
+import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
+import cc.aoeiuv020.panovel.local.LocalNovelType
+import cc.aoeiuv020.panovel.local.NovelExporter
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ItemAction.*
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.text.NovelTextActivity
+import cc.aoeiuv020.panovel.util.uiSelect
 import org.jetbrains.anko.*
 
 /**
@@ -29,7 +32,7 @@ class DefaultNovelItemActionListener(
             ReadContinue -> NovelTextActivity.start(vh.ctx, vh.novel)
             OpenDetail -> NovelDetailActivity.start(vh.ctx, vh.novel)
             RefineSearch -> FuzzySearchActivity.start(vh.ctx, vh.novel)
-            Export -> DataManager.exportText(vh.ctx, vh.novelManager)
+            Export -> exportNovel(vh)
         // TODO: 有点混乱不统一，改支之前考虑清楚，主要是有的操作需要更新vh界面，
             AddBookshelf -> vh.addBookshelf() // vh里再反过来调用onStarChanged，
             RemoveBookshelf -> vh.removeBookshelf() // vh里再反过来调用onStarChanged，
@@ -140,40 +143,6 @@ class DefaultNovelItemActionListener(
         }
     }
 
-    override fun askUpdate(vh: NovelViewHolder) {
-        // 缓存一下，以免异步过程vh被复用了，可能导致小红点不停转圈，
-        val novelManager = vh.novelManager
-        doAsync({ e ->
-            val message = "询问服务器是否有更新小说《${novelManager.novel.name}》失败，"
-            Reporter.post(message, e)
-            error(message, e)
-            vh.ctx.runOnUiThread {
-                // 失败也停止显示正在刷新，
-                vh.refreshed(novelManager)
-                onError(message, e)
-            }
-        }, ioExecutorService) {
-            if (novelManager.askUpdate()) {
-                try {
-                    // 如果有更新，就刷新章节列表，
-                    novelManager.requestChapters(true)
-                } catch (e: Exception) {
-                    // 刷新小说章节列表失败不要抛上去报询问服务器的错，
-                    val message = "刷新小说《${novelManager.novel.name}》失败，"
-                    Reporter.post(message, e)
-                    error(message, e)
-                    uiThread {
-                        onError(message, e)
-                    }
-                }
-            }
-            // 刷新是否失败都要调用refreshed,
-            uiThread {
-                vh.refreshed(novelManager)
-            }
-        }
-    }
-
     private fun pinned(vh: NovelViewHolder) {
         doAsync({ e ->
             val message = "置顶小说《${vh.novel.name}》失败，"
@@ -225,4 +194,31 @@ class DefaultNovelItemActionListener(
             vh.novelManager.cleanData()
         }
     }
+
+    private fun exportNovel(vh: NovelViewHolder) {
+        doAsync({ e ->
+            val message = "导出小说<${vh.novel.bookId}>失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            vh.ctx.runOnUiThread {
+                onError(message, e)
+            }
+        }, ioExecutorService) {
+            val ctx = vh.ctx
+            val types = LocalNovelType.values()
+            val items = types.map {
+                when (it) {
+                    LocalNovelType.TEXT -> R.string.select_item_text
+                    LocalNovelType.EPUB -> R.string.select_item_epub
+                }.let { ctx.getString(it) }
+            }.toTypedArray()
+            val defaultIndex = 1
+            val type = ctx.uiSelect(ctx.getString(R.string.file_type), items, defaultIndex)?.let { selectIndex ->
+                types[selectIndex]
+            } ?: interrupt("没有选择文件类型，")
+
+            NovelExporter.export(vh.ctx, type, vh.novelManager)
+        }
+    }
+
 }

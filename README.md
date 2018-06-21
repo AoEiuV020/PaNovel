@@ -1,10 +1,10 @@
 # 爬小说
-我们不生产小说，我们只做网站的搬运工，
-
+我们不生产小说，我们只做网站的搬运工，  
 [![img](https://img.shields.io/github/release/AoEiuV020/PaNovel.svg)](https://github.com/AoEiuV020/PaNovel/releases)
 
 ## 应用简介
-这是有理想的小说神器，目前支持<48>个网站，
+这是有理想的小说神器，目前支持<48>个网站，  
+支持阅读本地.txt以及.epub小说，
 
 【库】  
 kotlin + mvp + room  
@@ -23,8 +23,6 @@ kotlin + mvp + room
 [AspectRatioImageView](https://github.com/santalu/aspect-ratio-imageview)
 [jchardet](http://jchardet.sourceforge.net/index.html)
 
-![img](screenshots/bookshelf.jpg)
-![img](screenshots/genre.jpg)
-![img](screenshots/list.jpg)
-![img](screenshots/detail.jpg)
 ![img](screenshots/text.jpg)
+![img](screenshots/epub.jpg)
+![img](screenshots/bookshelf.jpg)

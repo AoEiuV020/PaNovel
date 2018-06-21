@@ -1,15 +1,19 @@
 package cc.aoeiuv020.panovel.server
 
 import android.content.Context
+import android.support.annotation.WorkerThread
 import android.util.Log
 import cc.aoeiuv020.base.jar.get
 import cc.aoeiuv020.base.jar.jsonPath
 import cc.aoeiuv020.base.jar.notZero
 import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.server.common.bookId
+import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
@@ -25,6 +29,7 @@ import org.jetbrains.anko.*
  */
 object UpdateManager : AnkoLogger {
     private var novelService: NovelService? = null
+    private var outOfVersion: Boolean = false
 
     fun downloadUpdate(ctx: Context, extra: String) {
         debug { "downloadUpdate $extra" }
@@ -82,74 +87,45 @@ object UpdateManager : AnkoLogger {
         }
     }
 
-    fun query(novel: Novel): Novel? {
-        debug { "query ：<${novel.run { "$site.$author.$name" }}>" }
-        val service = novelService ?: return null
-        return try {
-            service.query(novel)
-        } catch (e: Exception) {
-            val message = "查询小说<${novel.run { "$site.$author.$name" }}>失败，"
-            error(message, e)
-            Reporter.post(message, e)
-            null
+    fun queryList(novelMap: Map<Long, Novel>): Map<Long, QueryResponse> {
+        debug { "queryList ：${novelMap.map { "${it.key}=${it.value.bookId}" }}" }
+        val service = getService() ?: return emptyMap()
+        return service.queryList(novelMap).also {
+            debug { "查询小说更新返回: $it" }
         }
-
     }
 
     fun touch(novel: Novel) {
         debug { "touch ：<${novel.run { "$site.$author.$name" }}>" }
-        val service = novelService ?: return
-        doAsync({ e ->
-            val message = "上传刷新结果失败,"
-            Reporter.post(message, e)
-            error(message, e)
-        }) {
-            val result = service.touch(novel)
-            debug { "上传<${novel.run { "$site.$author.$name" }}>更新返回: $result" }
-        }
+        val service = getService() ?: return
+        val result = service.touch(novel)
+        debug { "上传<${novel.run { "$site.$author.$name" }}>更新返回: $result" }
     }
 
-    fun create(context: Context) {
-        debug { "create ${context.javaClass}" }
-        // 以防万一，如果已经初始化过就直接返回，
-        novelService?.let { return }
-        // 调试模式直接初始化，
-        if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
-            debug { "debug mode," }
-            novelService = NovelServiceImpl(ServerAddress.getAndroidTest())
-            return
+    @Synchronized
+    @WorkerThread
+    private fun getService(): NovelService? {
+        debug { "getService <$novelService, $outOfVersion>" }
+        // 已经创建就直接返回，
+        novelService?.let { return it }
+        // 如果版本过低，直接返回空，不继续，
+        if (outOfVersion) return null
+
+        val service = if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
+            info { "debug mode," }
+            NovelServiceImpl(ServerAddress.getAndroidTest())
         } else {
-            // 先给个默认地址，毕竟正常情况就是默认地址使用，
-            novelService = NovelServiceImpl(ServerAddress())
+            NovelServiceImpl(ServerAddress.getDefault())
         }
-        doAsync({ e ->
-            // 出错了就继续用默认地址，
-            // 如果是断网，就让这连接不断失败，没什么影响，
-            val message = "获取服务器信息失败, "
-            Reporter.post(message, e)
-            error(message, e)
-        }) {
-            // 从github拿服务器地址，这样可以随时改，至少最低版本需要修改，以达到让用户手中的app过期，不连接服务器，
-            val address = ServerAddress.getOnline()
-            debug { "ServerAddress ${address.minVersion}: ${address.data}" }
-            val currentVersionName = VersionUtil.getAppVersionName(context)
-            novelService = if (VersionName(address.minVersion) > VersionName(currentVersionName)) {
-                // 版本低于要求的，就直接返回，novelService设为空，拒绝请求，
-                warn { "minVersion(${address.minVersion}) > currentVersion($currentVersionName)" }
-                null
-            } else {
-                // 不管地址是否有不同，都覆盖默认配置，没影响，
-                NovelServiceImpl(address)
-            }
+        val currentVersion = VersionName(VersionUtil.getAppVersionName(App.ctx))
+        val minVersion = VersionName(service.minVersion())
+        info { "getService minVersion $minVersion/$currentVersion" }
+        return if (currentVersion < minVersion) {
+            outOfVersion = true
+            null
+        } else {
+            novelService = service
+            service
         }
     }
-
-    // 回收novelService以便下次重新获取，否则可能这个UpdateManager一直留在内存，唔，真的有必要么，
-    // 不用了，
-    @Suppress("unused")
-    fun destroy(context: Context) {
-        debug { "destroy ${context.javaClass}" }
-        novelService = null
-    }
-
 }

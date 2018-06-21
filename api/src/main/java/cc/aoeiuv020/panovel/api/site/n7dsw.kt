@@ -32,7 +32,7 @@ class N7dsw : DslJsoupNovelContext() {init {
             if (URL(root.ownerDocument().location()).path.startsWith("/book/")) {
                 single {
                     name("#info > div.infotitle > h1")
-                    author("#info > div.infotitle > i:nth-child(2)", block = pickString("作者：(\\S*)"))
+                    author("#info > div.infotitle > i:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
                 }
             } else {
                 items("#content > table > tbody > tr:not(:nth-child(1))") {
@@ -49,7 +49,7 @@ class N7dsw : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#info > div.infotitle > h1")
-                author("#info > div.infotitle > i:nth-child(2)", block = pickString("作者：(\\S*)"))
+                author("#info > div.infotitle > i:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
             }
             image("#fmimg > img")
             introduction("#info > div.intro") {

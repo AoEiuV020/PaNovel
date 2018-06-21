@@ -68,6 +68,10 @@ object Delegates {
     fun boolean(default: Boolean, key: String? = null) =
             PrefDelegate.Boolean(default, key)
 
+    /**
+     * enum枚举保存字符串，读取时用gson解析，
+     * 不带引号的字符串也能用gson解析，
+     */
     inline fun <reified T : Enum<*>> enum(default: T, key: kotlin.String? = null) =
             PrefDelegate.Enum.new(default, key)
 

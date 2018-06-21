@@ -47,10 +47,10 @@ internal class PageRecyclerAdapter(
         when (holder) {
             is TextViewHolder -> {
                 if (position == 0) {
-                    holder.setChapterName(chapterName)
+                    holder.setText(chapterName)
                 } else {
                     val line = reader.requester.requestParagraph(data[index])
-                    holder.setNovelText(line.toString())
+                    holder.setText(line.toString())
                 }
             }
             is ImageViewHolder -> {

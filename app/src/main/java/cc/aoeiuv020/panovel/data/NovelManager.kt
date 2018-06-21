@@ -1,11 +1,13 @@
 package cc.aoeiuv020.panovel.data
 
-import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
+import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.error
 import java.net.URL
 import java.util.*
 
@@ -33,31 +35,6 @@ class NovelManager(
     fun addToBookList(bookListId: Long) = app.addToBookList(bookListId, novel)
     fun removeFromBookList(bookListId: Long) = app.removeFromBookList(bookListId, novel)
 
-    /**
-     * 询问服务器是否有更新，
-     *
-     * @return 返回true表示有更新，
-     */
-    fun askUpdate(): Boolean {
-        debug { "askUpdate: <${novel.run { "$site.$author.$name.$receiveUpdateTime.$checkUpdateTime" }}>" }
-        val result = server?.askUpdate(novel) ?: return false
-        debug { "result: <${result.toJson()}}>" }
-        return if (result.chaptersCount ?: 0 > novel.chaptersCount) {
-            // 只对比章节数，
-            debug { "has update ${result.chaptersCount} > ${novel.chaptersCount}" }
-            true
-        } else {
-            debug { "no update ${result.chaptersCount} <= ${novel.chaptersCount}" }
-            // 如果没更新，就保存服务器上的更新时间，如果更大的话，
-            novel.apply {
-                // 不更新receiveUpdateTime，不准，有时别人比较晚收到同一个更新然后推上去被拿到，
-                checkUpdateTime = maxOf(checkUpdateTime, result.checkUpdateTime)
-            }
-            false
-        }
-    }
-
-
     fun saveReadStatus() {
         novel.readTime = Date()
         updateReadStatus()
@@ -73,19 +50,19 @@ class NovelManager(
     /**
      * 从缓存中读小说正文，没有就返回空，用于导入小说，
      */
-    fun getContent(chapter: NovelChapter): List<String>? =
-            cache.loadContent(novel, chapter)
+    fun getContent(extra: String): List<String>? =
+            cache.loadContent(novel, extra)
 
     fun requestContent(chapter: NovelChapter, refresh: Boolean): List<String> {
         // 指定刷新的话就不读缓存，
         if (!refresh) {
-            cache.loadContent(novel, chapter)?.also {
+            cache.loadContent(novel, chapter.extra)?.also {
                 return it
             }
         }
         return provider.getNovelContent(chapter).also {
             // 缓存起来，
-            cache.saveContent(novel, chapter, it)
+            cache.saveContent(novel, chapter.extra, it)
         }
     }
 
@@ -108,15 +85,22 @@ class NovelManager(
         // 确保存在详情页信息，
         requireDetail()
         val list = provider.requestNovelChapters()
-        if (novel.readAtChapterName.isBlank()) {
+        if (novel.readAtChapterName == Novel.VALUE_NULL) {
             // 如果数据库中没有阅读进度章节，说明没阅读过，直接存第一章名字，
             // 也可能是导入的进度，所以不能直接写0, 要用readAtChapterIndex，
-            novel.readAtChapterName = list.getOrNull(novel.readAtChapterIndex)?.name ?: ""
+            novel.readAtChapterName = list.getOrNull(novel.readAtChapterIndex)?.name ?: Novel.VALUE_NULL
         }
         // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
         app.updateChapters(novel)
         cache.saveChapters(novel, list)
-        server?.touchUpdate(novel)
+        // 这里异步，不影响刷新结果返回的时间，
+        doAsync({ e ->
+            val message = "上传<${novel.bookId}>刷新结果失败,"
+            Reporter.post(message, e)
+            error(message, e)
+        }) {
+            server?.touchUpdate(novel)
+        }
         return list
     }
 
@@ -174,8 +158,8 @@ class NovelManager(
         app.clean(novel)
     }
 
-    fun getCoverImage(): URL {
-        return provider.getCoverImage(novel.image)
+    fun getImage(extra: String): URL {
+        return provider.getImage(extra)
     }
 
 }

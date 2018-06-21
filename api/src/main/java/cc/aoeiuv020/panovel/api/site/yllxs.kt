@@ -33,7 +33,7 @@ class Yllxs : DslJsoupNovelContext() {init {
                     name("#book_left_a > div.book > div.book_info > div.title > h2") {
                         it.ownText()
                     }
-                    author("#book_left_a > div.book > div.book_info > div.title > h2 > address", block = pickString("作者：(\\S*)"))
+                    author("#book_left_a > div.book > div.book_info > div.title > h2 > address", block = pickString("作\\s*者：(\\S*)"))
                 }
             } else {
                 items("#Updates_list > ul > li") {
@@ -60,7 +60,7 @@ class Yllxs : DslJsoupNovelContext() {init {
                 name("#book_left_a > div.book > div.book_info > div.title > h2") {
                     it.ownText()
                 }
-                author("#book_left_a > div.book > div.book_info > div.title > h2 > address", block = pickString("作者：(\\S*)"))
+                author("#book_left_a > div.book > div.book_info > div.title > h2 > address", block = pickString("作\\s*者：(\\S*)"))
             }
             image("#book_left_a > div.book > div.pic > img")
             update("#book_left_a > div.book > div.book_info > div.info > p > span:nth-child(8)", format = "yyyy-MM-dd", block = pickString("更新时间：(.*)"))

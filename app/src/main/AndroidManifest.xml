@@ -87,7 +87,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".search.SiteChooseActivity"
-            android:label="@string/site" />
+            android:label="@string/site_list" />
         <activity
             android:name=".search.SingleSearchActivity"
             android:launchMode="singleTask"

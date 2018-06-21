@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.history
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.AnkoLogger
@@ -28,6 +29,22 @@ class HistoryPresenter : Presenter<HistoryFragment>(), AnkoLogger {
             val list = DataManager.history(GeneralSettings.historyCount)
             uiThread {
                 view?.showNovelList(list)
+            }
+        }
+    }
+
+    fun askUpdate(novelList: List<NovelManager>) {
+        view?.doAsync({ e ->
+            val message = "询问服务器小说列表更新失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.activity?.runOnUiThread {
+                view?.askUpdateError(message, e)
+            }
+        }) {
+            val resultList = DataManager.askUpdate(novelList)
+            uiThread {
+                view?.showAskUpdateResult(resultList)
             }
         }
     }

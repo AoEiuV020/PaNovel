@@ -10,7 +10,7 @@ buildGradleFile="$project/build.gradle"
 versionCode=$(sed -n 's/\s*version_code\s*=\s*\(\S*\)/\1/p' $buildGradleFile)
 versionCode=$(expr $versionCode + 1)
 
-sed -i "s/version_code\\s*=\\s*\\d*/version_code = $versionCode/" $buildGradleFile
+sed -i "s/version_code\\s*=\\s*[0-9]*/version_code = $versionCode/" $buildGradleFile
 
 versionName=$1
 sed -i "s/version_name\\s*=\\s*\".*\"/version_name = \"$versionName\"/" $buildGradleFile

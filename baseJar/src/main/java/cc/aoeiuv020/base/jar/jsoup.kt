@@ -31,6 +31,8 @@ fun jsoupConnect(url: String): Document = jsoupParse(get(url))
 
 fun Element.findAll(predicate: (Element) -> Boolean): List<Element> {
     val list = LinkedList<Element>()
+    // 过时方法懒得改，
+    @Suppress("DEPRECATION")
     NodeTraversor(object : NodeVisitor {
         override fun tail(node: Node?, depth: Int) {
         }
@@ -68,6 +70,8 @@ fun Element.textList(): List<String> {
     // 用LinkedList方便频繁添加，
     val list = LinkedList<String>()
     val line = StringBuilder()
+    // 过时方法懒得改，
+    @Suppress("DEPRECATION")
     NodeTraversor(object : NodeVisitor {
         override fun head(node: Node?, depth: Int) {
             if (node is TextNode) {
@@ -199,12 +203,18 @@ fun String.splitWhitespace(): List<String> = this.split(whitespaceRegex)
 fun String.splitNewLine(): List<String> = this.split(newLineRegex)
 
 fun Element.src(): String = attr("src")
-fun Element.absSrc(): String = absUrl("src")
-fun Element.absDataOriginal(): String = absUrl("data-original")
+fun Element.absSrc(): String = absUrl(baseUri(), src())
+fun Element.dataOriginal(): String = attr("data-original")
+fun Element.absDataOriginal(): String = absUrl(baseUri(), dataOriginal())
 fun Element.href(): String = attr("href")
-fun Element.absHref(): String = absUrl("href")
+fun Element.absHref(): String = absUrl(baseUri(), href())
 fun Element.xlinkHref(): String = attr("xlink:href")
-fun Element.absXlinkHref(): String = absUrl("xlink:href")
+fun Element.absXlinkHref(): String = absUrl(baseUri(), xlinkHref())
+
+// Jsoup的absUrl处理jar协议会出问题，错误在jar:后添加一个斜杆，
+private fun absUrl(base: String, attr: String): String =
+        if (attr.isBlank()) ""
+        else URL(URL(base), attr).toString()
 
 /**
  * 地址仅路径，斜杆/开头，

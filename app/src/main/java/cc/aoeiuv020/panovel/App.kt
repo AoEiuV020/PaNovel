@@ -17,6 +17,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import java.net.URL
 
 
 /**
@@ -66,6 +67,15 @@ class App : MultiDexApplication(), AnkoLogger {
 
         initGlide()
 
+        initJar()
+
+    }
+
+    private fun initJar() {
+        // 禁用默认缓存连接，对任意URLConnection实例使用都可以，
+        // 否则jar打开的文件不会被关闭，从而导致文件被覆盖了依然能读到旧文件，
+        // 多少会影响性能，
+        URL("jar:file:/fake.jar!/fake.file").openConnection().defaultUseCaches = false
     }
 
     private fun initGlide() {

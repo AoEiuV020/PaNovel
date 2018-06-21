@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.server.service.impl
 
-import cc.aoeiuv020.base.jar.baseClientBuilder
+import cc.aoeiuv020.base.jar.baseClient
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.base.jar.type
@@ -9,6 +9,7 @@ import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.common.toJson
 import cc.aoeiuv020.panovel.server.dal.model.MobRequest
 import cc.aoeiuv020.panovel.server.dal.model.MobResponse
+import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import okhttp3.MediaType
@@ -27,7 +28,7 @@ import java.util.concurrent.TimeUnit
  */
 class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService {
     private val logger: Logger = LoggerFactory.getLogger(NovelServiceImpl::class.java.simpleName)
-    private val client: OkHttpClient = baseClientBuilder
+    private val client: OkHttpClient = baseClient.newBuilder()
             // 超时设置短一些，连不上就放弃，不是很重要，
             .connectTimeout(3, TimeUnit.SECONDS)
             .readTimeout(3, TimeUnit.SECONDS)
@@ -69,13 +70,17 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
         return post(serverAddress.needRefreshNovelListUrl, count)
     }
 
-    override fun query(novel: Novel): Novel {
-        logger.debug { "query $novel" }
-        return post(serverAddress.queryUrl, novel)
+    override fun queryList(novelMap: Map<Long, Novel>): Map<Long, QueryResponse> {
+        logger.debug { "queryList ${novelMap.map { "${it.key}=<${it.value.run { "$site.$author.$name" }}>" }}" }
+        return post(serverAddress.queryListUrl, novelMap)
     }
 
     override fun touch(novel: Novel): Boolean {
         logger.debug { "touch $novel" }
         return post(serverAddress.touchUrl, novel)
+    }
+
+    override fun minVersion(): String {
+        return post(serverAddress.minVersionUrl, Any())
     }
 }

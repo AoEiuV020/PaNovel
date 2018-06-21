@@ -25,7 +25,7 @@ class N73xs : DslJsoupNovelContext() {init {
             if (root.ownerDocument().location().endsWith("/")) {
                 single {
                     name(".zhuyan > ul:nth-child(1) > li:nth-child(1)", block = pickString("书名：(\\S*)"))
-                    author(".zhuyan > ul:nth-child(1) > li:nth-child(2)", block = pickString("作者：(\\S*)"))
+                    author(".zhuyan > ul:nth-child(1) > li:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
                 }
             } else {
                 items("#content > table > tbody > tr:not(:nth-child(1)):not(:nth-last-child(1))") {
@@ -50,7 +50,7 @@ class N73xs : DslJsoupNovelContext() {init {
             val title = element("> div.infotitle", parent = div)
             novel {
                 name("> h1", parent = title)
-                author("> i:nth-child(2)", parent = title, block = pickString("作者：(\\S*)"))
+                author("> i:nth-child(2)", parent = title, block = pickString("作\\s*者：(\\S*)"))
             }
             image("#fmimg img")
             introduction("> div.intro", parent = div) {

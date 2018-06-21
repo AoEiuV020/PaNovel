@@ -21,7 +21,8 @@ class TextParser(
 ) : LocalNovelParser(file) {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
 
-    override fun getNovelContent(extra: String): List<String> {
+    override fun getNovelContent(chapter: LocalNovelChapter): List<String> {
+        val extra = chapter.extra
         val (beginPos, endPos) = extra.divide('/').let {
             it.first.toLong() to it.second.toLong()
         }
@@ -30,6 +31,9 @@ class TextParser(
             raf.readLines(beginPos, endPos, charset.name()).map {
                 it.trim()
             }
+                    // 章节内容开头可能是章节名，过滤掉，正文不包括章节名，
+                    .dropWhile { it == chapter.name }
+
         }
     }
 

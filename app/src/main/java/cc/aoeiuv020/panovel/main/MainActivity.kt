@@ -207,10 +207,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             }
 
             override fun onPageSelected(position: Int) {
-                // 切回书架时刷新一下，
-                if (position == 0) {
-                    bookshelfFragment.refresh()
-                }
                 if (position == 1) {
                     fab.show()
                 } else {

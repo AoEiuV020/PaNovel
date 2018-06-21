@@ -47,7 +47,7 @@ class Haxds : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#content > div:nth-child(1) > div > div.book-info > div.book-title > h1")
-                author("#content > div:nth-child(1) > div > div.book-info > div.book-title > em", block = pickString("作者：(\\S*)"))
+                author("#content > div:nth-child(1) > div > div.book-info > div.book-title > em", block = pickString("作\\s*者：(\\S*)"))
             }
             image("#content > div:nth-child(1) > div > div.book-img > img")
             update("#content > div:nth-child(1) > div > div.book-info > p.book-stats", format = "yyyy-MM-dd", block = pickString("更新时间：(.*)"))

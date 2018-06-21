@@ -72,6 +72,15 @@
         android:singleLine="true"
         android:title="@string/date_format" />
 
+    <cc.aoeiuv020.panovel.settings.EditTextPreference
+        android:defaultValue="　　"
+        android:inputType="text"
+        android:key="segmentIndentation"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/segment_indentation" />
+
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:defaultValue="60"

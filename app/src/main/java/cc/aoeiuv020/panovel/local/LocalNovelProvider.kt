@@ -34,7 +34,8 @@ class LocalNovelProvider(
 
     override fun getNovelContent(chapter: NovelChapter): List<String> {
         // epub章节内容开头可能是章节名，过滤掉不要，
-        return parser.getNovelContent(chapter.extra).dropWhile { it == chapter.name }
+        // 按理说是内容比章节名更适合保留着，但是不方便统一处理，
+        return parser.getNovelContent(LocalNovelChapter(name = chapter.name, extra = chapter.extra)).dropWhile { it == chapter.name }
     }
 
     override fun getContentUrl(chapter: NovelChapter): String {
@@ -45,8 +46,8 @@ class LocalNovelProvider(
         return file.toURI().toString()
     }
 
-    override fun getCoverImage(extra: String): URL {
-        return parser.getCoverImage(extra)
+    override fun getImage(extra: String): URL {
+        return parser.getImage(extra)
     }
 
     override fun updateNovelDetail() {
@@ -66,6 +67,10 @@ class LocalNovelProvider(
         fun update(novel: Novel, info: LocalNovelInfo) {
             novel.apply {
                 checkUpdateTime = Date()
+                if (info.chapters.size > chaptersCount) {
+                    // 本地导入小说按导入时间存一个receiveUpdateTime, 方便排序时算上，
+                    receiveUpdateTime = checkUpdateTime
+                }
             }
             val list = info.chapters
             novel.apply {

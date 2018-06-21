@@ -158,7 +158,10 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
         urlBar.setOnClickListener {
             // urlTextView只显示完整地址，以便点击打开，
-            browse(urlTextView.text.toString())
+            // 只支持打开网络地址，本地小说不支持调用其他app打开，
+            urlTextView.text?.takeIf { it.startsWith("http") }
+                    ?.also { browse(it.toString()) }
+                    ?: showError("本地小说不支持外部打开，")
         }
         if (ReaderSettings.autoSaveReadStatus > 0) {
             // 启动自动保存阅读进度循环，
@@ -179,6 +182,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         // https://youtrack.jetbrains.com/issue/KT-23756
         @Suppress("MayBeConstant")
         private val imagePattern = "^!\\[img\\]\\((.*)\\)$"
+        private val intent = ReaderSettings.segmentIndentation
 
         override fun requestParagraph(string: String): Any {
             return try {
@@ -186,7 +190,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                 Image(URL(string.pick(imagePattern).first()))
             } catch (e: Exception) {
                 // 则否加上段首空格，
-                "　　$string"
+                "$intent$string"
             }
         }
 
@@ -450,9 +454,13 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
     }
 
-    fun showError(message: String, e: Throwable) {
+    fun showError(message: String, e: Throwable? = null) {
         progressDialog.dismiss()
-        alertError(alertDialog, message, e)
+        if (e == null) {
+            alert(alertDialog, message)
+        } else {
+            alertError(alertDialog, message, e)
+        }
         show()
     }
 

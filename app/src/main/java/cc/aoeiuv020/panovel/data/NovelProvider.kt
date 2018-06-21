@@ -15,6 +15,6 @@ interface NovelProvider {
     fun getDetailUrl(): String
     fun updateNovelDetail()
     fun clean()
-    // 封面也要看上下文获取，比如epub内部，
-    fun getCoverImage(extra: String): URL
+    // 图片也要看上下文获取，比如epub内部，
+    fun getImage(extra: String): URL
 }

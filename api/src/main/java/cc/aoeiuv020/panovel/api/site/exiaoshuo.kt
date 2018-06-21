@@ -78,7 +78,7 @@ class Exiaoshuo : DslJsoupNovelContext() {init {
             /*
             <center><br><h2>记住E小说永久网址：www.exiaoshuo.cc  |   手机站：m.exiaoshuo.cc</h2><br></center>
              */
-            items(".chapter_content", block = ownLinesSplitWhitespace())
+            items(".chapter_content", block = ownLines())
         }
     }
 }

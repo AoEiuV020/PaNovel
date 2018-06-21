@@ -68,7 +68,7 @@ class ApiNovelProvider(
         // 一般网站的小说没什么要清除的，
     }
 
-    override fun getCoverImage(extra: String): URL {
-        return context.getCoverImage(extra)
+    override fun getImage(extra: String): URL {
+        return context.getImage(extra)
     }
 }

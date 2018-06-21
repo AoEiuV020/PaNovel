@@ -1,20 +1,23 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
-import android.support.annotation.UiThread
 import android.support.annotation.WorkerThread
 import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.local.*
+import cc.aoeiuv020.panovel.local.ImportRequireValue
+import cc.aoeiuv020.panovel.local.LocalNovelProvider
+import cc.aoeiuv020.panovel.local.LocalNovelType
+import cc.aoeiuv020.panovel.local.Previewer
 import cc.aoeiuv020.panovel.util.noCover
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.io.File
 import java.io.InputStream
+import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 
@@ -60,7 +63,7 @@ class LocalManager(ctx: Context) : AnkoLogger {
         // defaultType要作为单选框的默认值，必须是存在的type,
         val defaultType = previewer.guessType() ?: LocalNovelType.TEXT
         val actualTypeSuffix = requestInput(ImportRequireValue.TYPE, defaultType.suffix)
-                ?: interrupt("没有文件类型，")
+                ?: interrupt("没有选择文件类型，")
         val actualType = LocalNovelType.values().firstOrNull {
             it.suffix == actualTypeSuffix
         } ?: interrupt("不支持的文件类型，")
@@ -95,17 +98,21 @@ class LocalManager(ctx: Context) : AnkoLogger {
         }
         val suffix = actualType.suffix
         val defaultName = try {
-            // 提取uri最后一节，一般是就是文件名，当成默认的作者名和小说名，
-            uri.pick("/([^/]+)$").first()
+            // Uri先解码，因为可能系统文件管理器给的uri中文件路径是经过encode的，
+            // 有问题也无所谓，只是个默认值，
+            URLDecoder.decode(uri, Charsets.UTF_8.name())
+                    // 提取uri最后一节，一般是就是文件名，当成默认的作者名和小说名，
+                    .pick("/([^/]+)$").first()
         } catch (e: Exception) {
             "null"
         }
-        val author = requestInput(ImportRequireValue.AUTHOR, info.author
-                ?: defaultName)
-                ?: interrupt("没有作者名，")
         val name = requestInput(ImportRequireValue.NAME, info.name
                 ?: defaultName)
                 ?: interrupt("没有小说名，")
+        val author = requestInput(ImportRequireValue.AUTHOR, info.author
+        // 没有作者名就用小说名顶一下，当成默认值给用户改，
+                ?: name)
+                ?: interrupt("没有作者名，")
 
         // 最终导入的小说就永久保存在这里了，
         val file = saveNovel(previewer.file, suffix, author, name)
@@ -137,11 +144,6 @@ class LocalManager(ctx: Context) : AnkoLogger {
             to
         }
     }
-
-    // TODO: 统一导入导出的形式，
-    @UiThread
-    fun exportText(ctx: Context, novelManager: NovelManager) =
-            TextExporter.export(ctx, novelManager)
 
     fun getNovelProvider(novel: Novel): NovelProvider {
         return LocalNovelProvider(novel)

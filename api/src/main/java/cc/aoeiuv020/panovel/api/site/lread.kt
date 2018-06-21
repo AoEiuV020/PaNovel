@@ -55,7 +55,7 @@ class Lread : DslJsoupNovelContext() {init {
     contentPageTemplate = "/read/%s.html"
     content {
         document {
-            items("#booktext", block = ownLinesSplitWhitespace())
+            items("#booktext")
         }
     }
 }

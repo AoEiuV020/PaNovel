@@ -34,7 +34,7 @@ class Kuxiaoshuo : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#info > h1")
-                author("#info > p:nth-child(2)", block = pickString("作    者：(\\S*)"))
+                author("#info > p:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
             }
             image("#fmimg > img")
             update("#info > p:nth-child(4)", format = "最后更新：yyyy-MM-dd")

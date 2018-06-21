@@ -59,6 +59,7 @@ class ExporterV2 : DefaultExporter() {
         var count = 0
         file.readText().toBean<Map<String, JsonElement>>().forEach { (key, value) ->
             when (key) {
+            // 枚举，保存字符串，
                 "animationMode" -> editor.putString(key, value.asString)
                 "shareExpiration" -> editor.putString(key, value.asString)
                 "onCheckUpdateClick" -> editor.putString(key, value.asString)
@@ -69,6 +70,8 @@ class ExporterV2 : DefaultExporter() {
                 "onLastChapterClick" -> editor.putString(key, value.asString)
                 "onNameClick" -> editor.putString(key, value.asString)
                 "onNameLongClick" -> editor.putString(key, value.asString)
+                "bookshelfOrderBy" -> editor.putString(key, value.asString)
+
                 "adEnabled" -> editor.putBoolean(key, value.asBoolean)
                 "keepScreenOn" -> editor.putBoolean(key, value.asBoolean)
                 "backPressOutOfFullScreen" -> editor.putBoolean(key, value.asBoolean)
@@ -101,6 +104,7 @@ class ExporterV2 : DefaultExporter() {
                 "lastTextColor" -> editor.putInt(key, value.asInt)
                 "textSize" -> editor.putInt(key, value.asInt)
                 "dateFormat" -> editor.putString(key, value.asString)
+                "segmentIndentation" -> editor.putString(key, value.asString)
                 "enabled" -> editor.putBoolean(key, value.asBoolean)
                 "notifyNovelUpdate" -> editor.putBoolean(key, value.asBoolean)
                 "askUpdate" -> editor.putBoolean(key, value.asBoolean)
@@ -157,6 +161,7 @@ class ExporterV2 : DefaultExporter() {
             // 书单名允许重复，所以拼接上id，
             val fileName = "${bookList.id}|${bookList.name}"
             // 只取小说必须的几个参数，相关数据类不能被混淆，
+            // 不包括本地小说，
             val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
             folder.resolve(fileName).writeText(novelList.toJson())
             novelList.size
