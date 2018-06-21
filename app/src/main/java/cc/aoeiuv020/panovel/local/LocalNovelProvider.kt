@@ -67,6 +67,10 @@ class LocalNovelProvider(
         fun update(novel: Novel, info: LocalNovelInfo) {
             novel.apply {
                 checkUpdateTime = Date()
+                if (info.chapters.size > chaptersCount) {
+                    // 本地导入小说按导入时间存一个receiveUpdateTime, 方便排序时算上，
+                    receiveUpdateTime = checkUpdateTime
+                }
             }
             val list = info.chapters
             novel.apply {

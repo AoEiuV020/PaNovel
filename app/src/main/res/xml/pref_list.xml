@@ -14,7 +14,14 @@
             android:title="@string/large_view" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/settings_red_dot">
+    <PreferenceCategory android:title="@string/settings_bookshelf">
+
+        <cc.aoeiuv020.panovel.settings.ListPreference
+            android:defaultValue="Smart"
+            android:entries="@array/order_by_name"
+            android:entryValues="@array/order_by_values"
+            android:key="bookshelfOrderBy"
+            android:title="@string/settings_order_by" />
 
         <cc.aoeiuv020.panovel.settings.FloatEditTextPreference
             android:capitalize="words"

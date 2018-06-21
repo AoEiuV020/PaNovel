@@ -10,6 +10,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
 import cc.aoeiuv020.panovel.local.ImportRequireValue
 import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
+import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -55,7 +56,7 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun listBookshelf(): List<NovelManager> = app.listBookshelf().map { it.toManager() }
+    fun listBookshelf(): List<NovelManager> = app.listBookshelf(ListSettings.bookshelfOrderBy).map { it.toManager() }
 
     /**
      * 收到更新推送, 主动更新一下看看是不是真的有更新，
@@ -294,7 +295,7 @@ object DataManager : AnkoLogger {
      * 回调是收到极光的广播时调用，在ui线程的，
      */
     fun resetSubscript() =
-            server.setTags(app.listBookshelf())
+            server.setTags(app.listBookshelf(ListSettings.bookshelfOrderBy))
 
     fun removeAllCookies() {
         removeWebViewCookies()

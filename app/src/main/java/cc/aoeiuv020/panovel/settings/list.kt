@@ -31,6 +31,12 @@ object ListSettings : Pref {
     var onLastChapterClick: ItemAction by Delegates.enum(ItemAction.ReadLastChapter)
     var onItemClick: ItemAction by Delegates.enum(ItemAction.ReadContinue)
     var onItemLongClick: ItemAction by Delegates.enum(ItemAction.MoreAction)
+
+    /**
+     * 书架的排序标准，
+     * 置顶的固定置顶，
+     */
+    var bookshelfOrderBy: OrderBy by Delegates.enum(OrderBy.Smart)
 }
 
 enum class ItemAction {
@@ -45,4 +51,11 @@ enum class ItemAction {
     CleanData,
     // 什么都不做，
     None,
+}
+
+enum class OrderBy {
+    Id, ReadTime, UpdateTime,
+    // 综合阅读时间和更新时间，
+    Smart,
+    Name, Author, Site,
 }

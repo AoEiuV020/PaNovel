@@ -68,4 +68,32 @@
         <item>CancelPinned</item>
         <item>None</item>
     </string-array>
+    <!--
+    Id, ReadTime, UpdateTime,
+    // 综合阅读时间和更新时间，
+    Smart,
+    Name, Author, Site,
+    -->
+    <string-array name="order_by_name">
+        <item>@string/fixed_id</item>
+        <item>@string/read_time</item>
+        <item>@string/update_time</item>
+
+        <item>@string/smart</item>
+
+        <item>@string/name</item>
+        <item>@string/author</item>
+        <item>@string/site</item>
+    </string-array>
+    <string-array name="order_by_values">
+        <item>Id</item>
+        <item>ReadTime</item>
+        <item>UpdateTime</item>
+
+        <item>Smart</item>
+
+        <item>Name</item>
+        <item>Author</item>
+        <item>Site</item>
+    </string-array>
 </resources>

@@ -59,6 +59,7 @@ class ExporterV2 : DefaultExporter() {
         var count = 0
         file.readText().toBean<Map<String, JsonElement>>().forEach { (key, value) ->
             when (key) {
+            // 枚举，保存字符串，
                 "animationMode" -> editor.putString(key, value.asString)
                 "shareExpiration" -> editor.putString(key, value.asString)
                 "onCheckUpdateClick" -> editor.putString(key, value.asString)
@@ -69,6 +70,8 @@ class ExporterV2 : DefaultExporter() {
                 "onLastChapterClick" -> editor.putString(key, value.asString)
                 "onNameClick" -> editor.putString(key, value.asString)
                 "onNameLongClick" -> editor.putString(key, value.asString)
+                "bookshelfOrderBy" -> editor.putString(key, value.asString)
+
                 "adEnabled" -> editor.putBoolean(key, value.asBoolean)
                 "keepScreenOn" -> editor.putBoolean(key, value.asBoolean)
                 "backPressOutOfFullScreen" -> editor.putBoolean(key, value.asBoolean)
