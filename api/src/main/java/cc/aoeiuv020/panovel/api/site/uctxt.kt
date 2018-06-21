@@ -32,7 +32,7 @@ class Uctxt : DslJsoupNovelContext() {init {
         document {
             single("^/book/") {
                 name("#main > section > div.book-about.clrfix > div > div.l > h1")
-                author("#main > section > div.book-about.clrfix > div > div.l > em", block = pickString("作者：(\\S*)"))
+                author("#main > section > div.book-about.clrfix > div > div.l > em", block = pickString("作\\s*者：(\\S*)"))
             }
             items("#main > section > div.list-lastupdate > ul > li") {
                 name("> span.name > a")
@@ -50,7 +50,7 @@ class Uctxt : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#main > section > div.book-about.clrfix > div > div.l > h1")
-                author("#main > section > div.book-about.clrfix > div > div.l > em", block = pickString("作者：(\\S*)"))
+                author("#main > section > div.book-about.clrfix > div > div.l > em", block = pickString("作\\s*者：(\\S*)"))
             }
             update("#main > section > div.book-about.clrfix > p.stats > span.r > i:nth-child(3)", format = "yyyy-MM-dd HH:mm")
             introduction("#main > section > div.book-about.clrfix > p.intro") {

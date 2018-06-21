@@ -41,7 +41,7 @@ class Gxwztv : DslJsoupNovelContext() {init {
                     it.ownText().removeSuffix("　")
                 }
                 author("#btop-info > div > article > div > div.col-xs-8 > ul > li:nth-child(1) > h1 > small",
-                        block = pickString("作者：(\\S*)"))
+                        block = pickString("作\\s*者：(\\S*)"))
             }
             image("#btop-info > div > article > div > div.col-xs-2 > img")
             update("#btop-info > div > article > div > div.col-xs-8 > ul > li:nth-child(4)", format = "yyyy-MM-dd HH:mm", block = pickString("更新时间：(.*)"))

@@ -53,7 +53,7 @@ class N52ranwen : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("body > div.container > div > div:nth-child(3) > div.book-main > div.book-head > div.title > h1 > a")
-                author("body > div.container > div > div:nth-child(3) > div.book-main > div.book-head > div.title > span", block = pickString("作者：(\\S*)"))
+                author("body > div.container > div > div:nth-child(3) > div.book-main > div.book-head > div.title > span", block = pickString("作\\s*者：(\\S*)"))
             }
             image("body > div.container > div > div:nth-child(3) > div.book-main > div.book-body > div.img > a > img")
             update("body > div.container > div > div:nth-child(3) > div.book-main > div.book-bottom > div.hd > em", format = "更新时间：yyyy-MM-dd HH:mm")

@@ -30,7 +30,7 @@ class Zhuaji : DslJsoupNovelContext() {init {
             items("body > div > div.hot_sale") {
                 extra("> a")
                 name("> a > p.title")
-                author("> a > p:nth-child(2)", block = pickString("作者：(\\S*)"))
+                author("> a > p:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
             }
         }
     }
@@ -41,7 +41,7 @@ class Zhuaji : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#book > div.bookright > h3")
-                author("#book > div.bookright > p.author", block = pickString("作者：(\\S*)"))
+                author("#book > div.bookright > p.author", block = pickString("作\\s*者：(\\S*)"))
             }
             image("#book > div.bookleft > div.bookimg > img")
             update("#comments > div.comment_list.new9 > li:nth-child(1) > span", format = "yyyy-MM-dd")

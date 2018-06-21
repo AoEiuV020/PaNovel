@@ -32,11 +32,11 @@ class Lewen123 : DslJsoupNovelContext() {init {
         document {
             single("^/lewen/") {
                 name("#detail-box > div > div.ui_bg6 > div.box_intro > div.box_info > table > tbody > tr:nth-child(1) > td > div.bookname > h1", block = ownLinesString())
-                author("#detail-box > div > div.ui_bg6 > div.box_intro > div.box_info > table > tbody > tr:nth-child(1) > td > div.bookname > h1 > em", block = pickString("作者：(\\S+)"))
+                author("#detail-box > div > div.ui_bg6 > div.box_intro > div.box_info > table > tbody > tr:nth-child(1) > td > div.bookname > h1 > em", block = pickString("作\\s*者：(\\S+)"))
             }
             items("#alistbox") {
                 name("> div.info > div.title > h2 > a")
-                author("> div.info > div.title > span", block = pickString("作者：(\\S+)"))
+                author("> div.info > div.title > span", block = pickString("作\\s*者：(\\S+)"))
             }
         }
     }
@@ -48,7 +48,7 @@ class Lewen123 : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#detail-box > div > div.ui_bg6 > div.box_intro > div.box_info > table > tbody > tr:nth-child(1) > td > div.bookname > h1", block = ownLinesString())
-                author("#detail-box > div > div.ui_bg6 > div.box_intro > div.box_info > table > tbody > tr:nth-child(1) > td > div.bookname > h1 > em", block = pickString("作者：(\\S+)"))
+                author("#detail-box > div > div.ui_bg6 > div.box_intro > div.box_info > table > tbody > tr:nth-child(1) > td > div.bookname > h1 > em", block = pickString("作\\s*者：(\\S+)"))
             }
             image("#detail-box > div > div.ui_bg6 > div.box_intro > div.pic > img")
             update("#detail-box > div > div.ui_bg6 > div.box_intro > div.box_info > table > tbody > tr:nth-child(6) > td:nth-child(4)", format = "更新时间：yyyy-MM-dd")

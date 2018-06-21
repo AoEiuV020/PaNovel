@@ -33,7 +33,7 @@ class Mianhuatang : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#info > h1")
-                author("#info > div:nth-child(2)", block = pickString("作    者：(\\S*)"))
+                author("#info > div:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
             }
             image("#fmimg > img")
             /*

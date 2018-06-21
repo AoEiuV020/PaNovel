@@ -31,7 +31,7 @@ class Bqg5200 : DslJsoupNovelContext() {init {
         document {
             single("^/book/") {
                 name("#bookinfo > div.bookright > div.booktitle > h1")
-                author("#author", block = pickString("作者：(\\S+)"))
+                author("#author", block = pickString("作\\s*者：(\\S+)"))
             }
             items("#conn > table > tbody > tr:not(:nth-child(1))") {
                 name("> td:nth-child(1) > a")
@@ -47,7 +47,7 @@ class Bqg5200 : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#bookinfo > div.bookright > div.booktitle > h1")
-                author("#author", block = pickString("作者：(\\S+)"))
+                author("#author", block = pickString("作\\s*者：(\\S+)"))
             }
             image("#bookimg > img")
             update("#bookinfo > div.bookright > div.new > span.new_t", format = "最后更新：yyyy-MM-dd")

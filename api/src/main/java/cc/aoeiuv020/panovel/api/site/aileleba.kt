@@ -45,7 +45,7 @@ class Aileleba : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("body > div.wrapper > h1")
-                author("body > div.wrapper > div.excerpt", block = pickString("作者：(\\S*)"))
+                author("body > div.wrapper > div.excerpt", block = pickString("作\\s*者：(\\S*)"))
             }
             image("body > div.wrapper > div.excerpt > img")
             introduction("body > div.wrapper > div.excerpt") {

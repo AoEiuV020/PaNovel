@@ -29,7 +29,7 @@ class Yipinxia : DslJsoupNovelContext() {init {
             if (URL(root.ownerDocument().location()).path.startsWith("/yuedu/")) {
                 single {
                     name("#content > div.body > div.container > div.contents.ks-clear > div.bookk > div.bookk-info.ks-clear > div > h2 > a")
-                    author("#content > div.body > div.container > div.contents.ks-clear > div.bookk > div.bookk-info.ks-clear > div > p.intr", block = pickString("作者：(\\S*)"))
+                    author("#content > div.body > div.container > div.contents.ks-clear > div.bookk > div.bookk-info.ks-clear > div > p.intr", block = pickString("作\\s*者：(\\S*)"))
                 }
             } else {
                 items("#content > div > table > tbody > tr:not(:nth-child(1))") {
@@ -45,7 +45,7 @@ class Yipinxia : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#content > div.body > div.container > div.contents.ks-clear > div.bookk > div.bookk-info.ks-clear > div > h2 > a")
-                author("#content > div.body > div.container > div.contents.ks-clear > div.bookk > div.bookk-info.ks-clear > div > p.intr", block = pickString("作者：(\\S*)"))
+                author("#content > div.body > div.container > div.contents.ks-clear > div.bookk > div.bookk-info.ks-clear > div > p.intr", block = pickString("作\\s*者：(\\S*)"))
             }
             image("#BookImage")
             introduction("#content > div.body > div.container > div.contents.ks-clear > div.bookk > div.bookk-info.ks-clear > div > p.con")

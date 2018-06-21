@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api
 
-import cc.aoeiuv020.base.jar.baseClientBuilder
+import cc.aoeiuv020.base.jar.baseClient
 import cc.aoeiuv020.base.jar.info
 import cc.aoeiuv020.base.jar.notNull
 import okhttp3.*
@@ -17,6 +17,7 @@ import java.nio.charset.Charset
  * Created by AoEiuV020 on 2018.06.01-23:01:40.
  */
 class OkHttpTest {
+    @Suppress("ProtectedInFinal")
     protected val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
 
     @Test
@@ -94,7 +95,7 @@ class OkHttpTest {
 
     @Test
     fun cookie() {
-        val client = baseClientBuilder
+        val client = baseClient.newBuilder()
                 .cookieJar(cookieJar)
                 .addInterceptor {
                     val response = it.proceed(it.request())

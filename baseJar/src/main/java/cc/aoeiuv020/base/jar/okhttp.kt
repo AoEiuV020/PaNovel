@@ -14,12 +14,12 @@ import javax.net.ssl.X509TrustManager
 /**
  * Created by AoEiuV020 on 2018.06.10-15:56:00.
  */
-val baseClientBuilder: OkHttpClient.Builder by lazy {
+private val baseClientBuilder: OkHttpClient.Builder by lazy {
     OkHttpClient.Builder()
             .sslSocketFactory(TLSSocketFactory(), trustManager)
 }
 
-val client: OkHttpClient by lazy {
+val baseClient: OkHttpClient by lazy {
     baseClientBuilder.build()
 }
 private val trustManager: X509TrustManager
@@ -34,7 +34,7 @@ fun get(url: String): Call {
     val request = Request.Builder()
             .url(url)
             .build()
-    return client.newCall(request)
+    return baseClient.newCall(request)
 }
 
 fun Call.string(): String = this.execute().body().notNull().use { it.string() }

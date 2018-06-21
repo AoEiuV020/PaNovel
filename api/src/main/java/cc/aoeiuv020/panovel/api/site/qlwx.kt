@@ -33,7 +33,7 @@ class Qlwx : DslJsoupNovelContext() { init {
                 single {
                     val eInfo = element(query = "#maininfo #info")
                     name("> h1", eInfo)
-                    author("> p:nth-child(2)", eInfo, block = pickString("作    者：(\\S*)"))
+                    author("> p:nth-child(2)", eInfo, block = pickString("作\\s*者：(\\S*)"))
                 }
             } else {
                 items("#main > table > tbody > tr:not(:nth-child(1))") {
@@ -49,7 +49,7 @@ class Qlwx : DslJsoupNovelContext() { init {
             val eInfo = element(query = "#maininfo #info")
             novel {
                 name("> h1", eInfo)
-                author("> p:nth-child(2)", eInfo, block = pickString("作    者：(\\S*)"))
+                author("> p:nth-child(2)", eInfo, block = pickString("作\\s*者：(\\S*)"))
             }
             image("#fmimg > img")
             introduction("#intro > p:not(:nth-last-child(1))")

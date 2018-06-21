@@ -39,7 +39,7 @@ class Snwx : DslJsoupNovelContext() {init {
             val title = element("> div.infotitle", parent = div)
             novel {
                 name("> h1", parent = title)
-                author("> i:nth-child(2)", parent = title, block = pickString("作者：(\\S*)"))
+                author("> i:nth-child(2)", parent = title, block = pickString("作\\s*者：(\\S*)"))
             }
             image("#fmimg > img")
             introduction("> div.intro", parent = div) {

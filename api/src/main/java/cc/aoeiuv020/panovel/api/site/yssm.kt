@@ -47,7 +47,7 @@ class Yssm : DslJsoupNovelContext() {init {
             val div = root.requireElement("#container > div.bookinfo")
             novel {
                 name("> div > span > h1", parent = div)
-                author("> div > span > em", parent = div, block = pickString("作者：(\\S*)"))
+                author("> div > span > em", parent = div, block = pickString("作\\s*者：(\\S*)"))
             }
             // 这网站小说没有封面，
             image = null

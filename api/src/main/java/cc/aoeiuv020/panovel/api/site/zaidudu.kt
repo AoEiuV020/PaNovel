@@ -30,7 +30,7 @@ class Zaidudu : DslJsoupNovelContext() {init {
         document {
             single("^/book/") {
                 name("#post-title > h1")
-                author("#post-mate > li:nth-child(1)", block = pickString("作者：(\\S*)"))
+                author("#post-mate > li:nth-child(1)", block = pickString("作\\s*者：(\\S*)"))
             }
             items("#wrap > table > tbody > tr:not(:nth-child(1))") {
                 name("> td:nth-child(1) > a")
@@ -45,7 +45,7 @@ class Zaidudu : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("#post-title > h1")
-                author("#post-mate > li:nth-child(1)", block = pickString("作者：(\\S*)"))
+                author("#post-mate > li:nth-child(1)", block = pickString("作\\s*者：(\\S*)"))
             }
             image("#pic-fm > dl > dt > img")
             update("#post-mate > li:nth-child(3)", format = "更新时间：yyyy-MM-dd")

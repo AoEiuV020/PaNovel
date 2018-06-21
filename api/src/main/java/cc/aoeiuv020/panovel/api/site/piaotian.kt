@@ -40,15 +40,15 @@ class Piaotian : DslJsoupNovelContext() {init {
                     val tbody2 = element("tr:nth-child(1) > td > table > tbody", parent = tbody1)
                     val pattern = "" +
                             "(\\S*)\\s" +
-                            "类    别：(\\S*)\\s" +
-                            "作    者：(\\S*)\\s" +
-                            "管 理 员：(\\S*)\\s" +
+                            "类\\s*别：(\\S*)\\s" +
+                            "作\\s*者：(\\S*)\\s" +
+                            "管\\s*理\\s*员：(\\S*)\\s" +
                             "全文长度：(\\S*)\\s" +
                             "最后更新：(\\S*)\\s" +
                             "文章状态：(\\S*)\\s" +
                             "授权级别：(\\S*)\\s" +
                             "首发状态：(\\S*)\\s" +
-                            "收 藏 数：(\\S*)\\s" +
+                            "收\\s*藏\\s*数：(\\S*)\\s" +
                             "总推荐数：(\\S*)\\s" +
                             "本月推荐：(\\S*)\\s" +
                             "收到鲜花：(\\S*)" +
@@ -76,15 +76,15 @@ class Piaotian : DslJsoupNovelContext() {init {
             val tbody2 = element("tr:nth-child(1) > td > table > tbody", parent = tbody1)
             val pattern = "" +
                     "(\\S*)\\s" +
-                    "类    别：(\\S*)\\s" +
-                    "作    者：(\\S*)\\s" +
-                    "管 理 员：(\\S*)\\s" +
+                    "类\\s*别：(\\S*)\\s" +
+                    "作\\s*者：(\\S*)\\s" +
+                    "管\\s*理\\s*员：(\\S*)\\s" +
                     "全文长度：(\\S*)\\s" +
                     "最后更新：(\\S*)\\s" +
                     "文章状态：(\\S*)\\s" +
                     "授权级别：(\\S*)\\s" +
                     "首发状态：(\\S*)\\s" +
-                    "收 藏 数：(\\S*)\\s" +
+                    "收\\s*藏\\s*数：(\\S*)\\s" +
                     "总推荐数：(\\S*)\\s" +
                     "本月推荐：(\\S*)\\s" +
                     "收到鲜花：(\\S*)" +
