@@ -19,7 +19,7 @@ class NovelServiceImplTest {
     private lateinit var service: NovelServiceImpl
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress.getAndroidTest())
+        service = NovelServiceImpl(ServerAddress.getDefault())
     }
 
     @Test
