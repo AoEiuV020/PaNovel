@@ -41,7 +41,6 @@ class EpubParserTest : ParserTest(EpubParser::class) {
     @Test
     fun exported() {
         val file = getFile("/home/aoeiuv/tmp/panovel/epub/[和ヶ原聡司].打工吧！魔王大人16.epub") ?: return
-        println(file.toURI())
         val charset = "UTF-8"
         val parser = EpubParser(file, Charset.forName(charset))
         val chapters = chapters(
@@ -250,6 +249,12 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         // 能正确处理上一级，
         assertEquals("jar:${file.toURI()}!/Images/aa.jpg", parentUrl.toString())
 
+        // spec带jar协议也正常，
+        // NOTE: 安卓模拟器api 19 上测试发现不一致，地址会重复，真机api 25正常，
+        // jar:file:/第一个文件!/file:/第二个文件!/cover.jpeg
+        val jarUrl = URL(coverUrl, "jar:file:/q/w/e!/r/t")
+        assertEquals("jar:file:/q/w/e!/r/t", jarUrl.toString())
+        assertEquals("jar:file:/q/w/e!/r/t", URL(jarUrl, jarUrl.toString()).toString())
     }
 
     @Test

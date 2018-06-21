@@ -135,8 +135,12 @@ class EpubParser(
                 .dropWhile { it == chapter.name }
     }
 
+    // 封面extra只有包内路径，要展开成完整jar协议地址，
     override fun getImage(extra: String): URL {
-        return URL(rootUrl, extra)
+        // api19模拟器上测试发现文件路径会重复出现，电脑和高版本安卓没有出现，
+        return URL(rootUrl, extra.removePrefix(rootUrl.toString())).also {
+            logger.debug { "getImage <$extra> -> <$it>" }
+        }
     }
 
     /**

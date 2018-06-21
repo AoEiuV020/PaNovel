@@ -12,8 +12,8 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoaderFactory
 import com.bumptech.glide.load.model.MultiModelLoaderFactory
-import com.bumptech.glide.signature.ObjectKey
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 import org.jetbrains.anko.info
 import java.io.InputStream
 import java.net.URL
@@ -55,9 +55,10 @@ private class JarFactory : ModelLoaderFactory<GlideUrl, InputStream> {
     }
 }
 
-private class JarLoader : ModelLoader<GlideUrl, InputStream> {
+private class JarLoader : ModelLoader<GlideUrl, InputStream>, AnkoLogger {
     override fun buildLoadData(model: GlideUrl, width: Int, height: Int, options: Options?): ModelLoader.LoadData<InputStream>? {
-        return ModelLoader.LoadData(ObjectKey(model), UrlStreamFetcher(model.toURL()))
+        debug { "load $model" }
+        return ModelLoader.LoadData(model, UrlStreamFetcher(model.toURL()))
     }
 
     override fun handles(model: GlideUrl): Boolean {
@@ -71,7 +72,7 @@ private class JarLoader : ModelLoader<GlideUrl, InputStream> {
 
 private class UrlStreamFetcher(
         private val model: URL
-) : DataFetcher<InputStream> {
+) : DataFetcher<InputStream>, AnkoLogger {
     private lateinit var inputStream: InputStream
     override fun getDataClass(): Class<InputStream> {
         return InputStream::class.java
@@ -81,7 +82,7 @@ private class UrlStreamFetcher(
         if (::inputStream.isInitialized) {
             try {
                 inputStream.close()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
     }
@@ -94,6 +95,7 @@ private class UrlStreamFetcher(
     }
 
     override fun loadData(priority: Priority?, callback: DataFetcher.DataCallback<in InputStream>) {
+        debug { "open $model" }
         try {
             inputStream = model.openStream()
         } catch (e: Exception) {
