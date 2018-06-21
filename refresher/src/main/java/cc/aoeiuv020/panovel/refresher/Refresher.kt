@@ -23,9 +23,6 @@ class Refresher(
     private val vipNovelList = mutableSetOf<Novel>()
     fun start(address: ServerAddress, bookshelfList: MutableSet<String>) {
         logger.info {
-            "start address: ${address.data}"
-        }
-        logger.info {
             config
         }
         logger.info {

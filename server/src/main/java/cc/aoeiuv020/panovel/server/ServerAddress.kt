@@ -13,7 +13,7 @@ class ServerAddress(
         fun getAndroidTest(): ServerAddress = new("192.168.1.10:8080")
         fun getDefault(): ServerAddress = new(PANOVEL_HOST)
 
-        private fun new(host: String): ServerAddress {
+        fun new(host: String): ServerAddress {
             return ServerAddress(host)
         }
     }
