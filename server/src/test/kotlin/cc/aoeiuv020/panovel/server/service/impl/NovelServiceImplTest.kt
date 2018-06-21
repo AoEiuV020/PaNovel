@@ -89,4 +89,9 @@ class NovelServiceImplTest {
         }
     }
 
+    @Test
+    fun version() {
+        service.minVersion().let { println(it) }
+    }
+
 }

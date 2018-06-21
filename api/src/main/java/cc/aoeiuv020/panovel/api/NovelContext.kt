@@ -234,6 +234,7 @@ abstract class NovelContext {
 
     /**
      * 从extra中获取图片URL, 正常直接就是完整路径，
+     * TODO: 考虑缓存主页URL,
      */
     open fun getImage(extra: String): URL = URL(URL(site.baseUrl), extra)
 

@@ -125,6 +125,7 @@ class EpubExporter(
                 try {
                     val url = contentProvider.getImage(extra)
                     // 如果打开图片输入流返回空，直接抛异常到下面的catch打印普通文本，
+                    logger.debug { "adding image: $url" }
                     val resource = contentProvider.openImage(url).notNull().use { input ->
                         val suffix = try {
                             // 从url中拿文件后辍，

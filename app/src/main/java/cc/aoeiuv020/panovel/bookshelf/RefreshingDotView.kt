@@ -26,23 +26,17 @@ class RefreshingDotView : FrameLayout {
         View.inflate(context, R.layout.view_refreshing_dot, this)
     }
 
-    /**
-     * 是否显示那个表示有现金操作的三个小点，
-     */
-    private var showMoreActionIcon: Boolean = false
-
     fun refreshing() {
         pbRefreshing.show()
         ivDot.hide()
-        ivMoreAction.hide()
     }
 
     fun refreshed(hasNew: Boolean) {
         pbRefreshing.hide()
         if (hasNew) {
             ivDot.show()
-        } else if (showMoreActionIcon) {
-            ivMoreAction.show()
+        } else {
+            ivDot.hide()
         }
     }
 

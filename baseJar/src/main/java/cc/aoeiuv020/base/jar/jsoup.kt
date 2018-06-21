@@ -123,6 +123,7 @@ private fun preserveWhitespace(node: Node?): Boolean {
 fun Element.textListSplitWhitespace(): List<String> {
     // 用LinkedList方便频繁添加，
     val list = LinkedList<String>()
+    @Suppress("DEPRECATION")
     NodeTraversor(object : NodeVisitor {
         private val line = StringBuilder()
         override fun head(node: Node?, depth: Int) {
@@ -154,6 +155,7 @@ fun imgText(img: Element): String? {
             // svg中的image标签有这个属性，
             ?: img.absXlinkHref().takeIf(String::isNotBlank)
             )?.let {
+        // 只记录完整路径，
         "![img]($it)"
     }
 }

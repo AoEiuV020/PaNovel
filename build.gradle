@@ -8,8 +8,8 @@ buildscript {
         compile_version = 27
         min_version = 16
         target_version = 25
-        version_code = 64
-        version_name = "3.1.4"
+        version_code = 65
+        version_name = "3.1.5"
         support_version = '27.1.1'
         kotlin_version = '1.2.41'
         anko_version = '0.10.1'
@@ -175,9 +175,8 @@ androidModules.forEach { name ->
 
         dependencies {
             testImplementation "junit:junit:$junit_version"
-            androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
-                exclude group: 'com.android.support', module: 'support-annotations'
-            })
+            androidTestImplementation 'com.android.support.test:runner:1.0.2'
+            androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
             implementation "org.jetbrains.anko:anko-commons:$anko_version"
         }

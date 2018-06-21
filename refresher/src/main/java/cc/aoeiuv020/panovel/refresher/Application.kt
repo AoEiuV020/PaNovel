@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     gsonJsonPathInit()
     TLSSocketFactory.makeDefault()
     val ite = args.iterator()
-    var address: ServerAddress = ServerAddress.new()
+    var address: ServerAddress = ServerAddress.getDefault()
     var config = Config()
     val bookshelfList = mutableSetOf<String>()
 
