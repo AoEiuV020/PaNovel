@@ -150,7 +150,7 @@ class NovelExporter(
                             .apply(RequestOptions().onlyRetrieveFromCache(true))
                             .submit()
                             .get()
-                            .inputStream()
+                            ?.inputStream()
                 } else {
                     url.openStream()
                 }

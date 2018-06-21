@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.io.FileDescriptor
 
 /**
  * TODO: 其他阅读器无法识别，
@@ -114,8 +115,15 @@ class EpubExporter(
                         .text(name)
             }
             content.forEach { line ->
+                val extra = try {
+                    line.pick(imagePattern).first()
+                } catch (_: Exception) {
+                    // 不是图片就直接保存p标签，
+                    div.appendElement("p")
+                            .text("$indent$line")
+                    return@forEach
+                }
                 try {
-                    val extra = line.pick(imagePattern).first()
                     val url = contentProvider.getImage(extra)
                     // 如果打开图片输入流返回空，直接抛异常到下面的catch打印普通文本，
                     val resource = contentProvider.openImage(url).notNull().use { input ->
@@ -135,21 +143,31 @@ class EpubExporter(
                             // jsoup没有内容的标签不封闭，以防万一加上text就封闭了，
                             .text("")
                 } catch (e: Exception) {
-                    // 不是图片就直接保存p标签，
+                    logger.error(e) { "导出图片<$extra>出错，" }
                     div.appendElement("p")
-                            .text("$indent$line")
+                            .text("$indent[image]")
                 }
             }
             val bytes = (root.outerHtml()).toByteArray(Charsets.UTF_8)
             val resource = Resource(bytes, fileName)
             book.addSection(name, resource)
+            // 这个guide不知道是否重要，
             if (index == 0) {
                 book.guide.coverPage = resource
             }
         }
 
         // EpubWriter不带缓冲，加个缓冲，不确定有多大效果，
-        file.outputStream().buffered().use { output ->
+        // TODO: 这里use多余，write里面close了，
+        file.outputStream()
+                .also {
+                    FileDescriptor::class.java.getDeclaredField("descriptor")
+                            .apply { isAccessible = true }
+                            .get(it.fd)
+                            .toString()
+                            .also { logger.info { "write fd: $it" } }
+                }
+                .buffered().use { output ->
             EpubWriter().write(book, output)
         }
 

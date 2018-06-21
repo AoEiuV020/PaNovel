@@ -12,7 +12,6 @@ import java.nio.charset.Charset
  * Created by AoEiuV020 on 2018.06.19-22:57:24.
  */
 class EpubExporterTest : ParserTest(EpubParser::class) {
-
     @Test
     fun yidm() {
         val file = getFile("/home/aoeiuv/tmp/panovel/epub/yidm/Re：从零开始的异世界生活_第十一卷.epub") ?: return

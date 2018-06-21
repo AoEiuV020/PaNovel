@@ -16,6 +16,36 @@ import java.nio.charset.Charset
  * Created by AoEiuV020 on 2018.06.16-17:52:10.
  */
 class EpubParserTest : ParserTest(EpubParser::class) {
+
+    @Test
+    fun exported() {
+        val file = getFile("/home/aoeiuv/tmp/panovel/epub/[和ヶ原聡司].打工吧！魔王大人16.epub") ?: return
+        println(file.toURI())
+        val charset = "UTF-8"
+        val parser = EpubParser(file, Charset.forName(charset))
+        val chapters = chapters(
+                parser,
+                author = "和ヶ原聡司",
+                name = "[和ヶ原聡司].打工吧！魔王大人16",
+                requester = charset,
+                image = "cover.jpeg",
+                introduction = "为了搜索「大魔王撒旦的遗产」，把一切生活用品从三坪大的魔王城搬到异世界安特．" +
+                        "伊苏拉。 比起通勤时间，一边对独自一人留在VillaoRosa笹冢201号室过夜的独居生活感到寂寞，" +
+                        "一边参加着正式员工登录职训的魔王。 其间，从一起参加职训的蓬松发型女性那里收到了不带有任何含意的友情巧克力。" +
+                        "比起艾契丝的食欲，这个消息反而在女性阵容里掀起一堆波涛。 另一方面，在安特．伊苏拉，为了得到大魔王的遗产的其中一项" +
+                        "「亚多拉梅基努斯魔枪」，铃乃、莱拉、艾伯特、卢马克出发前往北大陆。在跟日本成吉思汗相似的店里，" +
+                        "被称作「围栏长」的北大陆代表正在等着…?平民派奇幻故事第16集"
+        )
+        parser.getNovelContent(chapters.first()).forEach {
+            assertEquals("![img](jar:${file.toURI()}!/cover.jpeg)", it)
+        }
+        parser.getImage("cover.jpeg")
+                .openStream()
+                .read()
+                .toString(16)
+                .let { println(it) }
+    }
+
     @Test
     fun yidm() {
         val file = getFile("/home/aoeiuv/tmp/panovel/epub/yidm/Re：从零开始的异世界生活_第十一卷.epub") ?: return
