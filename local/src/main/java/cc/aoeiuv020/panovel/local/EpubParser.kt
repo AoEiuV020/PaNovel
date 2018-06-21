@@ -39,6 +39,7 @@ class EpubParser(
         val requester: String = charset.name()
 
         val zipFile = ZipFile(file)
+        // 这个编码好像没什么用，epublib库里到处都是写死的utf8,
         val book: Book = EpubReader().readEpubLazy(zipFile, charset.name())
         // 马上就可以关闭了，
         zipFile.close()
@@ -60,6 +61,7 @@ class EpubParser(
         }
         // descriptions中存的一般是html,
         val introductionInDescriptions = book.metadata?.descriptions?.flatMap {
+            // 不按空格分割，否则英文电子书就很糟糕了，
             Jsoup.parse(it).body().textList()
         } ?: listOf()
         // 爱下电子书网站下载的epub有在封面页面放简介，
