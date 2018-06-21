@@ -10,7 +10,6 @@ import org.jsoup.nodes.Element
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.FileDescriptor
 
 /**
  * TODO: 其他阅读器无法识别，
@@ -158,16 +157,8 @@ class EpubExporter(
         }
 
         // EpubWriter不带缓冲，加个缓冲，不确定有多大效果，
-        // TODO: 这里use多余，write里面close了，
-        file.outputStream()
-                .also {
-                    FileDescriptor::class.java.getDeclaredField("descriptor")
-                            .apply { isAccessible = true }
-                            .get(it.fd)
-                            .toString()
-                            .also { logger.info { "write fd: $it" } }
-                }
-                .buffered().use { output ->
+        // 这里use多余，write里面close了，
+        file.outputStream().buffered().use { output ->
             EpubWriter().write(book, output)
         }
 

@@ -1,6 +1,9 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.*
+import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.findAll
+import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.base.jar.textList
 import net.sf.jazzlib.ZipFile
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.TOCReference
@@ -9,8 +12,6 @@ import org.jsoup.Jsoup
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.FileDescriptor
-import java.io.RandomAccessFile
 import java.net.URL
 import java.nio.charset.Charset
 import java.util.*
@@ -38,16 +39,6 @@ class EpubParser(
         val requester: String = charset.name()
 
         val zipFile = ZipFile(file)
-        ZipFile::class.java.declaredFields.single { it.type == RandomAccessFile::class.java }
-                .apply { isAccessible = true }
-                .get(zipFile)
-                .also {
-                    FileDescriptor::class.java.getDeclaredField("descriptor")
-                            .apply { isAccessible = true }
-                            .get((it as RandomAccessFile).fd)
-                            .toString()
-                            .also { logger.info { "read fd: $it" } }
-                }
         val book: Book = EpubReader().readEpubLazy(zipFile, charset.name())
         // 马上就可以关闭了，
         zipFile.close()

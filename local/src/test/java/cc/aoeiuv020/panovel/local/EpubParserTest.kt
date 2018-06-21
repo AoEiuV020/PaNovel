@@ -42,8 +42,7 @@ class EpubParserTest : ParserTest(EpubParser::class) {
         parser.getImage("cover.jpeg")
                 .openStream()
                 .read()
-                .toString(16)
-                .let { println(it) }
+                .let { assertEquals(0xff, it) }
     }
 
     @Test
