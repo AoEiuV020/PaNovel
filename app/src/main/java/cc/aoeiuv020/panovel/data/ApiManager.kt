@@ -4,7 +4,6 @@ import android.content.Context
 import cc.aoeiuv020.panovel.api.ApiNovelProvider
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.api.site.*
 import cc.aoeiuv020.panovel.data.entity.Novel
 import java.net.URL
 
@@ -20,23 +19,7 @@ class ApiManager(ctx: Context) {
     // TODO: 动漫之家还是维护，等开放了，测试后再添加，
     @Suppress("RemoveExplicitTypeArguments")
     val contexts: List<NovelContext> by lazy {
-        listOf(
-                Piaotian(), Biquge(), Liudatxt(), Qidian(), Sfacg(),
-                Snwx(), Syxs(), Yssm(), Qlwx(), Byzw(),
-
-                Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
-                Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
-
-                Lread(), Wenxuemi(), Yipinxia(), N360dxs(), N7dsw(),
-                Aileleba(), Gulizw(), N73xs(), Siluke(), Wukong(),
-
-                Exiaoshuo(), Dajiadu(), Liewen(), Qingkan5(), Bqg5200(),
-                Lewen123(), Zaidudu(), Shangshu(), Haxds(), X23us(),
-
-                Zhuishu(), N2kzw(), Shu8(), N52ranwen(), Kuxiaoshuo(),
-                Zzdxsw(), Zhuaji(), Uctxt()
-
-        )
+        NovelContext.getAllSite()
     }
     // 缓存host对应网站上下文的映射，
     private val hostMap: MutableMap<String, NovelContext> by lazy {
