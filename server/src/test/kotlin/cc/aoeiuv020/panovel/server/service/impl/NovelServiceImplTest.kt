@@ -20,7 +20,7 @@ class NovelServiceImplTest {
 
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress.getAndroidTest())
+        service = NovelServiceImpl(ServerAddress.new("niao.aoeiuv020.cc"))
     }
 
     @Test
