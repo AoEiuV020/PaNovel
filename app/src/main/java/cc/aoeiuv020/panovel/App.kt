@@ -17,6 +17,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
+import org.jetbrains.anko.info
 import java.net.URL
 
 
@@ -90,6 +91,8 @@ class App : MultiDexApplication(), AnkoLogger {
         if (BuildConfig.DEBUG) {
             JPushInterface.setDebugMode(Log.isLoggable("JPush", Log.DEBUG))
             JPushInterface.setAlias(ctx, 0, "debug")
+            val id = JPushInterface.getRegistrationID(ctx)
+            info { "JPush registration id: <$id>" }
         }
         JPushInterface.init(ctx)
     }

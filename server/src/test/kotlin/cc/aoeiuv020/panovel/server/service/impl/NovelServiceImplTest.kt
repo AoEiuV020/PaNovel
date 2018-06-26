@@ -17,9 +17,38 @@ class NovelServiceImplTest {
     }
 
     private lateinit var service: NovelServiceImpl
+
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress.getDefault())
+        service = NovelServiceImpl(ServerAddress.getAndroidTest())
+    }
+
+    @Test
+    fun touch() {
+        val novel = Novel().apply {
+            site = "起点中文"
+            author = "圣骑士的传说"
+            name = "修真聊天群"
+            detail = "3602691"
+            chaptersCount = 13
+            checkUpdateTime = Date()
+            receiveUpdateTime = checkUpdateTime
+        }
+        assertFalse(service.touch(novel))
+    }
+
+    @Test
+    fun delete() {
+        val novel = Novel().apply {
+            site = "起点中文"
+            author = "圣骑士的传说"
+            name = "修真聊天群"
+            detail = "3602691"
+            chaptersCount = 12
+            checkUpdateTime = Date()
+            receiveUpdateTime = Date(checkUpdateTime.time - TimeUnit.DAYS.toMillis(4))
+        }
+        assertFalse(service.touch(novel))
     }
 
     @Test
@@ -30,15 +59,11 @@ class NovelServiceImplTest {
             name = "修真聊天群"
             detail = "3602691"
             chaptersCount = 12
-            receiveUpdateTime = Date()
+            checkUpdateTime = Date()
+            receiveUpdateTime = checkUpdateTime
         }
-        assertTrue(service.uploadUpdate(novel))
-        novel.receiveUpdateTime = Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
         assertFalse(service.uploadUpdate(novel))
-        novel.let {
-            it.chaptersCount = 13
-            it.receiveUpdateTime = null
-        }
+        novel.chaptersCount = 22222
         assertTrue(service.uploadUpdate(novel))
     }
 
@@ -70,22 +95,9 @@ class NovelServiceImplTest {
     }
 
     @Test
-    fun notifyTest() {
-        val novel = Novel().apply {
-            site = "起点中文"
-            author = "圣骑士的传说"
-            name = "修真聊天群"
-            detail = "3602691"
-            chaptersCount = 22222
-            receiveUpdateTime = Date()
-        }
-        assertTrue(service.uploadUpdate(novel))
-    }
-
-    @Test
     fun needRefreshNovelList() {
         service.needRefreshNovelList(10).forEach { novel ->
-            println("<${novel.run { "$site.$author.$name" }}>")
+            println("<${novel.run { "$site.$author.$name/$chaptersCount" }}>")
         }
     }
 
