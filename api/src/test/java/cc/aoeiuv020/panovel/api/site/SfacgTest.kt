@@ -41,7 +41,7 @@ class SfacgTest : BaseNovelContextText(Sfacg::class) {
         chapters("114367",
                 "二月月票福利计划~", "/Novel/114367/199838/1653202/", null,
                 "第四十一章", "/vip/c/1892767/", null,
-                208)
+                200)
     }
 
     @Test
