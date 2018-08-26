@@ -27,7 +27,7 @@ abstract class NovelContext {
                 Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
                 Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
 
-                Lread(), Wenxuemi(), Yipinxia(), N360dxs(), N7dsw(),
+                Lread(), Wenxuemi(), Yipinxia(),/* N360dxs(),*/ N7dsw(),
                 Aileleba(), Gulizw(), N73xs(), Siluke(), Wukong(),
 
                 Exiaoshuo(), Dajiadu(), Liewen(), Qingkan5(), Bqg5200(),

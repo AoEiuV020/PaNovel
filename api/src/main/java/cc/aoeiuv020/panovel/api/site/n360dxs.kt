@@ -5,7 +5,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 /**
  * Created by AoEiuV020 on 2018.06.03-20:22:10.
  */
-// 这个是轻小说网站，
+// 这个曾经是个轻小说网站，貌似已经没了，
+@Suppress("unused")
 class N360dxs : DslJsoupNovelContext() {init {
     site {
         name = "360°C小说"
