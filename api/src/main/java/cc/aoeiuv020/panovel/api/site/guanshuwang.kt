@@ -10,8 +10,8 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 class Guanshuwang : DslJsoupNovelContext() {init {
     site {
         name = "官术网"
-        baseUrl = "http://www.3dllc.cc"
-        logo = "http://www.3dllc.cc/images/logo.gif"
+        baseUrl = "http://www.biyuwu.cc"
+        logo = "http://www.biyuwu.cc/images/logo.gif"
     }
     search {
         get {
