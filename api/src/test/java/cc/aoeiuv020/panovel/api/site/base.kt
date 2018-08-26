@@ -86,6 +86,9 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
             println(it)
             it.name != lastName || it.extra != lastExtra
         }
+        require(newList.size < list.size) {
+            "最新章《$lastName》不存在，"
+        }
         val first = list.first()
         assertEquals(firstName, first.name)
         assertEquals(firstExtra, first.extra)
