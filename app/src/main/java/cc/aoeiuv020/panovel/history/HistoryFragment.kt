@@ -87,6 +87,7 @@ class HistoryFragment : Fragment(), IView {
         novelListAdapter.hasUpdate(hasUpdateList)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun askUpdateError(message: String, e: Throwable) {
         // 询问服务器更新出错不展示，
         srlRefresh.isRefreshing = false
