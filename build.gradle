@@ -10,8 +10,9 @@ buildscript {
         target_version = 25
         version_code = 65
         version_name = "3.1.5"
+        studio_version = '3.2.0-rc02'
         support_version = '27.1.1'
-        kotlin_version = '1.2.41'
+        kotlin_version = '1.2.60'
         anko_version = '0.10.1'
         junit_version = '4.12'
         slf4j_version = '1.7.25'
@@ -31,7 +32,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha18'
+        //noinspection GradleDependency
+        classpath "com.android.tools.build:gradle:$studio_version"
+        //noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.0.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
@@ -76,17 +79,46 @@ applicationModules.forEach { name ->
                     proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
                 }
             }
+
+            def signingFile = rootProject.file('signing.properties')
+            if(signingFile.exists()){
+                def input = signingFile.newInputStream()
+                def p = new Properties()
+                p.load(input)
+                signingConfigs {
+                    config {
+                        keyAlias p['keyAlias']
+                        keyPassword p['keyPassword']
+                        storeFile file(p['storeFile'])
+                        storePassword p['storePassword']
+                        v1SigningEnabled true
+                        v2SigningEnabled true
+                    }
+                }
+                buildTypes {
+                    debug {
+                        signingConfig signingConfigs.config
+                    }
+                    release {
+                        signingConfig signingConfigs.config
+                    }
+                }
+            }
+
             applicationVariants.all { variant ->
                 if (variant.buildType.name == 'release') {
-                    variant.mergeAssets.doLast {
-                        delete(fileTree(dir: variant.mergeAssets.outputDir, includes: ['admob_test_device_list']))
-                    }
                     variant.assemble.doLast {
                         copy {
-                            from variant.mappingFile
-                            into "${rootDir}/proguard"
-                            rename { String fileName ->
-                                "$rootProject.name-mapping-$versionName-${variant.name}.txt"
+                            from variant.outputs[0].outputFile
+                            into "${rootDir}/release"
+                        }
+                        if (variant.mappingFile != null) {
+                            copy {
+                                from variant.mappingFile
+                                into "${rootDir}/release"
+                                rename { String fileName ->
+                                    "$rootProject.name-mapping-$versionName-${variant.name}.txt"
+                                }
                             }
                         }
                     }
