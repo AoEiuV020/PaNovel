@@ -74,14 +74,14 @@ object UpdateManager : AnkoLogger {
                             text = localNovel.lastChapterName,
                             title = it.getString(R.string.notify_has_update_title_placeholder, localNovel.name),
                             bigText = bitText,
-                            time = localNovel.updateTime.notZero()?.time)
+                            time = localNovel.receiveUpdateTime.notZero()?.time)
                 }
             } else {
                 uiThread {
                     it.notify(id = localNovel.nId.toInt(),
                             text = localNovel.lastChapterName,
                             title = it.getString(R.string.notify_has_update_title_placeholder, localNovel.name),
-                            time = localNovel.updateTime.notZero()?.time)
+                            time = localNovel.receiveUpdateTime.notZero()?.time)
                 }
             }
         }
