@@ -22,8 +22,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/export"
-        android:title="@string/export"
+        android:id="@+id/backup"
+        android:title="@string/backup"
         app:showAsAction="never" />
 
     <item

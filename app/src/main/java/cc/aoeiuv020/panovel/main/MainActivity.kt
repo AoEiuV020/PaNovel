@@ -20,13 +20,13 @@ import android.view.View
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.backup.BackupActivity
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
-import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.migration.MigrationPresenter
@@ -331,8 +331,8 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
     }
 
-    private fun export() {
-        ExportActivity.start(this)
+    private fun backup() {
+        BackupActivity.start(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -358,7 +358,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             R.id.scan -> scan()
             R.id.open -> open()
             R.id.subscript -> subscript()
-            R.id.export -> export()
+            R.id.backup -> backup()
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)

@@ -1,15 +1,15 @@
-package cc.aoeiuv020.panovel.export.impl
+package cc.aoeiuv020.panovel.backup.impl
 
 import android.net.Uri
 import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
 import cc.aoeiuv020.panovel.App
+import cc.aoeiuv020.panovel.backup.BackupOption
+import cc.aoeiuv020.panovel.backup.BackupOption.*
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
-import cc.aoeiuv020.panovel.export.ExportOption
-import cc.aoeiuv020.panovel.export.ExportOption.*
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.settings.OtherSettings
@@ -22,8 +22,8 @@ import java.io.File
 /**
  * Created by AoEiuV020 on 2018.05.30-20:40:56.
  */
-class ExporterV2 : DefaultExporter() {
-    override fun import(file: File, option: ExportOption): Int {
+class BackupV2 : DefaultBackup() {
+    override fun import(file: File, option: BackupOption): Int {
         debug { "import $option from $file" }
         return when (option) {
             Bookshelf -> importBookshelf(file)
@@ -136,7 +136,7 @@ class ExporterV2 : DefaultExporter() {
         return list.size
     }
 
-    override fun export(file: File, option: ExportOption): Int {
+    override fun export(file: File, option: BackupOption): Int {
         debug { "export $option to $file" }
         return when (option) {
             Bookshelf -> exportBookshelf(file)

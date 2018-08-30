@@ -1,7 +1,7 @@
-package cc.aoeiuv020.panovel.export.impl
+package cc.aoeiuv020.panovel.backup.impl
 
-import cc.aoeiuv020.panovel.export.ExportOption
-import cc.aoeiuv020.panovel.export.IExporter
+import cc.aoeiuv020.panovel.backup.BackupOption
+import cc.aoeiuv020.panovel.backup.IBackup
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.error
@@ -10,19 +10,19 @@ import java.io.File
 /**
  * Created by AoEiuV020 on 2018.05.11-20:27:17.
  */
-abstract class DefaultExporter : IExporter, AnkoLogger {
+abstract class DefaultBackup : IBackup, AnkoLogger {
 
     /**
      * @return 返回选项对应的名字和文件名，
      */
-    private fun getOptionName(option: ExportOption): String = when (option) {
-        ExportOption.Bookshelf -> "书架"
-        ExportOption.BookList -> "书单"
-        ExportOption.Settings -> "设置"
+    private fun getOptionName(option: BackupOption): String = when (option) {
+        BackupOption.Bookshelf -> "书架"
+        BackupOption.BookList -> "书单"
+        BackupOption.Settings -> "设置"
     }
 
     @Synchronized
-    override fun import(base: File, options: Set<ExportOption>): String {
+    override fun import(base: File, options: Set<BackupOption>): String {
         debug {
             "import from $base\n enable $options"
         }
@@ -40,10 +40,10 @@ abstract class DefaultExporter : IExporter, AnkoLogger {
         return sb.toString()
     }
 
-    abstract fun import(file: File, option: ExportOption): Int
+    abstract fun import(file: File, option: BackupOption): Int
 
     @Synchronized
-    override fun export(base: File, options: Set<ExportOption>): String {
+    override fun export(base: File, options: Set<BackupOption>): String {
         debug {
             "export to $base\n enable $options"
         }
@@ -62,7 +62,7 @@ abstract class DefaultExporter : IExporter, AnkoLogger {
     }
 
     // 只保留最新版的导出，
-    open fun export(file: File, option: ExportOption): Int {
+    open fun export(file: File, option: BackupOption): Int {
         throw UnsupportedOperationException()
     }
 

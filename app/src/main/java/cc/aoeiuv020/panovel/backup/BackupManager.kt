@@ -1,9 +1,9 @@
-package cc.aoeiuv020.panovel.export
+package cc.aoeiuv020.panovel.backup
 
 import android.content.Context
 import cc.aoeiuv020.panovel.App
-import cc.aoeiuv020.panovel.export.impl.ExporterV1
-import cc.aoeiuv020.panovel.export.impl.ExporterV2
+import cc.aoeiuv020.panovel.backup.impl.BackupV1
+import cc.aoeiuv020.panovel.backup.impl.BackupV2
 import net.lingala.zip4j.core.ZipFile
 import net.lingala.zip4j.exception.ZipException
 import net.lingala.zip4j.model.ZipParameters
@@ -14,7 +14,7 @@ import java.io.OutputStream
 /**
  * Created by AoEiuV020 on 2018.05.11-17:45:49.
  */
-class ExportManager {
+class BackupManager {
     companion object {
         const val NAME_TEMP = "PaNovel-Backup-00.zip"
         const val FOLDER_TEMP = "PaNovel-Backup-00"
@@ -39,9 +39,9 @@ class ExportManager {
                         mkdirs()
                     }
 
-    private fun getExporter(version: Int): IExporter = when (version) {
-        2 -> ExporterV2()
-        1 -> ExporterV1()
+    private fun getExporter(version: Int): IBackup = when (version) {
+        2 -> BackupV2()
+        1 -> BackupV1()
         else -> throw IllegalStateException("版本<$version>不存在,")
     }
 
@@ -51,7 +51,7 @@ class ExportManager {
      * @param input 在外面close,
      */
     @Synchronized
-    fun import(input: InputStream, options: Set<ExportOption>): String {
+    fun import(input: InputStream, options: Set<BackupOption>): String {
         val folder = getTempFolder()
         try {
             val tempFile = getTempFile()
@@ -84,7 +84,7 @@ class ExportManager {
      * @param output 在外面close,
      */
     @Synchronized
-    fun export(output: OutputStream, options: Set<ExportOption>): String {
+    fun export(output: OutputStream, options: Set<BackupOption>): String {
         val folder = getTempFolder()
         folder.resolve(NAME_VERSION).writeText(CURRENT_VERSION.toString())
         val exporter = getExporter(CURRENT_VERSION)

@@ -82,8 +82,8 @@
         </receiver>
 
         <activity
-            android:name=".export.ExportActivity"
-            android:label="@string/export"
+            android:name=".backup.BackupActivity"
+            android:label="@string/backup"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".search.SiteChooseActivity"
