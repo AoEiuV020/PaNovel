@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
-import cc.aoeiuv020.base.jar.compilePattern
-import cc.aoeiuv020.base.jar.jsoupConnect
-import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.base.jar.*
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.*
 import org.jetbrains.anko.*
@@ -26,15 +24,7 @@ object Check : Pref, AnkoLogger {
     private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
     private var knownVersionName: String by Delegates.string("0")
     private fun getNewestVersionName(): String {
-        return jsoupConnect(RELEASE_GITHUB).select("#js-repo-pjax-container " +
-                "> div.container.new-discussion-timeline.experiment-repo-nav " +
-                "> div.repository-content " +
-                "> div.position-relative.border-top " +
-                "> div.release.clearfix.label-latest " +
-                "> div.release-body.commit.open.float-left " +
-                "> div.release-header " +
-                "> h1 > a"
-        ).first().text()
+        return get(LATEST_RELEASE_GITHUB).string().jsonPath.get("tag_name")
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -58,8 +48,8 @@ object Check : Pref, AnkoLogger {
 
     private fun BufferedReader.cutChangeLog(fromVersion: String): String {
         val pattern = compilePattern("([0-9.]*):")
-        return useLines {
-            it.takeWhile {
+        return useLines { line ->
+            line.takeWhile {
                 try {
                     val (versionName) = it.pick(pattern)
                     VersionUtil.compare(versionName, fromVersion) > 0
@@ -141,6 +131,7 @@ object Check : Pref, AnkoLogger {
     private const val AOEIUV020_SIGNATURE = "F473239FE5E994CC7FF64F505D0F0BB6F8E3CB8C"
     private const val RELEASE_COOLAPK = "https://www.coolapk.com/apk/167994"
     private const val RELEASE_GITHUB = "https://github.com/AoEiuV020/PaNovel/releases"
+    private const val LATEST_RELEASE_GITHUB = "https://api.github.com/repos/AoEiuV020/PaNovel/releases/latest"
     private var ignoreSignatureCheck: Boolean by Delegates.boolean(false)
     private var signature: String by Delegates.string("")
 
