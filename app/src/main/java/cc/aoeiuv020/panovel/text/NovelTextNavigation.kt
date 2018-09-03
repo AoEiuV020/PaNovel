@@ -79,6 +79,9 @@ class NovelTextNavigation(val view: NovelTextActivity, val novel: Novel, navigat
         mPanelDefault.ivDownload.setOnClickListener {
             view.download()
         }
+        mPanelDefault.ivDownload.setOnLongClickListener {
+            view.askDownload()
+        }
         mPanelDefault.apply {
             tvPreviousChapter.setOnClickListener {
                 view.previousChapter()

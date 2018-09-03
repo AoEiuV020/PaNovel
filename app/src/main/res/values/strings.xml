@@ -218,5 +218,6 @@
     <string name="update_time">更新时间</string>
     <string name="smart">综合</string>
     <string name="site">网站名</string>
+    <string name="remember">记住</string>
 
 </resources>

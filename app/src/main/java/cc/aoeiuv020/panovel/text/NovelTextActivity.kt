@@ -18,7 +18,6 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AlertDialog
-import android.text.InputType
 import android.view.*
 import android.widget.ImageView
 import cc.aoeiuv020.base.jar.pick
@@ -41,7 +40,7 @@ import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_text.*
-import kotlinx.android.synthetic.main.dialog_editor.view.*
+import kotlinx.android.synthetic.main.dialog_download_count.view.*
 import kotlinx.android.synthetic.main.dialog_select_color_scheme.view.*
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
@@ -785,25 +784,42 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         val index = reader.currentChapter
         val count = GeneralSettings.downloadCount
         when {
-            count < 0 -> alert {
-                titleResource = R.string.download_chapters_count
-                val layout = View.inflate(ctx, R.layout.dialog_editor, null)
-                customView = layout
-                val etCount = layout.editText.apply {
-                    inputType = InputType.TYPE_CLASS_NUMBER
-                    setText(50.toString())
-                }
-                neutralPressed(R.string.all) {
-                    presenter.download(index, Int.MAX_VALUE)
-                }
-                yesButton {
-                    presenter.download(index, etCount.text.toString().toIntOrNull() ?: 0)
-                }
-                cancelButton { }
-            }.safelyShow()
+            count < 0 -> askDownload()
             count == 0 -> presenter.download(index, Int.MAX_VALUE)
             else -> presenter.download(index, count)
         }
+    }
+
+    fun askDownload(): Boolean {
+        val index = reader.currentChapter
+        val count = GeneralSettings.downloadCount.takeIf { it >= 0 }
+                ?: 50
+        alert {
+            titleResource = R.string.download_chapters_count
+            val layout = View.inflate(ctx, R.layout.dialog_download_count, null)
+            customView = layout
+            val etCount = layout.editText.apply {
+                setText(count.toString())
+            }
+            val cbRemember = layout.checkBox
+            fun remember() {
+                if (cbRemember.isChecked) {
+                    etCount.text.toString().toIntOrNull()?.let {
+                        GeneralSettings.downloadCount = it
+                    }
+                }
+            }
+            neutralPressed(R.string.all) {
+                remember()
+                presenter.download(index, Int.MAX_VALUE)
+            }
+            yesButton {
+                remember()
+                presenter.download(index, etCount.text.toString().toIntOrNull() ?: 0)
+            }
+            cancelButton { }
+        }.safelyShow()
+        return true
     }
 
     fun showDownloadStart(left: Int) {
