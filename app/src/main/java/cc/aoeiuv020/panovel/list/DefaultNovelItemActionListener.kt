@@ -45,6 +45,7 @@ class DefaultNovelItemActionListener(
                 val list = listOf(
                         R.string.read_continue to ReadContinue,
                         R.string.read_last_chapter to ReadLastChapter,
+                        R.string.refresh to Refresh,
                         R.string.open_detail to OpenDetail,
 
                         R.string.refine_search to RefineSearch,
