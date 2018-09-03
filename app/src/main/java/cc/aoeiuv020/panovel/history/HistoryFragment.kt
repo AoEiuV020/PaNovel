@@ -15,7 +15,6 @@ import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.settings.ListSettings
-import cc.aoeiuv020.panovel.settings.ServerSettings
 import kotlinx.android.synthetic.main.novel_item_list.*
 
 
@@ -73,11 +72,8 @@ class HistoryFragment : Fragment(), IView {
 
     fun showNovelList(list: List<NovelManager>) {
         novelListAdapter.data = list
-        if (ServerSettings.askUpdate) {
-            presenter.askUpdate(list)
-        } else {
-            srlRefresh.isRefreshing = false
-        }
+        // 历史页面不询问章节更新，
+        srlRefresh.isRefreshing = false
     }
 
     fun showAskUpdateResult(hasUpdateList: List<Long>) {
