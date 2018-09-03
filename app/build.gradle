@@ -40,7 +40,8 @@ dependencies {
     implementation "com.android.support:preference-v7:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support:support-vector-drawable:$support_version"
-    implementation "com.google.firebase:firebase-ads:$firebase_version"
+    implementation "com.google.firebase:firebase-core:$firebase_core_version"
+    implementation "com.google.firebase:firebase-ads:$firebase_ads_version"
     // firebase 15.0.1依赖的customtabs是26.0.1，不知道为什么不会自动指向新版而是会报红，
     // 所以明确指定customtabs,
     implementation "com.android.support:customtabs:$support_version"
