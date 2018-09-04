@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import cc.aoeiuv020.base.jar.gsonJsonPathInit
 import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
+import cc.aoeiuv020.base.jar.trustManager
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cn.jpush.android.api.JPushInterface
@@ -19,6 +20,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.info
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 
 /**
@@ -45,20 +47,13 @@ class App : MultiDexApplication(), AnkoLogger {
         super.onCreate()
         ctx = applicationContext
 
-        // 初始化要放在用到JsonPath之前
-        gsonJsonPathInit()
+        initJson()
 
         initDataSources()
 
-        // android4连接https可能抛SSLHandshakeException，
-        // 是tls1.2没有启用，
-        TLSSocketFactory.makeDefault()
+        initSsl()
 
-        // 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
-        // 还有ContextCompat.getDrawable也不行，
-        // it's not a BUG, it's a FEATURE,
-        // https://issuetracker.google.com/issues/37100284
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        initVector()
 
         initAdmob()
 
@@ -70,6 +65,31 @@ class App : MultiDexApplication(), AnkoLogger {
 
         initJar()
 
+    }
+
+    /**
+     * 初始化要放在用到JsonPath之前，
+     */
+    private fun initJson() {
+        gsonJsonPathInit()
+    }
+
+    /**
+     * 低版本api(<=20)默认不能用矢量图的selector, 要这样设置，
+     * 还有ContextCompat.getDrawable也不行，
+     * it's not a BUG, it's a FEATURE,
+     * https://issuetracker.google.com/issues/37100284
+     */
+    private fun initVector() {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+    }
+
+    /**
+     * android4连接https可能抛SSLHandshakeException，各种毛病，
+     * 只这样不能完全修复，但是app里主要是用okhttp3, 那连配置好了，
+     */
+    private fun initSsl() {
+        HttpsURLConnection.setDefaultSSLSocketFactory(TLSSocketFactory(trustManager))
     }
 
     private fun initJar() {

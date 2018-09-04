@@ -8,10 +8,10 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * 启用所有支持的协议，
@@ -25,20 +25,10 @@ public class TLSSocketFactory extends SSLSocketFactory {
 
     private SSLSocketFactory internalSSLSocketFactory;
 
-    public TLSSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {
+    public TLSSocketFactory(X509TrustManager tm) throws KeyManagementException, NoSuchAlgorithmException {
         SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, null, null);
+        context.init(null, (tm != null) ? new X509TrustManager[]{tm} : null, null);
         internalSSLSocketFactory = context.getSocketFactory();
-    }
-
-    public static void makeDefault() {
-        try {
-            HttpsURLConnection.setDefaultSSLSocketFactory(new TLSSocketFactory());
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
