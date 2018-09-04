@@ -12,8 +12,8 @@ class Haxds : DslJsoupNovelContext() {init {
     enabled = false
     site {
         name = "海岸线文学"
-        baseUrl = "https://www.haxds.com"
-        logo = "https://www.haxds.com/static/css/logo.png"
+        baseUrl = "http://www.haxwx11.com"
+        logo = "http://www.haxwx11.com/static/css/logo.png"
     }
     search {
         get {
