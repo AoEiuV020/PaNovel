@@ -5,33 +5,24 @@ buildscript {
         applicationModules = ['app']
         javaModules = ["api", "local", "baseJar", "IronDB", "refresher", "server"]
         androidModules = ["pager", "reader"]
-        compile_version = 27
-        min_version = 16
-        target_version = 25
-        version_code = 65
-        version_name = "3.1.5"
-        support_version = '27.1.1'
-        kotlin_version = '1.2.41'
-        anko_version = '0.10.1'
-        junit_version = '4.12'
-        slf4j_version = '1.7.25'
-        jsoup_version = '1.11.3'
-        constraint_layout_version = '1.1.2'
-        glide_version = '4.1.1'
-        rxjava_version = '2.1.3'
-        rxandroid_version = '2.0.1'
-        firebase_version = '15.0.1'
-        okhttp_version = '3.10.0'
-        gson_version = '2.8.2'
-        room_version = '1.1.0'
-        json_path_version = '2.4.0'
+    }
+    def versionFile = rootProject.file('version.properties')
+    if (versionFile.exists()) {
+        def input = versionFile.newInputStream()
+        def p = new Properties()
+        p.load(input)
+        p.forEach { k, v ->
+            ext.set(k, v)
+        }
     }
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha18'
+        //noinspection GradleDependency
+        classpath "com.android.tools.build:gradle:$studio_version"
+        //noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.0.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
@@ -57,11 +48,11 @@ applicationModules.forEach { name ->
         apply plugin: 'kotlin-android-extensions'
         apply plugin: 'kotlin-kapt'
         android {
-            compileSdkVersion compile_version
+            compileSdkVersion compile_version.toInteger()
             defaultConfig {
-                minSdkVersion min_version
-                targetSdkVersion target_version
-                versionCode version_code
+                minSdkVersion min_version.toInteger()
+                targetSdkVersion target_version.toInteger()
+                versionCode version_code.toInteger()
                 versionName version_name
                 multiDexEnabled true
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -76,17 +67,46 @@ applicationModules.forEach { name ->
                     proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
                 }
             }
+
+            def signingFile = rootProject.file('signing.properties')
+            if (signingFile.exists()) {
+                def input = signingFile.newInputStream()
+                def p = new Properties()
+                p.load(input)
+                signingConfigs {
+                    config {
+                        keyAlias p['keyAlias']
+                        keyPassword p['keyPassword']
+                        storeFile file(p['storeFile'])
+                        storePassword p['storePassword']
+                        v1SigningEnabled true
+                        v2SigningEnabled true
+                    }
+                }
+                buildTypes {
+                    debug {
+                        signingConfig signingConfigs.config
+                    }
+                    release {
+                        signingConfig signingConfigs.config
+                    }
+                }
+            }
+
             applicationVariants.all { variant ->
                 if (variant.buildType.name == 'release') {
-                    variant.mergeAssets.doLast {
-                        delete(fileTree(dir: variant.mergeAssets.outputDir, includes: ['admob_test_device_list']))
-                    }
                     variant.assemble.doLast {
                         copy {
-                            from variant.mappingFile
-                            into "${rootDir}/proguard"
-                            rename { String fileName ->
-                                "$rootProject.name-mapping-$versionName-${variant.name}.txt"
+                            from variant.outputs[0].outputFile
+                            into "${rootDir}/release"
+                        }
+                        if (variant.mappingFile != null) {
+                            copy {
+                                from variant.mappingFile
+                                into "${rootDir}/release"
+                                rename { String fileName ->
+                                    "$rootProject.name-mapping-$versionName-${variant.name}.txt"
+                                }
                             }
                         }
                     }
@@ -155,10 +175,10 @@ androidModules.forEach { name ->
         apply plugin: 'com.github.dcendents.android-maven'
 
         android {
-            compileSdkVersion compile_version
+            compileSdkVersion compile_version.toInteger()
             defaultConfig {
-                minSdkVersion min_version
-                targetSdkVersion target_version
+                minSdkVersion min_version.toInteger()
+                targetSdkVersion target_version.toInteger()
                 versionCode 1
                 versionName "1.0"
 

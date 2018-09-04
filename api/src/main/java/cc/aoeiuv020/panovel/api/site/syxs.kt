@@ -11,6 +11,9 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
  * Created by AoEiuV020 on 2018.03.14-01:35:36.
  */
 class Syxs : DslJsoupNovelContext() {init {
+    // 这网站有时候会乱码，原因不明，可能是部分页面没有明确编码，
+    // 这里指定一下编码，
+    charset = "GBK"
     site {
         name = "31小说"
         baseUrl = "http://www.31xs.net"
@@ -42,7 +45,7 @@ class Syxs : DslJsoupNovelContext() {init {
     bookIdRegex = firstTwoIntPattern
     // http://www.31xs.net/13/13011/
     detailPageTemplate = "/%s/"
-    detail {
+    detail { _ ->
         document {
             val div = root.requireElement("#info")
             novel {
@@ -58,7 +61,7 @@ class Syxs : DslJsoupNovelContext() {init {
             }
         }
     }
-    chapters {
+    chapters { _ ->
         document {
             items("#list > dl > dd > a")
         }.reverseRemoveDuplication().dropWhile { it.extra.isBlank() }

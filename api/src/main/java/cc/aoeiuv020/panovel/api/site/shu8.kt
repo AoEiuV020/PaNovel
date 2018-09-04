@@ -41,22 +41,22 @@ class Shu8 : DslJsoupNovelContext() {init {
     // http://shu8.cc/xs/61/61453/
     bookIdRegex = firstTwoIntPattern
     detailPageTemplate = "/xs/%s/"
-    detail {
+    detail { _ ->
         document {
             novel {
                 name("#info > h1")
                 author("#info > div.options > span.item.red")
             }
             image("#main > div:nth-child(1) > div.book_info > div.pic > img")
-            introduction("#info > h3") {
-                it.textNodes().first { it.text().isNotBlank() }
+            introduction("#info > h3") { element ->
+                element.textNodes().first { it.text().isNotBlank() }
                         .ownLinesString()
             }
         }
     }
     chapters {
         document {
-            items("#main > div:nth-child(4) > div.book_list > ul > li > a")
+            items("#main > div.box.mt10 > div.book_list > ul > li > a")
         }
     }
     // http://shu8.cc/xs/61/61453/16115143.html

@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package cc.aoeiuv020.panovel.export
+package cc.aoeiuv020.panovel.backup
 
 import android.Manifest
 import android.app.ProgressDialog
@@ -23,15 +23,15 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivity
 
-class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
+class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
     companion object {
         fun start(ctx: Context) {
-            ctx.startActivity<ExportActivity>()
+            ctx.startActivity<BackupActivity>()
         }
     }
 
     lateinit var progressDialog: ProgressDialog
-    private lateinit var presenter: ExportPresenter
+    private lateinit var presenter: BackupPresenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_export)
@@ -39,16 +39,16 @@ class ExportActivity : AppCompatActivity(), AnkoLogger, IView {
 
         initWidget()
 
-        presenter = ExportPresenter()
+        presenter = BackupPresenter()
         presenter.attach(this)
         presenter.start()
     }
 
-    fun getCheckedOption(): Set<ExportOption> {
-        val options = mutableSetOf<ExportOption>()
-        cbBookshelf.isChecked && options.add(ExportOption.Bookshelf)
-        cbBookList.isChecked && options.add(ExportOption.BookList)
-        cbSettings.isChecked && options.add(ExportOption.Settings)
+    fun getCheckedOption(): Set<BackupOption> {
+        val options = mutableSetOf<BackupOption>()
+        cbBookshelf.isChecked && options.add(BackupOption.Bookshelf)
+        cbBookList.isChecked && options.add(BackupOption.BookList)
+        cbSettings.isChecked && options.add(BackupOption.Settings)
         return options
     }
 

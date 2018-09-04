@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.settings.ItemAction.Pinned
 import cc.aoeiuv020.panovel.settings.ItemAction.RemoveBookshelf
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.settings.ServerSettings
+import cc.aoeiuv020.panovel.util.cancelAllNotify
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.novel_item_list.*
@@ -61,6 +62,9 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
         }
 
         presenter.attach(this)
+
+        // 启动书架页面时清空所有通知，包括小说更新通知和其他导出下载等通知，
+        requireContext().cancelAllNotify()
     }
 
     override fun onDestroyView() {
@@ -104,6 +108,7 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
         novelListAdapter.hasUpdate(hasUpdateList)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun askUpdateError(message: String, e: Throwable) {
         // 询问服务器更新出错不展示，
         srlRefresh.isRefreshing = false

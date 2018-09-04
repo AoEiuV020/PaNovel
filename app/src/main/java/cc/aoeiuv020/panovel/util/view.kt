@@ -144,6 +144,11 @@ fun Context.cancelNotify(id: Int) {
     manager.cancel(id)
 }
 
+fun Context.cancelAllNotify() {
+    val manager = NotificationManagerCompat.from(this)
+    manager.cancelAll()
+}
+
 /**
  * https://stackoverflow.com/a/38244327/5615186
  */

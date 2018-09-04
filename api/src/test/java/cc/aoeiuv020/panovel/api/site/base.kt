@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.gsonJsonPathInit
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
@@ -16,6 +17,7 @@ import kotlin.reflect.KClass
 abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     init {
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
+        gsonJsonPathInit()
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
@@ -85,6 +87,9 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
             // 至少打印最后一章，
             println(it)
             it.name != lastName || it.extra != lastExtra
+        }
+        require(newList.size < list.size) {
+            "最新章《$lastName》不存在，"
         }
         val first = list.first()
         assertEquals(firstName, first.name)

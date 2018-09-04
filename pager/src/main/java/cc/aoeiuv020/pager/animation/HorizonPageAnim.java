@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import cc.aoeiuv020.pager.IMargins;
 
@@ -67,6 +68,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
 
     public abstract void drawMove(Canvas canvas);
 
+    // 极值，用于处理翻页时因抖动误判取消翻页的问题，
+    int mLeftExtreme = -1;
+    int mRightExtreme = -1;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //获取点击位置
@@ -121,6 +125,9 @@ public abstract class HorizonPageAnim extends PageAnimation {
                 if (isMove) {
                     //判断是否是准备移动的状态(将要移动但是还没有移动)
                     if (mMoveX == 0 && mMoveY == 0) {
+                        // 开始翻页前初始化两个极值，
+                        mLeftExtreme = x;
+                        mRightExtreme = x;
                         //判断翻得是上一页还是下一页
                         if (x - mStartX > 0) {
                             //上一页的参数配置
@@ -151,18 +158,28 @@ public abstract class HorizonPageAnim extends PageAnimation {
                             }
                         }
                     } else {
-                        //判断是否取消翻页
-                        if (isNext) {
-                            if (x - mMoveX > 0) {
-                                isCancel = true;
-                            } else {
-                                isCancel = false;
+                        // 正在滑动，判断是否取消翻页，
+
+                        // 16px,
+                        int sold = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
+                        if (isNext ^ isCancel) {
+                            // 往后翻页和取消前翻页两种情况都是左划，
+                            if (x < mLeftExtreme) {
+                                // 左极值往左推，
+                                mLeftExtreme = x;
+                            } else if (x > mLeftExtreme + sold) {
+                                // 往右一定距离时改变翻页取消状态，
+                                isCancel = !isCancel;
+                                mRightExtreme = x;
                             }
                         } else {
-                            if (x - mMoveX < 0) {
-                                isCancel = true;
-                            } else {
-                                isCancel = false;
+                            if (x > mRightExtreme) {
+                                // 右极值往右推，
+                                mRightExtreme = x;
+                            } else if (x < mRightExtreme - sold) {
+                                // 往左一定距离时改变翻页取消状态，
+                                isCancel = !isCancel;
+                                mLeftExtreme = x;
                             }
                         }
                     }

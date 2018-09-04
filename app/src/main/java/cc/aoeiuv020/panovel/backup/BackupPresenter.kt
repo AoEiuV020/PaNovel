@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.export
+package cc.aoeiuv020.panovel.backup
 
 import android.net.Uri
 import android.os.Environment
@@ -15,12 +15,12 @@ import java.util.*
 /**
  * Created by AoEiuV020 on 2018.05.11-12:39:10.
  */
-class ExportPresenter : Presenter<ExportActivity>(), AnkoLogger {
+class BackupPresenter : Presenter<BackupActivity>(), AnkoLogger {
     companion object {
-        const val NAME_FOLDER = "Export"
-        const val NAME_TEMPLATE = "PaNovel-Backup-##.zip"
+        const val NAME_FOLDER = "Backup"
+        private const val NAME_TEMPLATE = "PaNovel-Backup-##.zip"
         val NAME_FORMAT = NAME_TEMPLATE.replace("##", "%d")
-        val NAME_MATCHER = Regex(NAME_TEMPLATE.replace("##", "(\\d+)"))
+        private val NAME_MATCHER = Regex(NAME_TEMPLATE.replace("##", "(\\d+)"))
         val NAME_PATTERN = NAME_MATCHER.pattern
         val FILENAME_FILTER = FilenameFilter { _, name ->
             name.matches(NAME_MATCHER)
@@ -29,7 +29,7 @@ class ExportPresenter : Presenter<ExportActivity>(), AnkoLogger {
 
     private val ctx = App.ctx
 
-    private val exporterManager = ExportManager()
+    private val backupManager = BackupManager()
 
     fun start() {
         view?.doAsync({ e ->
@@ -98,7 +98,7 @@ class ExportPresenter : Presenter<ExportActivity>(), AnkoLogger {
                 }
             }.use { input ->
                 debug { "开始导入，" }
-                exporterManager.import(input, options)
+                backupManager.import(input, options)
             }
             uiThread {
                 view?.showImportSuccess(result)
@@ -134,7 +134,7 @@ class ExportPresenter : Presenter<ExportActivity>(), AnkoLogger {
             }.use { output ->
                 // 这里貌似不会抛没权限的异常，
                 debug { "开始导出，" }
-                exporterManager.export(output, options)
+                backupManager.export(output, options)
             }
             uiThread {
                 view?.showExportSuccess(result)

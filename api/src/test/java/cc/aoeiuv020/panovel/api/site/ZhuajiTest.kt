@@ -16,13 +16,13 @@ class ZhuajiTest : BaseNovelContextText(Zhuaji::class) {
     @Test
     fun detail() {
         detail("2471", "2471", "麻衣神算子", "骑马钓鱼",
-                "http://www.zhuaji.org/files/article/image/2/2471/2471s.jpg",
+                "https://img.zhuaji.org/2/2471/2471s.jpg",
                 "爷爷教了我一身算命的本事，却在我帮人算了三次命后，离开了我。\n" +
                         "从此之后，我不光给活人看命，还要给死人看，更要给……\n" +
                         "更新：每天中午12点之前一更，下午四点之前一更，加更的话，都在晚上",
                 "2017-04-20 00:00:00")
         detail("2294", "2294", "劫天运", "浮梦流年",
-                "http://www.zhuaji.org/files/article/image/2/2294/2294s.jpg",
+                "https://img.zhuaji.org/2/2294/2294s.jpg",
                 "本书原名《养鬼为祸》\n" +
                         "我从出生前就给人算计了，五阴俱全，天生招厉鬼，懂行的先生说我活不过七岁，死后是要给人养成血衣小鬼害人的。\n" +
                         "外婆为了救我，给我娶了童养媳，让我过起了安生日子，虽然后来我发现媳妇姐姐不是人……\n" +
@@ -35,7 +35,7 @@ class ZhuajiTest : BaseNovelContextText(Zhuaji::class) {
     fun chapters() {
         chapters("2471", "第001章 看相", "2471/913859", null,
                 "番外（3）", "2471/4984164", null,
-                1727)
+                1726)
         chapters("2294", "第一章 算计", "2294/843846", null,
                 "第三千七百七十四章 八剑", "2294/14740604", null,
                 3775)

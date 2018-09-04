@@ -45,6 +45,7 @@ class DefaultNovelItemActionListener(
                 val list = listOf(
                         R.string.read_continue to ReadContinue,
                         R.string.read_last_chapter to ReadLastChapter,
+                        R.string.refresh to Refresh,
                         R.string.open_detail to OpenDetail,
 
                         R.string.refine_search to RefineSearch,
@@ -206,13 +207,14 @@ class DefaultNovelItemActionListener(
         }, ioExecutorService) {
             val ctx = vh.ctx
             val types = LocalNovelType.values()
-            val items = types.map {
-                when (it) {
+            val items = types.map { type ->
+                when (type) {
                     LocalNovelType.TEXT -> R.string.select_item_text
                     LocalNovelType.EPUB -> R.string.select_item_epub
                 }.let { ctx.getString(it) }
             }.toTypedArray()
-            val defaultIndex = 1
+            // 默认导出txt,
+            val defaultIndex = 0
             val type = ctx.uiSelect(ctx.getString(R.string.file_type), items, defaultIndex)?.let { selectIndex ->
                 types[selectIndex]
             } ?: interrupt("没有选择文件类型，")

@@ -176,6 +176,7 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
         novelListAdapter.hasUpdate(hasUpdateList)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun askUpdateError(message: String, e: Throwable) {
         // 询问服务器更新出错不展示，
         srlRefresh.isRefreshing = false
@@ -184,14 +185,13 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
     fun selectToAdd(list: List<NovelManager>, nameArray: Array<String>, containsArray: BooleanArray) {
         AlertDialog.Builder(this)
                 .setTitle(R.string.contents)
-                .setMultiChoiceItems(nameArray,
-                        containsArray, { _, i, isChecked ->
+                .setMultiChoiceItems(nameArray, containsArray) { _, i, isChecked ->
                     if (isChecked) {
                         presenter.add(list[i])
                     } else {
                         presenter.remove(list[i])
                     }
-                }).setCancelable(false)
+                }.setCancelable(false)
                 .setPositiveButton(android.R.string.yes) { _, _ ->
                     refresh()
                 }

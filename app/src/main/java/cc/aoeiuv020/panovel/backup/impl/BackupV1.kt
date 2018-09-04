@@ -1,12 +1,12 @@
-package cc.aoeiuv020.panovel.export.impl
+package cc.aoeiuv020.panovel.backup.impl
 
 import cc.aoeiuv020.base.jar.get
 import cc.aoeiuv020.base.jar.jsonPath
 import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.panovel.backup.BackupOption
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
-import cc.aoeiuv020.panovel.export.ExportOption
 import cc.aoeiuv020.panovel.settings.*
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
@@ -19,12 +19,12 @@ import java.io.File
 /**
  * Created by AoEiuV020 on 2018.05.11-18:52:50.
  */
-class ExporterV1 : DefaultExporter(), AnkoLogger {
-    override fun import(file: File, option: ExportOption): Int {
+class BackupV1 : DefaultBackup(), AnkoLogger {
+    override fun import(file: File, option: BackupOption): Int {
         debug { "import $option" }
 
         return when (option) {
-            ExportOption.Bookshelf -> {
+            BackupOption.Bookshelf -> {
                 val list = file.readText().jsonPath.get<JsonArray>().map {
                     it.jsonPath.run {
                         NovelWithProgress(site = get("$.item.site"),
@@ -38,7 +38,7 @@ class ExporterV1 : DefaultExporter(), AnkoLogger {
                 DataManager.importBookshelfWithProgress(list)
                 list.size
             }
-            ExportOption.BookList -> {
+            BackupOption.BookList -> {
                 file.readText().jsonPath.get<JsonArray>().onEach {
                     it.jsonPath.run {
                         val name = get<String>("$.name")
@@ -54,7 +54,7 @@ class ExporterV1 : DefaultExporter(), AnkoLogger {
                     }
                 }.size()
             }
-            ExportOption.Settings -> {
+            BackupOption.Settings -> {
                 val map = mapOf<String, (JsonElement) -> Unit>(
                         "backPressOutOfFullScreen" to { value -> ReaderSettings.backPressOutOfFullScreen = value.asBoolean },
                         "adEnabled" to { value -> GeneralSettings.adEnabled = value.asBoolean },

@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.api
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.toBean
 import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Cookie
@@ -19,6 +20,23 @@ import java.net.URL
 @Suppress("MemberVisibilityCanPrivate")
 abstract class NovelContext {
     companion object {
+        fun getAllSite(): List<NovelContext> = listOf(
+                Piaotian(), Biquge(), Liudatxt(), Qidian(), Sfacg(),
+                Snwx(), Syxs(), Yssm(), Qlwx(), Byzw(),
+
+                Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
+                Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
+
+                Lread(), Wenxuemi(), Yipinxia(),/* N360dxs(),*/ N7dsw(),
+                Aileleba(), Gulizw(), N73xs(), Siluke(), Wukong(),
+
+                Exiaoshuo(), Dajiadu(), Liewen(), Qingkan5(), Bqg5200(),
+                Lewen123(), Zaidudu(), Shangshu(), Haxds(), X23us(),
+
+                Zhuishu(), N2kzw(), Shu8(), N52ranwen(), Kuxiaoshuo(),
+                Zzdxsw(), Zhuaji(), Uctxt(), Lnovel()
+        )
+
         private val gson: Gson = GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()

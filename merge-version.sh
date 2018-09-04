@@ -6,8 +6,9 @@ old=$PWD
 cd $(dirname $0)
 project=$(pwd)
 buildGradleFile="$project/build.gradle"
+versionFile="$project/version.properties"
 
-versionName=$(sed -n 's/\s*version_name\s*=\s*"\(\S*\)"/\1/p' $buildGradleFile)
+versionName=$(sed -n 's/\s*version_name\s*=\s*\(\S*\)/\1/p' $versionFile)
 
 branch=release-$versionName
 git checkout -b $branch

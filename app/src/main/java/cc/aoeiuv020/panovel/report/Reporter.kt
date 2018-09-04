@@ -82,7 +82,7 @@ object Reporter : AnkoLogger {
 
     private fun postException(e: Throwable) {
         // 开发过程不要上报，
-        if (!BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             return
         }
         var cause: Throwable? = e
@@ -92,7 +92,7 @@ object Reporter : AnkoLogger {
                 return
             }
             // 以防万一，虽然应该不会出现cause就是本身导致死循环，
-            cause = e.cause.takeIf { it != cause }
+            cause = cause.cause.takeIf { it != cause }
         }
         CrashReport.postCatchedException(e)
     }

@@ -146,12 +146,15 @@ class Refresher(
     }
 
     private fun refreshActual(novel: Novel) {
-        logger.info {
-            "refresh <${novel.run { "$site.$author.$name.$detail" }}>"
-        }
         if (System.currentTimeMillis() - (novel.checkUpdateTime?.time ?: 0) < config.minTime) {
+            logger.info {
+                "skip <${novel.run { "$site.$author.$name.$detail" }}>"
+            }
             // 避免频繁刷新，
             return
+        }
+        logger.info {
+            "refresh <${novel.run { "$site.$author.$name.$detail" }}>"
         }
         if (config.disableSites.contains(novel.site)) {
             // 有些网站可以选择跳过，可能连不上之类的，超时一直等就不爽了，

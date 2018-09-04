@@ -11,9 +11,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:baselineAligned="false"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,21 +70,35 @@
         android:id="@+id/scrollView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-        <TextView
-            android:id="@+id/tvDonateExplain"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:textIsSelectable="true"
-            tools:text="捐赠说明" />
-    </ScrollView>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <cc.aoeiuv020.reader.simple.ResizableImageView
+                android:id="@+id/ivRedPacket"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitStart"
+                app:srcCompat="@mipmap/donate_alipay_red_packet"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tvDonateExplain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true"
+                tools:text="捐赠说明" />
+        </LinearLayout>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

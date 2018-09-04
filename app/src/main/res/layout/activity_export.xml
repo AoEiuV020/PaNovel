@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".export.ExportActivity"
+    tools:context=".backup.BackupActivity"
     tools:layout_editor_absoluteY="81dp">
 
     <Button

@@ -107,14 +107,8 @@ abstract class OkHttpNovelContext : NovelContext() {
     }
 
     protected fun responseBody(call: Call): ResponseBody {
-        val response = call.execute()
-        if (!check(response.request().url().toString())) {
-            // 可能网络需要登录之类的，会跳到不认识的地址，
-            // 可能误伤，比如网站自己换域名，
-            throw IOException("网络被重定向，检查网络是否可用，")
-        }
         // 不可能为空，execute得到的response一定有body,
-        return response.body().notNull()
+        return response(call).body().notNull()
     }
 
     private inner class LogInterceptor : Interceptor {

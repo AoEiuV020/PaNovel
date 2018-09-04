@@ -16,13 +16,13 @@ class ShangshuTest : BaseNovelContextText(Shangshu::class) {
     @Test
     fun detail() {
         detail("15/15043", "15/15043", "仲夏夜的秘密", "安知晓",
-                "https://www.shangshu.cc/files/article/image/15/15043/15043s.jpg",
+                "http://www.shangshu.cc/files/article/image/15/15043/15043s.jpg",
                 "仲夏夜的秘密的简介：乔东林对顾玥一见钟情，不到一个月，两人领了结婚证，她选择了没有爱情的婚姻。" +
                         "在仲夏里，一场盛世婚礼展开了序幕，结婚前，乔东林说，“顾玥，你放心，嫁给我，你肯定不会后悔！”\n" +
                         "顾玥心想，你一定会后悔！结婚后，顾玥步步为营，化解婚姻中的危机，他本以为事业爱情两得意，却发现枕边是触不到的爱人……",
                 null)
         detail("88/88425", "88/88425", "蚀骨危情", "淇老游",
-                "https://www.shangshu.cc/files/article/image/88/88425/88425s.jpg",
+                "http://www.shangshu.cc/files/article/image/88/88425/88425s.jpg",
                 "夏薇茗死了，沈修瑾亲手将简童送进了女子监狱。\n" +
                         "三年牢狱，简童被沈修瑾一句“好好关照她”折磨的大变样，甚至狱中“被同意捐肾”。\n" +
                         "入狱前，简童说：我没杀她。沈修瑾不为所动。\n" +

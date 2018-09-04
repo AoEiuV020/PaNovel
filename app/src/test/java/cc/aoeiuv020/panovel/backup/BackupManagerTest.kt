@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.export
+package cc.aoeiuv020.panovel.backup
 
 import net.lingala.zip4j.core.ZipFile
 import net.lingala.zip4j.model.FileHeader
@@ -16,7 +16,7 @@ import org.junit.runners.MethodSorters
  * Created by AoEiuV020 on 2018.05.11-18:09:14.
  */
 @FixMethodOrder(value = MethodSorters.NAME_ASCENDING)
-class ExportManagerTest {
+class BackupManagerTest {
     @Rule
     @JvmField
     val folder = TemporaryFolder()

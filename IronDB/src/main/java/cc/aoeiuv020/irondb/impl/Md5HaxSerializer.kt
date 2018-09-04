@@ -1,5 +1,6 @@
 package cc.aoeiuv020.irondb.impl
 
+import cc.aoeiuv020.base.jar.hex
 import cc.aoeiuv020.base.jar.md5
 import cc.aoeiuv020.irondb.KeySerializer
 
@@ -11,6 +12,6 @@ import cc.aoeiuv020.irondb.KeySerializer
  */
 class Md5HaxSerializer : KeySerializer {
     override fun serialize(from: String): String {
-        return from.md5()
+        return from.md5().hex()
     }
 }

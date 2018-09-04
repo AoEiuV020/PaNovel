@@ -16,15 +16,15 @@ class HaxdsTest : BaseNovelContextText(Haxds::class) {
     @Test
     fun detail() {
         detail("72169", "72169", "一剑飞仙", "流浪的蛤蟆",
-                "https://www.haxds.com/article/image/72/72169/72169s.jpg",
+                "http://www.haxwx11.com/article/image/72/72169/72169s.jpg",
                 "x.千锤百炼烈火雷霆，十年换得一剑光寒。潜牙伏爪百般忍受，只为今朝一飞冲霄！" +
                         "各位书友要是觉得《一剑飞仙》还不错的话请不要忘记向您qq群和微博里的朋友推荐哦！",
                 "2018-06-01 00:00:00")
         detail("67", "67", "和空姐同居的日子", "三十",
-                "https://www.haxds.com/article/image/0/67/67s.jpg",
+                "http://www.haxwx11.com/article/image/0/67/67s.jpg",
                 "只想写一个开心快乐的爱情故事，只想写一个普通人在社会生存的故事，" +
                         "只想写一个可以让大家看了之后微微一笑的故事，多谢大家给予的支持，请留言指教！谢谢！",
-                "2016-05-25 00:00:00")
+                "2016-05-24 00:00:00")
     }
 
     @Test

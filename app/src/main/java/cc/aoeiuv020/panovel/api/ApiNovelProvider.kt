@@ -50,6 +50,7 @@ class ApiNovelProvider(
             }
             checkUpdateTime = Date()
             if (hasNew) {
+                // 无更新时可能receiveUpdateTime为0？貌似不会，
                 receiveUpdateTime = checkUpdateTime
             }
         }

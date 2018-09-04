@@ -17,17 +17,16 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.backup.BackupActivity
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
-import cc.aoeiuv020.panovel.export.ExportActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.migration.MigrationPresenter
@@ -62,9 +61,12 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
     lateinit var progressDialog: ProgressDialog
     private var migratingDialog: ProgressDialog? = null
-    private lateinit var bookshelfFragment: BookshelfFragment
-    private lateinit var historyFragment: HistoryFragment
-    lateinit var bookListFragment: BookListFragment
+    private val bookshelfFragment: BookshelfFragment?
+        get() = supportFragmentManager.fragments.firstOrNull { it is BookshelfFragment } as BookshelfFragment?
+    private val bookListFragment: BookListFragment?
+        get() = supportFragmentManager.fragments.firstOrNull { it is BookListFragment } as BookListFragment?
+    private val historyFragment: HistoryFragment?
+        get() = supportFragmentManager.fragments.firstOrNull { it is HistoryFragment } as HistoryFragment?
 
     private val openListener: OpenManager.OpenListener = object : OpenManager.OpenListener {
         override fun onNovelOpened(novel: Novel) {
@@ -73,13 +75,13 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
         override fun onLocalNovelImported(novel: Novel) {
             progressDialog.dismiss()
-            bookshelfFragment.refresh()
+            bookshelfFragment?.refresh()
             showMessage("导入小说<${novel.bookId}>")
         }
 
         override fun onBookListReceived(count: Int) {
             progressDialog.dismiss()
-            bookListFragment.refresh()
+            bookListFragment?.refresh()
             showMessage("添加书单，共${count}本，")
         }
 
@@ -190,13 +192,9 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     }
 
     private fun initWidget() {
-        bookshelfFragment = BookshelfFragment()
-        historyFragment = HistoryFragment()
-        bookListFragment = BookListFragment()
-
-        initTab(R.string.bookshelf to bookshelfFragment,
-                R.string.book_list to bookListFragment,
-                R.string.history to historyFragment)
+        initTab(R.string.bookshelf to BookshelfFragment(),
+                R.string.book_list to BookListFragment(),
+                R.string.history to HistoryFragment())
 
 
         container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -217,7 +215,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         })
 
         fab.setOnClickListener { _ ->
-            bookListFragment.newBookList()
+            bookListFragment?.newBookList()
         }
     }
 
@@ -227,17 +225,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             override fun getItem(position: Int): Fragment = fragmentList[position]
 
             override fun getCount(): Int = fragmentList.size
-
-            override fun instantiateItem(container: ViewGroup, position: Int): Any {
-                val fragment = super.instantiateItem(container, position)
-                when (fragment) {
-                    is BookshelfFragment -> bookshelfFragment = fragment
-                    is BookListFragment -> bookListFragment = fragment
-                    is HistoryFragment -> historyFragment = fragment
-                }
-                return fragment
-            }
-
         }
 
         container.adapter = pagerAdapter
@@ -344,8 +331,8 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
     }
 
-    private fun export() {
-        ExportActivity.start(this)
+    private fun backup() {
+        BackupActivity.start(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -371,7 +358,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             R.id.scan -> scan()
             R.id.open -> open()
             R.id.subscript -> subscript()
-            R.id.export -> export()
+            R.id.backup -> backup()
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)

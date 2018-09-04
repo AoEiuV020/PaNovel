@@ -5,8 +5,10 @@ import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.base.jar.type
 import cc.aoeiuv020.panovel.server.ServerAddress
+import cc.aoeiuv020.panovel.server.common.bookId
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.common.toJson
+import cc.aoeiuv020.panovel.server.dal.model.Config
 import cc.aoeiuv020.panovel.server.dal.model.MobRequest
 import cc.aoeiuv020.panovel.server.dal.model.MobResponse
 import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
@@ -55,7 +57,7 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
                 .toBean()
         if (!response.isSuccess()) {
             // 只能说可能是上传的参数不对，
-            throw IllegalStateException("请求失败，")
+            throw IllegalStateException("请求失败: ${response.data}")
         }
         return response.getRealData(type)
     }
@@ -76,11 +78,15 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
     }
 
     override fun touch(novel: Novel): Boolean {
-        logger.debug { "touch $novel" }
+        logger.debug { "touch ${novel.bookId}" }
         return post(serverAddress.touchUrl, novel)
     }
 
     override fun minVersion(): String {
         return post(serverAddress.minVersionUrl, Any())
+    }
+
+    override fun config(): Config {
+        return post(serverAddress.config, Any())
     }
 }
