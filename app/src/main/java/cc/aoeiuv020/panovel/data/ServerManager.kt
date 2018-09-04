@@ -3,7 +3,7 @@ package cc.aoeiuv020.panovel.data
 import android.content.Context
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.server.UpdateManager
+import cc.aoeiuv020.panovel.server.ServerManager
 import cc.aoeiuv020.panovel.server.common.md5
 import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.jpush.ExampleUtil
@@ -106,7 +106,7 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
         TagAliasOperatorHelper.getInstance().handleAction(App.ctx, sequence.getAndIncrement(), bean)
     }
 
-    fun touchUpdate(novel: Novel) = UpdateManager.touch(novel.toServer())
+    fun touchUpdate(novel: Novel) = ServerManager.touch(novel.toServer())
     fun askUpdate(list: List<Novel>): Map<Long, QueryResponse> =
-            UpdateManager.queryList(list.map { it.nId to it.toServer() }.toMap())
+            ServerManager.queryList(list.map { it.nId to it.toServer() }.toMap())
 }

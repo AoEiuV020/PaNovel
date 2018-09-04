@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import cc.aoeiuv020.panovel.main.MainActivity;
-import cc.aoeiuv020.panovel.server.UpdateManager;
+import cc.aoeiuv020.panovel.server.ServerManager;
 import cn.jpush.android.api.JPushInterface;
 
 /**
@@ -114,7 +114,7 @@ public class MyReceiver extends BroadcastReceiver {
         if (extras == null) {
             return;
         }
-        UpdateManager.INSTANCE.downloadUpdate(context, extras);
+        ServerManager.INSTANCE.downloadUpdate(context, extras);
 /*
         if (MainActivity.isForeground) {
             String message = bundle.getString(JPushInterface.EXTRA_MESSAGE);

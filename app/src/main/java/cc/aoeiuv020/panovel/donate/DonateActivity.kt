@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.server.ServerManager
 import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.util.hide
 import kotlinx.android.synthetic.main.activity_donate.*
+import org.jetbrains.anko.browse
 import org.jetbrains.anko.startActivity
 import java.util.concurrent.TimeUnit
 
@@ -34,6 +37,16 @@ class DonateActivity : AppCompatActivity() {
 
         lWeChatPay.setOnClickListener {
             Donate.weChatPay.start(this@DonateActivity)
+        }
+
+        val redPacketUrl = ServerManager.config?.redPacket
+                ?: "https://qr.alipay.com/c1x06390qprcokz0xvccv13"
+        if (redPacketUrl.isEmpty()) {
+            // 这样可以在服务器端控制这张图片的显示隐藏，
+            ivRedPacket.hide()
+        }
+        ivRedPacket.setOnClickListener {
+            browse(redPacketUrl)
         }
 
         tvDonateExplain.text = assets.open("Donate.txt").reader().readText()

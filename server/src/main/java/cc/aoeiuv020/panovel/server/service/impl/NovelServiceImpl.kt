@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.bookId
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.common.toJson
+import cc.aoeiuv020.panovel.server.dal.model.Config
 import cc.aoeiuv020.panovel.server.dal.model.MobRequest
 import cc.aoeiuv020.panovel.server.dal.model.MobResponse
 import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
@@ -83,5 +84,9 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
 
     override fun minVersion(): String {
         return post(serverAddress.minVersionUrl, Any())
+    }
+
+    override fun config(): Config {
+        return post(serverAddress.config, Any())
     }
 }

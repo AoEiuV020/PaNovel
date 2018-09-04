@@ -13,6 +13,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.server.common.bookId
+import cc.aoeiuv020.panovel.server.dal.model.Config
 import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
@@ -27,9 +28,10 @@ import org.jetbrains.anko.*
  *
  * Created by AoEiuV020 on 2018.04.06-02:37:52.
  */
-object UpdateManager : AnkoLogger {
+object ServerManager : AnkoLogger {
     private var novelService: NovelService? = null
     private var outOfVersion: Boolean = false
+    var config: Config? = null
 
     fun downloadUpdate(ctx: Context, extra: String) {
         debug { "downloadUpdate $extra" }
@@ -118,7 +120,8 @@ object UpdateManager : AnkoLogger {
             NovelServiceImpl(ServerAddress.getDefault())
         }
         val currentVersion = VersionName(VersionUtil.getAppVersionName(App.ctx))
-        val minVersion = VersionName(service.minVersion())
+        val config = service.config().also { this.config = it }
+        val minVersion = VersionName(config.minVersion)
         info { "getService minVersion $minVersion/$currentVersion" }
         return if (currentVersion < minVersion) {
             outOfVersion = true

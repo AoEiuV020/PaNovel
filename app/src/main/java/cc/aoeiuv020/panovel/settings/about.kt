@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.server.ServerManager
 import cc.aoeiuv020.panovel.util.VersionUtil
 import cc.aoeiuv020.panovel.util.safelyShow
 import kotlinx.android.synthetic.main.content_about.*
@@ -31,7 +32,8 @@ class AboutFragment : Fragment() {
             email(tvEmail.text.toString(),
                     "${activity.getString(R.string.feedback)}[${activity.getString(R.string.app_name)}]$currentVersionName")
         }
-        val number = tvGroup.text.toString()
+        // 可能没有连接上服务器，就用固定的群号，
+        val number = ServerManager.config?.qqGroup ?: tvGroup.text.toString()
         tvGroup.setOnClickListener {
             val urlQQ = "mqqwpa://im/chat?chat_type=group&uin=$number&version=1"
             browse(urlQQ)

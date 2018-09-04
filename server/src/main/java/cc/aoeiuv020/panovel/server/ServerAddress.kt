@@ -32,4 +32,7 @@ class ServerAddress(
 
     val minVersionUrl: String
         get() = "http://$host/novel/minVersion"
+
+    val config: String
+        get() = "http://$host/novel/config"
 }
