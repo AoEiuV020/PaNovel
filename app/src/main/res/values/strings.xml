@@ -37,6 +37,7 @@
     <string name="pref_cache_clear">清除缓存</string>
     <string name="pref_clear">清除</string>
     <string name="pref_header_change_log">更新日志</string>
+    <string name="pref_header_about">关于</string>
     <string name="pref_header_disclaimer">免责声明</string>
 
     <string name="download_thread_count">下载线程数</string>
@@ -219,5 +220,6 @@
     <string name="smart">综合</string>
     <string name="site">网站名</string>
     <string name="remember">记住</string>
+    <string name="label_qq_group">QQ群：</string>
 
 </resources>

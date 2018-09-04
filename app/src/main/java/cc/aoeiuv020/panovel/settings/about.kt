@@ -31,6 +31,11 @@ class AboutFragment : Fragment() {
             email(tvEmail.text.toString(),
                     "${activity.getString(R.string.feedback)}[${activity.getString(R.string.app_name)}]$currentVersionName")
         }
+        val number = tvGroup.text.toString()
+        tvGroup.setOnClickListener {
+            val urlQQ = "mqqwpa://im/chat?chat_type=group&uin=$number&version=1"
+            browse(urlQQ)
+        }
         tvChangeLog.text = activity.assets.open("ChangeLog.txt").reader().readText()
 
         tvLicenses.setOnClickListener {

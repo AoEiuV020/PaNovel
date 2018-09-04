@@ -32,6 +32,6 @@
 
     <header
         android:fragment="cc.aoeiuv020.panovel.settings.AboutFragment"
-        android:title="@string/pref_header_change_log" />
+        android:title="@string/pref_header_about" />
 
 </preference-headers>
