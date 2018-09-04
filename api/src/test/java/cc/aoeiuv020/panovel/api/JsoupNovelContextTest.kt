@@ -114,4 +114,12 @@ class JsoupNovelContextTest {
             assertEquals("asdf", it.text())
         }
     }
+
+    @Test
+    fun root() {
+        val html = "asdf"
+        val root = Jsoup.parse(html)
+                .select(":root")
+        println(root.outerHtml())
+    }
 }

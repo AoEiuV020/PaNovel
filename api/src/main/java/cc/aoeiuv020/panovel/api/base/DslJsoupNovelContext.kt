@@ -11,6 +11,8 @@ import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * Created by AoEiuV020 on 2018.05.20-16:26:44.
@@ -455,6 +457,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     protected inner class _NovelChapterListParser(root: Element)
         : _Parser<List<NovelChapter>>(root) {
+        private var volumesList: List<Element>? = null
         private lateinit var novelChapterList: List<NovelChapter>
 
         @SuppressWarnings("SimpleDateFormat")
@@ -469,6 +472,12 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             novelChapterList.lastOrNull()?.update = parent.getElement(query = query, block = block)
         }
 
+        fun volumes(query: String, parent: Element = root, init: List<Element>.() -> List<Element> = {
+            this
+        }) {
+            volumesList = parent.requireElements(query, name = TAG_VOLUME).toList().init()
+        }
+
         fun items(query: String, parent: Element = root, init: _NovelChapterParser.() -> Unit = {
             name = root.text()
             if (extra == null) {
@@ -476,7 +485,17 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 extra = findBookIdWithChapterId(root.absHref())
             }
         }) {
-            novelChapterList = parent.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {
+            novelChapterList = volumesList?.flatMap {
+                it.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {
+                    // 解析不通过的章节直接无视，不抛异常，
+                    tryOrNul {
+                        _NovelChapterParser(it).run {
+                            init()
+                            parse()
+                        }
+                    }
+                }
+            } ?: parent.requireElements(query, name = TAG_CHAPTER_LINK).mapNotNull {
                 // 解析不通过的章节直接无视，不抛异常，
                 tryOrNul {
                     _NovelChapterParser(it).run {
@@ -679,11 +698,19 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
         }
 
-        fun <T> response(block: (String) -> T): T {
-            return responseBody(call.notNull()).use {
+        fun <T> response(block: _Response.(String) -> T): T {
+            val response = response(call.notNull())
+            val _response = _Response(response.networkResponse().notNull())
+            return response.body().notNull().use {
                 val body = it.string()
-                block(body)
+                _response.block(body)
             }
+        }
+
+        inner class _Response(
+                val response: Response
+        ) {
+            val request: Request = response.request()
         }
     }
 
@@ -695,6 +722,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         var httpUrl: HttpUrl? = null
         var requestBody: RequestBody? = null
         var request: Request? = null
+        var headerMap: Map<String, String>? = null
         var dataMap: Map<String, String>? = null
         fun createCall(): Call {
             val httpUrlBuilder = (httpUrl
@@ -719,7 +747,43 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 requestBuilder.method(method.notNull(), null)
             }
             requestBuilder.url(httpUrlBuilder.build())
+            headerMap?.forEach { (name, value) ->
+                requestBuilder.addHeader(name, value)
+            }
             return client.newCall(requestBuilder.build())
+        }
+
+        fun header(init: _Header.() -> Unit) {
+            _Header().also { _header ->
+                _header.init()
+                headerMap = _header.createDataMap()
+            }
+        }
+
+        inner class _Header {
+            val map: MutableMap<String, String> = mutableMapOf()
+            var referer: String? by MapDelegate("Referer")
+            var userAgent: String? by MapDelegate("User-Agent")
+
+            fun createDataMap(): Map<String, String> = map
+            infix fun String.to(value: String) {
+                // 和kotlin内建的Pair方法重名，无所谓了，
+                map[this] = value
+            }
+
+            inner class MapDelegate(val name: String) : ReadWriteProperty<_Header, String?> {
+                override fun getValue(thisRef: _Header, property: KProperty<*>): String? {
+                    return thisRef.map[name]
+                }
+
+                override fun setValue(thisRef: _Header, property: KProperty<*>, value: String?) {
+                    if (value == null) {
+                        thisRef.map.remove(name)
+                    } else {
+                        thisRef.map[name] = value
+                    }
+                }
+            }
         }
 
         fun data(init: _Data.() -> Unit) {
@@ -735,7 +799,6 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             infix fun String.to(value: String) {
                 // 和kotlin内建的Pair方法重名，无所谓了，
                 map[this] = value
-
             }
         }
     }

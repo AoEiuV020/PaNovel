@@ -22,6 +22,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         const val TAG_AUTHOR_NAME = "作者名"
         const val TAG_SEARCH_RESULT_LIST = "搜索结果列表"
         const val TAG_INTRODUCTION = "简介"
+        const val TAG_VOLUME = "分卷"
         const val TAG_CHAPTER_LINK = "章节链接"
         const val TAG_CHAPTER_PAGE = "目录页"
         const val TAG_CONTENT = "正文"
