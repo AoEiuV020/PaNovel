@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.refresher
 
 import cc.aoeiuv020.base.jar.gsonJsonPathInit
-import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.toBean
 import java.io.File
@@ -11,7 +10,6 @@ import java.io.File
  */
 fun main(args: Array<String>) {
     gsonJsonPathInit()
-    TLSSocketFactory.makeDefault()
     val ite = args.iterator()
     var address: ServerAddress = ServerAddress.getDefault()
     var config = Config()
