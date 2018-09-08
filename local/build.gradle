@@ -1,7 +1,7 @@
 dependencies {
-    implementation "com.google.code.gson:gson:$gson_version"
+    implementation 'com.google.code.gson:gson:' + gson_version
     implementation project(':baseJar')
     implementation 'net.sourceforge.jchardet:jchardet:1.0'
     implementation 'com.github.AoEiuV020:epublib:3.1.2'
-    implementation "org.jsoup:jsoup:$jsoup_version"
+    implementation 'org.jsoup:jsoup:' + jsoup_version
 }

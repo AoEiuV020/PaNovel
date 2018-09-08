@@ -1,6 +1,6 @@
 dependencies {
-    api "com.google.code.gson:gson:$gson_version"
-    api "com.jayway.jsonpath:json-path:$json_path_version"
-    api "com.squareup.okhttp3:okhttp:$okhttp_version"
-    api "org.jsoup:jsoup:$jsoup_version"
+    api 'com.google.code.gson:gson:' + gson_version
+    api 'com.jayway.jsonpath:json-path:' + json_path_version
+    api 'com.squareup.okhttp3:okhttp:' + okhttp_version
+    api 'org.jsoup:jsoup:' + jsoup_version
 }

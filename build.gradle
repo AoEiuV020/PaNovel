@@ -5,14 +5,14 @@ buildscript {
         applicationModules = ['app']
         javaModules = ["api", "local", "baseJar", "IronDB", "refresher", "server"]
         androidModules = ["pager", "reader"]
-    }
-    def versionFile = rootProject.file('version.properties')
-    if (versionFile.exists()) {
-        def input = versionFile.newInputStream()
-        def p = new Properties()
-        p.load(input)
-        p.forEach { k, v ->
-            ext.set(k, v)
+        def versionFile = rootProject.file('version.properties')
+        if (versionFile.exists()) {
+            def input = versionFile.newInputStream()
+            def p = new Properties()
+            p.load(input)
+            p.forEach { k, v ->
+                ext.set(k, v)
+            }
         }
     }
     repositories {
@@ -21,11 +21,11 @@ buildscript {
     }
     dependencies {
         //noinspection GradleDependency
-        classpath "com.android.tools.build:gradle:$studio_version"
+        classpath 'com.android.tools.build:gradle:' + studio_version
         //noinspection DifferentKotlinGradleVersion
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.0.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:' + kotlin_version
+        classpath 'com.google.gms:google-services:' + google_version
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:' + jitpack_android_version
     }
 }
 
@@ -49,6 +49,7 @@ applicationModules.forEach { name ->
         apply plugin: 'kotlin-kapt'
         android {
             compileSdkVersion compile_version.toInteger()
+            flavorDimensions "tier"
             defaultConfig {
                 minSdkVersion min_version.toInteger()
                 targetSdkVersion target_version.toInteger()
@@ -62,14 +63,14 @@ applicationModules.forEach { name ->
             buildTypes {
                 release {
                     minifyEnabled true
-                    useProguard true
+                    useProguard false
                     shrinkResources true
                     proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
                 }
             }
 
             def signingFile = rootProject.file('signing.properties')
-            if (signingFile.exists()) {
+            if(signingFile.exists()){
                 def input = signingFile.newInputStream()
                 def p = new Properties()
                 p.load(input)
@@ -114,19 +115,26 @@ applicationModules.forEach { name ->
             }
         }
 
+        // pc端的单元测试移除无法使用的slf4j-android，
+        // 关键是runtimeOnly依赖不只加入apk中，test也会加上，
+        // 在allprojects设置没用，apply plugin后才存在这些configurations,
+        configurations.findAll {it.name.startsWith('test')}.each { conf ->
+            conf.exclude group: "org.slf4j", module: "slf4j-android"
+        }
+
         dependencies {
-            implementation "com.android.support:support-v4:$support_version"
-            implementation "com.android.support:appcompat-v7:$support_version"
-            testImplementation "junit:junit:$junit_version"
-            androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
-                exclude group: 'com.android.support', module: 'support-annotations'
-            })
-            implementation 'com.android.support:multidex:1.0.3'
-            testImplementation 'org.mockito:mockito-core:2.15.0'
-            implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-            implementation "org.jetbrains.anko:anko-commons:$anko_version"
-            implementation "org.slf4j:slf4j-api:$slf4j_version"
-            debugRuntimeOnly "org.slf4j:slf4j-android:$slf4j_version"
+            implementation 'com.android.support:support-v4:' + support_version
+            implementation 'com.android.support:appcompat-v7:' + support_version
+            testImplementation 'junit:junit:' + junit_version
+            androidTestImplementation 'com.android.support.test:runner:' + test_runner_version
+            androidTestImplementation 'com.android.support.test.espresso:espresso-core:' + test_espresso_version
+            implementation 'com.android.support:multidex:' + multidex_version
+            testImplementation 'org.mockito:mockito-core:' + mockito_version
+            implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlin_version
+            implementation 'org.jetbrains.anko:anko-commons:' + anko_version
+            implementation 'org.slf4j:slf4j-api:' + slf4j_version
+            runtimeOnly 'org.slf4j:slf4j-android:' + slf4j_version
+            testImplementation 'org.slf4j:slf4j-simple:' + slf4j_version
         }
     }
 }
@@ -139,10 +147,10 @@ javaModules.forEach { name ->
         apply plugin: 'maven'
 
         dependencies {
-            testImplementation "junit:junit:$junit_version"
-            implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-            implementation "org.slf4j:slf4j-api:$slf4j_version"
-            testImplementation "org.slf4j:slf4j-simple:$slf4j_version"
+            testImplementation 'junit:junit:' + junit_version
+            implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlin_version
+            implementation 'org.slf4j:slf4j-api:' + slf4j_version
+            testImplementation 'org.slf4j:slf4j-simple:' + slf4j_version
         }
 
         sourceCompatibility = "1.7"
@@ -193,12 +201,22 @@ androidModules.forEach { name ->
             }
         }
 
+        // pc端的单元测试移除无法使用的slf4j-android，
+        // 关键是runtimeOnly依赖不只加入apk中，test也会加上，
+        // 在allprojects设置没用，apply plugin后才存在这些configurations,
+        configurations.findAll {it.name.startsWith('test')}.each { conf ->
+            conf.exclude group: "org.slf4j", module: "slf4j-android"
+        }
+
         dependencies {
-            testImplementation "junit:junit:$junit_version"
-            androidTestImplementation 'com.android.support.test:runner:1.0.2'
-            androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-            implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-            implementation "org.jetbrains.anko:anko-commons:$anko_version"
+            testImplementation 'junit:junit:' + junit_version
+            androidTestImplementation 'com.android.support.test:runner:' + test_runner_version
+            androidTestImplementation 'com.android.support.test.espresso:espresso-core:' + test_espresso_version
+            implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlin_version
+            implementation 'org.jetbrains.anko:anko-commons:' + anko_version
+            implementation 'org.slf4j:slf4j-api:' + slf4j_version
+            runtimeOnly 'org.slf4j:slf4j-android:' + slf4j_version
+            testImplementation 'org.slf4j:slf4j-simple:' + slf4j_version
         }
 
         task sourcesJar(type: Jar) {
