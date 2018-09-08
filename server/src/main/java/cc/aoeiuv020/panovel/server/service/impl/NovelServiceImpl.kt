@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.server.service.impl
 
-import cc.aoeiuv020.base.jar.baseClient
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.base.jar.type
+import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.bookId
 import cc.aoeiuv020.panovel.server.common.toBean
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit
  */
 class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService {
     private val logger: Logger = LoggerFactory.getLogger(NovelServiceImpl::class.java.simpleName)
-    private val client: OkHttpClient = baseClient.newBuilder()
+    private val client: OkHttpClient = OkHttpUtils.client.newBuilder()
             // 超时设置短一些，连不上就放弃，不是很重要，
             .connectTimeout(3, TimeUnit.SECONDS)
             .readTimeout(3, TimeUnit.SECONDS)

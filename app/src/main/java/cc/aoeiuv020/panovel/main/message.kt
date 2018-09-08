@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.main
 
 import android.content.Context
-import cc.aoeiuv020.base.jar.get
-import cc.aoeiuv020.base.jar.string
+import cc.aoeiuv020.okhttp.OkHttpUtils
+import cc.aoeiuv020.okhttp.string
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.util.Delegates
@@ -26,7 +26,7 @@ object DevMessage : Pref, AnkoLogger {
             Reporter.post(message, e)
             error(message, e)
         }) {
-            val jsonObject: JsonObject = get(MESSAGE_URL).string().toBean()
+            val jsonObject: JsonObject = OkHttpUtils.get(MESSAGE_URL).string().toBean()
             val message = jsonObject.get("message")?.asString
             if (message == null || message.isBlank() || message == cachedMessage) {
                 return@doAsync

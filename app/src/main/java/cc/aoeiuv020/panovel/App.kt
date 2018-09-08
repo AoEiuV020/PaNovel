@@ -6,10 +6,10 @@ import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import cc.aoeiuv020.base.jar.gsonJsonPathInit
-import cc.aoeiuv020.base.jar.ssl.TLSSocketFactory
-import cc.aoeiuv020.base.jar.trustManager
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.ssl.TLSSocketFactory
+import cc.aoeiuv020.ssl.TrustManagerUtils
 import cn.jpush.android.api.JPushInterface
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
@@ -86,10 +86,10 @@ class App : MultiDexApplication(), AnkoLogger {
 
     /**
      * android4连接https可能抛SSLHandshakeException，各种毛病，
-     * 只这样不能完全修复，但是app里主要是用okhttp3, 那连配置好了，
+     * 只这样不能完全修复，但是app里主要是用okhttp3, 那边配置好了，
      */
     private fun initSsl() {
-        HttpsURLConnection.setDefaultSSLSocketFactory(TLSSocketFactory(trustManager))
+        HttpsURLConnection.setDefaultSSLSocketFactory(TLSSocketFactory(TrustManagerUtils.include(emptySet())))
     }
 
     private fun initJar() {
