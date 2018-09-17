@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.gsonJsonPathInit
+import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
@@ -115,7 +116,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
                           lastLine: String,
                           size: Int, count: Int = 3): List<String>? {
         if (!enabled) return null
-        val list = content(extra)
+        val list = content(extra).notNull()
         println(list.size)
         list.take(count).forEach {
             println(it)
@@ -129,6 +130,9 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         return list
     }
 
-    protected fun content(extra: String) = context.getNovelContent(extra)
+    protected fun content(extra: String): List<String>? {
+        if (!enabled) return null
+        return context.getNovelContent(extra)
+    }
 
 }

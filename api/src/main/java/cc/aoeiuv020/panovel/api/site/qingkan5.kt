@@ -11,6 +11,7 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 class Qingkan5 : DslJsoupNovelContext() {init {
     // 这网站可能有图片，搞不定，
     // 还有空正文章节，
+    // 墙内连不上，墙外400,
     enabled = false
     site {
         name = "请看小说5"
