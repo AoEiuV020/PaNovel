@@ -6,6 +6,10 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.06.04-17:29:08.
  */
 class N73xsTest : BaseNovelContextText(N73xs::class) {
+    init {
+        enabled = false
+    }
+
     @Test
     fun search() {
         search("都市")
