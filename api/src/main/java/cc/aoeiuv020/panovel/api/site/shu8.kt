@@ -4,6 +4,7 @@ import cc.aoeiuv020.base.jar.ownLinesString
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 
 /**
  * Created by AoEiuV020 on 2018.06.08-19:09:23.
@@ -57,7 +58,7 @@ class Shu8 : DslJsoupNovelContext() {init {
     chapters {
         document {
             items("#main > div.box.mt10 > div.book_list > ul > li > a")
-        }
+        }.reverseRemoveDuplication()
     }
     // http://shu8.cc/xs/61/61453/16115143.html
     bookIdWithChapterIdRegex = firstThreeIntPattern
