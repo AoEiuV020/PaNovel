@@ -12,15 +12,15 @@ class Haxds : DslJsoupNovelContext() {init {
     enabled = false
     site {
         name = "海岸线文学"
-        baseUrl = "http://www.haxwx11.com"
-        logo = "http://www.haxwx11.com/static/css/logo.png"
+        baseUrl = "https://www.haxwx11.com"
+        logo = "https://www.haxwx11.com/static/css/logo.png"
     }
     search {
         get {
             // http://zhannei.baidu.com/cse/search?s=12437495264296208885&q=%E9%83%BD%E5%B8%82
             // 这网站电脑搜索用的是百度的，不行，
             // https://m.haxds.com/modules/article/waps.php?type=articlename&s=%E9%83%BD%E5%B8%82&submit=
-            url = "//m.haxds.com/modules/article/waps.php"
+            url = "//m.haxwx11.com/modules/article/waps.php"
             data {
                 "type" to "articlename"
                 "s" to it
