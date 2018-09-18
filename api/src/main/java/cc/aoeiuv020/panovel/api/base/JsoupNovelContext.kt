@@ -8,6 +8,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import java.io.IOException
 import java.io.InputStream
 import java.net.URLEncoder
 
@@ -48,7 +49,13 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
     protected fun parse(input: InputStream, charset: String?, baseUri: String): Document = try {
         Jsoup.parse(input, charset, baseUri)
     } catch (e: Exception) {
-        throw IllegalStateException("页面<$baseUri>解析失败，", e)
+        if (!check(baseUri)) {
+            // 解析失败再判断是响应地址是否正确，
+            // 如果是网站改域名，虽然是check地址不会通过，但是解析是正常的，
+            throw IOException("网络被重定向，检查网络是否可用， <$baseUri>，", e)
+        } else {
+            throw IllegalStateException("页面<$baseUri>解析失败，", e)
+        }
     }
 
     protected fun parse(call: Call, charset: String? = this.charset): Document {
