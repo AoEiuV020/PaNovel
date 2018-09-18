@@ -9,10 +9,11 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  */
 class N52ranwen : DslJsoupNovelContext() {init {
     // 这网站连接超时了，
+    // 是被墙了，
     enabled = false
     site {
         name = "燃文小说"
-        baseUrl = "http://www.52ranwen.cc"
+        baseUrl = "https://www.52ranwen.cc"
         logo = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/static/logo/52ranwen.png"
     }
     search {
