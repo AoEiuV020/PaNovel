@@ -8,11 +8,9 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  * Created by AoEiuV020 on 2018.06.04-17:23:51.
  */
 class N73xs : DslJsoupNovelContext() {init {
-    // 被墙了，
-    enabled = false
     site {
         name = "73文学"
-        baseUrl = "http://www.73wx.com/"
+        baseUrl = "http://www.73wxw.com"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=d8f0b6300f3b5bb5bed720f606d2d523/958c4b160924ab1867ef56ac39fae6cd79890b9f.jpg"
     }
     search {
