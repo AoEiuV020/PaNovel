@@ -36,10 +36,7 @@ import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
-import cc.aoeiuv020.panovel.util.VersionName
-import cc.aoeiuv020.panovel.util.loading
-import cc.aoeiuv020.panovel.util.safelyShow
-import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.panovel.util.*
 import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
@@ -266,6 +263,8 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     override fun onResume() {
         super.onResume()
         ad_view.resume()
+        // 回到主页时清空所有通知，包括小说更新通知和其他导出下载等通知，
+        cancelAllNotify()
     }
 
     override fun onDestroy() {
