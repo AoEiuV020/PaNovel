@@ -3,10 +3,10 @@ apply plugin: 'application'
 mainClassName = "cc.aoeiuv020.panovel.refresher.ApplicationKt"
 
 dependencies {
-    implementation "org.slf4j:slf4j-simple:$slf4j_version"
-    implementation "com.google.code.gson:gson:$gson_version"
+    implementation 'org.slf4j:slf4j-simple:' + slf4j_version
+    implementation 'com.google.code.gson:gson:' + gson_version
     implementation project(':baseJar')
     implementation project(':api')
     implementation project(':server')
-    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation 'com.github.AoEiuV020.AndroidDemo:okhttp:' + okhttp_ssl_version
 }

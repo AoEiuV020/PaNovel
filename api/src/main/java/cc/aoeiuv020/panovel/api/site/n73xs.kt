@@ -10,7 +10,7 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 class N73xs : DslJsoupNovelContext() {init {
     site {
         name = "73文学"
-        baseUrl = "http://www.73wx.com/"
+        baseUrl = "http://www.73wxw.com"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=d8f0b6300f3b5bb5bed720f606d2d523/958c4b160924ab1867ef56ac39fae6cd79890b9f.jpg"
     }
     search {

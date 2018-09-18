@@ -6,6 +6,9 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.06.08-19:34:43.
  */
 class N52ranwenTest : BaseNovelContextText(N52ranwen::class) {
+    init {
+        enabled = false
+    }
     @Test
     fun search() {
         search("都市")

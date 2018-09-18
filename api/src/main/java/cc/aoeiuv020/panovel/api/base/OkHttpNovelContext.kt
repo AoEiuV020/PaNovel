@@ -1,12 +1,12 @@
 package cc.aoeiuv020.panovel.api.base
 
-import cc.aoeiuv020.base.jar.baseClient
 import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.error
 import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.panovel.api.NovelContext
 import okhttp3.*
 import okio.Buffer
-import java.io.IOException
 import java.io.InputStream
 
 /**
@@ -20,7 +20,7 @@ abstract class OkHttpNovelContext : NovelContext() {
     // 子类可以继承，只在第一次使用client时使用一次，
     protected open val clientBuilder: OkHttpClient.Builder
     // 每次都生成新的builder，以免一个网站加的设置影响到其他网站，
-        get() = baseClient.newBuilder()
+        get() = OkHttpUtils.client.newBuilder()
                 .addInterceptor(LogInterceptor())
                 // 没具体测试，低版本安卓可能https握手失败，
                 // 是某个tls协议没有启用导致胡，
@@ -98,10 +98,13 @@ abstract class OkHttpNovelContext : NovelContext() {
 
     protected fun response(call: Call): Response {
         val response = call.execute()
-        if (!check(response.request().url().toString())) {
+        if (!check(response.url())) {
             // 可能网络需要登录之类的，会跳到不认识的地址，
             // 可能误伤，比如网站自己换域名，
-            throw IOException("网络被重定向，检查网络是否可用，")
+            // TODO: 日志要支持发行版上传bugly,
+            // 目前这样如果后面解析失败，上传失败日志时会带上这条日志，
+            logger.error { "网络被重定向，<${call.request().url()}> -> <${response.url()}>" }
+//            throw IOException("网络被重定向，检查网络是否可用，")
         }
         return response
     }

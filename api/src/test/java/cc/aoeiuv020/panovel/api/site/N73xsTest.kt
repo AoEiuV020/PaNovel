@@ -16,13 +16,13 @@ class N73xsTest : BaseNovelContextText(N73xs::class) {
     @Test
     fun detail() {
         detail("32252", "32252", "一念永恒", "耳根",
-                "http://www.73wx.com/files/article/image/32/32252/32252s.jpg",
+                "http://www.73wxw.com/files/article/image/32/32252/32252s.jpg",
                 "《一念永恒》是著名网络作家耳根继《我欲封天》之后第四本网络仿古仙侠小说，" +
                         "本书主要以时间线索贯穿全文，讲述白家后人白小纯寻仙问道的艰难之旅，" +
                         "最终一念成沧海，一念化桑田，一念斩千魔，一念诛万仙。唯我念……永恒",
                 null)
         detail("52970", "52970", "天下第一医馆", "贵族丑丑",
-                "http://www.73wx.com/files/article/image/52/52970/52970s.jpg",
+                "http://www.73wxw.com/files/article/image/52/52970/52970s.jpg",
                 "一睁眼，便是人命如草芥的乱世芳华。" +
                         "墨白是个大夫，但他还来不及去想治世救人，他首先要考虑的是如何在三天后不死。" +
                         "然后还得考虑怎样才能见一见那已经和自己成过亲，拜过堂，据说国色天香的老婆？" +

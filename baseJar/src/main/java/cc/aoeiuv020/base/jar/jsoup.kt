@@ -2,6 +2,9 @@
 
 package cc.aoeiuv020.base.jar
 
+import cc.aoeiuv020.okhttp.OkHttpUtils
+import cc.aoeiuv020.okhttp.charset
+import cc.aoeiuv020.okhttp.url
 import okhttp3.Call
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,7 +30,7 @@ fun jsoupParse(call: Call): Document {
     }
 }
 
-fun jsoupConnect(url: String): Document = jsoupParse(get(url))
+fun jsoupConnect(url: String): Document = jsoupParse(OkHttpUtils.get(url))
 
 fun Element.findAll(predicate: (Element) -> Boolean): List<Element> {
     val list = LinkedList<Element>()

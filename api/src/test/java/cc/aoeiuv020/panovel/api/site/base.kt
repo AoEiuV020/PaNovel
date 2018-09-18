@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.gsonJsonPathInit
+import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
@@ -15,6 +16,8 @@ import kotlin.reflect.KClass
  */
 // 传入class为了在初始化logger前配置log级别，
 abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
+    protected open var enabled = true
+
     init {
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
         gsonJsonPathInit()
@@ -23,7 +26,8 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     @Suppress("MemberVisibilityCanBePrivate")
     protected val context: NovelContext = clazz.java.newInstance()
 
-    protected fun search(name: String, author: String, extra: String, count: Int = 3): NovelItem {
+    protected fun search(name: String, author: String, extra: String, count: Int = 3): NovelItem? {
+        if (!enabled) return null
         val list = context.searchNovelName(name)
         println(list.size)
         list.take(count).forEach {
@@ -32,7 +36,8 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         return list.first { it.name == name && it.author == author && it.extra == extra }
     }
 
-    protected fun search(name: String, count: Int = 3): List<NovelItem> {
+    protected fun search(name: String, count: Int = 3): List<NovelItem>? {
+        if (!enabled) return null
         val list = context.searchNovelName(name)
         println(list.size)
         list.take(count).forEach {
@@ -43,7 +48,8 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     }
 
     protected fun detail(detailExtra: String, extra: String, name: String, author: String,
-                         image: String?, intro: String? = null, update: String? = null): NovelDetail {
+                         image: String?, intro: String? = null, update: String? = null): NovelDetail? {
+        if (!enabled) return null
         val detail = context.getNovelDetail(detailExtra)
         println(detail)
         assertEquals(name, detail.novel.name)
@@ -77,7 +83,8 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
                            firstName: String, firstExtra: String, firstUpdate: String?,
                            lastName: String, lastExtra: String, lastUpdate: String?,
                            size: Int,
-                           count: Int = 3): List<NovelChapter> {
+                           count: Int = 3): List<NovelChapter>? {
+        if (!enabled) return null
         val list = context.getNovelChaptersAsc(extra)
         println(list.size)
         list.take(count).forEach {
@@ -107,8 +114,9 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     protected fun content(extra: String,
                           firstLine: String,
                           lastLine: String,
-                          size: Int, count: Int = 3): List<String> {
-        val list = content(extra)
+                          size: Int, count: Int = 3): List<String>? {
+        if (!enabled) return null
+        val list = content(extra).notNull()
         println(list.size)
         list.take(count).forEach {
             println(it)
@@ -122,6 +130,9 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         return list
     }
 
-    protected fun content(extra: String) = context.getNovelContent(extra)
+    protected fun content(extra: String): List<String>? {
+        if (!enabled) return null
+        return context.getNovelContent(extra)
+    }
 
 }

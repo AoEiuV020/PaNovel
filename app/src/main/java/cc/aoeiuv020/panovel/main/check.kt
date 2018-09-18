@@ -5,7 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
-import cc.aoeiuv020.base.jar.*
+import cc.aoeiuv020.base.jar.compilePattern
+import cc.aoeiuv020.base.jar.get
+import cc.aoeiuv020.base.jar.jsonPath
+import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.okhttp.OkHttpUtils
+import cc.aoeiuv020.okhttp.string
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.*
 import org.jetbrains.anko.*
@@ -24,7 +29,7 @@ object Check : Pref, AnkoLogger {
     private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
     private var knownVersionName: String by Delegates.string("0")
     private fun getNewestVersionName(): String {
-        return get(LATEST_RELEASE_GITHUB).string().jsonPath.get("tag_name")
+        return OkHttpUtils.get(LATEST_RELEASE_GITHUB).string().jsonPath.get("tag_name")
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -74,15 +79,15 @@ object Check : Pref, AnkoLogger {
             val hasUpdate = VersionUtil.compare(newestVersionName, currentVersionName) > 0
                     && VersionUtil.compare(newestVersionName, knownVersionName) > 0
             val changeLog = when {
-            // 有更新，网上获取更新日志，截取当前版本到网上最新的日志，
+                // 有更新，网上获取更新日志，截取当前版本到网上最新的日志，
                 hasUpdate -> {
                     getChangeLog(currentVersionName)
                 }
-            // 已经更新，截取更新部分日志，从上次保存的版本到最新的日志，
+                // 已经更新，截取更新部分日志，从上次保存的版本到最新的日志，
                 VersionUtil.compare(currentVersionName, cachedVersionName) > 0 -> {
                     getChangeLogFromAssert(ctx, cachedVersionName)
                 }
-            // 没有更新也不是刚更新完，直接返回，
+                // 没有更新也不是刚更新完，直接返回，
                 else -> return@doAsync
             }
             // 缓存当前版本，以便更新后对比，

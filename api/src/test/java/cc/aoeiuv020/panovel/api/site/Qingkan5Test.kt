@@ -7,6 +7,10 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.06.06-17:10:41.
  */
 class Qingkan5Test : BaseNovelContextText(Qingkan5::class) {
+    init {
+        enabled = false
+    }
+
     @Test
     fun search() {
         search("都市")
@@ -53,7 +57,9 @@ class Qingkan5Test : BaseNovelContextText(Qingkan5::class) {
                 "</p>",
                 46)
         // 还有空正文的章节，还不少，这源不行啊，
-        assertEquals(0, content("5/5518/2912686").size)
+        content("5/5518/2912686")?.size?.let {
+            assertEquals(0, it)
+        }
         content("26/26837/12257240",
                 "“哈哈哈……”",
                 "“妈的，我们可能真的暴露了，他们要跑。”开车的家伙骂了一声，脚下也猛踩油门。",

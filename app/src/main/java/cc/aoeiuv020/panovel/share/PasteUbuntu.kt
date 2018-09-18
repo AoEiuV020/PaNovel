@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.share
 
-import cc.aoeiuv020.base.jar.baseClient
 import cc.aoeiuv020.base.jar.jsoupConnect
+import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.FormBody
 import okhttp3.Request
@@ -35,7 +35,7 @@ internal class PasteUbuntu {
                 .url(homePage)
                 .post(form)
                 .build()
-        return baseClient.newBuilder().followRedirects(false)
+        return OkHttpUtils.client.newBuilder().followRedirects(false)
                 .build()
                 .newCall(request)
                 .execute()
