@@ -1,6 +1,4 @@
 dependencies {
     api 'org.jsoup:jsoup:' + jsoup_version
-    implementation 'com.google.code.gson:gson:' + gson_version
     implementation project(':baseJar')
-    implementation 'com.github.AoEiuV020.AndroidDemo:okhttp:' + okhttp_ssl_version
 }
