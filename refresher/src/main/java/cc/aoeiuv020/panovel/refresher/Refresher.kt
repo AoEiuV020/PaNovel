@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.refresher
 
 import cc.aoeiuv020.base.jar.*
+import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.panovel.api.getNovelContextByName
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
@@ -139,6 +140,7 @@ class Refresher(
                     threadPoolExecutor.submit(runnable)
                 }
             }
+
     private fun refresh(novel: Novel) {
         executor.submit {
             refreshActual(novel)

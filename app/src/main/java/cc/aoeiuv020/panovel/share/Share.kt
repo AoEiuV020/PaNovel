@@ -2,9 +2,9 @@ package cc.aoeiuv020.panovel.share
 
 import android.content.Context
 import android.view.View
-import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.base.jar.toJson
-import cc.aoeiuv020.base.jar.type
+import cc.aoeiuv020.gson.toBean
+import cc.aoeiuv020.gson.toJson
+import cc.aoeiuv020.gson.type
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager

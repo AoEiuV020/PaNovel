@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.server.service.impl
 
 import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.notNull
-import cc.aoeiuv020.base.jar.type
+import cc.aoeiuv020.gson.type
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.bookId

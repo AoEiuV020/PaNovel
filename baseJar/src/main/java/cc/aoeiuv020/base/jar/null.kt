@@ -2,6 +2,9 @@
 
 package cc.aoeiuv020.base.jar
 
+import cc.aoeiuv020.type.type
+
+
 /**
  * Created by AoEiuV020 on 2018.06.02-17:41:27.
  */

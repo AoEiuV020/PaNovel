@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.preference.PreferenceFragment
-import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.gson.toBean
+import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.App
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

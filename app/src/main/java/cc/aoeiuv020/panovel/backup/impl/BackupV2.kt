@@ -2,8 +2,8 @@ package cc.aoeiuv020.panovel.backup.impl
 
 import android.net.Uri
 import cc.aoeiuv020.base.jar.divide
-import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.gson.toBean
+import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.backup.BackupOption
 import cc.aoeiuv020.panovel.backup.BackupOption.*

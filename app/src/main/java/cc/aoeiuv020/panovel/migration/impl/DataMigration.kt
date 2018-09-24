@@ -5,7 +5,7 @@ import android.net.Uri
 import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.get
 import cc.aoeiuv020.base.jar.jsonPath
-import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress

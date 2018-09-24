@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.support.v4.content.LocalBroadcastManager
-import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.gson.toBean
+import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.report.Reporter
 import cn.jpush.android.api.JPushMessage
 import org.jetbrains.anko.AnkoLogger

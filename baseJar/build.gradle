@@ -1,5 +1,5 @@
 dependencies {
-    api 'com.google.code.gson:gson:' + gson_version
+    api 'com.github.AoEiuV020:AndroidDemo:9c08910' // gson,
     api 'com.jayway.jsonpath:json-path:' + json_path_version
     api 'org.jsoup:jsoup:' + jsoup_version
     api 'com.github.AoEiuV020.AndroidDemo:okhttp:' + okhttp_ssl_version

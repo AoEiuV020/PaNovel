@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.gson.toBean
+import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -37,6 +37,7 @@ abstract class NovelContext {
                 Zzdxsw(), Zhuaji(), Uctxt(), Lnovel()
         )
 
+        // 用于存取cookie,
         private val gson: Gson = GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()

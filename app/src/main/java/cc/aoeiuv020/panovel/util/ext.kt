@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.util
 
-import cc.aoeiuv020.base.jar.type
+import cc.aoeiuv020.gson.type
 import cc.aoeiuv020.panovel.report.Reporter
 
 /**
