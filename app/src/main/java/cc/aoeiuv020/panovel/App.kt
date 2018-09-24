@@ -5,7 +5,7 @@ import android.content.Context
 import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import android.util.Log
-import cc.aoeiuv020.base.jar.gsonJsonPathInit
+import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.ssl.TLSSocketFactory
@@ -71,7 +71,7 @@ class App : MultiDexApplication(), AnkoLogger {
      * 初始化要放在用到JsonPath之前，
      */
     private fun initJson() {
-        gsonJsonPathInit()
+        JsonPathUtils.initGson()
     }
 
     /**

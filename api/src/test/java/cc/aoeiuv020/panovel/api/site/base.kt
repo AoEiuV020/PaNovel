@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.gsonJsonPathInit
 import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
@@ -20,7 +20,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
 
     init {
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
-        gsonJsonPathInit()
+        JsonPathUtils.initGson()
     }
 
     @Suppress("MemberVisibilityCanBePrivate")

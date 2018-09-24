@@ -6,9 +6,9 @@ import android.content.Intent
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
 import cc.aoeiuv020.base.jar.compilePattern
-import cc.aoeiuv020.base.jar.get
-import cc.aoeiuv020.base.jar.jsonPath
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.jsonpath.get
+import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.okhttp.string
 import cc.aoeiuv020.panovel.report.Reporter
