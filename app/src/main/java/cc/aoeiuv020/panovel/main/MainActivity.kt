@@ -33,6 +33,7 @@ import cc.aoeiuv020.panovel.migration.MigrationPresenter
 import cc.aoeiuv020.panovel.migration.MigrationView
 import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
@@ -66,7 +67,14 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         get() = supportFragmentManager.fragments.firstOrNull { it is HistoryFragment } as HistoryFragment?
 
     private val openListener: OpenManager.OpenListener = object : OpenManager.OpenListener {
+        override fun onOtherCase(str: String) {
+            progressDialog.dismiss()
+            // 打开的不是网址，就直接精确搜索，
+            FuzzySearchActivity.start(ctx, str)
+        }
+
         override fun onNovelOpened(novel: Novel) {
+            progressDialog.dismiss()
             NovelDetailActivity.start(ctx, novel)
         }
 
@@ -83,6 +91,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
 
         override fun onError(message: String, e: Throwable) {
+            progressDialog.dismiss()
             showError(message, e)
         }
 
