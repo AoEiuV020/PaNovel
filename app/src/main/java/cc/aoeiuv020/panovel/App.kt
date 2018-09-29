@@ -12,12 +12,9 @@ import cc.aoeiuv020.ssl.TLSSocketFactory
 import cc.aoeiuv020.ssl.TrustManagerUtils
 import cn.jpush.android.api.JPushInterface
 import com.bumptech.glide.Glide
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
 import org.jetbrains.anko.info
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
@@ -39,8 +36,6 @@ class App : MultiDexApplication(), AnkoLogger {
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
                 .create()
-
-        lateinit var adRequest: AdRequest
     }
 
     override fun onCreate() {
@@ -54,8 +49,6 @@ class App : MultiDexApplication(), AnkoLogger {
         initSsl()
 
         initVector()
-
-        initAdmob()
 
         initReporter()
 
@@ -115,22 +108,6 @@ class App : MultiDexApplication(), AnkoLogger {
             info { "JPush registration id: <$id>" }
         }
         JPushInterface.init(ctx)
-    }
-
-    private fun initAdmob() {
-        MobileAds.initialize(this, "ca-app-pub-3036112914192534~4631187497")
-        adRequest = AdRequest.Builder()
-                .also { builder ->
-                    // 添加广告的测试设备，
-                    try {
-                        assets.open("admob_test_device_list").reader().readLines().filter(String::isNotBlank).forEach {
-                            debug { "add test device: $it" }
-                            builder.addTestDevice(it)
-                        }
-                    } catch (_: Exception) {
-                        // 什么都不做，
-                    }
-                }.build()
     }
 
     /**

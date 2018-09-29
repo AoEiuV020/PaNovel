@@ -17,7 +17,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.backup.BackupActivity
@@ -35,10 +34,11 @@ import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
-import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
-import cc.aoeiuv020.panovel.util.*
-import com.google.android.gms.ads.AdListener
+import cc.aoeiuv020.panovel.util.VersionName
+import cc.aoeiuv020.panovel.util.cancelAllNotify
+import cc.aoeiuv020.panovel.util.loading
+import cc.aoeiuv020.panovel.util.safelyShow
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -183,18 +183,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         Check.asyncCheckVersion(this)
         // 异步获取可能存在的, 我放在网上想推给用户的消息，
         DevMessage.asyncShowMessage(this)
-
-
-        ad_view.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                ad_view.show()
-            }
-        }
-
-        if (GeneralSettings.adEnabled) {
-            ad_view.loadAd(App.adRequest)
-        }
-
     }
 
     private fun initWidget() {
@@ -264,14 +252,8 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
     }
 
-    override fun onPause() {
-        ad_view.pause()
-        super.onPause()
-    }
-
     override fun onResume() {
         super.onResume()
-        ad_view.resume()
         // 回到主页时清空所有通知，包括小说更新通知和其他导出下载等通知，
         cancelAllNotify()
     }
@@ -281,7 +263,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         if (::progressDialog.isInitialized) {
             progressDialog.dismiss()
         }
-        ad_view.destroy()
         super.onDestroy()
     }
 
