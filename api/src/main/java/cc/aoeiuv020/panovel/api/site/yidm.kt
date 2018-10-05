@@ -49,10 +49,11 @@ class Yidm : DslJsoupNovelContext() {init {
     // http://www.yidm.com/article/info/1/1517.html
     // 1517
     // http://openapi.yidm.com/article/getArticleInfo.php?aid=1517
-    detailPageTemplate = "//openapi.yidm.com/article/getArticleInfo.php?aid=%s"
+    detailPageTemplate = "/article/info/%s/%s.html"
+    detailDivision = 1000
     detail { aid ->
         get {
-            url = detailPageTemplate.notNull().format(aid)
+            url = "//openapi.yidm.com/article/getArticleInfo.php?aid=%s".notNull().format(aid)
         }
         response { json ->
             json.toBean<JsonObject>()
@@ -75,7 +76,7 @@ class Yidm : DslJsoupNovelContext() {init {
     }
     chapters { aid ->
         get {
-            url = detailPageTemplate.notNull().format(aid)
+            url = "//openapi.yidm.com/article/getArticleInfo.php?aid=%s".notNull().format(aid)
         }
         response { json ->
             var lastUpdate: Date? = null
@@ -117,7 +118,11 @@ class Yidm : DslJsoupNovelContext() {init {
     contentPageTemplate = "//www.yidm.com/article/html/%s/%s/%s.html"
     getNovelContentUrl { extra ->
         val (aid, _, cid) = extra.split('/')
-        contentPageTemplate.notNull().format(aid.toInt() % 1000, aid, cid)
+        if (cid.isBlank()) {
+            getNovelDetailUrl(aid)
+        } else {
+            contentPageTemplate.notNull().format(aid.toInt() / 1000, aid, cid)
+        }
     }
     content { extra ->
         val (aid, vid, cid) = extra.split('/')
