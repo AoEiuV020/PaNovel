@@ -150,11 +150,12 @@ class NovelManager(
 
     fun cleanCache() {
         cache.clean(novel)
+        provider.cleanCache()
     }
 
     fun cleanData() {
         cleanCache()
-        provider.clean()
+        provider.cleanData()
         app.clean(novel)
     }
 

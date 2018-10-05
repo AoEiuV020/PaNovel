@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import org.junit.Assert.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.reflect.KClass
@@ -15,12 +16,22 @@ import kotlin.reflect.KClass
  * Created by AoEiuV020 on 2018.05.21-19:15:56.
  */
 // 传入class为了在初始化logger前配置log级别，
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     protected open var enabled = true
+    protected val folder: File = File(System.getProperty("java.io.tmpdir", "."))
+            .resolve("PaNovel")
+            .resolve("api")
+            .resolve("test")
+            .also { it.mkdirs() }
+    protected val cacheDir = folder.resolve("cache")
+    protected val filesDir = folder.resolve("files")
 
     init {
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
         JsonPathUtils.initGson()
+        NovelContext.cache(cacheDir)
+        NovelContext.files(filesDir)
     }
 
     @Suppress("MemberVisibilityCanBePrivate")

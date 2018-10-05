@@ -34,7 +34,7 @@ abstract class NovelContext {
                 Lewen123(), Zaidudu(), Shangshu(), Haxds(), X23us(),
 
                 Zhuishu(), N2kzw(), Shu8(), N52ranwen(), Kuxiaoshuo(),
-                Zzdxsw(), Zhuaji(), Uctxt(), Lnovel()
+                Zzdxsw(), Zhuaji(), Uctxt(), Lnovel(), Yidm()
         )
 
         // 用于存取cookie,
@@ -115,6 +115,14 @@ abstract class NovelContext {
             _cookies = value
             cookiesFile?.writeText(value.toJson(gson))
         }
+
+    fun cleanData() {
+        mFilesDir?.deleteRecursively()
+    }
+
+    fun cleanCache() {
+        mCacheDir?.deleteRecursively()
+    }
 
     /**
      * 保存okhttp得到的cookie， 不过滤，

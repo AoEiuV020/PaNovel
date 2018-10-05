@@ -58,8 +58,13 @@ class LocalNovelProvider(
         }
     }
 
-    override fun clean() {
+    override fun cleanData() {
         file.delete()
+    }
+
+    override fun cleanCache() {
+        // 没什么缓存文件可以删除的，
+        // 复制到内部的备份不方便删除，
     }
 
     companion object {

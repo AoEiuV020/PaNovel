@@ -14,7 +14,8 @@ interface NovelProvider {
     fun requestNovelChapters(): List<NovelChapter>
     fun getDetailUrl(): String
     fun updateNovelDetail()
-    fun clean()
+    fun cleanData()
+    fun cleanCache()
     // 图片也要看上下文获取，比如epub内部，
     fun getImage(extra: String): URL
 }
