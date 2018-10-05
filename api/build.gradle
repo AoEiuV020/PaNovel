@@ -1,7 +1,4 @@
 dependencies {
     implementation 'org.jsoup:jsoup:' + jsoup_version
-    implementation 'com.google.code.gson:gson:' + gson_version
     implementation project(':baseJar')
-    implementation 'com.jayway.jsonpath:json-path:' + json_path_version
-    implementation 'com.github.AoEiuV020.AndroidDemo:okhttp:' + okhttp_ssl_version
 }

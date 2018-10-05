@@ -3,10 +3,10 @@ package cc.aoeiuv020.panovel.server
 import android.content.Context
 import android.support.annotation.WorkerThread
 import android.util.Log
-import cc.aoeiuv020.base.jar.get
-import cc.aoeiuv020.base.jar.jsonPath
 import cc.aoeiuv020.base.jar.notZero
-import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.gson.toBean
+import cc.aoeiuv020.jsonpath.get
+import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R

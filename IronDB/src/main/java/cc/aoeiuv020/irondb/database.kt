@@ -1,6 +1,6 @@
 package cc.aoeiuv020.irondb
 
-import cc.aoeiuv020.base.jar.type
+import cc.aoeiuv020.gson.type
 import java.lang.reflect.Type
 
 /**

@@ -65,8 +65,12 @@ class ApiNovelProvider(
         return context.getNovelContentUrl(chapter.extra)
     }
 
-    override fun clean() {
-        // 一般网站的小说没什么要清除的，
+    override fun cleanData() {
+        context.cleanData()
+    }
+
+    override fun cleanCache() {
+        context.cleanCache()
     }
 
     override fun getImage(extra: String): URL {

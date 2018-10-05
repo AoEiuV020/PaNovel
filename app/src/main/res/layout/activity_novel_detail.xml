@@ -90,15 +90,6 @@
 
         </android.support.design.widget.CoordinatorLayout>
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/ad_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone"
-            app:adSize="SMART_BANNER"
-            app:adUnitId="ca-app-pub-3036112914192534/4956552759" />
-
     </LinearLayout>
 
 </android.support.v4.widget.SwipeRefreshLayout>

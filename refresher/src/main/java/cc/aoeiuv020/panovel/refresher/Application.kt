@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.refresher
 
-import cc.aoeiuv020.base.jar.gsonJsonPathInit
+import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.toBean
 import java.io.File
@@ -9,7 +9,7 @@ import java.io.File
  * Created by AoEiuV020 on 2018.04.21-16:05:40.
  */
 fun main(args: Array<String>) {
-    gsonJsonPathInit()
+    JsonPathUtils.initGson()
     val ite = args.iterator()
     var address: ServerAddress = ServerAddress.getDefault()
     var config = Config()

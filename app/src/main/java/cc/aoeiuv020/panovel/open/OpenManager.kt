@@ -8,7 +8,6 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.ImportRequireValue
 import cc.aoeiuv020.panovel.local.LocalNovelType
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.uiInput
 import cc.aoeiuv020.panovel.util.uiSelect
@@ -35,8 +34,7 @@ object OpenManager : AnkoLogger {
         openListener.onLoading(ctx.getString(R.string.judging))
         when {
             uri.scheme == null -> {
-                // 打开的不是网址，就直接精确搜索，
-                FuzzySearchActivity.start(ctx, uri.toString())
+                openListener.onOtherCase(uri.toString())
             }
             !uri.scheme.startsWith("http") -> {
                 // 协议不是http或https的话统统当成本地小说打开，
@@ -110,6 +108,7 @@ object OpenManager : AnkoLogger {
 
     interface OpenListener {
         fun onLoading(status: String)
+        fun onOtherCase(str: String)
         fun onBookListReceived(count: Int)
         fun onError(message: String, e: Throwable)
         fun onNovelOpened(novel: Novel)

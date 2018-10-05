@@ -9,8 +9,8 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.gson.toBean
+import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
@@ -19,14 +19,10 @@ import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.list.NovelViewHolder
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.settings.ServerSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
 import cc.aoeiuv020.panovel.util.safelyShow
-import cc.aoeiuv020.panovel.util.show
-import com.google.android.gms.ads.AdListener
-import kotlinx.android.synthetic.main.activity_book_list.*
 import kotlinx.android.synthetic.main.novel_item_list.*
 import org.jetbrains.anko.*
 
@@ -101,36 +97,15 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
             forceRefresh()
         }
 
-        ad_view.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                ad_view.show()
-            }
-        }
-
-        if (GeneralSettings.adEnabled) {
-            ad_view.loadAd(App.adRequest)
-        }
-
         presenter.attach(this)
         // 查询书单名，只用来改title, 没什么大用，
         presenter.start()
-    }
-
-    override fun onPause() {
-        ad_view.pause()
-        super.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        ad_view.resume()
     }
 
     override fun onDestroy() {
         if (::presenter.isInitialized) {
             presenter.detach()
         }
-        ad_view.destroy()
         super.onDestroy()
     }
 

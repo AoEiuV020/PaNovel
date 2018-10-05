@@ -8,17 +8,13 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.NovelListAdapter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
-import cc.aoeiuv020.panovel.util.show
-import com.google.android.gms.ads.AdListener
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_fuzzy_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
@@ -104,16 +100,6 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
         name?.let { nameNonnull ->
             search(nameNonnull, author)
         } ?: searchView.post { showSearch() }
-
-        ad_view.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                ad_view.show()
-            }
-        }
-
-        if (GeneralSettings.adEnabled) {
-            ad_view.loadAd(App.adRequest)
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -127,19 +113,8 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
         searchView.setQuery(presenter.name, false)
     }
 
-    override fun onPause() {
-        ad_view.pause()
-        super.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        ad_view.resume()
-    }
-
     override fun onDestroy() {
         presenter.detach()
-        ad_view.destroy()
         super.onDestroy()
     }
 

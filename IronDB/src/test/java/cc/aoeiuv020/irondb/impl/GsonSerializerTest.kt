@@ -1,6 +1,6 @@
 package cc.aoeiuv020.irondb.impl
 
-import cc.aoeiuv020.base.jar.type
+import cc.aoeiuv020.gson.type
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

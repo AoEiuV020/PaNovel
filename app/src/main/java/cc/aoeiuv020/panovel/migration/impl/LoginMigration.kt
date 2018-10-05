@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.migration.impl
 
 import android.content.Context
-import cc.aoeiuv020.base.jar.toBean
+import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.report.Reporter

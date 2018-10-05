@@ -24,7 +24,6 @@ buildscript {
         classpath 'com.android.tools.build:gradle:' + studio_version
         //noinspection DifferentKotlinGradleVersion
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:' + kotlin_version
-        classpath 'com.google.gms:google-services:' + google_version
         classpath 'com.github.dcendents:android-maven-gradle-plugin:' + jitpack_android_version
     }
 }
@@ -70,7 +69,7 @@ applicationModules.forEach { name ->
             }
 
             def signingFile = rootProject.file('signing.properties')
-            if(signingFile.exists()){
+            if (signingFile.exists()) {
                 def input = signingFile.newInputStream()
                 def p = new Properties()
                 p.load(input)
@@ -118,7 +117,7 @@ applicationModules.forEach { name ->
         // pc端的单元测试移除无法使用的slf4j-android，
         // 关键是runtimeOnly依赖不只加入apk中，test也会加上，
         // 在allprojects设置没用，apply plugin后才存在这些configurations,
-        configurations.findAll {it.name.startsWith('test')}.each { conf ->
+        configurations.findAll { it.name.startsWith('test') }.each { conf ->
             conf.exclude group: "org.slf4j", module: "slf4j-android"
         }
 
@@ -135,6 +134,7 @@ applicationModules.forEach { name ->
             implementation 'org.slf4j:slf4j-api:' + slf4j_version
             runtimeOnly 'org.slf4j:slf4j-android:' + slf4j_version
             testImplementation 'org.slf4j:slf4j-simple:' + slf4j_version
+            implementation 'com.github.AoEiuV020.AndroidDemo:commons:commons-' + a_commons_version
         }
     }
 }
@@ -151,6 +151,7 @@ javaModules.forEach { name ->
             implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlin_version
             implementation 'org.slf4j:slf4j-api:' + slf4j_version
             testImplementation 'org.slf4j:slf4j-simple:' + slf4j_version
+            implementation 'com.github.AoEiuV020.AndroidDemo:commons:commons-' + a_commons_version
         }
 
         sourceCompatibility = "1.7"
@@ -204,7 +205,7 @@ androidModules.forEach { name ->
         // pc端的单元测试移除无法使用的slf4j-android，
         // 关键是runtimeOnly依赖不只加入apk中，test也会加上，
         // 在allprojects设置没用，apply plugin后才存在这些configurations,
-        configurations.findAll {it.name.startsWith('test')}.each { conf ->
+        configurations.findAll { it.name.startsWith('test') }.each { conf ->
             conf.exclude group: "org.slf4j", module: "slf4j-android"
         }
 
@@ -217,6 +218,7 @@ androidModules.forEach { name ->
             implementation 'org.slf4j:slf4j-api:' + slf4j_version
             runtimeOnly 'org.slf4j:slf4j-android:' + slf4j_version
             testImplementation 'org.slf4j:slf4j-simple:' + slf4j_version
+            implementation 'com.github.AoEiuV020.AndroidDemo:commons:commons-' + a_commons_version
         }
 
         task sourcesJar(type: Jar) {

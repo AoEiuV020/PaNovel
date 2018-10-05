@@ -8,21 +8,17 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.alert
 import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.noCover
-import cc.aoeiuv020.panovel.util.show
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.gms.ads.AdListener
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
 import org.jetbrains.anko.AnkoLogger
@@ -84,30 +80,9 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter = NovelDetailPresenter(id)
         presenter.attach(this)
         presenter.start()
-
-        ad_view.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                ad_view.show()
-            }
-        }
-
-        if (GeneralSettings.adEnabled) {
-            ad_view.loadAd(App.adRequest)
-        }
-    }
-
-    override fun onPause() {
-        ad_view.pause()
-        super.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        ad_view.resume()
     }
 
     override fun onDestroy() {
-        ad_view.destroy()
         presenter.detach()
         super.onDestroy()
     }

@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.toBean
-import cc.aoeiuv020.base.jar.toJson
+import cc.aoeiuv020.gson.toBean
+import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -34,9 +34,10 @@ abstract class NovelContext {
                 Lewen123(), Zaidudu(), Shangshu(), Haxds(), X23us(),
 
                 Zhuishu(), N2kzw(), Shu8(), N52ranwen(), Kuxiaoshuo(),
-                Zzdxsw(), Zhuaji(), Uctxt(), Lnovel()
+                Zzdxsw(), Zhuaji(), Uctxt(), Lnovel(), Yidm()
         )
 
+        // 用于存取cookie,
         private val gson: Gson = GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
@@ -114,6 +115,14 @@ abstract class NovelContext {
             _cookies = value
             cookiesFile?.writeText(value.toJson(gson))
         }
+
+    fun cleanData() {
+        mFilesDir?.deleteRecursively()
+    }
+
+    fun cleanCache() {
+        mCacheDir?.deleteRecursively()
+    }
 
     /**
      * 保存okhttp得到的cookie， 不过滤，
