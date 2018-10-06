@@ -72,6 +72,8 @@ class App : MultiDexApplication(), AnkoLogger {
      * 还有ContextCompat.getDrawable也不行，
      * it's not a BUG, it's a FEATURE,
      * https://issuetracker.google.com/issues/37100284
+     *
+     * 这个设置只对AppCompatActivity有效，其他context没用，
      */
     private fun initVector() {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

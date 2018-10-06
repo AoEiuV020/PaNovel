@@ -4,7 +4,6 @@ package cc.aoeiuv020.panovel.text
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -15,8 +14,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.app.AlertDialog
 import android.view.*
 import android.widget.ImageView
@@ -28,7 +25,6 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
-import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.settings.GeneralSettings
@@ -415,8 +411,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     override fun onDestroy() {
         // 删除循环自动保存阅读自动的回调，
         handler.removeCallbacks(autoSaveReadStatusRunnable)
-        // 删除可能存在的循环通知下载状态的回调，
-        handler.removeCallbacks(downloadingRunnable)
         if (::presenter.isInitialized) {
             presenter.detach()
         }
@@ -718,68 +712,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
      */
     private val handler: Handler = Handler()
 
-    /**
-     * 安卓通知是不按顺序的，使用唯一runnable确保顺序，
-     */
-    private val downloadingRunnable = object : Runnable {
-        var exists = 0
-        var downloads = 0
-        var errors = 0
-        var left = 0
-        fun set(exists: Int, downloads: Int, errors: Int, left: Int) {
-            this.exists = exists
-            this.downloads = downloads
-            this.errors = errors
-            this.left = left
-        }
-
-        // 太早了Intent不能用，
-        val nb: NotificationCompat.Builder by lazy {
-            val intent = intentFor<MainActivity>()
-            val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
-            @Suppress("DEPRECATION")
-            // 用过时的通知，可以兼容api26,
-            val notificationBuilder = NotificationCompat.Builder(ctx)
-                    .setOnlyAlertOnce(true)
-                    .setAutoCancel(true)
-                    .setContentTitle(novel.name)
-                    .setContentIntent(pendingIntent)
-            notificationBuilder.apply {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    setLargeIcon(getBitmapFromVectorDrawable(R.drawable.ic_file_download))
-                    setSmallIcon(R.mipmap.ic_launcher_round)
-                } else {
-                    setSmallIcon(R.drawable.ic_file_download)
-                }
-            }
-            notificationBuilder
-        }
-        // System services not available to Activities before onCreate()
-        val manager by lazy { NotificationManagerCompat.from(ctx) }
-
-        fun complete() {
-            // 完成时停止通知循环，
-            // 可能正在通知？删除后又调用了延迟100ms的通知，覆盖了完成的通知，
-            // 不对啊，这是在主线程的操作，只有一个线程，那就是其中一个通知在阻塞中，这里通知完了才到它，
-            // 不管了，这多线程实在恶心，给个一秒的延迟，确保最后通知，
-            handler.removeCallbacks(this)
-            handler.postDelayed({
-                nb.setContentText(getString(R.string.download_complete_placeholder, exists, downloads, errors))
-                        .setProgress(0, 0, false)
-                manager.notify(1, nb.build())
-            }, 1000)
-        }
-
-        override fun run() {
-            val progress = ((exists + downloads + errors).toFloat() / ((exists + downloads + errors) + left) * 100).toInt()
-            nb.setContentText(getString(R.string.downloading_placeholder, exists, downloads, errors, left))
-                    .setProgress(100, progress, false)
-            manager.notify(1, nb.build())
-            // 100ms通知一次，避免过快，
-            handler.postDelayed(this, 100)
-        }
-    }
-
     fun download() {
         val index = reader.currentChapter
         val count = GeneralSettings.downloadCount
@@ -820,27 +752,6 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             cancelButton { }
         }.safelyShow()
         return true
-    }
-
-    fun showDownloadStart(left: Int) {
-        downloadingRunnable.left = left
-        // 开始通知循环，
-        handler.post(downloadingRunnable)
-    }
-
-    fun showDownloadError() {
-        // 下载失败直接停止通知循环，
-        handler.removeCallbacks(downloadingRunnable)
-    }
-
-    fun showDownloading(exists: Int, downloads: Int, errors: Int, left: Int) {
-        // 更新数据，下次通知自己读取，
-        downloadingRunnable.set(exists, downloads, errors, left)
-    }
-
-    fun showDownloadComplete(exists: Int, downloads: Int, errors: Int) {
-        downloadingRunnable.set(exists, downloads, errors, 0)
-        downloadingRunnable.complete()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
