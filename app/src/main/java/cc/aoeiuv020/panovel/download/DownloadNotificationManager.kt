@@ -14,7 +14,8 @@ class DownloadNotificationManager(
 ) : DownloadListener {
 
     private val status = DownloadStatus()
-    private val proxy = NotifyLoopProxy(ctx)
+    // 固定通知id以免频繁下载出现一堆通知，
+    private val proxy = NotifyLoopProxy(ctx, 1)
     // 太早了Intent不能用，
     private val nb: NotificationCompat.Builder by lazy {
         val intent = ctx.intentFor<DownloadActivity>()

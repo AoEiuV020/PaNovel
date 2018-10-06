@@ -22,7 +22,7 @@ import org.jetbrains.anko.intentFor
  */
 class NotifyLoopProxy(
         ctx: Context,
-        private val id: Int = 1,
+        private val id: Int = (Math.random() * Int.MAX_VALUE).toInt(),
         // 最多delay毫秒一个通知，
         private val delay: Long = 300L
 ) {
