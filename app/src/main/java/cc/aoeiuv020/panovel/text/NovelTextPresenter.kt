@@ -4,7 +4,6 @@ import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.data.DownloadManager
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.report.Reporter
@@ -56,7 +55,7 @@ class NovelTextPresenter(
 
     fun download(fromIndex: Int, count: Int) {
         view?.let {
-            DownloadManager(it).download(novelManager, fromIndex, count)
+            DataManager.download.download(novelManager, fromIndex, count)
         }
     }
 

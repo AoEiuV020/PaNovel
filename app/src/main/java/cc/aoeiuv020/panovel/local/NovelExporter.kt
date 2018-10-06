@@ -2,7 +2,6 @@ package cc.aoeiuv020.panovel.local
 
 import android.app.PendingIntent
 import android.content.Context
-import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import cc.aoeiuv020.panovel.App
@@ -10,7 +9,6 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.main.MainActivity
-import cc.aoeiuv020.panovel.util.getBitmapFromVectorDrawable
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -69,12 +67,7 @@ class NovelExporter(
                         .setContentTitle(ctx.getString(R.string.exporting_title_placeholder, novel.name))
                         .setContentIntent(pendingIntent)
                 notificationBuilder.apply {
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                        setLargeIcon(ctx.getBitmapFromVectorDrawable(R.drawable.ic_file_download))
-                        setSmallIcon(R.mipmap.ic_launcher_round)
-                    } else {
-                        setSmallIcon(R.drawable.ic_file_download)
-                    }
+                    setSmallIcon(android.R.drawable.stat_sys_download)
                 }
                 notificationBuilder
             }
@@ -102,6 +95,7 @@ class NovelExporter(
                         nb.setContentTitle(ctx.getString(R.string.export_title_complete_placeholder, novel.name))
                         nb.setStyle(NotificationCompat.BigTextStyle().bigText(ctx.getString(R.string.export_complete_big_placeholder, file.path)))
                         nb.setProgress(max, max, false)
+                        nb.setSmallIcon(android.R.drawable.stat_sys_download_done)
                         manager.notify(1, nb.build())
                     }
                 }

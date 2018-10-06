@@ -2,14 +2,12 @@ package cc.aoeiuv020.panovel.download
 
 import android.app.PendingIntent
 import android.content.Context
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.util.getBitmapFromVectorDrawable
 import org.jetbrains.anko.intentFor
 
 class DownloadNotificationManager(
@@ -44,12 +42,7 @@ class DownloadNotificationManager(
                     .setContentTitle(novel.name)
                     .setContentIntent(pendingIntent)
             notificationBuilder.apply {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    setLargeIcon(ctx.getBitmapFromVectorDrawable(R.drawable.ic_file_download))
-                    setSmallIcon(R.mipmap.ic_launcher_round)
-                } else {
-                    setSmallIcon(R.drawable.ic_file_download)
-                }
+                setSmallIcon(android.R.drawable.stat_sys_download)
             }
             notificationBuilder
         }
@@ -65,6 +58,7 @@ class DownloadNotificationManager(
             handler.postDelayed({
                 nb.setContentText(ctx.getString(R.string.download_complete_placeholder, exists, downloads, errors))
                         .setProgress(0, 0, false)
+                        .setSmallIcon(android.R.drawable.stat_sys_download_done)
                 manager.notify(1, nb.build())
             }, 1000)
         }
