@@ -7,7 +7,7 @@ import android.support.annotation.MainThread
  */
 interface DownloadListener {
     @MainThread
-    fun downloadStart(count: Int)
+    fun downloadStart(left: Int)
 
     @MainThread
     fun downloading(exists: Int, downloads: Int, errors: Int, left: Int)
