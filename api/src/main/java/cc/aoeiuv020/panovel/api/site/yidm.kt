@@ -191,7 +191,7 @@ class Yidm : DslJsoupNovelContext() {init {
         val rootUrl = URL("jar:${wpub.toURI()}!/")
         val cUrl = URL(rootUrl, cid)
         return cUrl.openStream().bufferedReader().useLines { sequence ->
-            sequence.map { line ->
+            sequence.mapNotNull { line ->
                 // {$FULLPATH$}img/26508.jpg
                 // "![img]($it)"
                 try {
@@ -200,7 +200,7 @@ class Yidm : DslJsoupNovelContext() {init {
                             .let { "![img](${URL(rootUrl, it)})" }
                 } catch (_: Exception) {
                     // 该行不是图片，
-                    line.trim()
+                    line.trim().takeIf { it.isNotEmpty() }
                 }
             }.toList()
         }
