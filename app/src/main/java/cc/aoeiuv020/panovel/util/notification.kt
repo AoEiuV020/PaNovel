@@ -18,6 +18,7 @@ import org.jetbrains.anko.intentFor
 
 /**
  * 用来代理循环通知的情况，
+ * 没有死循环，就算不主动结束，也会在delay时间后自动结束，
  */
 class NotifyLoopProxy(
         ctx: Context,
@@ -70,6 +71,8 @@ class NotifyLoopProxy(
     fun complete(notification: Notification) {
         done = true
         // 就算完成了，也等最后一个循环节走完，
+        // 这里无视线程冲突，尽量都只用主线程，
+        // 要是说刚好主线程正在进入loopBlock拿走notification,可能导致最后一个通知不是完成通知，
         if (waiting) {
             wrapper.notification = notification
         } else {

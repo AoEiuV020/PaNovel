@@ -3,12 +3,12 @@ package cc.aoeiuv020.panovel.local
 import android.app.PendingIntent
 import android.content.Context
 import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.util.NotifyLoopProxy
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -54,7 +54,6 @@ class NovelExporter(
                         LocalNovelType.EPUB -> NovelExporter.EPUB_FOLDER
                     }).apply { exists() || mkdirs() }
                     .resolve(fileName)
-            var lastP = -1
             // 太早了Intent不能用，<-- 我也不知道这在说什么，
             val nb: NotificationCompat.Builder by lazy {
                 val intent = ctx.intentFor<MainActivity>()
@@ -71,32 +70,23 @@ class NovelExporter(
                 }
                 notificationBuilder
             }
-            // System services not available to Activities before onCreate()
-            val manager by lazy { NotificationManagerCompat.from(ctx) }
-            var isDone = false
+            val proxy = NotifyLoopProxy(ctx)
+            ctx.runOnUiThread {
+                nb.setProgress(0, 0, true)
+                proxy.start(nb.build())
+            }
             NovelExporter(type, file) { current, total ->
                 debug { "exporting $current/$total" }
-                if (current == total) {
-                    // 以防万一，多一个isDone判断避免结束会调顺序出问题时不能通知结束，
-                    isDone = true
-                }
-                // 进度分成一百份，
-                val max = 100
-                val progress = (current.toFloat() / total * max).toInt()
-                if (progress > lastP && !isDone) {
-                    lastP = progress
-                    ctx.runOnUiThread {
-                        nb.setProgress(max, progress, false)
-                        manager.notify(1, nb.build())
-                    }
-                }
-                if (isDone) {
-                    ctx.runOnUiThread {
+                ctx.runOnUiThread {
+                    if (current == total) {
                         nb.setContentTitle(ctx.getString(R.string.export_title_complete_placeholder, novel.name))
                         nb.setStyle(NotificationCompat.BigTextStyle().bigText(ctx.getString(R.string.export_complete_big_placeholder, file.path)))
-                        nb.setProgress(max, max, false)
+                        nb.setProgress(total, current, false)
                         nb.setSmallIcon(android.R.drawable.stat_sys_download_done)
-                        manager.notify(1, nb.build())
+                        proxy.complete(nb.build())
+                    } else {
+                        nb.setProgress(total, current, false)
+                        proxy.modify(nb.build())
                     }
                 }
             }.export(novelManager)
