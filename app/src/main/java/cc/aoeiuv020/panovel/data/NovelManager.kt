@@ -5,7 +5,10 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import cc.aoeiuv020.panovel.report.Reporter
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.error
 import java.net.URL
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -66,16 +69,13 @@ class NovelManager(
         }
         val dnm: DownloadingNotificationManager = dnmLocal.get()
         dnm.downloadStart(novel, index, chapter.name)
-        info { "start ${chapter.name}" }
         return provider.getNovelContent(chapter) { offset, length ->
             dnm.downloading(index, chapter.name, offset, length)
         }.also {
             dnm.downloadComplete(index, chapter.name)
-            info { "Complete ${chapter.name}" }
             // 线程进度通知1秒后删除，
             // 如果还有剩，1秒内重新开始循环也就不会删除通知了，
             dnm.cancelNotification(TimeUnit.SECONDS.toMillis(1))
-            info { "cancel ${chapter.name}" }
             // 缓存起来，
             cache.saveContent(novel, chapter.extra, it)
         }

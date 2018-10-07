@@ -49,10 +49,7 @@ class NotifyLoopProxy(
     }
     private val loopBlock = Runnable {
         // 取出wrapper中的notification,
-        val notification = wrapper.notification
-        wrapper.notification = null
-        // 如果wrapper中存在notification，表示有通知要弹，
-        if (notification != null) {
+        if (wrapper.notification != null) {
             notifyCached()
         }
         if (canceled) {
@@ -74,7 +71,11 @@ class NotifyLoopProxy(
 
     private fun notifyCached() {
         runOnUiThread {
+            // 如果wrapper中存在notification，表示有通知要弹，
             wrapper.notification?.let { n ->
+                // 弹完置空，免得重复弹，
+                // 可能存在多线程冲突问题，基本不会出现，
+                wrapper.notification = null
                 manager.notify(id, n)
             }
         }
