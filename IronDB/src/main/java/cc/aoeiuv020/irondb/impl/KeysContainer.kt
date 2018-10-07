@@ -14,7 +14,7 @@ class KeysContainer(
         private val keySerializer: KeySerializer
 ) : Collection<String> {
     // 文件名列表，包括目录，也就是Database.sub方法产生的，
-    private val nameSet = base.list().toSet()
+    private val nameSet = base.list()?.toSet() ?: emptySet()
 
     override val size: Int = nameSet.size
 
