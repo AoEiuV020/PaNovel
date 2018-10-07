@@ -2,7 +2,6 @@ package cc.aoeiuv020.panovel.data
 
 import android.content.Context
 import cc.aoeiuv020.base.jar.ioExecutorService
-import cc.aoeiuv020.panovel.download.DownloadListener
 import cc.aoeiuv020.panovel.download.DownloadNotificationManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
@@ -15,17 +14,14 @@ import java.util.concurrent.atomic.AtomicInteger
 class DownloadManager(
         private val ctx: Context
 ) : AnkoLogger {
-    fun download(novelManager: NovelManager, fromIndex: Int, count: Int, listener: DownloadListener? = null) {
+    fun download(novelManager: NovelManager, fromIndex: Int, count: Int) {
         val novel = novelManager.novel
-        val dfm = DownloadNotificationManager(ctx, novel)
         ctx.doAsync({ e ->
             val message = "下载失败，"
             Reporter.post(message, e)
             error(message, e)
             ctx.runOnUiThread {
-                // 应该不需要通知dfm, 异常能抛到这里基本上下载还没开始，
-                dfm.error(message, e)
-                listener?.error(message, e)
+                // 这种情况没法处理应该往外抛，或者加个监听器，
             }
         }) {
             val chapters = novelManager.requestChapters(false)
@@ -41,10 +37,7 @@ class DownloadManager(
             debug {
                 "download start <$fromIndex/$size> * $threadsLimit"
             }
-            uiThread {
-                dfm.downloadStart(left.get())
-                listener?.downloadStart(left.get())
-            }
+            var done = false
             // 同时启动多个线程下载，
             // 判断一下，线程数不要过多，
             repeat(minOf(threadsLimit, left.get())) {
@@ -53,10 +46,17 @@ class DownloadManager(
                     Reporter.post(message, e)
                     error(message, e)
                     ctx.runOnUiThread {
-                        dfm.error(message, e)
-                        listener?.error(message, e)
+                        // 这种情况没法处理应该往外抛，或者加个监听器，
                     }
                 }, ioExecutorService) {
+                    val dfm = object : ThreadLocal<DownloadNotificationManager>() {
+                        override fun initialValue(): DownloadNotificationManager {
+                            return DownloadNotificationManager(ctx, novel)
+                        }
+                    }.get()
+                    uiThread {
+                        dfm.downloadStart(left.get())
+                    }
                     // 每次循环最后再获取，
                     var index = nextIndex.getAndIncrement()
                     // 如果presenter已经detach说明离开了这个页面，不继续下载，
@@ -84,14 +84,18 @@ class DownloadManager(
                         uiThread {
                             debug { "download $tmpIndex, left $tmpLeft" }
                             if (tmpLeft == 0) {
+                                done = true
+                            }
+                            if (done) {
                                 dfm.downloadCompletion(exists, downloads, errors)
-                                listener?.downloadCompletion(exists, downloads, errors)
                             } else {
                                 dfm.downloading(exists, downloads, errors, tmpLeft)
-                                listener?.downloading(exists, downloads, errors, tmpLeft)
                             }
                         }
                         index = nextIndex.getAndIncrement()
+                    }
+                    uiThread {
+                        dfm.downloadCompletion(exists, downloads, errors)
                     }
                 }
             }

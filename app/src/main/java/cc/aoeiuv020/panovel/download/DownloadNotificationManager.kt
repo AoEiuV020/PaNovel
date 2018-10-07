@@ -14,8 +14,14 @@ class DownloadNotificationManager(
 ) : DownloadListener {
 
     private val status = DownloadStatus()
+
+    private val proxyLocal: ThreadLocal<NotifyLoopProxy> = object : ThreadLocal<NotifyLoopProxy>() {
+        override fun initialValue(): NotifyLoopProxy {
+            return NotifyLoopProxy(ctx)
+        }
+    }
     // 固定通知id以免频繁下载出现一堆通知，
-    private val proxy = NotifyLoopProxy(ctx)
+    private val proxy: NotifyLoopProxy = NotifyLoopProxy(ctx)
     // 太早了Intent不能用，
     private val nb: NotificationCompat.Builder by lazy {
         val intent = ctx.intentFor<DownloadActivity>()
