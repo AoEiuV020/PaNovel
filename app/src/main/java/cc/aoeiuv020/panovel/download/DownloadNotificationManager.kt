@@ -13,7 +13,6 @@ class DownloadNotificationManager(
         novel: Novel
 ) {
 
-    private val status = DownloadStatus()
     private val proxy: NotifyLoopProxy = NotifyLoopProxy(ctx)
     // 太早了Intent不能用，
     private val nb: NotificationCompat.Builder by lazy {
@@ -43,8 +42,6 @@ class DownloadNotificationManager(
     }
 
     fun downloading(exists: Int, downloads: Int, errors: Int, left: Int) {
-        // 更新数据，下次通知自己读取，
-        status.set(exists, downloads, errors, left)
         val progress = ((exists + downloads + errors).toFloat() / ((exists + downloads + errors) + left) * 100).toInt()
         nb.setContentText(ctx.getString(R.string.downloading_placeholder, exists, downloads, errors, left))
                 .setProgress(100, progress, false)
@@ -52,7 +49,6 @@ class DownloadNotificationManager(
     }
 
     fun downloadCompletion(exists: Int, downloads: Int, errors: Int) {
-        status.set(exists, downloads, errors, 0)
         nb.setContentText(ctx.getString(R.string.download_complete_placeholder, exists, downloads, errors))
                 .setProgress(0, 0, false)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
