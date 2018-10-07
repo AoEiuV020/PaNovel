@@ -91,7 +91,7 @@
             android:layout_height="@dimen/reader_settings_image_size"
             android:layout_weight="1"
             android:tint="@android:color/white"
-            app:srcCompat="@drawable/ic_file_download"
+            app:srcCompat="@android:drawable/stat_sys_download_done"
             tools:ignore="ContentDescription" />
 
         <ImageView

@@ -57,8 +57,8 @@ class ApiNovelProvider(
         return list
     }
 
-    override fun getNovelContent(chapter: NovelChapter): List<String> {
-        return context.getNovelContent(chapter.extra)
+    override fun getNovelContent(chapter: NovelChapter, listener: ((Long, Long) -> Unit)?): List<String> {
+        return context.getNovelContent(chapter.extra, listener)
     }
 
     override fun getContentUrl(chapter: NovelChapter): String {

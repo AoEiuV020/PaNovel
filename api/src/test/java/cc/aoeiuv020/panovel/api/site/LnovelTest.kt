@@ -12,6 +12,7 @@ import java.nio.charset.Charset
 class LnovelTest : BaseNovelContextText(Lnovel::class) {
     @Test
     fun search() {
+        search("异世界")
         search("都市")
         search("OVERLORD不死者之王", "丸山くがね", "1592")
         search("不正经的魔术讲师与禁忌教典", "羊太郎", "1829")

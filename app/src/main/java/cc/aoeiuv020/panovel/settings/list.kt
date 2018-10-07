@@ -43,6 +43,7 @@ enum class ItemAction {
     OpenDetail, ReadLastChapter, ReadContinue,
     RefineSearch, Refresh, MoreAction,
     Export, RemoveBookshelf, AddBookshelf,
+    Cache,
     // 置顶，
     Pinned,
     CancelPinned,

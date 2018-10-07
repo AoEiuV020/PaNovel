@@ -10,7 +10,7 @@ import java.net.URL
  */
 interface NovelProvider {
     fun getContentUrl(chapter: NovelChapter): String
-    fun getNovelContent(chapter: NovelChapter): List<String>
+    fun getNovelContent(chapter: NovelChapter, listener: ((Long, Long) -> Unit)?): List<String>
     fun requestNovelChapters(): List<NovelChapter>
     fun getDetailUrl(): String
     fun updateNovelDetail()

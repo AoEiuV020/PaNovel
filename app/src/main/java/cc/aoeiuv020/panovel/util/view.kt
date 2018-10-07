@@ -4,7 +4,6 @@ package cc.aoeiuv020.panovel.util
 
 import android.app.Activity
 import android.app.Dialog
-import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -14,8 +13,6 @@ import android.os.BaseBundle
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.WorkerThread
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AlertDialog
@@ -24,7 +21,6 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
@@ -111,43 +107,6 @@ fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = Col
             // 去除对话框的灰背景，
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.safelyShow()
-
-fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null, bigText: String? = null) {
-    val intent = intentFor<MainActivity>()
-    val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
-    val nb = NotificationCompat.Builder(this)
-            .setContentTitle(title)
-            .setContentText(text)
-            .setAutoCancel(true)
-            .setOnlyAlertOnce(true)
-            .setContentIntent(pendingIntent)
-    bigText?.let {
-        nb.setStyle(NotificationCompat.BigTextStyle().bigText(it))
-    }
-    time?.let {
-        nb.setWhen(it)
-    }
-    nb.apply {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            setLargeIcon(getBitmapFromVectorDrawable(icon))
-            setSmallIcon(R.mipmap.ic_launcher_round)
-        } else {
-            setSmallIcon(icon)
-        }
-    }
-    val manager = NotificationManagerCompat.from(this)
-    manager.notify(id, nb.build())
-}
-
-fun Context.cancelNotify(id: Int) {
-    val manager = NotificationManagerCompat.from(this)
-    manager.cancel(id)
-}
-
-fun Context.cancelAllNotify() {
-    val manager = NotificationManagerCompat.from(this)
-    manager.cancelAll()
-}
 
 /**
  * https://stackoverflow.com/a/38244327/5615186

@@ -95,6 +95,7 @@ class BackupV2 : DefaultBackup() {
                 "downloadThreadsLimit" -> editor.putInt(key, value.asInt)
                 "searchThreadsLimit" -> editor.putInt(key, value.asInt)
                 "downloadCount" -> editor.putInt(key, value.asInt)
+                "autoDownloadCount" -> editor.putInt(key, value.asInt)
                 "fullScreenDelay" -> editor.putInt(key, value.asInt)
                 "historyCount" -> editor.putInt(key, value.asInt)
                 "lineSpacing" -> editor.putInt(key, value.asInt)

@@ -4,6 +4,7 @@ import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.error
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.okhttp.OkHttpUtils
+import cc.aoeiuv020.panovel.api.LoggerInputStream
 import cc.aoeiuv020.panovel.api.NovelContext
 import okhttp3.*
 import okio.Buffer
@@ -13,6 +14,13 @@ import java.io.InputStream
  * Created by AoEiuV020 on 2018.06.01-20:43:49.
  */
 abstract class OkHttpNovelContext : NovelContext() {
+    protected val defaultHeaders: MutableMap<String, String> by lazy {
+        mutableMapOf(
+                "Referer" to site.baseUrl,
+                "User-Agent" to "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36"
+        )
+    }
+
     // 子类可以继承自己的clientBuilder, 然后不能影响得到client, 要用lazy,
     protected open val client: OkHttpClient by lazy { clientBuilder.build() }
 
@@ -81,8 +89,13 @@ abstract class OkHttpNovelContext : NovelContext() {
             firstOrNull { it.name() == name }?.value()
 
     // close基本上有重复，但是可以重复关闭，
-    protected inline fun <reified T> Response.inputStream(block: (InputStream) -> T): T =
-            body().notNull().use { it.byteStream().use(block) }
+    protected fun <T> Response.inputStream(
+            listener: ((Long, Long) -> Unit)? = null,
+            block: (InputStream) -> T
+    ): T = body().notNull().use {
+        val maxSize = it.contentLength()
+        LoggerInputStream(it.byteStream(), maxSize, listener).use(block)
+    }
 
     protected fun Response.charset(): String? = body()?.contentType()?.charset()?.name()
 
@@ -92,6 +105,11 @@ abstract class OkHttpNovelContext : NovelContext() {
     protected fun connect(url: String): Call {
         val request = Request.Builder()
                 .url(url)
+                .apply {
+                    defaultHeaders.forEach { (key, value) ->
+                        addHeader(key, value)
+                    }
+                }
                 .build()
         return client.newCall(request)
     }

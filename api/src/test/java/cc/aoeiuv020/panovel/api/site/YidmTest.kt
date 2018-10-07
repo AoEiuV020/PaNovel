@@ -23,7 +23,7 @@ class YidmTest : BaseNovelContextText(Yidm::class) {
                 "一款席卷游戏界的网路游戏「YGGDRASIL」，" +
                         "有一天突然毫无预警地停止一切服务——原本应该是如此。" +
                         "但是不知为何它却成了一款即使过了结束时间，玩家角色依然不会登出的游戏。" +
-                        "NPC开始拥有自己的思想。\r\n" +
+                        "NPC开始拥有自己的思想。<br />\r\n" +
                         "现实世界当中一名喜欢电玩的普通青年，" +
                         "似乎和整个公会一起穿越到异世界，变成拥有骷髅外表的最强魔法师「飞鼠」。" +
                         "他率领的公会「安兹．乌尔．恭」将展开前所未有的奇幻传说！",
@@ -42,7 +42,7 @@ class YidmTest : BaseNovelContextText(Yidm::class) {
         content("1517/49048/49049",
                 "OVERLORD1 不死者之王",
                 "于是──",
-                185)
+                93)
         content("1517/49048/",
                 "第一卷 不死者之王",
                 "第一卷 不死者之王",
@@ -53,7 +53,7 @@ class YidmTest : BaseNovelContextText(Yidm::class) {
                         .resolve("49048")
                         .toURI()}!/img/82173.jpg)",
                 "飞鼠告诉自己，暂时把这个问题抛在脑后，先将目前的当务之急依序处理完毕之后再来伤脑筋吧。",
-                1401)
+                701)
         content("1517/49048/73186",
                 "![img](jar:${cacheDir.resolve("迷糊轻小说")
                         .resolve("1517")

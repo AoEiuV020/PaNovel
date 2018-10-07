@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.text
 
 import android.content.Context
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,10 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.OtherSettings
+import cc.aoeiuv020.panovel.util.hide
+import cc.aoeiuv020.panovel.util.show
 import kotlinx.android.synthetic.main.novel_chapter_item.view.*
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -31,6 +35,7 @@ class NovelContentsAdapter(
                     name.setTextColor(chapterColorList)
                 }
         val nameTextView = view.name
+        val tvUpdateTime = view.tvUpdateTime
         val chapter = getItem(position)
         nameTextView.apply {
             text = chapter.name
@@ -38,6 +43,15 @@ class NovelContentsAdapter(
             isChecked = novel.readAtChapterIndex == position
             // isSelected代表已经缓存的章节，
             isSelected = cachedList.contains(chapter.extra)
+        }
+        tvUpdateTime.apply {
+            val update = chapter.update
+            if (update == null) {
+                hide()
+            } else {
+                text = DateUtils.getRelativeTimeSpanString(update.time, System.currentTimeMillis(), TimeUnit.SECONDS.toMillis(1))
+                show()
+            }
         }
         return view
     }

@@ -2,14 +2,17 @@ package cc.aoeiuv020.panovel.data
 
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
 import java.net.URL
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * 持有小说对象，统一在这里读取小说相关数据，
@@ -25,7 +28,8 @@ class NovelManager(
         private val provider: NovelProvider,
         private val cache: CacheManager,
         // server可空，本地小说不传入server，相关方法也都不调用，
-        private val server: ServerManager?
+        private val server: ServerManager?,
+        private val dnmLocal: ThreadLocal<DownloadingNotificationManager>
 ) : AnkoLogger {
 
     fun pinned() = app.pinned(novel)
@@ -53,16 +57,35 @@ class NovelManager(
     fun getContent(extra: String): List<String>? =
             cache.loadContent(novel, extra)
 
-    fun requestContent(chapter: NovelChapter, refresh: Boolean): List<String> {
+    fun requestContent(
+            index: Int,
+            chapter: NovelChapter,
+            refresh: Boolean
+    ): List<String> {
         // 指定刷新的话就不读缓存，
         if (!refresh) {
             cache.loadContent(novel, chapter.extra)?.also {
                 return it
             }
         }
-        return provider.getNovelContent(chapter).also {
-            // 缓存起来，
-            cache.saveContent(novel, chapter.extra, it)
+        val dnm: DownloadingNotificationManager = dnmLocal.get()
+        dnm.downloadStart(novel, index, chapter.name)
+        return try {
+            provider.getNovelContent(chapter) { offset, length ->
+                dnm.downloading(index, chapter.name, offset, length)
+            }.also {
+                dnm.downloadComplete(index, chapter.name)
+                // 缓存起来，
+                cache.saveContent(novel, chapter.extra, it)
+            }
+        } catch (t: Throwable) {
+            // 成功和失败都是马上取消，看不见，但是要走个流程，
+            dnm.downloadError(index, chapter.name, t.message.toString())
+            throw t
+        } finally {
+            // 线程进度通知1秒后删除，
+            // 如果还有剩，1秒内重新开始循环也就不会删除通知了，
+            dnm.cancelNotification(TimeUnit.SECONDS.toMillis(1))
         }
     }
 
@@ -84,6 +107,8 @@ class NovelManager(
     private fun refreshChapters(): List<NovelChapter> {
         // 确保存在详情页信息，
         requireDetail()
+        val cachedList = cache.loadChapters(novel)
+        val cachedSize = cachedList?.size ?: 0
         val list = provider.requestNovelChapters()
         if (novel.readAtChapterName == Novel.VALUE_NULL) {
             // 如果数据库中没有阅读进度章节，说明没阅读过，直接存第一章名字，
@@ -93,6 +118,13 @@ class NovelManager(
         // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
         app.updateChapters(novel)
         cache.saveChapters(novel, list)
+        // 书架上的小说自动缓存一定章节，
+        // 要在缓存之后下载，因为是根据缓存列表下载的，
+        if (novel.bookshelf
+                && list.size - cachedSize > 0
+                && list.size - cachedSize <= GeneralSettings.autoDownloadCount) {
+            DataManager.download.download(this, cachedSize, list.size - cachedSize)
+        }
         // 这里异步，不影响刷新结果返回的时间，
         doAsync({ e ->
             val message = "上传<${novel.bookId}>刷新结果失败,"

@@ -8,8 +8,8 @@ import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import com.google.gson.JsonObject
-import okhttp3.Call
 import java.io.File
+import java.io.InputStream
 import java.net.URL
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -22,6 +22,13 @@ class Yidm : DslJsoupNovelContext() {init {
         name = "迷糊轻小说"
         baseUrl = "http://www.yidm.com"
         logo = "http://static.yidm.com/img/index/logo.png"
+    }
+    header {
+        // 模拟迷糊轻小说app，
+        // 还缺个PHPSESSID，保持和cookie里一致有点麻烦，
+        userAgent = "RN(0.52.0) Yidmos Yidm(V3) Android"
+        // app里是小写的，
+        "accept" to "application/json"
     }
     search {
         get {
@@ -147,13 +154,18 @@ class Yidm : DslJsoupNovelContext() {init {
                 } catch (_: Exception) {
                     // 无论如何读取失败都继续往下走正常下载，
                     // 包括章节不存在的情况，
-                    downloadwpub(call, aid, vid).also { tmpFile ->
-                        tmpFile.renameTo(cacheFile)
+                    inputStream {
+                        downloadWpub(it, aid, vid).also { tmpFile ->
+                            tmpFile.renameTo(cacheFile)
+                        }
                     }
                     readFromWpub(cacheFile, cid)
                 }
             } else {
-                readFromWpub(downloadwpub(call, aid, vid), cid)
+                val wpub = inputStream {
+                    downloadWpub(it, aid, vid)
+                }
+                readFromWpub(wpub, cid)
             }
         }
     }
@@ -161,14 +173,12 @@ class Yidm : DslJsoupNovelContext() {init {
 
     private val keyLocker = KeyLocker()
 
-    private fun downloadwpub(call: Call?, aid: String, vid: String): File {
+    private fun downloadWpub(input: InputStream, aid: String, vid: String): File {
         // 直接上锁，禁止多线程下载同一卷，
         // mCacheDir不必须，如果没有，就放在系统临时目录，事后不删除，
         val tmpFile = File.createTempFile(aid, vid, mCacheDir)
-        call.notNull().execute().inputStream { input ->
-            tmpFile.outputStream().use { output ->
-                input.copyTo(output)
-            }
+        tmpFile.outputStream().use { output ->
+            input.copyTo(output)
         }
         return tmpFile
     }
@@ -191,7 +201,7 @@ class Yidm : DslJsoupNovelContext() {init {
         val rootUrl = URL("jar:${wpub.toURI()}!/")
         val cUrl = URL(rootUrl, cid)
         return cUrl.openStream().bufferedReader().useLines { sequence ->
-            sequence.map { line ->
+            sequence.mapNotNull { line ->
                 // {$FULLPATH$}img/26508.jpg
                 // "![img]($it)"
                 try {
@@ -200,7 +210,7 @@ class Yidm : DslJsoupNovelContext() {init {
                             .let { "![img](${URL(rootUrl, it)})" }
                 } catch (_: Exception) {
                     // 该行不是图片，
-                    line.trim()
+                    line.trim().takeIf { it.isNotEmpty() }
                 }
             }.toList()
         }

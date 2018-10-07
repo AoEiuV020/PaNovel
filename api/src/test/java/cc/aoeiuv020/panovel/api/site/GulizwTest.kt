@@ -8,6 +8,7 @@ import org.junit.Test
 class GulizwTest : BaseNovelContextText(Gulizw::class) {
     @Test
     fun search() {
+        // ProtocolException: Unexpected status line: ?�????????????��??????????HTTP/1.1 302 Moved Temporarily
         search("都市")
         search("一念永恒", "耳根", "94719")
         search("我是至尊", "风凌天下", "5141")

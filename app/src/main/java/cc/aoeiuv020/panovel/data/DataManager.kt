@@ -29,11 +29,12 @@ import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 object DataManager : AnkoLogger {
     lateinit var app: AppDatabaseManager
     lateinit var api: ApiManager
-    @SuppressLint("StaticFieldLeak")
     lateinit var cookie: CookieManager
     lateinit var cache: CacheManager
     lateinit var server: ServerManager
     lateinit var local: LocalManager
+    @SuppressLint("StaticFieldLeak")
+    lateinit var download: DownloadManager
     @Synchronized
     fun init(ctx: Context) {
         if (!::app.isInitialized) {
@@ -53,6 +54,9 @@ object DataManager : AnkoLogger {
         }
         if (!::local.isInitialized) {
             local = LocalManager(ctx)
+        }
+        if (!::download.isInitialized) {
+            download = DownloadManager(ctx)
         }
     }
 
@@ -82,9 +86,9 @@ object DataManager : AnkoLogger {
 
     private fun Novel.toManager() = if (site.startsWith(".")) {
         // 网站名是点.开头的表示本地小说，让LocalManager提供数据，
-        NovelManager(this, app, local.getNovelProvider(this), cache, null)
+        NovelManager(this, app, local.getNovelProvider(this), cache, null, download.dnmLocal)
     } else {
-        NovelManager(this, app, api.getNovelProvider(this), cache, server)
+        NovelManager(this, app, api.getNovelProvider(this), cache, server, download.dnmLocal)
     }
 
     fun allNovelContexts() = api.contexts

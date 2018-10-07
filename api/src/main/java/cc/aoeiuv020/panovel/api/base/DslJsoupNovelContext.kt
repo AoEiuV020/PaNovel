@@ -6,6 +6,7 @@ import okhttp3.*
 import okhttp3.internal.http.HttpMethod
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.io.InputStream
 import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.Charset
@@ -566,18 +567,22 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
     }
 
-    override fun getNovelContent(extra: String): List<String> =
-            _Content(extra).initContent(extra)
+    override fun getNovelContent(extra: String, listener: ((Long, Long) -> Unit)?): List<String> =
+            _Content(extra, listener).initContent(extra)
 
     private lateinit var initContent: _Content.(String) -> List<String>
     protected fun content(init: _Content.(String) -> List<String>) {
         initContent = init
     }
 
-    protected inner class _Content(extra: String) : _Requester(extra) {
+    protected inner class _Content(
+            extra: String,
+            listener: ((Long, Long) -> Unit)?
+    ) : _Requester(extra, listener) {
         fun document(
                 document: Document = parse(call
-                        ?: connect(getNovelContentUrl(extra)), charset),
+                        ?: connect(getNovelContentUrl(extra)), charset,
+                        listener),
                 init: _NovelContentParser.() -> Unit
         ): List<String> = _NovelContentParser(document).also(init).parse()
     }
@@ -675,7 +680,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     @DslTag
     protected abstract inner class _Requester(
-            protected val extra: String
+            protected val extra: String,
+            protected val listener: ((Long, Long) -> Unit)? = null
     ) {
         var call: Call? = null
         // 指定响应的编码，用于jsoup解析html时，
@@ -699,18 +705,25 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
 
         fun <T> response(block: _Response.(String) -> T): T {
+            return inputStream {
+                val body = it.reader(Charset.forName(charset ?: defaultCharset)).readText()
+                block(body)
+            }
+        }
+
+        fun <T> inputStream(block: _Response.(InputStream) -> T): T {
             val response = response(call.notNull())
-            val _response = _Response(response.networkResponse().notNull())
-            return response.body().notNull().use {
-                val body = it.string()
-                _response.block(body)
+            val _response = _Response(response)
+            return response.inputStream(listener) {
+                _response.block(it)
             }
         }
 
         inner class _Response(
                 val response: Response
         ) {
-            val request: Request = response.request()
+            // 我为什么要用networkResponse？
+//            val request: Request = response.networkResponse().notNull().request()
         }
     }
 
@@ -722,7 +735,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         var httpUrl: HttpUrl? = null
         var requestBody: RequestBody? = null
         var request: Request? = null
-        var headerMap: Map<String, String>? = null
+        var headerMap: Map<String, String> = defaultHeaders
         var dataMap: Map<String, String>? = null
         fun createCall(): Call {
             val httpUrlBuilder = (httpUrl
@@ -747,7 +760,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 requestBuilder.method(method.notNull(), null)
             }
             requestBuilder.url(httpUrlBuilder.build())
-            headerMap?.forEach { (name, value) ->
+            // 存在headerMap就只用headerMap，否则设置默认ua,
+            headerMap.forEach { (name, value) ->
                 requestBuilder.addHeader(name, value)
             }
             return client.newCall(requestBuilder.build())
@@ -755,34 +769,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
         fun header(init: _Header.() -> Unit) {
             _Header().also { _header ->
+                // 默认ua,
+                _header.map.putAll(defaultHeaders)
                 _header.init()
-                headerMap = _header.createDataMap()
-            }
-        }
-
-        inner class _Header {
-            val map: MutableMap<String, String> = mutableMapOf()
-            var referer: String? by MapDelegate("Referer")
-            var userAgent: String? by MapDelegate("User-Agent")
-
-            fun createDataMap(): Map<String, String> = map
-            infix fun String.to(value: String) {
-                // 和kotlin内建的Pair方法重名，无所谓了，
-                map[this] = value
-            }
-
-            inner class MapDelegate(val name: String) : ReadWriteProperty<_Header, String?> {
-                override fun getValue(thisRef: _Header, property: KProperty<*>): String? {
-                    return thisRef.map[name]
-                }
-
-                override fun setValue(thisRef: _Header, property: KProperty<*>, value: String?) {
-                    if (value == null) {
-                        thisRef.map.remove(name)
-                    } else {
-                        thisRef.map[name] = value
-                    }
-                }
+                headerMap = _header.createHeaderMap()
             }
         }
 
@@ -792,13 +782,54 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 dataMap = _data.createDataMap()
             }
         }
+    }
 
-        inner class _Data {
-            val map: MutableMap<String, String> = mutableMapOf()
-            fun createDataMap(): Map<String, String> = map
-            infix fun String.to(value: String) {
-                // 和kotlin内建的Pair方法重名，无所谓了，
-                map[this] = value
+    /**
+     * header调用要在site后面，因为默认referer用到site.baseUrl,
+     */
+    fun header(init: _Header.() -> Unit) {
+        _Header().also { _header ->
+            // 默认ua,
+            _header.map.putAll(defaultHeaders)
+            _header.init()
+            defaultHeaders.clear()
+            defaultHeaders.putAll(_header.createHeaderMap())
+        }
+    }
+
+    @DslTag
+    class _Data {
+        val map: MutableMap<String, String> = mutableMapOf()
+        fun createDataMap(): Map<String, String> = map
+        infix fun String.to(value: String) {
+            // 和kotlin内建的Pair方法重名，无所谓了，
+            map[this] = value
+        }
+    }
+
+    @DslTag
+    class _Header {
+        val map: MutableMap<String, String> = mutableMapOf()
+        var referer: String? by MapDelegate("Referer")
+        var userAgent: String? by MapDelegate("User-Agent")
+
+        fun createHeaderMap(): Map<String, String> = map
+        infix fun String.to(value: String) {
+            // 和kotlin内建的Pair方法重名，无所谓了，
+            map[this] = value
+        }
+
+        class MapDelegate(val name: String) : ReadWriteProperty<_Header, String?> {
+            override fun getValue(thisRef: _Header, property: KProperty<*>): String? {
+                return thisRef.map[name]
+            }
+
+            override fun setValue(thisRef: _Header, property: KProperty<*>, value: String?) {
+                if (value == null) {
+                    thisRef.map.remove(name)
+                } else {
+                    thisRef.map[name] = value
+                }
             }
         }
     }

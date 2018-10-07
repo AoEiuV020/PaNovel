@@ -28,7 +28,8 @@ class Lnovel : DslJsoupNovelContext() {init {
             url = "/search/$it.html"
         }
         document {
-            items("div.mdl-grid > div") {
+            // 搜索结果分页会有一个多余的div.mdl-grid，
+            items("div.mdl-grid:nth-child(2) > div") {
                 /*
                 <a href="/book/1861.html"><h2 class="mdl-card__title-text">Re:从零开始的异世界生活</h2></a>
                  */

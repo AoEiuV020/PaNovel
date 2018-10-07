@@ -49,6 +49,7 @@
         <item>@string/refresh</item>
         <item>@string/more_action</item>
 
+        <item>@string/cache</item>
         <item>@string/export</item>
         <item>@string/pinned_bookshelf</item>
         <item>@string/cancel_pinned</item>
@@ -63,6 +64,7 @@
         <item>Refresh</item>
         <item>MoreAction</item>
 
+        <item>Cache</item>
         <item>Export</item>
         <item>Pinned</item>
         <item>CancelPinned</item>

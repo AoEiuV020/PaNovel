@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.migration.impl
 
 import android.content.Context
+import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.migration.Migration
@@ -8,7 +9,6 @@ import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import okhttp3.Cookie
 import okhttp3.HttpUrl
 import org.jetbrains.anko.AnkoLogger
@@ -45,7 +45,7 @@ class LoginMigration : Migration(), AnkoLogger {
             return
         }
         // 用于存取cookies, 和2.2.0版本一样配置的gson，
-        val gson: Gson = GsonBuilder()
+        val gson: Gson = GsonUtils.gsonBuilder
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
                 .create()

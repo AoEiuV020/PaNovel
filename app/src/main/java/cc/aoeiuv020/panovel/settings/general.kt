@@ -23,6 +23,10 @@ object GeneralSettings : Pref {
      * -1表示每次询问，
      */
     var downloadCount: Int by Delegates.int(-1)
+    /**
+     * 书架小说刷新章节列表后如果新增章节数小于等于该值就自动缓存新章节，
+     */
+    var autoDownloadCount: Int by Delegates.int(2)
     // 提供彩蛋，满足条件就关闭广告，要在代码中改这个值，所以可变，var,
     var adEnabled: Boolean by Delegates.boolean(true)
     var historyCount: Int by Delegates.int(30)

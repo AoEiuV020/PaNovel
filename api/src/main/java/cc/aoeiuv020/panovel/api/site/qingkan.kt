@@ -8,6 +8,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
  * Created by AoEiuV020 on 2018.06.03-14:54:37.
  */
 class Qingkan : DslJsoupNovelContext() {init {
+    // 被墙了？ERR_EMPTY_RESPONSE
+    enabled = false
     site {
         name = "请看小说"
         baseUrl = "https://www.qingkan9.com"

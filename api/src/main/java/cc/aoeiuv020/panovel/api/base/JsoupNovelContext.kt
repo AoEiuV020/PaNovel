@@ -45,7 +45,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
      */
     protected open val charset: String? get() = null
 
-    protected fun parse(extra: String): Document = parse(connect(absUrl(extra)))
+    protected fun parse(extra: String, listener: ((Long, Long) -> Unit)? = null): Document = parse(connect(absUrl(extra)), listener = listener)
     protected fun parse(input: InputStream, charset: String?, baseUri: String): Document = try {
         Jsoup.parse(input, charset, baseUri)
     } catch (e: Exception) {
@@ -58,13 +58,17 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         }
     }
 
-    protected fun parse(call: Call, charset: String? = this.charset): Document {
+    protected fun parse(call: Call, charset: String? = this.charset, listener: ((Long, Long) -> Unit)? = null): Document {
         val response = response(call)
         // 用Jsoup解析okhttp得到的InputStream，
         // 编码如果指定，就用指定的，没有就从okhttp的response中拿，再没有传null, Jsoup会自己尝试解析，
         // 如果有301之类跳转，最终响应的地址作为Jsoup解析的baseUri, 主要应该只是从相对地址计算绝对地址时用到，
-        return response.inputStream { input ->
-            parse(input, charset ?: response.charset(), response.url())
+        return response.inputStream(listener) { input ->
+            parse(
+                    input,
+                    charset ?: response.charset(),
+                    response.url()
+            )
         }
     }
 

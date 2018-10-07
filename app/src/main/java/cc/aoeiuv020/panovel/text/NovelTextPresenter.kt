@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.text
 
+import android.content.Context
 import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.api.NovelChapter
@@ -7,9 +8,10 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
-import org.jetbrains.anko.*
-import java.util.concurrent.atomic.AtomicInteger
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.error
+import org.jetbrains.anko.uiThread
 
 /**
  *
@@ -48,83 +50,19 @@ class NovelTextPresenter(
         }
     }
 
-    fun requestContent(chapter: NovelChapter, refresh: Boolean): List<String> {
-        return novelManager.requestContent(chapter, refresh)
+    fun requestContent(index: Int, chapter: NovelChapter, refresh: Boolean): List<String> {
+        return novelManager.requestContent(index, chapter, refresh)
     }
 
     fun download(fromIndex: Int, count: Int) {
-        view?.doAsync({ e ->
-            val message = "下载失败，"
-            Reporter.post(message, e)
-            error(message, e)
-            view?.runOnUiThread {
-                view?.showError(message, e)
-            }
-        }) {
-            val chapters = novelManager.requestChapters(false)
-            val cachedList = novelManager.novelContentsCached()
-            val size = chapters.size
-            val last = minOf(size - fromIndex, count) + fromIndex
-            var exists = 0
-            var downloads = 0
-            var errors = 0
-            val left = AtomicInteger(last - fromIndex)
-            val nextIndex = AtomicInteger(fromIndex)
-            val threadsLimit = GeneralSettings.downloadThreadsLimit
-            debug {
-                "download start <$fromIndex/$size> * $threadsLimit"
-            }
-            uiThread {
-                view?.showDownloadStart(left.get())
-            }
-            // 同时启动多个线程下载，
-            // 判断一下，线程数不要过多，
-            repeat(minOf(threadsLimit, left.get())) {
-                view?.doAsync({ e ->
-                    val message = "线程下载失败，"
-                    Reporter.post(message, e)
-                    error(message, e)
-                    view?.runOnUiThread {
-                        view?.showDownloadError()
-                        view?.showError(message, e)
-                    }
-                }, ioExecutorService) {
-                    // 每次循环最后再获取，
-                    var index = nextIndex.getAndIncrement()
-                    // 如果presenter已经detach说明离开了这个页面，不继续下载，
-                    // 正在下载的章节不中断，
-                    // 上面判断过，线程数不会过多，一进来index会小于size,
-                    while (index < last && view != null) {
-                        debug { "${Thread.currentThread().name} downloading $index" }
-                        val chapter = chapters[index]
-                        if (cachedList.contains(chapter.extra)) {
-                            ++exists
-                        } else {
-                            try {
-                                // 方法返回前请求到正文就已经缓存了，
-                                novelManager.requestContent(chapter, false)
-                                ++downloads
-                            } catch (e: Exception) {
-                                val message = "缓存<${novel.bookId}.$index>章节失败，"
-                                Reporter.post(message, e)
-                                error(message, e)
-                                ++errors
-                            }
-                        }
-                        val tmpLeft = left.decrementAndGet()
-                        val tmpIndex = index
-                        uiThread {
-                            debug { "download $tmpIndex, left $tmpLeft" }
-                            if (tmpLeft == 0) {
-                                view?.showDownloadComplete(exists, downloads, errors)
-                            } else {
-                                view?.showDownloading(exists, downloads, errors, tmpLeft)
-                            }
-                        }
-                        index = nextIndex.getAndIncrement()
-                    }
-                }
-            }
+        view?.let {
+            DataManager.download.download(novelManager, fromIndex, count)
+        }
+    }
+
+    fun askDownload(ctx: Context, currentIndex: Int) {
+        view?.also {
+            DataManager.download.askDownload(ctx, novelManager, currentIndex, false)
         }
     }
 
@@ -200,6 +138,5 @@ class NovelTextPresenter(
     fun getDetailUrl(): String {
         return novelManager.getDetailUrl()
     }
-
 }
 

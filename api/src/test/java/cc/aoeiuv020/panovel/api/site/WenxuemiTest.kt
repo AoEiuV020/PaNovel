@@ -16,7 +16,7 @@ class WenxuemiTest : BaseNovelContextText(Wenxuemi::class) {
     @Test
     fun detail() {
         detail("24/24163", "24/24163", "大道朝天", "猫腻",
-                "https://www.wenxuemi.com/files/article/image/24/24163/24163s.jpg",
+                "https://www.ji6.cc/files/article/image/24/24163/24163s.jpg",
                 "我就是剑。\n" +
                         "千里杀一人，十步不愿行。\n" +
                         "千里杀一人，十步不得行。\n" +

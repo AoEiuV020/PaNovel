@@ -1,11 +1,11 @@
 package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import okhttp3.Cookie
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -38,7 +38,7 @@ abstract class NovelContext {
         )
 
         // 用于存取cookie,
-        private val gson: Gson = GsonBuilder()
+        private val gson: Gson = GsonUtils.gsonBuilder
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
                 .create()
@@ -225,7 +225,7 @@ abstract class NovelContext {
      *
      * @param extra [NovelChapter.extra]
      */
-    abstract fun getNovelContent(extra: String): List<String>
+    abstract fun getNovelContent(extra: String, listener: ((Long, Long) -> Unit)? = null): List<String>
 
     /**
      * 判断这个地址是不是属于这个网站，
