@@ -5,6 +5,7 @@ import android.content.Context
 import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import android.util.Log
+import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
@@ -13,7 +14,6 @@ import cc.aoeiuv020.ssl.TrustManagerUtils
 import cn.jpush.android.api.JPushInterface
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import java.net.URL
@@ -32,7 +32,7 @@ class App : MultiDexApplication(), AnkoLogger {
         /**
          * 用于app不同页面传递数据时的序列化，
          */
-        val gson: Gson = GsonBuilder()
+        val gson: Gson = GsonUtils.gsonBuilder
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
                 .create()

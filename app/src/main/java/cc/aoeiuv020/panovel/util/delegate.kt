@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.preference.PreferenceFragment
+import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.App
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.io.File
@@ -236,8 +236,7 @@ sealed class PrefDelegate<T>(
             private val type: Class<T>
     ) : PrefDelegate<T>(key) {
         companion object {
-            val gson: Gson = GsonBuilder()
-                    .create()
+            val gson: Gson = GsonUtils.gson
 
             inline fun <reified T : kotlin.Enum<*>> new(default: T, key: kotlin.String? = null) = Enum(default, key, T::class.java)
         }
@@ -264,8 +263,7 @@ sealed class PrefDelegate<T>(
             private val type: Class<T>
     ) : PrefDelegate<T>(key) {
         companion object {
-            val gson: Gson = GsonBuilder()
-                    .create()
+            val gson: Gson = GsonUtils.gson
 
             inline fun <reified T : kotlin.Any> new(default: T, key: kotlin.String? = null) = Any(default, key, T::class.java)
         }

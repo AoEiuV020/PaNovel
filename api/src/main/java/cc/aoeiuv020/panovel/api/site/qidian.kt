@@ -3,10 +3,10 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.title
+import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -165,7 +165,7 @@ class Qidian : DslJsoupNovelContext() {init {
 }
 
     // 用来解析章节api和正文api,
-    private val gson: Gson = GsonBuilder().create()
+    private val gson: Gson = GsonUtils.gson
 
     override fun cookieFilter(url: HttpUrl, cookies: MutableList<Cookie>): MutableList<Cookie> {
         if (url.encodedPath() == "/majax/chapter/getChapterInfo") {
