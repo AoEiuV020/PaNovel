@@ -24,7 +24,11 @@ class Yidm : DslJsoupNovelContext() {init {
         logo = "http://static.yidm.com/img/index/logo.png"
     }
     header {
+        // 模拟迷糊轻小说app，
+        // 还缺个PHPSESSID，保持和cookie里一致有点麻烦，
         userAgent = "RN(0.52.0) Yidmos Yidm(V3) Android"
+        // app里是小写的，
+        "accept" to "application/json"
     }
     search {
         get {
