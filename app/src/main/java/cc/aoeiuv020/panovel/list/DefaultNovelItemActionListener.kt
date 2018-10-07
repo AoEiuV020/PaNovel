@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.list
 import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.local.LocalNovelType
 import cc.aoeiuv020.panovel.local.NovelExporter
@@ -37,6 +38,7 @@ class DefaultNovelItemActionListener(
             AddBookshelf -> vh.addBookshelf() // vh里再反过来调用onStarChanged，
             RemoveBookshelf -> vh.removeBookshelf() // vh里再反过来调用onStarChanged，
             Refresh -> vh.refresh()
+            Cache -> download(vh)
             Pinned -> pinned(vh)
             CancelPinned -> cancelPinned(vh)
             CleanCache -> cleanCache(vh)
@@ -55,6 +57,7 @@ class DefaultNovelItemActionListener(
                         } else {
                             R.string.add_bookshelf to AddBookshelf
                         },
+                        R.string.cache to Cache,
                         R.string.pinned to Pinned,
                         R.string.cancel_pinned to CancelPinned,
 
@@ -142,6 +145,10 @@ class DefaultNovelItemActionListener(
                 vh.refreshed(novelManager)
             }
         }
+    }
+
+    private fun download(vh: NovelViewHolder) {
+        DataManager.download.askDownload(vh.ctx, vh.novelManager, vh.novel.readAtChapterIndex)
     }
 
     private fun pinned(vh: NovelViewHolder) {

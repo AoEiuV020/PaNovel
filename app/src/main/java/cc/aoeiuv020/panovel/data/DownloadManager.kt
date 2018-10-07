@@ -1,11 +1,15 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
+import android.view.View
 import cc.aoeiuv020.base.jar.ioExecutorService
+import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.download.DownloadNotificationManager
 import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.util.safelyShow
+import kotlinx.android.synthetic.main.dialog_download_count.view.*
 import org.jetbrains.anko.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -100,4 +104,38 @@ class DownloadManager(
             }
         }
     }
+
+    // 不能用全局application的Context弹对话框，
+    // WindowManager$BadTokenException: Unable to add window -- token null is not for an application
+    fun askDownload(ctx: Context, novelManager: NovelManager, currentIndex: Int): Boolean {
+        val count = GeneralSettings.downloadCount.takeIf { it >= 0 }
+                ?: 50
+        ctx.alert {
+            titleResource = R.string.download_chapters_count
+            val layout = View.inflate(ctx, R.layout.dialog_download_count, null)
+            customView = layout
+            val etCount = layout.editText.apply {
+                setText(count.toString())
+            }
+            val cbRemember = layout.checkBox
+            fun remember() {
+                if (cbRemember.isChecked) {
+                    etCount.text.toString().toIntOrNull()?.let {
+                        GeneralSettings.downloadCount = it
+                    }
+                }
+            }
+            neutralPressed(R.string.all) {
+                remember()
+                download(novelManager, currentIndex, Int.MAX_VALUE)
+            }
+            yesButton {
+                remember()
+                download(novelManager, currentIndex, etCount.text.toString().toIntOrNull() ?: 0)
+            }
+            cancelButton { }
+        }.safelyShow()
+        return true
+    }
+
 }

@@ -36,7 +36,6 @@ import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_text.*
-import kotlinx.android.synthetic.main.dialog_download_count.view.*
 import kotlinx.android.synthetic.main.dialog_select_color_scheme.view.*
 import org.jetbrains.anko.*
 import java.io.FileNotFoundException
@@ -723,34 +722,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     }
 
     fun askDownload(): Boolean {
-        val index = reader.currentChapter
-        val count = GeneralSettings.downloadCount.takeIf { it >= 0 }
-                ?: 50
-        alert {
-            titleResource = R.string.download_chapters_count
-            val layout = View.inflate(ctx, R.layout.dialog_download_count, null)
-            customView = layout
-            val etCount = layout.editText.apply {
-                setText(count.toString())
-            }
-            val cbRemember = layout.checkBox
-            fun remember() {
-                if (cbRemember.isChecked) {
-                    etCount.text.toString().toIntOrNull()?.let {
-                        GeneralSettings.downloadCount = it
-                    }
-                }
-            }
-            neutralPressed(R.string.all) {
-                remember()
-                presenter.download(index, Int.MAX_VALUE)
-            }
-            yesButton {
-                remember()
-                presenter.download(index, etCount.text.toString().toIntOrNull() ?: 0)
-            }
-            cancelButton { }
-        }.safelyShow()
+        presenter.askDownload(this, reader.currentChapter)
         return true
     }
 
