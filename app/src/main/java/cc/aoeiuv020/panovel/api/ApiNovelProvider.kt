@@ -2,7 +2,6 @@ package cc.aoeiuv020.panovel.api
 
 import cc.aoeiuv020.panovel.data.NovelProvider
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.download.DownloadProgressListener
 import cc.aoeiuv020.panovel.util.noCover
 import java.net.URL
 import java.util.*
@@ -58,10 +57,8 @@ class ApiNovelProvider(
         return list
     }
 
-    override fun getNovelContent(chapter: NovelChapter, listener: DownloadProgressListener?): List<String> {
-        return context.getNovelContent(chapter.extra) { off, len ->
-            listener?.downloading(off, len)
-        }
+    override fun getNovelContent(chapter: NovelChapter, listener: ((Long, Long) -> Unit)?): List<String> {
+        return context.getNovelContent(chapter.extra, listener)
     }
 
     override fun getContentUrl(chapter: NovelChapter): String {

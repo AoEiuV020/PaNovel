@@ -49,8 +49,8 @@ class NovelTextPresenter(
         }
     }
 
-    fun requestContent(chapter: NovelChapter, refresh: Boolean): List<String> {
-        return novelManager.requestContent(chapter, refresh)
+    fun requestContent(index: Int, chapter: NovelChapter, refresh: Boolean): List<String> {
+        return novelManager.requestContent(index, chapter, refresh)
     }
 
     fun download(fromIndex: Int, count: Int) {

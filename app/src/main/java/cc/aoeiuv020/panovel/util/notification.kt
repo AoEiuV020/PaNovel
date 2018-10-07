@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.main.MainActivity
+import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.intentFor
 import java.util.concurrent.TimeUnit
 
@@ -26,10 +27,11 @@ class NotifyLoopProxy(
         private val id: Int = (Math.random() * Int.MAX_VALUE).toInt(),
         // 最多delay毫秒一个通知，
         private val delay: Long = 300L
-) {
+) : AnkoLogger {
     companion object {
         val DEFAULT_CANCEL_DELAY: Long = TimeUnit.SECONDS.toMillis(5)
     }
+
     private val handler = Handler(Looper.getMainLooper())
     // System services not available to Activities before onCreate()
     private val manager by lazy { NotificationManagerCompat.from(ctx) }
@@ -39,29 +41,54 @@ class NotifyLoopProxy(
     private var canceled = false
     private var cancelDelay: Long = DEFAULT_CANCEL_DELAY
     private val wrapper = NotificationWrapper()
-    private var loopBlock = Runnable {
+    private val cancelBlock = Runnable {
+        // 如果延时期间取消了取消，就不取消，
+        if (canceled) {
+            manager.cancel(id)
+        }
+    }
+    private val loopBlock = Runnable {
         // 取出wrapper中的notification,
         val notification = wrapper.notification
         wrapper.notification = null
         // 如果wrapper中存在notification，表示有通知要弹，
         if (notification != null) {
-            manager.notify(id, notification)
+            notifyCached()
         }
         if (canceled) {
-            handler.postDelayed({
-                manager.cancel(id)
-            }, cancelDelay)
+            handler.postDelayed(cancelBlock, cancelDelay)
         }
         // 执行完了取消等待状态，
         waiting = false
     }
 
+    private val mainThread = Looper.getMainLooper().thread
+
+    private fun runOnUiThread(block: () -> Unit) {
+        if (mainThread == Thread.currentThread()) {
+            block()
+        } else {
+            handler.post(block)
+        }
+    }
+
+    private fun notifyCached() {
+        runOnUiThread {
+            wrapper.notification?.let { n ->
+                manager.notify(id, n)
+            }
+        }
+    }
+
     fun start(notification: Notification) {
         done = false
         canceled = false
+        handler.removeCallbacks(cancelBlock)
+        handler.removeCallbacks(loopBlock)
         // 循环开始前先弹一次通知，
         // 之后隔delay时间弹一次，
-        manager.notify(id, notification)
+        wrapper.notification = notification
+        notifyCached()
         waiting = true
         handler.postDelayed(loopBlock, delay)
     }
@@ -72,10 +99,9 @@ class NotifyLoopProxy(
         // 如果正在等待状态，也就是loopBlock已经提交，还没执行，
         // 直接修改当前缓存的notification，
         // 不论当前是否已经存在notification, 只弹最后一个通知，跳过频率过高的通知，
-        if (waiting) {
-            wrapper.notification = notification
-        } else {
-            manager.notify(id, notification)
+        wrapper.notification = notification
+        if (!waiting) {
+            notifyCached()
             waiting = true
             handler.postDelayed(loopBlock, delay)
         }
@@ -86,10 +112,9 @@ class NotifyLoopProxy(
         // 就算完成了，也等最后一个循环节走完，
         // 这里无视线程冲突，尽量都只用主线程，
         // 要是说刚好主线程正在进入loopBlock拿走notification,可能导致最后一个通知不是完成通知，
-        if (waiting) {
-            wrapper.notification = notification
-        } else {
-            manager.notify(id, notification)
+        wrapper.notification = notification
+        if (!waiting) {
+            notifyCached()
         }
     }
 
@@ -97,9 +122,7 @@ class NotifyLoopProxy(
         canceled = true
         this.cancelDelay = cancelDelay
         if (!waiting) {
-            handler.postDelayed({
-                manager.cancel(id)
-            }, cancelDelay)
+            handler.postDelayed(cancelBlock, cancelDelay)
         }
     }
 

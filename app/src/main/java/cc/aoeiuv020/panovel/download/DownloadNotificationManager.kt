@@ -48,7 +48,7 @@ class DownloadNotificationManager(
         proxy.modify(nb.build())
     }
 
-    fun downloadCompletion(exists: Int, downloads: Int, errors: Int) {
+    fun downloadComplete(exists: Int, downloads: Int, errors: Int) {
         nb.setContentText(ctx.getString(R.string.download_complete_placeholder, exists, downloads, errors))
                 .setProgress(0, 0, false)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)

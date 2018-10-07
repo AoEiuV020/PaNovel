@@ -2,15 +2,13 @@ package cc.aoeiuv020.panovel.data
 
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
-import cc.aoeiuv020.panovel.download.DownloadProgressListener
+import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import cc.aoeiuv020.panovel.report.Reporter
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.error
+import org.jetbrains.anko.*
 import java.net.URL
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * 持有小说对象，统一在这里读取小说相关数据，
@@ -26,7 +24,8 @@ class NovelManager(
         private val provider: NovelProvider,
         private val cache: CacheManager,
         // server可空，本地小说不传入server，相关方法也都不调用，
-        private val server: ServerManager?
+        private val server: ServerManager?,
+        private val dnmLocal: ThreadLocal<DownloadingNotificationManager>
 ) : AnkoLogger {
 
     fun pinned() = app.pinned(novel)
@@ -55,9 +54,9 @@ class NovelManager(
             cache.loadContent(novel, extra)
 
     fun requestContent(
+            index: Int,
             chapter: NovelChapter,
-            refresh: Boolean,
-            listener: DownloadProgressListener? = null
+            refresh: Boolean
     ): List<String> {
         // 指定刷新的话就不读缓存，
         if (!refresh) {
@@ -65,7 +64,18 @@ class NovelManager(
                 return it
             }
         }
-        return provider.getNovelContent(chapter, listener).also {
+        val dnm: DownloadingNotificationManager = dnmLocal.get()
+        dnm.downloadStart(novel, index, chapter.name)
+        info { "start ${chapter.name}" }
+        return provider.getNovelContent(chapter) { offset, length ->
+            dnm.downloading(index, chapter.name, offset, length)
+        }.also {
+            dnm.downloadComplete(index, chapter.name)
+            info { "Complete ${chapter.name}" }
+            // 线程进度通知1秒后删除，
+            // 如果还有剩，1秒内重新开始循环也就不会删除通知了，
+            dnm.cancelNotification(TimeUnit.SECONDS.toMillis(1))
+            info { "cancel ${chapter.name}" }
             // 缓存起来，
             cache.saveContent(novel, chapter.extra, it)
         }

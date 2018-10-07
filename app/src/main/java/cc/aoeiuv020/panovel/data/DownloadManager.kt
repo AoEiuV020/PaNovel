@@ -3,7 +3,6 @@ package cc.aoeiuv020.panovel.data
 import android.content.Context
 import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.download.DownloadNotificationManager
-import cc.aoeiuv020.panovel.download.DownloadProgressListener
 import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
@@ -17,6 +16,13 @@ import java.util.concurrent.atomic.AtomicInteger
 class DownloadManager(
         private val ctx: Context
 ) : AnkoLogger {
+
+    val dnmLocal = object : ThreadLocal<DownloadingNotificationManager>() {
+        override fun initialValue(): DownloadingNotificationManager {
+            return DownloadingNotificationManager(ctx)
+        }
+    }
+
     fun download(novelManager: NovelManager, fromIndex: Int, count: Int) {
         val novel = novelManager.novel
         ctx.doAsync({ e ->
@@ -56,7 +62,6 @@ class DownloadManager(
                     }
                 }, ioExecutorService) {
                     val thread = Thread.currentThread().name
-                    val dnm = DownloadingNotificationManager(ctx, novel)
                     // 每次循环最后再获取，
                     var index = nextIndex.getAndIncrement()
                     // 如果presenter已经detach说明离开了这个页面，不继续下载，
@@ -65,30 +70,12 @@ class DownloadManager(
                     while (index < last) {
                         debug { "$thread downloading $index" }
                         val chapter = chapters[index]
-                        val name = chapter.name
                         if (cachedList.contains(chapter.extra)) {
                             ++exists
                         } else {
                             try {
-                                uiThread {
-                                    dnm.downloadStart(index, name)
-                                }
                                 // 方法返回前请求到正文就已经缓存了，
-                                novelManager.requestContent(chapter, false, object : DownloadProgressListener {
-                                    override fun downloading(offset: Long, length: Long) {
-                                        uiThread {
-                                            verbose { "$thread downloading: $index.$name $offset/$length" }
-                                            dnm.downloading(index, name, offset, length)
-                                        }
-                                    }
-                                })
-                                uiThread {
-                                    verbose { "$thread downloaded: $index.$name" }
-                                    dnm.downloadCompletion(index, name)
-                                    // 线程进度通知1秒后删除，
-                                    // 如果还有剩，1秒内重新开始循环也就不会删除通知了，
-                                    dnm.cancelNotification(TimeUnit.SECONDS.toMillis(1))
-                                }
+                                novelManager.requestContent(index, chapter, false)
                                 ++downloads
                             } catch (e: Exception) {
                                 val message = "缓存<${novel.bookId}.$index>章节失败，"
@@ -105,7 +92,7 @@ class DownloadManager(
                         index = nextIndex.getAndIncrement()
                     }
                     uiThread {
-                        dfm.downloadCompletion(exists, downloads, errors)
+                        dfm.downloadComplete(exists, downloads, errors)
                         // 5秒后删除下载结果通知，
                         dfm.cancelNotification(TimeUnit.SECONDS.toMillis(5))
                     }

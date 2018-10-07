@@ -197,7 +197,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
 
         override fun requestChapter(index: Int, refresh: Boolean): List<String> {
-            return presenter.requestContent(chaptersAsc[index], refresh)
+            return presenter.requestContent(index, chaptersAsc[index], refresh)
         }
     }
 
