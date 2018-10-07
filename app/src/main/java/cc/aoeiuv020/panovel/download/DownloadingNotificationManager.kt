@@ -67,7 +67,10 @@ class DownloadingNotificationManager(
                 .setProgress(0, 0, false)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
         proxy.complete(nb.build())
-        proxy.cancel()
+    }
+
+    fun cancelNotification(cancelDelay: Long = NotifyLoopProxy.DEFAULT_CANCEL_DELAY) {
+        proxy.cancel(cancelDelay)
     }
 
     @Suppress("UNUSED_PARAMETER")

@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.*
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -84,6 +85,9 @@ class DownloadManager(
                                 uiThread {
                                     verbose { "$thread downloaded: $index.$name" }
                                     dnm.downloadCompletion(index, name)
+                                    // 线程进度通知1秒后删除，
+                                    // 如果还有剩，1秒内重新开始循环也就不会删除通知了，
+                                    dnm.cancelNotification(TimeUnit.SECONDS.toMillis(1))
                                 }
                                 ++downloads
                             } catch (e: Exception) {
@@ -102,6 +106,8 @@ class DownloadManager(
                     }
                     uiThread {
                         dfm.downloadCompletion(exists, downloads, errors)
+                        // 5秒后删除下载结果通知，
+                        dfm.cancelNotification(TimeUnit.SECONDS.toMillis(5))
                     }
                 }
             }

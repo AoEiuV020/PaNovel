@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationManagerCompat
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.main.MainActivity
 import org.jetbrains.anko.intentFor
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by AoEiuV020 on 2018.10.06-19:33:43.
@@ -26,6 +27,9 @@ class NotifyLoopProxy(
         // 最多delay毫秒一个通知，
         private val delay: Long = 300L
 ) {
+    companion object {
+        val DEFAULT_CANCEL_DELAY: Long = TimeUnit.SECONDS.toMillis(5)
+    }
     private val handler = Handler(Looper.getMainLooper())
     // System services not available to Activities before onCreate()
     private val manager by lazy { NotificationManagerCompat.from(ctx) }
@@ -33,6 +37,7 @@ class NotifyLoopProxy(
     private var waiting = false
     private var done = false
     private var canceled = false
+    private var cancelDelay: Long = DEFAULT_CANCEL_DELAY
     private val wrapper = NotificationWrapper()
     private var loopBlock = Runnable {
         // 取出wrapper中的notification,
@@ -45,7 +50,7 @@ class NotifyLoopProxy(
         if (canceled) {
             handler.postDelayed({
                 manager.cancel(id)
-            }, 2 * delay)
+            }, cancelDelay)
         }
         // 执行完了取消等待状态，
         waiting = false
@@ -88,10 +93,13 @@ class NotifyLoopProxy(
         }
     }
 
-    fun cancel() {
+    fun cancel(cancelDelay: Long = DEFAULT_CANCEL_DELAY) {
         canceled = true
+        this.cancelDelay = cancelDelay
         if (!waiting) {
-            manager.cancel(id)
+            handler.postDelayed({
+                manager.cancel(id)
+            }, cancelDelay)
         }
     }
 
