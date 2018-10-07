@@ -62,7 +62,7 @@ class NovelTextPresenter(
 
     fun askDownload(ctx: Context, currentIndex: Int) {
         view?.also {
-            DataManager.download.askDownload(ctx, novelManager, currentIndex)
+            DataManager.download.askDownload(ctx, novelManager, currentIndex, false)
         }
     }
 

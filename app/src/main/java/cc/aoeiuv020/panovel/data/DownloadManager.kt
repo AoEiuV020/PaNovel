@@ -109,7 +109,7 @@ class DownloadManager(
 
     // 不能用全局application的Context弹对话框，
     // WindowManager$BadTokenException: Unable to add window -- token null is not for an application
-    fun askDownload(ctx: Context, novelManager: NovelManager, currentIndex: Int): Boolean {
+    fun askDownload(ctx: Context, novelManager: NovelManager, currentIndex: Int, fromFirst: Boolean): Boolean {
         val defaultCount = GeneralSettings.downloadCount.takeIf { it >= 0 }
                 ?: 50
         ctx.alert {
@@ -120,6 +120,11 @@ class DownloadManager(
                 setText(defaultCount.toString())
             }
             val rgFrom = layout.rgFrom
+            if (fromFirst) {
+                rgFrom.check(R.id.rbFromFirst)
+            } else {
+                rgFrom.check(R.id.rbFromCurrent)
+            }
             val cbRemember = layout.checkBox
             fun remember() {
                 if (cbRemember.isChecked) {

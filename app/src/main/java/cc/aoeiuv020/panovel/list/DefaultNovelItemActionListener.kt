@@ -148,7 +148,7 @@ class DefaultNovelItemActionListener(
     }
 
     private fun download(vh: NovelViewHolder) {
-        DataManager.download.askDownload(vh.ctx, vh.novelManager, vh.novel.readAtChapterIndex)
+        DataManager.download.askDownload(vh.ctx, vh.novelManager, vh.novel.readAtChapterIndex, true)
     }
 
     private fun pinned(vh: NovelViewHolder) {
