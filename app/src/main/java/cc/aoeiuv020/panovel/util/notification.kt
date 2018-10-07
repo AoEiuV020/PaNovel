@@ -46,6 +46,7 @@ class NotifyLoopProxy(
     }
 
     fun start(notification: Notification) {
+        done = false
         // 循环开始前先弹一次通知，
         // 之后隔delay时间弹一次，
         manager.notify(id, notification)
