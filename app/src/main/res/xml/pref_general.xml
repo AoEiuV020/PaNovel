@@ -42,6 +42,17 @@
         android:summary="@string/download_chapters_count_summary"
         android:title="@string/download_chapters_count" />
 
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
+        android:defaultValue="0"
+        android:inputType="number|numberSigned"
+        android:key="autoDownloadCount"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/auto_download_chapters_count_summary"
+        android:title="@string/auto_download_chapters_count" />
+
     <SwitchPreference
         android:defaultValue="true"
         android:enabled="false"

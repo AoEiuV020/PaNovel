@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.doAsync
@@ -106,6 +107,8 @@ class NovelManager(
     private fun refreshChapters(): List<NovelChapter> {
         // 确保存在详情页信息，
         requireDetail()
+        val cachedList = cache.loadChapters(novel)
+        val cachedSize = cachedList?.size ?: 0
         val list = provider.requestNovelChapters()
         if (novel.readAtChapterName == Novel.VALUE_NULL) {
             // 如果数据库中没有阅读进度章节，说明没阅读过，直接存第一章名字，
@@ -115,6 +118,13 @@ class NovelManager(
         // 不管是否真的有更新，都更新数据库，至少checkUpdateTime是必须要更新的，
         app.updateChapters(novel)
         cache.saveChapters(novel, list)
+        // 书架上的小说自动缓存一定章节，
+        // 要在缓存之后下载，因为是根据缓存列表下载的，
+        if (novel.bookshelf
+                && list.size - cachedSize > 0
+                && list.size - cachedSize <= GeneralSettings.autoDownloadCount) {
+            DataManager.download.download(this, cachedSize, list.size - cachedSize)
+        }
         // 这里异步，不影响刷新结果返回的时间，
         doAsync({ e ->
             val message = "上传<${novel.bookId}>刷新结果失败,"
