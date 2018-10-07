@@ -69,14 +69,15 @@ class DownloadingNotificationManager(
         proxy.complete(nb.build())
     }
 
-    fun cancelNotification(cancelDelay: Long = NotifyLoopProxy.DEFAULT_CANCEL_DELAY) {
-        proxy.cancel(cancelDelay)
+    fun downloadError(index: Int, name: String, message: String) {
+        nb.setContentText(ctx.getString(R.string.chapter_download_error_placeholder, index, name, message))
+                .setProgress(0, 0, false)
+                .setSmallIcon(android.R.drawable.stat_sys_download_done)
+        proxy.complete(nb.build())
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun error(message: String, t: Throwable) {
-        // 出意外了直接停止通知循环，
-        proxy.error()
+    fun cancelNotification(cancelDelay: Long = NotifyLoopProxy.DEFAULT_CANCEL_DELAY) {
+        proxy.cancel(cancelDelay)
     }
 
 }

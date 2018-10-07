@@ -40,7 +40,7 @@ class NotifyLoopProxy(
     private var done = false
     private var canceled = false
     private var cancelDelay: Long = DEFAULT_CANCEL_DELAY
-    private val wrapper = NotificationWrapper()
+    private var mNotification: Notification? = null
     private val cancelBlock = Runnable {
         // 如果延时期间取消了取消，就不取消，
         if (canceled) {
@@ -49,7 +49,7 @@ class NotifyLoopProxy(
     }
     private val loopBlock = Runnable {
         // 取出wrapper中的notification,
-        if (wrapper.notification != null) {
+        if (mNotification != null) {
             notifyCached()
         }
         if (canceled) {
@@ -70,12 +70,11 @@ class NotifyLoopProxy(
     }
 
     private fun notifyCached() {
-        runOnUiThread {
-            // 如果wrapper中存在notification，表示有通知要弹，
-            wrapper.notification?.let { n ->
-                // 弹完置空，免得重复弹，
-                // 可能存在多线程冲突问题，基本不会出现，
-                wrapper.notification = null
+        val notification = mNotification
+        // 置空，免得重复弹，
+        mNotification = null
+        notification?.let { n ->
+            runOnUiThread {
                 manager.notify(id, n)
             }
         }
@@ -88,7 +87,7 @@ class NotifyLoopProxy(
         handler.removeCallbacks(loopBlock)
         // 循环开始前先弹一次通知，
         // 之后隔delay时间弹一次，
-        wrapper.notification = notification
+        mNotification = notification
         notifyCached()
         waiting = true
         handler.postDelayed(loopBlock, delay)
@@ -100,7 +99,7 @@ class NotifyLoopProxy(
         // 如果正在等待状态，也就是loopBlock已经提交，还没执行，
         // 直接修改当前缓存的notification，
         // 不论当前是否已经存在notification, 只弹最后一个通知，跳过频率过高的通知，
-        wrapper.notification = notification
+        mNotification = notification
         if (!waiting) {
             notifyCached()
             waiting = true
@@ -113,7 +112,7 @@ class NotifyLoopProxy(
         // 就算完成了，也等最后一个循环节走完，
         // 这里无视线程冲突，尽量都只用主线程，
         // 要是说刚好主线程正在进入loopBlock拿走notification,可能导致最后一个通知不是完成通知，
-        wrapper.notification = notification
+        mNotification = notification
         if (!waiting) {
             notifyCached()
         }
@@ -129,13 +128,10 @@ class NotifyLoopProxy(
 
     fun error() {
         done = true
+        waiting = false
         // 出错了直接停止循环，
         handler.removeCallbacks(loopBlock)
     }
-
-    class NotificationWrapper(
-            var notification: Notification? = null
-    )
 }
 
 fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null, bigText: String? = null) {

@@ -69,15 +69,22 @@ class NovelManager(
         }
         val dnm: DownloadingNotificationManager = dnmLocal.get()
         dnm.downloadStart(novel, index, chapter.name)
-        return provider.getNovelContent(chapter) { offset, length ->
-            dnm.downloading(index, chapter.name, offset, length)
-        }.also {
-            dnm.downloadComplete(index, chapter.name)
+        return try {
+            provider.getNovelContent(chapter) { offset, length ->
+                dnm.downloading(index, chapter.name, offset, length)
+            }.also {
+                dnm.downloadComplete(index, chapter.name)
+                // 缓存起来，
+                cache.saveContent(novel, chapter.extra, it)
+            }
+        } catch (t: Throwable) {
+            // 成功和失败都是马上取消，看不见，但是要走个流程，
+            dnm.downloadError(index, chapter.name, t.message.toString())
+            throw t
+        } finally {
             // 线程进度通知1秒后删除，
             // 如果还有剩，1秒内重新开始循环也就不会删除通知了，
             dnm.cancelNotification(TimeUnit.SECONDS.toMillis(1))
-            // 缓存起来，
-            cache.saveContent(novel, chapter.extra, it)
         }
     }
 
