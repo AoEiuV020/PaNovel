@@ -722,8 +722,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         inner class _Response(
                 val response: Response
         ) {
-            // 非networkResponse没有request，但是networkResponse没有body,有点烦，
-            val request: Request = response.networkResponse().notNull().request()
+            // 我为什么要用networkResponse？
+//            val request: Request = response.networkResponse().notNull().request()
         }
     }
 
