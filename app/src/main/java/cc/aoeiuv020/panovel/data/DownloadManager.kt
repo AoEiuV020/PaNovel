@@ -119,6 +119,7 @@ class DownloadManager(
             val etCount = layout.editText.apply {
                 setText(count.toString())
             }
+            val rgFrom = layout.rgFrom
             val cbRemember = layout.checkBox
             fun remember() {
                 if (cbRemember.isChecked) {
@@ -129,11 +130,21 @@ class DownloadManager(
             }
             neutralPressed(R.string.all) {
                 remember()
-                download(novelManager, currentIndex, Int.MAX_VALUE)
+                val fromIndex = if (rgFrom.checkedRadioButtonId == R.id.rbFromFirst) {
+                    0
+                } else {
+                    currentIndex
+                }
+                download(novelManager, fromIndex, Int.MAX_VALUE)
             }
             yesButton {
                 remember()
-                download(novelManager, currentIndex, etCount.text.toString().toIntOrNull() ?: 0)
+                val fromIndex = if (rgFrom.checkedRadioButtonId == R.id.rbFromFirst) {
+                    0
+                } else {
+                    currentIndex
+                }
+                download(novelManager, fromIndex, etCount.text.toString().toIntOrNull() ?: 0)
             }
             cancelButton { }
         }.safelyShow()

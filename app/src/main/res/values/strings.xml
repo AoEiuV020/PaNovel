@@ -226,5 +226,7 @@
     <string name="label_qq_group">QQ群：</string>
     <string name="auto_download_chapters_count">自动下载章节数</string>
     <string name="auto_download_chapters_count_summary">书架小说刷新章节列表后如果新增章节数小于等于该值就自动缓存新章节，</string>
+    <string name="rb_from_first">从头开始</string>
+    <string name="rb_from_current">从阅读章节开始</string>
 
 </resources>
