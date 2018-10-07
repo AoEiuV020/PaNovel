@@ -32,6 +32,7 @@ class NotifyLoopProxy(
 
     private var waiting = false
     private var done = false
+    private var canceled = false
     private val wrapper = NotificationWrapper()
     private var loopBlock = Runnable {
         // 取出wrapper中的notification,
@@ -41,12 +42,18 @@ class NotifyLoopProxy(
         if (notification != null) {
             manager.notify(id, notification)
         }
+        if (canceled) {
+            handler.postDelayed({
+                manager.cancel(id)
+            }, 2 * delay)
+        }
         // 执行完了取消等待状态，
         waiting = false
     }
 
     fun start(notification: Notification) {
         done = false
+        canceled = false
         // 循环开始前先弹一次通知，
         // 之后隔delay时间弹一次，
         manager.notify(id, notification)
@@ -78,6 +85,13 @@ class NotifyLoopProxy(
             wrapper.notification = notification
         } else {
             manager.notify(id, notification)
+        }
+    }
+
+    fun cancel() {
+        canceled = true
+        if (!waiting) {
+            manager.cancel(id)
         }
     }
 

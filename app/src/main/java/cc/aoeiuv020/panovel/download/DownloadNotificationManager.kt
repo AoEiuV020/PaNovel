@@ -15,7 +15,7 @@ class DownloadNotificationManager(
 
     private val status = DownloadStatus()
     // 固定通知id以免频繁下载出现一堆通知，
-    private val proxy = NotifyLoopProxy(ctx, 1)
+    private val proxy = NotifyLoopProxy(ctx)
     // 太早了Intent不能用，
     private val nb: NotificationCompat.Builder by lazy {
         val intent = ctx.intentFor<DownloadActivity>()
@@ -58,6 +58,7 @@ class DownloadNotificationManager(
                 .setProgress(0, 0, false)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
         proxy.complete(nb.build())
+        proxy.cancel()
     }
 
     override fun error(message: String, t: Throwable) {
