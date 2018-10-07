@@ -23,6 +23,9 @@ class Yidm : DslJsoupNovelContext() {init {
         baseUrl = "http://www.yidm.com"
         logo = "http://static.yidm.com/img/index/logo.png"
     }
+    header {
+        userAgent = "RN(0.52.0) Yidmos Yidm(V3) Android"
+    }
     search {
         get {
             url = "//openapi.yidm.com/article/search.php"

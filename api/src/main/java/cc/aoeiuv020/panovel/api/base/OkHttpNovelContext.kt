@@ -14,6 +14,13 @@ import java.io.InputStream
  * Created by AoEiuV020 on 2018.06.01-20:43:49.
  */
 abstract class OkHttpNovelContext : NovelContext() {
+    protected val defaultHeaders: MutableMap<String, String> by lazy {
+        mutableMapOf(
+                "Referer" to site.baseUrl,
+                "User-Agent" to "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36"
+        )
+    }
+
     // 子类可以继承自己的clientBuilder, 然后不能影响得到client, 要用lazy,
     protected open val client: OkHttpClient by lazy { clientBuilder.build() }
 
@@ -98,6 +105,11 @@ abstract class OkHttpNovelContext : NovelContext() {
     protected fun connect(url: String): Call {
         val request = Request.Builder()
                 .url(url)
+                .apply {
+                    defaultHeaders.forEach { (key, value) ->
+                        addHeader(key, value)
+                    }
+                }
                 .build()
         return client.newCall(request)
     }
