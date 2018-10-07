@@ -28,6 +28,7 @@ class DownloadManager(
     }
 
     fun download(novelManager: NovelManager, fromIndex: Int, count: Int) {
+        if (count <= 0) return
         val novel = novelManager.novel
         ctx.doAsync({ e ->
             val message = "下载失败，"
@@ -45,8 +46,9 @@ class DownloadManager(
             var downloads = 0
             var errors = 0
             val left = AtomicInteger(last - fromIndex)
+            if (left.get() <= 0) return@doAsync
             val nextIndex = AtomicInteger(fromIndex)
-            val threadsLimit = GeneralSettings.downloadThreadsLimit
+            val threadsLimit = maxOf(1, GeneralSettings.downloadThreadsLimit)
             debug {
                 "download start <$fromIndex/$size> * $threadsLimit"
             }
