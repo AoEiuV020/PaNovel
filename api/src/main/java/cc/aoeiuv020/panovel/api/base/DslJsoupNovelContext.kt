@@ -6,6 +6,7 @@ import okhttp3.*
 import okhttp3.internal.http.HttpMethod
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.io.InputStream
 import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.Charset
@@ -566,18 +567,22 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
     }
 
-    override fun getNovelContent(extra: String): List<String> =
-            _Content(extra).initContent(extra)
+    override fun getNovelContent(extra: String, listener: ((Long, Long) -> Unit)?): List<String> =
+            _Content(extra, listener).initContent(extra)
 
     private lateinit var initContent: _Content.(String) -> List<String>
     protected fun content(init: _Content.(String) -> List<String>) {
         initContent = init
     }
 
-    protected inner class _Content(extra: String) : _Requester(extra) {
+    protected inner class _Content(
+            extra: String,
+            listener: ((Long, Long) -> Unit)?
+    ) : _Requester(extra, listener) {
         fun document(
                 document: Document = parse(call
-                        ?: connect(getNovelContentUrl(extra)), charset),
+                        ?: connect(getNovelContentUrl(extra)), charset,
+                        listener),
                 init: _NovelContentParser.() -> Unit
         ): List<String> = _NovelContentParser(document).also(init).parse()
     }
@@ -675,7 +680,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     @DslTag
     protected abstract inner class _Requester(
-            protected val extra: String
+            protected val extra: String,
+            protected val listener: ((Long, Long) -> Unit)? = null
     ) {
         var call: Call? = null
         // 指定响应的编码，用于jsoup解析html时，
@@ -699,18 +705,25 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
         }
 
         fun <T> response(block: _Response.(String) -> T): T {
+            return inputStream {
+                val body = it.reader(Charset.forName(charset ?: defaultCharset)).readText()
+                block(body)
+            }
+        }
+
+        fun <T> inputStream(block: _Response.(InputStream) -> T): T {
             val response = response(call.notNull())
-            val _response = _Response(response.networkResponse().notNull())
-            return response.body().notNull().use {
-                val body = it.string()
-                _response.block(body)
+            val _response = _Response(response)
+            return response.inputStream(listener) {
+                _response.block(it)
             }
         }
 
         inner class _Response(
                 val response: Response
         ) {
-            val request: Request = response.request()
+            // 非networkResponse没有request，但是networkResponse没有body,有点烦，
+            val request: Request = response.networkResponse().notNull().request()
         }
     }
 

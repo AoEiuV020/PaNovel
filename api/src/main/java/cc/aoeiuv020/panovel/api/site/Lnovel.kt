@@ -99,7 +99,7 @@ class Lnovel : DslJsoupNovelContext() {init {
             val plant = content.cipherDecrypt(key, iv, "AES", "CBC", "NoPadding")
                     .toString(Charset.defaultCharset())
 
-            document(Jsoup.parse(plant, response.request().url().toString())) {
+            document(Jsoup.parse(plant, request.url().toString())) {
                 items("body")
             }
         }

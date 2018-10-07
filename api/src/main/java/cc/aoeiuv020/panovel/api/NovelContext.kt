@@ -225,7 +225,7 @@ abstract class NovelContext {
      *
      * @param extra [NovelChapter.extra]
      */
-    abstract fun getNovelContent(extra: String): List<String>
+    abstract fun getNovelContent(extra: String, listener: ((Long, Long) -> Unit)? = null): List<String>
 
     /**
      * 判断这个地址是不是属于这个网站，

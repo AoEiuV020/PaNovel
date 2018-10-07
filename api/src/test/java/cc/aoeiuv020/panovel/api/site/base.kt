@@ -143,7 +143,9 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
 
     protected fun content(extra: String): List<String>? {
         if (!enabled) return null
-        return context.getNovelContent(extra)
+        return context.getNovelContent(extra) { c, t ->
+            println("$c/$t")
+        }
     }
 
 }

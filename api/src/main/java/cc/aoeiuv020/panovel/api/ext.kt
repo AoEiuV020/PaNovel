@@ -2,6 +2,10 @@
 
 package cc.aoeiuv020.panovel.api
 
+import java.io.FilterInputStream
+import java.io.InputStream
+import java.io.OutputStream
+
 /**
  * Created by AoEiuV020 on 2017.10.02-16:01:09.
  */
@@ -37,3 +41,56 @@ fun List<NovelChapter>.reverseRemoveDuplication(): List<NovelChapter> {
     }
 }
 
+fun InputStream.copyTo(
+        out: OutputStream,
+        maxSize: Long = 0L,
+        listener: ((Long, Long) -> Unit)? = null,
+        bufferSize: Int = 4 * 1024
+): Long {
+    var bytesCopied: Long = 0
+    listener?.invoke(bytesCopied, maxSize)
+    val buffer = ByteArray(bufferSize)
+    var bytes = read(buffer)
+    while (bytes >= 0) {
+        out.write(buffer, 0, bytes)
+        bytesCopied += bytes
+        listener?.invoke(bytesCopied, maxSize)
+        bytes = read(buffer)
+    }
+    return bytesCopied
+}
+
+class LoggerInputStream(
+        input: InputStream,
+        private val maxSize: Long = 0L,
+        private val listener: ((Long, Long) -> Unit)? = null
+) : FilterInputStream(input) {
+    private var bytesCopied: Long = 0
+
+    init {
+        listener?.invoke(bytesCopied, maxSize)
+    }
+
+    override fun read(): Int {
+        return super.read().also {
+            if (it > 0) {
+                bytesCopied++
+                listener?.invoke(bytesCopied, maxSize)
+            }
+        }
+    }
+
+    // FilterInputStream的这个方法就是调用自己的read，不能重复处理了，
+/*
+    override fun read(b: ByteArray): Int = read(b, 0, b.size)
+*/
+
+    override fun read(b: ByteArray, off: Int, len: Int): Int {
+        return super.read(b, off, len).also {
+            if (it > 0) {
+                bytesCopied += it
+                listener?.invoke(bytesCopied, maxSize)
+            }
+        }
+    }
+}

@@ -4,6 +4,7 @@ import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.error
 import cc.aoeiuv020.base.jar.notNull
 import cc.aoeiuv020.okhttp.OkHttpUtils
+import cc.aoeiuv020.panovel.api.LoggerInputStream
 import cc.aoeiuv020.panovel.api.NovelContext
 import okhttp3.*
 import okio.Buffer
@@ -81,8 +82,13 @@ abstract class OkHttpNovelContext : NovelContext() {
             firstOrNull { it.name() == name }?.value()
 
     // close基本上有重复，但是可以重复关闭，
-    protected inline fun <reified T> Response.inputStream(block: (InputStream) -> T): T =
-            body().notNull().use { it.byteStream().use(block) }
+    protected fun <T> Response.inputStream(
+            listener: ((Long, Long) -> Unit)? = null,
+            block: (InputStream) -> T
+    ): T = body().notNull().use {
+        val maxSize = it.contentLength()
+        LoggerInputStream(it.byteStream(), maxSize, listener).use(block)
+    }
 
     protected fun Response.charset(): String? = body()?.contentType()?.charset()?.name()
 
