@@ -5,19 +5,22 @@ import android.content.Context
 import android.support.v4.app.NotificationCompat
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.util.NotifyLoopProxy
 import org.jetbrains.anko.intentFor
 
-class DownloadNotificationManager(
+/**
+ * Created by AoEiuV020 on 2018.10.07-15:16:13.
+ */
+class DownloadingNotificationManager(
         private val ctx: Context,
         novel: Novel
 ) {
 
-    private val status = DownloadStatus()
     private val proxy: NotifyLoopProxy = NotifyLoopProxy(ctx)
     // 太早了Intent不能用，
     private val nb: NotificationCompat.Builder by lazy {
-        val intent = ctx.intentFor<DownloadActivity>()
+        val intent = ctx.intentFor<MainActivity>()
         val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
         @Suppress("DEPRECATION")
         // 用过时的通知，可以兼容api26,
@@ -32,28 +35,35 @@ class DownloadNotificationManager(
         notificationBuilder
     }
 
-    fun downloadStart(left: Int) {
-        val exists = 0
-        val downloads = 0
-        val errors = 0
-        val progress = ((exists + downloads + errors).toFloat() / ((exists + downloads + errors) + left) * 100).toInt()
-        nb.setContentText(ctx.getString(R.string.downloading_placeholder, exists, downloads, errors, left))
+    // 进度百分比，
+    fun progress(offset: Long, length: Long): Int = (if (length <= 0) {
+        0f
+    } else {
+        offset.toFloat() / length
+    } * 100).toInt()
+
+
+    fun downloadStart(index: Int, name: String) {
+        val offset = 0L
+        val length = 0L
+        val progress = progress(offset, length)
+        nb.setContentText(ctx.getString(R.string.chapter_downloading_placeholder, index, name, offset, length))
+                .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setProgress(100, progress, false)
         proxy.start(nb.build())
     }
 
-    fun downloading(exists: Int, downloads: Int, errors: Int, left: Int) {
+    fun downloading(index: Int, name: String, offset: Long, length: Long) {
         // 更新数据，下次通知自己读取，
-        status.set(exists, downloads, errors, left)
-        val progress = ((exists + downloads + errors).toFloat() / ((exists + downloads + errors) + left) * 100).toInt()
-        nb.setContentText(ctx.getString(R.string.downloading_placeholder, exists, downloads, errors, left))
-                .setProgress(100, progress, false)
+        val progress = progress(offset, length)
+        nb.setContentText(ctx.getString(R.string.chapter_downloading_placeholder, index, name, offset, length))
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .setProgress(100, progress, length <= 0)
         proxy.modify(nb.build())
     }
 
-    fun downloadCompletion(exists: Int, downloads: Int, errors: Int) {
-        status.set(exists, downloads, errors, 0)
-        nb.setContentText(ctx.getString(R.string.download_complete_placeholder, exists, downloads, errors))
+    fun downloadCompletion(index: Int, name: String) {
+        nb.setContentText(ctx.getString(R.string.chapter_download_complete_placeholder, index, name))
                 .setProgress(0, 0, false)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
         proxy.complete(nb.build())

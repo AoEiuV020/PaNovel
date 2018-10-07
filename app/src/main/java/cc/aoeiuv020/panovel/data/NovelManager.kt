@@ -2,6 +2,7 @@ package cc.aoeiuv020.panovel.data
 
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.download.DownloadProgressListener
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.AnkoLogger
@@ -53,14 +54,18 @@ class NovelManager(
     fun getContent(extra: String): List<String>? =
             cache.loadContent(novel, extra)
 
-    fun requestContent(chapter: NovelChapter, refresh: Boolean): List<String> {
+    fun requestContent(
+            chapter: NovelChapter,
+            refresh: Boolean,
+            listener: DownloadProgressListener? = null
+    ): List<String> {
         // 指定刷新的话就不读缓存，
         if (!refresh) {
             cache.loadContent(novel, chapter.extra)?.also {
                 return it
             }
         }
-        return provider.getNovelContent(chapter).also {
+        return provider.getNovelContent(chapter, listener).also {
             // 缓存起来，
             cache.saveContent(novel, chapter.extra, it)
         }

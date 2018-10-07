@@ -25,6 +25,8 @@
     <string name="downloading_from_current_chapter_placeholder">从当前章节(%d)开始下载</string>
     <string name="downloading_placeholder">下载中 已存在%d章 下载%d章 失败%d章 剩余%d章</string>
     <string name="download_complete_placeholder">下载完成 已存在%d章 下载%d章 失败%d章</string>
+    <string name="chapter_downloading_placeholder">下载中: %d.%s %d/%d</string>
+    <string name="chapter_download_complete_placeholder">下载完成: %d.%s</string>
     <string name="read_at">阅读至</string>
     <string name="last_chapter">最新章</string>
     <string name="history_count">历史记录数</string>

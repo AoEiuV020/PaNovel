@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.data
 
 import cc.aoeiuv020.panovel.api.NovelChapter
+import cc.aoeiuv020.panovel.download.DownloadProgressListener
 import java.net.URL
 
 /**
@@ -10,7 +11,7 @@ import java.net.URL
  */
 interface NovelProvider {
     fun getContentUrl(chapter: NovelChapter): String
-    fun getNovelContent(chapter: NovelChapter): List<String>
+    fun getNovelContent(chapter: NovelChapter, listener: DownloadProgressListener?): List<String>
     fun requestNovelChapters(): List<NovelChapter>
     fun getDetailUrl(): String
     fun updateNovelDetail()

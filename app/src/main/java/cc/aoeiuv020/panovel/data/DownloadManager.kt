@@ -3,6 +3,8 @@ package cc.aoeiuv020.panovel.data
 import android.content.Context
 import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.download.DownloadNotificationManager
+import cc.aoeiuv020.panovel.download.DownloadProgressListener
+import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import org.jetbrains.anko.*
@@ -37,7 +39,10 @@ class DownloadManager(
             debug {
                 "download start <$fromIndex/$size> * $threadsLimit"
             }
-            var done = false
+            val dfm = DownloadNotificationManager(ctx, novel)
+            uiThread {
+                dfm.downloadStart(left.get())
+            }
             // 同时启动多个线程下载，
             // 判断一下，线程数不要过多，
             repeat(minOf(threadsLimit, left.get())) {
@@ -49,28 +54,37 @@ class DownloadManager(
                         // 这种情况没法处理应该往外抛，或者加个监听器，
                     }
                 }, ioExecutorService) {
-                    val dfm = object : ThreadLocal<DownloadNotificationManager>() {
-                        override fun initialValue(): DownloadNotificationManager {
-                            return DownloadNotificationManager(ctx, novel)
-                        }
-                    }.get()
-                    uiThread {
-                        dfm.downloadStart(left.get())
-                    }
+                    val thread = Thread.currentThread().name
+                    val dnm = DownloadingNotificationManager(ctx, novel)
                     // 每次循环最后再获取，
                     var index = nextIndex.getAndIncrement()
                     // 如果presenter已经detach说明离开了这个页面，不继续下载，
                     // 正在下载的章节不中断，
                     // 上面判断过，线程数不会过多，一进来index会小于size,
                     while (index < last) {
-                        debug { "${Thread.currentThread().name} downloading $index" }
+                        debug { "$thread downloading $index" }
                         val chapter = chapters[index]
+                        val name = chapter.name
                         if (cachedList.contains(chapter.extra)) {
                             ++exists
                         } else {
                             try {
+                                uiThread {
+                                    dnm.downloadStart(index, name)
+                                }
                                 // 方法返回前请求到正文就已经缓存了，
-                                novelManager.requestContent(chapter, false)
+                                novelManager.requestContent(chapter, false, object : DownloadProgressListener {
+                                    override fun downloading(offset: Long, length: Long) {
+                                        uiThread {
+                                            verbose { "$thread downloading: $index.$name $offset/$length" }
+                                            dnm.downloading(index, name, offset, length)
+                                        }
+                                    }
+                                })
+                                uiThread {
+                                    verbose { "$thread downloaded: $index.$name" }
+                                    dnm.downloadCompletion(index, name)
+                                }
                                 ++downloads
                             } catch (e: Exception) {
                                 val message = "缓存<${novel.bookId}.$index>章节失败，"
@@ -80,17 +94,9 @@ class DownloadManager(
                             }
                         }
                         val tmpLeft = left.decrementAndGet()
-                        val tmpIndex = index
                         uiThread {
-                            debug { "download $tmpIndex, left $tmpLeft" }
-                            if (tmpLeft == 0) {
-                                done = true
-                            }
-                            if (done) {
-                                dfm.downloadCompletion(exists, downloads, errors)
-                            } else {
-                                dfm.downloading(exists, downloads, errors, tmpLeft)
-                            }
+                            debug { "download $index, left $tmpLeft" }
+                            dfm.downloading(exists, downloads, errors, tmpLeft)
                         }
                         index = nextIndex.getAndIncrement()
                     }
