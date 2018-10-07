@@ -42,7 +42,7 @@ class YidmTest : BaseNovelContextText(Yidm::class) {
         content("1517/49048/49049",
                 "OVERLORD1 不死者之王",
                 "于是──",
-                185)
+                93)
         content("1517/49048/",
                 "第一卷 不死者之王",
                 "第一卷 不死者之王",
@@ -53,7 +53,7 @@ class YidmTest : BaseNovelContextText(Yidm::class) {
                         .resolve("49048")
                         .toURI()}!/img/82173.jpg)",
                 "飞鼠告诉自己，暂时把这个问题抛在脑后，先将目前的当务之急依序处理完毕之后再来伤脑筋吧。",
-                1401)
+                701)
         content("1517/49048/73186",
                 "![img](jar:${cacheDir.resolve("迷糊轻小说")
                         .resolve("1517")
