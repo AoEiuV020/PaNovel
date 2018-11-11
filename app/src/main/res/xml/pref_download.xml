@@ -13,7 +13,7 @@
 
     <SwitchPreference
         android:defaultValue="false"
-        android:key="downloadThreadPregress"
+        android:key="downloadThreadProgress"
         android:summary="@string/download_thread_progress_summary"
         android:title="@string/download_thread_progress" />
 

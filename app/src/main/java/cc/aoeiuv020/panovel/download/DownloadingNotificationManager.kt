@@ -18,7 +18,7 @@ class DownloadingNotificationManager(
         private val ctx: Context
 ) : AnkoLogger {
 
-    private val enable: Boolean get() = DownloadSettings.downloadThreadPregress
+    private val enable: Boolean get() = DownloadSettings.downloadThreadProgress
     private val proxy: NotifyLoopProxy = NotifyLoopProxy(ctx)
     // 太早了Intent不能用，
     private val nb: NotificationCompat.Builder by lazy {
