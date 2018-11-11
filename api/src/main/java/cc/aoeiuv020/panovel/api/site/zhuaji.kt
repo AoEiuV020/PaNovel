@@ -14,23 +14,23 @@ class Zhuaji : DslJsoupNovelContext() {init {
     enabled = false
     site {
         name = "爪机书屋"
-        baseUrl = "http://www.zhuaji.org"
-        logo = "http://www.zhuaji.org/zhuaji/images/header_logo.png"
+        baseUrl = "https://www.zhuaji.org"
+        logo = "https://www.zhuaji.org/zhuaji/images/header_logo.png"
     }
     search {
         // http://m.zhuaji.org/so.html?keyword=%E9%83%BD%E5%B8%82&t=1
-        get {
-            url = "//m.zhuaji.org/so.html"
+        post {
+            url = "//m.zhuaji.org/search.html"
             data {
                 "t" to "1"
-                "keyword" to it
+                "searchkey" to it
             }
         }
         document {
-            items("body > div > div.hot_sale") {
+            items(" div.main > ul > li") {
                 extra("> a")
-                name("> a > p.title")
-                author("> a > p:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
+                name("> a > p.bookname")
+                author("> a > p.author", block = ownText())
             }
         }
     }
