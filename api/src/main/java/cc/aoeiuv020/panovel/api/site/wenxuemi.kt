@@ -10,8 +10,8 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 class Wenxuemi : DslJsoupNovelContext() {init {
     site {
         name = "文学迷"
-        baseUrl = "https://www.ji6.cc"
-        logo = "https://www.ji6.cc/images/logo.gif"
+        baseUrl = "https://www.wenxuemi6.com"
+        logo = "https://www.wenxuemi6.com/images/logo.gif"
     }
     search {
         get {
