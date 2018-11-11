@@ -15,6 +15,13 @@ class Snwx : DslJsoupNovelContext() {init {
         baseUrl = "https://www.snwx8.com"
         logo = "https://www.snwx8.com/xiaoyi/images/logo.gif"
     }
+    cookieFilter {
+        // 删除cookie绕开搜索时间间隔限制，
+        // 这网站只删除jieqiVisitTime已经没用了，
+        removeAll {
+            httpUrl.encodedPath().startsWith("/modules/article/search.php")
+        }
+    }
     search {
         get {
             charset = "GBK"
@@ -43,6 +50,7 @@ class Snwx : DslJsoupNovelContext() {init {
             }
             image("#fmimg > img")
             introduction("> div.intro", parent = div) {
+                // 可能没有简介，
                 it.textNodes().first {
                     // TextNode不可避免的有空的，
                     !it.isBlank
@@ -66,12 +74,6 @@ class Snwx : DslJsoupNovelContext() {init {
     content {
         document {
             items("#BookText")
-        }
-    }
-    cookieFilter {
-        removeAll {
-            // 删除cookie绕开搜索时间间隔限制，
-            it.name() == "jieqiVisitTime"
         }
     }
 }

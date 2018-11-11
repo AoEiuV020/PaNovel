@@ -32,7 +32,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     // 比如“https://www.gxwztv.com/55/55886/”，就是除以1000，
     // 章节列表页和正文页都可能有，
     var detailDivision: Int? = null
-    // 向下传递，
+        // 向下传递，
         set(value) {
             field = value
             if (chapterDivision == null) {
@@ -197,6 +197,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             val httpUrl: HttpUrl,
             val cookies: MutableList<Cookie>
     ) {
+        fun clear() {
+            cookies.clear()
+        }
+
         fun removeAll(predicate: (Cookie) -> Boolean) {
             cookies.removeAll(predicate)
         }
