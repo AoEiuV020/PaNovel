@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
  */
 class Zzdxsw : DslJsoupNovelContext() {init {
     // 网速过慢，
+    // 可能部分网络连接超时，不是墙，
     enabled = false
     site {
         name = "猪猪岛小说网"
