@@ -5,6 +5,7 @@ import android.content.Context
 import android.support.v4.app.NotificationCompat
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.settings.DownloadSettings
 import cc.aoeiuv020.panovel.util.NotifyLoopProxy
 import org.jetbrains.anko.intentFor
@@ -18,7 +19,7 @@ class DownloadNotificationManager(
     private val proxy: NotifyLoopProxy = NotifyLoopProxy(ctx)
     // 太早了Intent不能用，
     private val nb: NotificationCompat.Builder by lazy {
-        val intent = ctx.intentFor<DownloadActivity>()
+        val intent = ctx.intentFor<MainActivity>()
         val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
         @Suppress("DEPRECATION")
         // 用过时的通知，可以兼容api26,
