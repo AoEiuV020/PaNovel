@@ -5,7 +5,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.DownloadSettings
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.doAsync
@@ -122,7 +122,7 @@ class NovelManager(
         // 要在缓存之后下载，因为是根据缓存列表下载的，
         if (novel.bookshelf
                 && list.size - cachedSize > 0
-                && list.size - cachedSize <= GeneralSettings.autoDownloadCount) {
+                && list.size - cachedSize <= DownloadSettings.autoDownloadCount) {
             DataManager.download.download(this, cachedSize, list.size - cachedSize)
         }
         // 这里异步，不影响刷新结果返回的时间，

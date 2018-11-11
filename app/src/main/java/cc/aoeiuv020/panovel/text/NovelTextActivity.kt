@@ -27,7 +27,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
-import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.DownloadSettings
 import cc.aoeiuv020.panovel.settings.Margins
 import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.util.*
@@ -713,7 +713,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
 
     fun download() {
         val index = reader.currentChapter
-        val count = GeneralSettings.downloadCount
+        val count = DownloadSettings.downloadCount
         when {
             count < 0 -> askDownload()
             count == 0 -> presenter.download(index, Int.MAX_VALUE)
