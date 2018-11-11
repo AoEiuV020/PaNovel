@@ -15,8 +15,8 @@ class Yssm : DslJsoupNovelContext() {init {
     enabled = false
     site {
         name = "幼狮书盟"
-        baseUrl = "https://www.yssm.org"
-        logo = "https://www.yssm.org/images/logo.png"
+        baseUrl = "https://www.yssm.tv/"
+        logo = "https://www.yssm.tv//images/logo.png"
     }
     search {
         get {
