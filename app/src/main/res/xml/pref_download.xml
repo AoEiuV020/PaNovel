@@ -11,6 +11,12 @@
         android:singleLine="true"
         android:title="@string/download_thread_count" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="downloadThreadPregress"
+        android:summary="@string/download_thread_progress_summary"
+        android:title="@string/download_thread_progress" />
+
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:defaultValue="-1"

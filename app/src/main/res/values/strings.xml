@@ -229,5 +229,7 @@
     <string name="rb_from_first">从头开始</string>
     <string name="rb_from_current">从阅读章节开始</string>
     <string name="pref_header_download">下载设置</string>
+    <string name="download_thread_progress">下载线程通知</string>
+    <string name="download_thread_progress_summary">下载中的线程用通知方式展示进度，</string>
 
 </resources>

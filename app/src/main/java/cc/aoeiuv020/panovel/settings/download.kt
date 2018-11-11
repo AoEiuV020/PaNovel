@@ -14,6 +14,10 @@ object DownloadSettings : Pref {
      */
     var downloadThreadsLimit: Int by Delegates.int(4)
     /**
+     * 下载线程具体进度的通知，
+     */
+    var downloadThreadPregress: Boolean by Delegates.boolean(false)
+    /**
      * 点击下载时下载的章节数，
      * 0表示下载剩余全部，
      * -1表示每次询问，
