@@ -1,5 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.compilePattern
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
@@ -49,6 +51,15 @@ class N2kzwTest : BaseNovelContextText(N2kzw::class) {
                 "一方方宇宙坍塌，就像沙滩上堆积的浮雕，在巨浪拍来之时，几乎不分先后土崩瓦解，连带得整个真实界也化作了一团乱粥，从多个纪元前的开天辟地始，时光长河出现了蜷缩。",
                 "==========================================================",
                 98)
+    }
+
+    @Test
+    fun pickNameTest() {
+        // 这网站所有名字都是/遮天(精校版)/官道无疆(校对版)/
+        val pickName = { e: String ->
+            e.replace(compilePattern("\\(\\S+版\\)$").toRegex(), "")
+        }
+        assertEquals("遮天", pickName("遮天(精校版)"))
     }
 
 }
