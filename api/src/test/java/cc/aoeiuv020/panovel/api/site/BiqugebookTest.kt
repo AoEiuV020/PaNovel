@@ -41,7 +41,7 @@ class BiqugebookTest : BaseNovelContextText(Biqugebook::class) {
         content("94492/33000962",
                 "“粑粑，贝贝好看嘛？”",
                 "穿着一件破烂外衣，身材有些伛偻，看不出男女，脸上布满血污，小腹处有一个贯穿",
-                40)
+                41)
     }
 
 }
