@@ -14,7 +14,11 @@ object DownloadSettings : Pref {
      */
     var downloadThreadsLimit: Int by Delegates.int(4)
     /**
-     * 下载线程具体进度的通知，
+     * 下载进度用通知方式展示进度，
+     */
+    var downloadProgress: Boolean by Delegates.boolean(true)
+    /**
+     * 下载线程具体进度用通知方式展示进度，
      */
     var downloadThreadProgress: Boolean by Delegates.boolean(false)
     /**
