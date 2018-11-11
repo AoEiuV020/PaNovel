@@ -31,7 +31,7 @@ class SyxsTest : BaseNovelContextText(Syxs::class) {
         chapters("7/7787",
                 "第一章 道法无情", "7/7787/5748209", null,
                 "第八百九十六章 下落 二", "7/7787/10358281", null,
-                892)
+                896)
     }
 
     @Test

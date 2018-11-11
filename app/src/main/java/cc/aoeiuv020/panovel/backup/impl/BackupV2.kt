@@ -10,10 +10,7 @@ import cc.aoeiuv020.panovel.backup.BackupOption.*
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
-import cc.aoeiuv020.panovel.settings.GeneralSettings
-import cc.aoeiuv020.panovel.settings.ListSettings
-import cc.aoeiuv020.panovel.settings.OtherSettings
-import cc.aoeiuv020.panovel.settings.ReaderSettings
+import cc.aoeiuv020.panovel.settings.*
 import cc.aoeiuv020.panovel.util.Pref
 import com.google.gson.JsonElement
 import org.jetbrains.anko.debug
@@ -92,10 +89,12 @@ class BackupV2 : DefaultBackup() {
                 "chapterColorDefault" -> editor.putInt(key, value.asInt)
                 "chapterColorReadAt" -> editor.putInt(key, value.asInt)
                 "dotColor" -> editor.putInt(key, value.asInt)
-                "downloadThreadsLimit" -> editor.putInt(key, value.asInt)
                 "searchThreadsLimit" -> editor.putInt(key, value.asInt)
-                "downloadCount" -> editor.putInt(key, value.asInt)
-                "autoDownloadCount" -> editor.putInt(key, value.asInt)
+                // 下载相关设置以前是在GeneralSettings里，
+                // TODO: 可以干脆都改成这样，
+                "downloadThreadsLimit" -> DownloadSettings.downloadThreadsLimit = value.asInt
+                "downloadCount" -> DownloadSettings.downloadCount = value.asInt
+                "autoDownloadCount" -> DownloadSettings.autoDownloadCount = value.asInt
                 "fullScreenDelay" -> editor.putInt(key, value.asInt)
                 "historyCount" -> editor.putInt(key, value.asInt)
                 "lineSpacing" -> editor.putInt(key, value.asInt)

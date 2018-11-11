@@ -1,8 +1,10 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.compilePattern
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import org.jsoup.nodes.Element
 
 /**
  * Created by AoEiuV020 on 2018.06.08-18:47:21.
@@ -14,7 +16,9 @@ class N2kzw : DslJsoupNovelContext() {init {
         logo = "http://www.2kzw.com/17mb/images/logo.png"
     }
     // 这网站所有名字都是/遮天(精校版)/官道无疆(校对版)/
-    val pickNamePattern = "(\\S+)\\(\\S+版\\)?"
+    val pickName = { e: Element ->
+        e.text().replace(compilePattern("\\(\\S+版\\)$").toRegex(), "")
+    }
     search {
         get {
             // http://www.2kzw.com/modules/article/search.php?searchtype=articlename&searchkey=%B6%BC%CA%D0&page=1
@@ -30,11 +34,11 @@ class N2kzw : DslJsoupNovelContext() {init {
         }
         document {
             single("^/\\d+/\\d+/") {
-                name("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > h1", block = pickString(pickNamePattern))
+                name("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > h1", block = pickName)
                 author("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > span > a")
             }
             items("body > div.main.w > ul > li") {
-                name("> p.d1 > a", block = pickString(pickNamePattern))
+                name("> p.d1 > a", block = pickName)
                 author("> p.d2 > span.author > a")
             }
         }
@@ -45,7 +49,7 @@ class N2kzw : DslJsoupNovelContext() {init {
     detail {
         document {
             novel {
-                name("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > h1", block = pickString(pickNamePattern))
+                name("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > h1", block = pickName)
                 author("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > span > a")
             }
             image("body > div.main.w > div.articleinfo > div.l > p > img")

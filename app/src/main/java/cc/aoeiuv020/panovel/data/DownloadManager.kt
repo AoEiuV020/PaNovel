@@ -7,7 +7,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.download.DownloadNotificationManager
 import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.DownloadSettings
 import cc.aoeiuv020.panovel.util.safelyShow
 import kotlinx.android.synthetic.main.dialog_download_count.view.*
 import org.jetbrains.anko.*
@@ -48,7 +48,7 @@ class DownloadManager(
             val left = AtomicInteger(last - fromIndex)
             if (left.get() <= 0) return@doAsync
             val nextIndex = AtomicInteger(fromIndex)
-            val threadsLimit = maxOf(1, GeneralSettings.downloadThreadsLimit)
+            val threadsLimit = maxOf(1, DownloadSettings.downloadThreadsLimit)
             debug {
                 "download start <$fromIndex/$size> * $threadsLimit"
             }
@@ -110,7 +110,7 @@ class DownloadManager(
     // 不能用全局application的Context弹对话框，
     // WindowManager$BadTokenException: Unable to add window -- token null is not for an application
     fun askDownload(ctx: Context, novelManager: NovelManager, currentIndex: Int, fromFirst: Boolean): Boolean {
-        val defaultCount = GeneralSettings.downloadCount.takeIf { it >= 0 }
+        val defaultCount = DownloadSettings.downloadCount.takeIf { it >= 0 }
                 ?: 50
         ctx.alert {
             titleResource = R.string.download_chapters_count
@@ -129,7 +129,7 @@ class DownloadManager(
             fun remember() {
                 if (cbRemember.isChecked) {
                     etCount.text.toString().toIntOrNull()?.let {
-                        GeneralSettings.downloadCount = it
+                        DownloadSettings.downloadCount = it
                     }
                 }
             }

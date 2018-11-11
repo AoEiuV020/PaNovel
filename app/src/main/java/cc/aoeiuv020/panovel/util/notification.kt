@@ -119,6 +119,9 @@ class NotifyLoopProxy(
     }
 
     fun cancel(cancelDelay: Long = DEFAULT_CANCEL_DELAY) {
+        if (canceled) {
+            return
+        }
         canceled = true
         this.cancelDelay = cancelDelay
         if (!waiting) {

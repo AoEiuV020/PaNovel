@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
+        android:defaultValue="4"
+        android:inputType="number"
+        android:key="downloadThreadsLimit"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/download_thread_count" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="downloadProgress"
+        android:summary="@string/download_progress_summary"
+        android:title="@string/download_progress" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="downloadThreadProgress"
+        android:summary="@string/download_thread_progress_summary"
+        android:title="@string/download_thread_progress" />
+
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
+        android:defaultValue="-1"
+        android:inputType="number|numberSigned"
+        android:key="downloadCount"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/download_chapters_count_summary"
+        android:title="@string/download_chapters_count" />
+
+    <cc.aoeiuv020.panovel.settings.IntEditTextPreference
+        android:capitalize="words"
+        android:defaultValue="0"
+        android:inputType="number|numberSigned"
+        android:key="autoDownloadCount"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/auto_download_chapters_count_summary"
+        android:title="@string/auto_download_chapters_count" />
+
+</PreferenceScreen>

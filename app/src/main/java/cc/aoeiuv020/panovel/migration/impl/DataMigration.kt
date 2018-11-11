@@ -71,7 +71,7 @@ class DataMigration : Migration(), AnkoLogger {
                 "textColor" to { value -> ReaderSettings.textColor = value.asInt },
                 "backgroundColor" to { value -> ReaderSettings.backgroundColor = value.asInt },
                 "historyCount" to { value -> GeneralSettings.historyCount = value.asInt },
-                "downloadThreadCount" to { value -> GeneralSettings.downloadThreadsLimit = value.asInt },
+                "downloadThreadCount" to { value -> DownloadSettings.downloadThreadsLimit = value.asInt },
                 "chapterColorDefault" to { value -> OtherSettings.chapterColorDefault = value.asInt },
                 "chapterColorCached" to { value -> OtherSettings.chapterColorCached = value.asInt },
                 "chapterColorReadAt" to { value -> OtherSettings.chapterColorReadAt = value.asInt },
