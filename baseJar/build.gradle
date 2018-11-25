@@ -1,6 +1,6 @@
 dependencies {
-    api 'com.github.AoEiuV020.AndroidDemo:gson:' + a_gson_version
-    api 'com.github.AoEiuV020.AndroidDemo:jsonpath:' + a_jsonpath_version
+    api 'cc.aoeiuv020:gson:' + a_gson_version
+    api 'cc.aoeiuv020:jsonpath:' + a_jsonpath_version
+    api 'cc.aoeiuv020:okhttp:' + a_okhttp_version
     api 'org.jsoup:jsoup:' + jsoup_version
-    api 'com.github.AoEiuV020.AndroidDemo:okhttp:' + a_okhttp_version
 }
