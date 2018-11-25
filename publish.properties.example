@@ -1,0 +1,7 @@
+# suppress inspection "UnusedProperty" for whole file
+bintrayUser=aoeiuv020
+bintrayKey=
+userOrg=aoeiuv020
+groupId=cc.aoeiuv020
+website=https://github.com/AoEiuV020/AndroidDemo
+licences=MIT
