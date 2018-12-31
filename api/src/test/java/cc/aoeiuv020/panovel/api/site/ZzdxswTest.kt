@@ -8,7 +8,9 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.06.09-19:10:45.
  */
 class ZzdxswTest : BaseNovelContextText(Zzdxsw::class) {
-    override var enabled: Boolean = false
+    init {
+        enabled = false
+    }
     @Test
     fun regex() {
         val r = "(//[^/]+)?/([^/]+)"
