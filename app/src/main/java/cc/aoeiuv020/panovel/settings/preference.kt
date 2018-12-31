@@ -194,3 +194,28 @@ class ColorPickerPreference : com.flask.colorpicker.ColorPickerPreference {
     }
 }
 
+class FilePickerPreference : com.github.angads25.filepicker.view.FilePickerPreference {
+    constructor(context: Context)
+            : super(context)
+
+    constructor(context: Context, attrs: AttributeSet?)
+            : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
+            : super(context, attrs, defStyleAttr)
+
+
+    override fun onSelectedFilePaths(files: Array<String>) {
+        val dFiles = files.joinToString(":")
+        if (isPersistent) {
+            persistString(dFiles)
+        }
+        try {
+            onPreferenceChangeListener.onPreferenceChange(this, dFiles)
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+        }
+    }
+
+}
+

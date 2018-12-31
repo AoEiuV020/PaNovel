@@ -59,4 +59,5 @@ dependencies {
     implementation project(':IronDB')
     implementation 'com.github.santalu:aspect-ratio-imageview:1.0.4'
     implementation project(':local')
+    compile 'com.github.angads25:filepicker:1.1.1'
 }

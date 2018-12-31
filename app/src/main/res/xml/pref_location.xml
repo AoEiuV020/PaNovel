@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <cc.aoeiuv020.panovel.settings.FilePickerPreference
         android:key="cacheLocation"
         android:summary="@string/settings_cache_location_summary"
-        android:title="@string/settings_cache_location" />
+        android:title="@string/settings_cache_location"
+        app:error_dir="/mnt"
+        app:root_dir="/sdcard"
+        app:selection_type="dir_select" />
+
 </PreferenceScreen>
