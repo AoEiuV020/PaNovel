@@ -5,8 +5,6 @@
         android:key="cacheLocation"
         android:summary="@string/settings_cache_location_summary"
         android:title="@string/settings_cache_location"
-        app:error_dir="/mnt"
-        app:root_dir="/sdcard"
         app:selection_type="dir_select" />
 
 </PreferenceScreen>

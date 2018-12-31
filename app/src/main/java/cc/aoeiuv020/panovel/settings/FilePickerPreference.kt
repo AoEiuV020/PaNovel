@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.settings
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.os.Bundle
@@ -27,17 +28,22 @@ class FilePickerPreference : Preference, DialogSelectionListener, Preference.OnP
     private var titleText: String? = null
 
     constructor(context: Context) : super(context) {
-        onPreferenceClickListener = this
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        init()
         initProperties(attrs)
-        onPreferenceClickListener = this
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        init()
         initProperties(attrs)
+    }
+
+    private fun init() {
         onPreferenceClickListener = this
+        properties.offset = File(defaultPath)
     }
 
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
@@ -45,11 +51,21 @@ class FilePickerPreference : Preference, DialogSelectionListener, Preference.OnP
     }
 
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-        val defaultString: String = (defaultValue as? String) ?: ""
+        // 当前值为空时给个全局的默认值，是app在sd卡的私有目录，
+        val defaultString: String = (defaultValue as? String) ?: defaultPath
         val value = if (restorePersistedValue) this.getPersistedString(defaultString) else defaultString
         properties.offset = File(value.split(':').first())
         setProperties(properties)
     }
+
+    private val defaultPath: String
+        // 默认根目录是/mnt，这库有判断路径要是根目录开头才能用，所以不能通过getExternalFilesDir获取，
+        @SuppressLint("SdCardPath")
+        get() = (File("/mnt/sdcard/Android/data/${context.packageName}/files")
+                .apply { exists() || mkdirs() }
+                .takeIf { it.canWrite() }
+                ?: context.filesDir
+                ).absolutePath
 
     override fun onBindView(view: View) {
         super.onBindView(view)
