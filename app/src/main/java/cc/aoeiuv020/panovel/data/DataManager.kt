@@ -35,6 +35,7 @@ object DataManager : AnkoLogger {
     lateinit var local: LocalManager
     @SuppressLint("StaticFieldLeak")
     lateinit var download: DownloadManager
+
     @Synchronized
     fun init(ctx: Context) {
         if (!::app.isInitialized) {
@@ -101,19 +102,38 @@ object DataManager : AnkoLogger {
     /**
      * 同步所有网站到数据库，app升级时调用一次就好，
      */
-    fun syncSites(): List<Site> = app.db.runInTransaction<List<Site>> {
-        allNovelContexts().map { context ->
+    fun syncSites() = app.db.runInTransaction<Unit> {
+        val existsSites = listSites()
+        existsSites.forEach { site ->
+            val context = try {
+                api.getNovelContextByName(site.name)
+            } catch (e: Exception) {
+                app.db.siteDao().removeSite(site)
+                return@forEach
+            }
+            var dirdy = false
+            if (site.hide != context.hide) {
+                site.hide = context.hide
+                dirdy = true
+            }
+            if (site.baseUrl != context.site.baseUrl) {
+                site.baseUrl = context.site.baseUrl
+                dirdy = true
+            }
+            if (site.logo != context.site.logo) {
+                site.logo = context.site.logo
+                dirdy = true
+            }
+            // 如果有变化，就更新该字段，
+            if (dirdy) {
+                app.db.siteDao().updateSite(site)
+            }
+        }
+        // 新增的网站加入网站表，
+        val existsSiteNameSet = existsSites.map { it.name }.toSet()
+        allNovelContexts().filter { it.site.name !in existsSiteNameSet }.forEach { context ->
             context.site.run {
-                app.queryOrNewSite(name, baseUrl, logo, context.enabled)
-            }.also { site ->
-                if (site.baseUrl != context.site.baseUrl
-                        || site.logo != context.site.logo) {
-                    // 比如网站logo地址可能改了，
-                    // 主要是有的网站logo是我发到百度外链的，可能被删除，
-                    site.baseUrl = context.site.baseUrl
-                    site.logo = context.site.logo
-                    app.updateSiteInfo(site)
-                }
+                app.newSite(name, baseUrl, logo, context.enabled, context.hide)
             }
         }
     }
@@ -224,6 +244,7 @@ object DataManager : AnkoLogger {
 
     // 不包括本地小说，
     fun getNovelMinimalFromBookList(bookListId: Long): List<NovelMinimal> = app.getNovelMinimalFromBookList(bookListId)
+
     fun allBookList() = app.allBookList()
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)
     fun removeBookList(bookList: BookList) = app.removeBookList(bookList)
