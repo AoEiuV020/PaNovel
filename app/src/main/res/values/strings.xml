@@ -233,5 +233,6 @@
     <string name="download_progress_summary">下载进度用通知方式展示进度，</string>
     <string name="download_thread_progress">下载线程进度通知</string>
     <string name="download_thread_progress_summary">下载中线程的进度用通知方式展示进度，</string>
+    <string name="tip_init_cache_failed_place_holder">初始化缓存目录(%s)失败</string>
 
 </resources>

@@ -1,0 +1,17 @@
+package cc.aoeiuv020.panovel.settings
+
+import cc.aoeiuv020.panovel.util.Delegates
+import cc.aoeiuv020.panovel.util.Pref
+
+/**
+ * Created by AoEiuV020 on 2018.12.31-20:41:11.
+ */
+@Suppress("unused")
+object LocationSettings : Pref {
+    override val name: String
+        get() = "Location"
+    var downloadLocation: String by Delegates.string("")
+    var cacheLocation: String by Delegates.string(ctx.cacheDir.absolutePath)
+    var exportLocation: String by Delegates.string("")
+    var backupLocation: String by Delegates.string("")
+}
