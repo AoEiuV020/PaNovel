@@ -14,8 +14,8 @@ import java.util.*
 class Jdxs520 : DslJsoupNovelContext() {init {
     site {
         name = "经典小说520"
-        baseUrl = "http://www.jdxs5200.com"
-        logo = "http://www.jdxs5200.com/jdxs/images/logo.png"
+        baseUrl = "http://www.jdxs5200.net"
+        logo = "http://www.jdxs5200.net/jdxs/images/logo.png"
     }
     search {
         get {
