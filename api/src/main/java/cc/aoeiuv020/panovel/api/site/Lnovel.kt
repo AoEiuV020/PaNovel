@@ -75,6 +75,7 @@ class Lnovel : DslJsoupNovelContext() {init {
                 // 没必要，referer只要是这个网站都可以，
                 referer = absUrl("/read/%s.html".format(it))
                 userAgent = ua
+                "accept-language" to "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6"
             }
         }
         response {
