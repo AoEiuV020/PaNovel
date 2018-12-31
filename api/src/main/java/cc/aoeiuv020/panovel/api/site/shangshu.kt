@@ -11,6 +11,7 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
  * Created by AoEiuV020 on 2018.06.07-14:02:53.
  */
 class Shangshu : DslJsoupNovelContext() {init {
+    enabled = false
     site {
         name = "上书网"
         baseUrl = "https://www.shangshu.cc"
