@@ -38,7 +38,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     protected val context: NovelContext = clazz.java.newInstance()
 
     protected fun search(name: String, author: String, extra: String, count: Int = 3): NovelItem? {
-        if (!enabled) return null
+        if (context.hide || !enabled) return null
         val list = context.searchNovelName(name)
         println(list.size)
         list.take(count).forEach {
@@ -48,7 +48,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     }
 
     protected fun search(name: String, count: Int = 3): List<NovelItem>? {
-        if (!enabled) return null
+        if (context.hide || !enabled) return null
         val list = context.searchNovelName(name)
         println(list.size)
         list.take(count).forEach {
@@ -60,7 +60,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
 
     protected fun detail(detailExtra: String, extra: String, name: String, author: String,
                          image: String?, intro: String? = null, update: String? = null): NovelDetail? {
-        if (!enabled) return null
+        if (context.hide || !enabled) return null
         val detail = context.getNovelDetail(detailExtra)
         println(detail)
         assertEquals(name, detail.novel.name)
@@ -95,7 +95,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
                            lastName: String, lastExtra: String, lastUpdate: String?,
                            size: Int,
                            count: Int = 3): List<NovelChapter>? {
-        if (!enabled) return null
+        if (context.hide || !enabled) return null
         val list = context.getNovelChaptersAsc(extra)
         println(list.size)
         list.take(count).forEach {
@@ -126,7 +126,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
                           firstLine: String,
                           lastLine: String,
                           size: Int, count: Int = 3): List<String>? {
-        if (!enabled) return null
+        if (context.hide || !enabled) return null
         val list = content(extra).notNull()
         println(list.size)
         list.take(count).forEach {
@@ -142,7 +142,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     }
 
     protected fun content(extra: String): List<String>? {
-        if (!enabled) return null
+        if (context.hide || !enabled) return null
         return context.getNovelContent(extra) { c, t ->
             println("$c/$t")
         }

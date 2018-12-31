@@ -27,7 +27,7 @@ abstract class NovelContext {
                 Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
                 Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
 
-                Lread(), Wenxuemi(), Yipinxia(),/* N360dxs(),*/ N7dsw(),
+                Lread(), Wenxuemi(), Yipinxia(), N360dxs(), N7dsw(),
                 Aileleba(), Gulizw(), N73xs(), Siluke(), Wukong(),
 
                 Exiaoshuo(), Dajiadu(), Liewen(), Qingkan5(), Bqg5200(),
@@ -178,6 +178,11 @@ abstract class NovelContext {
      * 这个网站是否启用，
      */
     open val enabled: Boolean = true
+
+    /**
+     * 这个网站是否隐藏，
+     */
+    open val hide: Boolean = false
 
     abstract val site: NovelSite
 
