@@ -18,8 +18,20 @@ import java.util.*
  * Created by AoEiuV020 on 2018.05.23-22:08:14.
  */
 class CacheManager(ctx: Context) {
+    private val contentDBMap = WeakHashMap<Long, Database>()
     // 所有都保存在/data/data/cc.aoeiuv020.panovel/cache/novel
-    private val root = try {
+    private var root: Database
+
+    init {
+        root = initCacheLocation(ctx)
+    }
+
+    fun resetCacheLocation(ctx: Context) {
+        contentDBMap.clear()
+        root = initCacheLocation(ctx)
+    }
+
+    fun initCacheLocation(ctx: Context): Database = try {
         Iron.db(File(LocationSettings.cacheLocation)).sub(KEY_NOVEL)
     } catch (e: Exception) {
         Reporter.post("初始化缓存目录<${LocationSettings.cacheLocation}>失败，", e)
@@ -29,7 +41,6 @@ class CacheManager(ctx: Context) {
         Iron.db(ctx.cacheDir).sub(KEY_NOVEL)
     }
 
-    private val contentDBMap = WeakHashMap<Long, Database>()
     private fun getContentDB(novel: Novel) = contentDBMap.getOrPut(novel.nId) {
         root.sub(novel.site).sub(novel.author).sub(novel.name).sub(KEY_CONTENT)
     }

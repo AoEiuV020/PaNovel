@@ -61,6 +61,10 @@ object DataManager : AnkoLogger {
         }
     }
 
+    fun resetCacheLocation(ctx: Context) {
+        cache.resetCacheLocation(ctx)
+    }
+
     fun listBookshelf(): List<NovelManager> = app.listBookshelf(ListSettings.bookshelfOrderBy).map { it.toManager() }
 
     /**
