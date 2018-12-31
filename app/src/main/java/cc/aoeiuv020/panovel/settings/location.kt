@@ -12,7 +12,6 @@ import cc.aoeiuv020.panovel.util.Pref
 object LocationSettings : Pref {
     override val name: String
         get() = "Location"
-    var downloadLocation: String by Delegates.string("")
     var cacheLocation: String by Delegates.string(ctx.cacheDir.absolutePath)
     var backupLocation: String by Delegates.string(sdcardResolve(BackupPresenter.NAME_FOLDER))
     var exportLocation: String by Delegates.string(sdcardResolve(NovelExporter.NAME_FOLDER))
