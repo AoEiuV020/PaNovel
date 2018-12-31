@@ -191,6 +191,8 @@ applicationModules.forEach { name ->
             runtimeOnly 'org.slf4j:slf4j-android:' + slf4j_version
             // slf4j的控制台简单实现，
             testImplementation 'org.slf4j:slf4j-simple:' + slf4j_version
+            // 支持使用浏览器调试数据库，
+            debugImplementation 'com.amitshekhar.android:debug-db:' + debug_db_version
             // 自己的kotlin通用工具集，
             implementation 'cc.aoeiuv020:commons:' + a_commons_version
         }
