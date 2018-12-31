@@ -23,7 +23,7 @@ class SfacgTest : BaseNovelContextText(Sfacg::class) {
     @Test
     fun detail() {
         detail("123589", "123589", "黑猫变成少女才不奇怪呢", "青衣流苏",
-                "http://rs.sfacg.com/web/novel/images/NovelCover/Big/2018/02/556aa0b6-25b5-43de-bd60-9a7bc9234ba5.jpg",
+                "http://rs.sfacg.com/web/novel/images/NovelCover/Big/defaultNew.jpg",
                 "逃避真实的世界是要付出代价的，而这个代价，我的妈妈为我垫付了十八年。\n" +
                         "这种假象一直维持到了那一刻，我捡回来的黑猫变成了美少女，所以说黑猫变成少女才不奇怪呢！",
                 "2018-05-17 22:51:10")
