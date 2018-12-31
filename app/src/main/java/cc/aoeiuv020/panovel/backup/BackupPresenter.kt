@@ -6,7 +6,9 @@ import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.LocationSettings
 import org.jetbrains.anko.*
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.FilenameFilter
 import java.io.IOException
@@ -39,10 +41,9 @@ class BackupPresenter : Presenter<BackupActivity>(), AnkoLogger {
                 view?.showError(message, e)
             }
         }) {
-            val baseFile = ctx.getExternalFilesDir(null)
-                    ?.resolve(NAME_FOLDER)
-                    ?.apply { exists() || mkdirs() }
-                    ?.takeIf { it.canWrite() }
+            val baseFile = File(LocationSettings.backupLocation)
+                    .apply { exists() || mkdirs() }
+                    .takeIf { it.canWrite() }
                     ?: ctx.filesDir
                             .resolve(NAME_FOLDER)
                             .apply { exists() || mkdirs() }

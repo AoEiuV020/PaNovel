@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.settings
 
+import cc.aoeiuv020.panovel.backup.BackupPresenter
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
 
@@ -13,5 +14,14 @@ object LocationSettings : Pref {
     var downloadLocation: String by Delegates.string("")
     var cacheLocation: String by Delegates.string(ctx.cacheDir.absolutePath)
     var exportLocation: String by Delegates.string("")
-    var backupLocation: String by Delegates.string("")
+    var backupLocation: String by Delegates.string((
+            // 优先SD卡，不可用就filesDir,
+            ctx.getExternalFilesDir(null)
+                    ?.resolve(BackupPresenter.NAME_FOLDER)
+                    ?.apply { exists() || mkdirs() }
+                    ?.takeIf { it.canWrite() }
+                    ?: ctx.filesDir
+                            .resolve(BackupPresenter.NAME_FOLDER)
+            ).absolutePath
+    )
 }
