@@ -44,6 +44,8 @@ class ReaderPreferenceFragment : BasePreferenceFragment(ReaderSettings, R.xml.pr
 
 class DownloadPreferenceFragment : BasePreferenceFragment(DownloadSettings, R.xml.pref_download)
 
+class LocationPreferenceFragment : BasePreferenceFragment(LocationSettings, R.xml.pref_location)
+
 class ServerPreferenceFragment : BasePreferenceFragment(ServerSettings, R.xml.pref_server)
 
 class OthersPreferenceFragment : BasePreferenceFragment(OtherSettings, R.xml.pref_others)

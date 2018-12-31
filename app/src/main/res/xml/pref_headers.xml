@@ -19,6 +19,10 @@
         android:title="@string/pref_header_download" />
 
     <header
+        android:fragment="cc.aoeiuv020.panovel.settings.LocationPreferenceFragment"
+        android:title="@string/pref_header_location" />
+
+    <header
         android:fragment="cc.aoeiuv020.panovel.settings.ServerPreferenceFragment"
         android:title="@string/pref_header_server" />
 
