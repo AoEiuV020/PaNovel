@@ -237,5 +237,9 @@
     <string name="pref_header_location">路径设置</string>
     <string name="settings_cache_location">缓存路径</string>
     <string name="settings_cache_location_summary">小说章节正文等各种缓存的所在路径，重启生效，</string>
+    <string name="settings_backup_location">备份路径</string>
+    <string name="settings_backup_location_summary">备份数据页面提供的默认路径，</string>
+    <string name="settings_export_location">导出路径</string>
+    <string name="settings_export_location_summary">导出小说所在的路径，</string>
 
 </resources>
