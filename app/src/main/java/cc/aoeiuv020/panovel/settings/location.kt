@@ -14,22 +14,16 @@ object LocationSettings : Pref {
         get() = "Location"
     var downloadLocation: String by Delegates.string("")
     var cacheLocation: String by Delegates.string(ctx.cacheDir.absolutePath)
-    var backupLocation: String by Delegates.string((
-            // 优先SD卡，不可用就filesDir,
+    var backupLocation: String by Delegates.string(sdcardResolve(BackupPresenter.NAME_FOLDER))
+    var exportLocation: String by Delegates.string(sdcardResolve(NovelExporter.NAME_FOLDER))
+
+    // 优先SD卡，不可用就私有目录,
+    private fun sdcardResolve(name: String): String = (
             ctx.getExternalFilesDir(null)
-                    ?.resolve(BackupPresenter.NAME_FOLDER)
+                    ?.resolve(name)
                     ?.apply { exists() || mkdirs() }
                     ?.takeIf { it.canWrite() }
-                    ?: ctx.filesDir.resolve(BackupPresenter.NAME_FOLDER)
+                    ?: ctx.filesDir.resolve(name)
             ).absolutePath
-    )
-    var exportLocation: String by Delegates.string((
-            // 优先SD卡，不可用就filesDir,
-            ctx.getExternalFilesDir(null)
-                    ?.resolve(NovelExporter.NAME_FOLDER)
-                    ?.apply { exists() || mkdirs() }
-                    ?.takeIf { it.canWrite() }
-                    ?: ctx.filesDir.resolve(NovelExporter.NAME_FOLDER)
-            ).absolutePath
-    )
+
 }
