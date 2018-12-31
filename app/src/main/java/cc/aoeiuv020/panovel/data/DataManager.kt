@@ -102,7 +102,7 @@ object DataManager : AnkoLogger {
     /**
      * 同步所有网站到数据库，app升级时调用一次就好，
      */
-    fun syncSites() = app.db.runInTransaction<Unit> {
+    fun syncSites(): Unit = app.db.runInTransaction<Unit> {
         val existsSites = listSites()
         existsSites.forEach { site ->
             val context = try {
@@ -111,21 +111,21 @@ object DataManager : AnkoLogger {
                 app.db.siteDao().removeSite(site)
                 return@forEach
             }
-            var dirdy = false
+            var dirty = false
             if (site.hide != context.hide) {
                 site.hide = context.hide
-                dirdy = true
+                dirty = true
             }
             if (site.baseUrl != context.site.baseUrl) {
                 site.baseUrl = context.site.baseUrl
-                dirdy = true
+                dirty = true
             }
             if (site.logo != context.site.logo) {
                 site.logo = context.site.logo
-                dirdy = true
+                dirty = true
             }
             // 如果有变化，就更新该字段，
-            if (dirdy) {
+            if (dirty) {
                 app.db.siteDao().updateSite(site)
             }
         }
