@@ -26,9 +26,9 @@ class Lread : DslJsoupNovelContext() {init {
         }
         // 搜索结果可能过多，但是页面不太大，无所谓了，
         document {
-            items("body > div.search_box > p.search_list") {
+            items("body > div.main > div.searchresult > p") {
                 name("> a:nth-child(1)")
-                author("> a:nth-child(3)")
+                author("> span > a")
             }
         }
     }
