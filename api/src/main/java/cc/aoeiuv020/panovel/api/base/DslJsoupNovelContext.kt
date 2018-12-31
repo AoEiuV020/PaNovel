@@ -70,7 +70,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     override var charset: String? = null
     override var enabled: Boolean = true
-    override var hide: Boolean = true
+    override var hide: Boolean = false
 
     /*
     *************** interceptor ***************
