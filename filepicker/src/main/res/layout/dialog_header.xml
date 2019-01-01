@@ -15,7 +15,7 @@
         android:layout_marginLeft="@dimen/toolbar_image_margin"
         android:background="@null"
         android:scaleType="centerInside"
-        android:src="@mipmap/ic_directory_parent" />
+        android:src="@drawable/ic_add" />
 
     <LinearLayout
         android:layout_width="match_parent"

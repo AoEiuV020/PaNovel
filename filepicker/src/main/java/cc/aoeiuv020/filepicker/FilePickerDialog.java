@@ -18,15 +18,20 @@ package cc.aoeiuv020.filepicker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +68,7 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
     private ArrayList<FileListItem> internalList;
     private ExtensionFilter filter;
     private FileListAdapter mFileListAdapter;
+    private View imageView;
     private Button select;
     private String titleStr = null;
     private String positiveBtnNameStr = null;
@@ -101,6 +107,48 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
         listView = (ListView) findViewById(R.id.fileList);
         select = (Button) findViewById(R.id.select);
         resetSelectBottom();
+        imageView = findViewById(R.id.imageView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.create_folder);
+                View view = LayoutInflater.from(context).inflate(R.layout.dialog_input_text, null);
+                final EditText input = view.findViewById(R.id.etInput);
+                builder.setView(view);
+                setOnShowListener(new OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                });
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String name = input.getText().toString();
+                        File cur = new File(dir_path.getText().toString());
+                        File newFolder = new File(cur, name);
+                        // 无视失败情况，
+                        newFolder.mkdirs();
+                        FileListItem item = new FileListItem();
+                        item.setFilename(newFolder.getName());
+                        item.setDirectory(newFolder.isDirectory());
+                        item.setLocation(newFolder.getAbsolutePath());
+                        item.setTime(newFolder.lastModified());
+                        internalList.add(1, item);
+                        mFileListAdapter.notifyDataSetChanged();
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        });
         dname = (TextView) findViewById(R.id.dname);
         title = (TextView) findViewById(R.id.title);
         dir_path = (TextView) findViewById(R.id.dir_path);
