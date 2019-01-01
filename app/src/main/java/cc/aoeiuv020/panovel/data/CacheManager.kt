@@ -31,14 +31,14 @@ class CacheManager(ctx: Context) {
         root = initCacheLocation(ctx)
     }
 
-    fun initCacheLocation(ctx: Context): Database = try {
-        Iron.db(File(LocationSettings.cacheLocation)).sub(KEY_NOVEL)
+    private fun initCacheLocation(ctx: Context): Database = try {
+        Iron.db(File(LocationSettings.cacheLocation))
     } catch (e: Exception) {
         Reporter.post("初始化缓存目录<${LocationSettings.cacheLocation}>失败，", e)
         ctx.toast(ctx.getString(R.string.tip_init_cache_failed_place_holder, LocationSettings.cacheLocation))
         // 失败一次就改成默认的，以免反复失败，
-        LocationSettings.cacheLocation = ctx.cacheDir.absolutePath
-        Iron.db(ctx.cacheDir).sub(KEY_NOVEL)
+        LocationSettings.cacheLocation = ctx.cacheDir.resolve(NAME_FOLDER).absolutePath
+        Iron.db(ctx.cacheDir)
     }
 
     private fun getContentDB(novel: Novel) = contentDBMap.getOrPut(novel.nId) {
@@ -81,7 +81,7 @@ class CacheManager(ctx: Context) {
     }
 
     companion object {
-        const val KEY_NOVEL = "novel"
+        const val NAME_FOLDER = "novel"
         const val KEY_CHAPTERS = "chapters"
         const val KEY_CONTENT = "content"
     }

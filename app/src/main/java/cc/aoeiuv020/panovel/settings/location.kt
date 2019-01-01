@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.settings
 
 import cc.aoeiuv020.panovel.backup.BackupPresenter
+import cc.aoeiuv020.panovel.data.CacheManager
 import cc.aoeiuv020.panovel.local.NovelExporter
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
@@ -12,7 +13,7 @@ import cc.aoeiuv020.panovel.util.Pref
 object LocationSettings : Pref {
     override val name: String
         get() = "Location"
-    var cacheLocation: String by Delegates.string(ctx.cacheDir.absolutePath)
+    var cacheLocation: String by Delegates.string(ctx.cacheDir.resolve(CacheManager.NAME_FOLDER).absolutePath)
     var backupLocation: String by Delegates.string(sdcardResolve(BackupPresenter.NAME_FOLDER))
     var exportLocation: String by Delegates.string(sdcardResolve(NovelExporter.NAME_FOLDER))
 
