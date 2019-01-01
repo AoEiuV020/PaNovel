@@ -2,8 +2,8 @@ package cc.aoeiuv020.panovel.data
 
 import android.content.Context
 import android.support.annotation.WorkerThread
-import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.exception.interrupt
 import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel

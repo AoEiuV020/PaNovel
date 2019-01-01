@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.interrupt
+import cc.aoeiuv020.exception.interrupt
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.NovelProvider
 import cc.aoeiuv020.panovel.data.entity.Novel
