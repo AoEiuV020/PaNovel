@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.matches
 import cc.aoeiuv020.base.jar.ownTextListSplitWhitespace
-import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.regex.matches
+import cc.aoeiuv020.regex.pick
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*

@@ -17,7 +17,6 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.view.*
 import android.widget.ImageView
-import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.IView
@@ -34,6 +33,7 @@ import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.reader.*
 import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
+import cc.aoeiuv020.regex.pick
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.dialog_select_color_scheme.view.*

@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.compilePattern
+import cc.aoeiuv020.regex.compilePattern
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
