@@ -57,7 +57,7 @@ class LocationPreferenceFragment : BasePreferenceFragment(LocationSettings, R.xm
         }
     }
 
-    fun requestPermissions() {
+    private fun requestPermissions() {
         ActivityCompat.requestPermissions(activity, arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
