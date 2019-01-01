@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.api
 
-import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
+import cc.aoeiuv020.log.debug
 import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import okhttp3.Cookie

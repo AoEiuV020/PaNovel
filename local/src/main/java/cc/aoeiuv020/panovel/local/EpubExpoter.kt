@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.anull.notNull
-import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.error
+import cc.aoeiuv020.log.debug
+import cc.aoeiuv020.log.error
 import cc.aoeiuv020.regex.pick
 import cc.aoeiuv020.string.divide
 import cc.aoeiuv020.string.lastDivide
