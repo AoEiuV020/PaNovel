@@ -2,11 +2,11 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.atry.tryOrNul
 import cc.aoeiuv020.base.jar.compilePattern
-import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
+import cc.aoeiuv020.string.divide
 import org.jsoup.nodes.Element
 
 /**

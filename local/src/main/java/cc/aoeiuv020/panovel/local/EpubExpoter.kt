@@ -1,6 +1,11 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.*
+import cc.aoeiuv020.base.jar.debug
+import cc.aoeiuv020.base.jar.error
+import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.string.divide
+import cc.aoeiuv020.string.lastDivide
 import nl.siegmann.epublib.domain.Author
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.Resource

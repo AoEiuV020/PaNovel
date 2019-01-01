@@ -2,7 +2,6 @@ package cc.aoeiuv020.panovel.migration.impl
 
 import android.content.Context
 import android.net.Uri
-import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
@@ -12,6 +11,7 @@ import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.settings.*
 import cc.aoeiuv020.panovel.util.VersionName
+import cc.aoeiuv020.string.divide
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import org.jetbrains.anko.AnkoLogger
