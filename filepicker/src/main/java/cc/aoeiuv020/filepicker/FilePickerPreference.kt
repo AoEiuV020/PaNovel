@@ -55,8 +55,8 @@ class FilePickerPreference : Preference, DialogSelectionListener, Preference.OnP
         properties.offset = File(defaultPath)
     }
 
-    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return super.onGetDefaultValue(a, index)
+    override fun onGetDefaultValue(a: TypedArray, index: Int): Any? {
+        return a.getString(index).replace("\${applicationId}", context.packageName)
     }
 
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
