@@ -1,0 +1,6 @@
+dependencies {
+}
+publish {
+    licences = ["Apache-2.0"]
+}
+
