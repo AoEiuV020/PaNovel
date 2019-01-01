@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.api
 
-import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
+import cc.aoeiuv020.log.debug
 import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import okhttp3.Cookie
@@ -27,7 +27,7 @@ abstract class NovelContext {
                 Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
                 Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
 
-                Lread(), Wenxuemi(), Yipinxia(),/* N360dxs(),*/ N7dsw(),
+                Lread(), Wenxuemi(), Yipinxia(), N360dxs(), N7dsw(),
                 Aileleba(), Gulizw(), N73xs(), Siluke(), Wukong(),
 
                 Exiaoshuo(), Dajiadu(), Liewen(), Qingkan5(), Bqg5200(),
@@ -178,6 +178,11 @@ abstract class NovelContext {
      * 这个网站是否启用，
      */
     open val enabled: Boolean = true
+
+    /**
+     * 这个网站是否隐藏，
+     */
+    open val hide: Boolean = false
 
     abstract val site: NovelSite
 

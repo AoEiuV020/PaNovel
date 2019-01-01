@@ -2,9 +2,11 @@
 
 package cc.aoeiuv020.base.jar
 
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.okhttp.charset
 import cc.aoeiuv020.okhttp.url
+import cc.aoeiuv020.regex.compileRegex
 import okhttp3.Call
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

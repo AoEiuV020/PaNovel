@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.base64Decode
-import cc.aoeiuv020.base.jar.cipherDecrypt
-import cc.aoeiuv020.base.jar.md5
-import cc.aoeiuv020.base.jar.sha1
+import cc.aoeiuv020.encrypt.base64Decode
+import cc.aoeiuv020.encrypt.cipherDecrypt
+import cc.aoeiuv020.encrypt.md5
+import cc.aoeiuv020.encrypt.sha1
 import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
@@ -75,6 +75,7 @@ class Lnovel : DslJsoupNovelContext() {init {
                 // 没必要，referer只要是这个网站都可以，
                 referer = absUrl("/read/%s.html".format(it))
                 userAgent = ua
+                "accept-language" to "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6"
             }
         }
         response {

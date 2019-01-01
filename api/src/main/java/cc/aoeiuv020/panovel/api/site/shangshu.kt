@@ -1,16 +1,17 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.compileRegex
 import cc.aoeiuv020.base.jar.ownTextListSplitWhitespace
 import cc.aoeiuv020.base.jar.splitWhitespace
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import cc.aoeiuv020.regex.compileRegex
 
 /**
  * Created by AoEiuV020 on 2018.06.07-14:02:53.
  */
 class Shangshu : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "上书网"
         baseUrl = "https://www.shangshu.cc"

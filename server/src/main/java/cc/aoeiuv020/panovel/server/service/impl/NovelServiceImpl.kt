@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.server.service.impl
 
-import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.gson.type
+import cc.aoeiuv020.log.debug
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.bookId
@@ -20,7 +20,6 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.lang.IllegalStateException
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cancel_button_label">取消</string>
+    <string name="choose_button_label">選擇</string>
+    <string name="label_parent_directory">上層資料夾</string>
+    <string name="last_edit">最後修改：</string>
+    <string name="error_dir_access">文件夾無法訪問</string>
+    <string name="create_folder">新建文件夾</string>
+    <string name="folder_name">文件夾名稱</string>
+</resources>

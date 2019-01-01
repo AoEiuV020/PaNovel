@@ -21,7 +21,7 @@ import cc.aoeiuv020.panovel.data.entity.Site
  */
 @Database(
         entities = [Novel::class, Site::class, BookListItem::class, BookList::class],
-        version = 3
+        version = 4
 )
 @TypeConverters(value = [DateTypeConverter::class])
 abstract class AppDatabase : RoomDatabase() {
@@ -36,7 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
                     dbFile.path)
                     // 版本1的数据库只有网站启用设置，不迁移，略麻烦，
                     .fallbackToDestructiveMigrationFrom(1)
-                    .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                     .build().also {
                         sInstance = it
                     }
@@ -52,6 +52,12 @@ abstract class AppDatabase : RoomDatabase() {
         val MIGRATION_2_3 = migration(2, 3) {
             // Site表添加了置顶时间的字段，
             it.execSQL("ALTER TABLE Site ADD pinnedTime integer default 0 NOT NULL;")
+        }
+
+        @VisibleForTesting
+        val MIGRATION_3_4 = migration(3, 4) {
+            // Site表添加了置顶时间的字段，
+            it.execSQL("ALTER TABLE Site ADD hide INTEGER default 0 NOT NULL;")
         }
     }
 

@@ -21,6 +21,7 @@ internal class DatabaseImpl(
 
     init {
         base.exists() || base.mkdirs() || throw IOException("failed mkdirs ${base.path}")
+        base.canWrite() || throw IOException("failed write ${base.path}")
     }
 
     override fun sub(table: String) = DatabaseImpl(

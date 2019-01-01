@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 // 这个曾经是个轻小说网站，貌似已经没了，
 @Suppress("unused")
 class N360dxs : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "360°C小说"
         baseUrl = "http://www.360dxs.com"

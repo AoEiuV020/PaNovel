@@ -1,9 +1,14 @@
 package cc.aoeiuv020.panovel.settings
 
+import android.Manifest
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.preference.TwoStatePreference
+import android.support.v4.app.ActivityCompat
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.util.Pref
 import cc.aoeiuv020.panovel.util.attach
 
@@ -43,6 +48,37 @@ class ListPreferenceFragment : BasePreferenceFragment(ListSettings, R.xml.pref_l
 class ReaderPreferenceFragment : BasePreferenceFragment(ReaderSettings, R.xml.pref_read)
 
 class DownloadPreferenceFragment : BasePreferenceFragment(DownloadSettings, R.xml.pref_download)
+
+class LocationPreferenceFragment : BasePreferenceFragment(LocationSettings, R.xml.pref_location), SharedPreferences.OnSharedPreferenceChangeListener {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        when (key) {
+            // 缓存目录修改立即生效，
+            "cacheLocation" -> DataManager.resetCacheLocation(activity.notNull())
+        }
+    }
+
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(activity, arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ), 1)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        requestPermissions()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+    }
+}
 
 class ServerPreferenceFragment : BasePreferenceFragment(ServerSettings, R.xml.pref_server)
 

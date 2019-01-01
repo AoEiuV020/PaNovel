@@ -54,3 +54,5 @@ freeline_project_description.json
 ###
 /release
 /signing.properties
+/publish.properties
+class_files.txt

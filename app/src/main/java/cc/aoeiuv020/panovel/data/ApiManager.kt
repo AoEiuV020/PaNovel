@@ -30,6 +30,9 @@ class ApiManager(ctx: Context) {
     }
 
     @Suppress("unused")
+    fun siteNameContains(name: String) = nameMap.containsKey(name)
+
+    @Suppress("unused")
     fun getNovelContextByUrl(url: String): NovelContext {
         return hostMap[URL(url).host]
                 ?: contexts.firstOrNull { it.check(url) }

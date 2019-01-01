@@ -5,9 +5,11 @@ import android.content.Context
 import android.support.v4.app.NotificationCompat
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.backup.BackupPresenter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.main.MainActivity
+import cc.aoeiuv020.panovel.settings.LocationSettings
 import cc.aoeiuv020.panovel.util.NotifyLoopProxy
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import com.bumptech.glide.Glide
@@ -29,8 +31,7 @@ class NovelExporter(
         private val progressCallback: (Int, Int) -> Unit
 ) : AnkoLogger {
     companion object : AnkoLogger {
-        private const val TEXT_FOLDER = "Text"
-        private const val EPUB_FOLDER = "Epub"
+        const val NAME_FOLDER = "Export"
 
         override val loggerTag: String
             get() = "NovelExporter"
@@ -44,16 +45,13 @@ class NovelExporter(
                 novel.run { "$name.$author.$site${type.suffix}" }
             }
             // 尝试导出到sd卡，没有就导出到私有目录，虽然这样的导出好像没什么意义，
-            val filesDir = ctx.getExternalFilesDir(null)
-                    ?.apply { exists() || mkdirs() }
-                    ?.takeIf { it.canWrite() }
+            val baseFile = File(LocationSettings.exportLocation)
+                    .apply { exists() || mkdirs() }
+                    .takeIf { it.canWrite() }
                     ?: ctx.filesDir
-            val file = filesDir
-                    .resolve(when (type) {
-                        LocalNovelType.TEXT -> NovelExporter.TEXT_FOLDER
-                        LocalNovelType.EPUB -> NovelExporter.EPUB_FOLDER
-                    }).apply { exists() || mkdirs() }
-                    .resolve(fileName)
+                            .resolve(BackupPresenter.NAME_FOLDER)
+                            .apply { exists() || mkdirs() }
+            val file = baseFile.resolve(fileName)
             // 太早了Intent不能用，<-- 我也不知道这在说什么，
             val nb: NotificationCompat.Builder by lazy {
                 val intent = ctx.intentFor<MainActivity>()

@@ -1,12 +1,12 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.anull.notNull
-import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
 import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.regex.pick
 import com.google.gson.JsonObject
 import java.io.File
 import java.io.InputStream
@@ -86,7 +86,7 @@ class Yidm : DslJsoupNovelContext() {init {
             url = "//openapi.yidm.com/article/getArticleInfo.php?aid=%s".notNull().format(aid)
         }
         response { json ->
-            var lastUpdate: Date? = null
+            var lastUpdate: Date?
             json.toBean<JsonObject>()
                     .get("data")
                     .asJsonObject

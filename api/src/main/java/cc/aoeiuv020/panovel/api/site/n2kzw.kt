@@ -1,9 +1,12 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.compilePattern
+import cc.aoeiuv020.atry.tryOrNul
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
+import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
+import cc.aoeiuv020.regex.compilePattern
+import cc.aoeiuv020.string.divide
 import org.jsoup.nodes.Element
 
 /**
@@ -34,12 +37,12 @@ class N2kzw : DslJsoupNovelContext() {init {
         }
         document {
             single("^/\\d+/\\d+/") {
-                name("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > h1", block = pickName)
-                author("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > span > a")
+                name("#info > h1", block = pickName)
+                author("#info > p:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
             }
-            items("body > div.main.w > ul > li") {
-                name("> p.d1 > a", block = pickName)
-                author("> p.d2 > span.author > a")
+            items("#nr") {
+                name("> td:nth-child(1) > a", block = pickName)
+                author("> td:nth-child(3)")
             }
         }
     }
@@ -49,17 +52,24 @@ class N2kzw : DslJsoupNovelContext() {init {
     detail {
         document {
             novel {
-                name("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > h1", block = pickName)
-                author("body > div.main.w > div.articleinfo > div.r > div.l2 > div.p1 > span > a")
+                name("#info > h1", block = pickName)
+                author("#info > p:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
             }
-            image("body > div.main.w > div.articleinfo > div.l > p > img")
-            introduction("body > div.main.w > div.articleinfo > div.r > div.l2 > p")
+            // https://www.2kzw.com/files/article/image/3/3426/3426s.jpg
+            tryOrNul {
+                image = site.baseUrl + "/files/article/image/$it/${it.divide('/').second}s.jpg"
+            }
+            introduction("#intro > p")
         }
     }
     chapters {
         document {
-            items("body > div.main.w > div.chapterlist > div.read-list > ul > li > a")
+            items("#list > dl > dd > a")
         }
+                .reverseRemoveDuplication()
+                // https://www.2kzw.com/0/852/
+                // 开头的缓存章节莫名多了一个中间章节，两次去重可以去掉，
+                .reverseRemoveDuplication()
     }
     // http://www.2kzw.com/5/5798/6586941.html
     bookIdWithChapterIdRegex = firstThreeIntPattern
@@ -67,7 +77,7 @@ class N2kzw : DslJsoupNovelContext() {init {
     content {
         // 第一段固定是章节名，
         document {
-            items("#content > p")
+            items("#content")
         }.drop(1)
     }
 }

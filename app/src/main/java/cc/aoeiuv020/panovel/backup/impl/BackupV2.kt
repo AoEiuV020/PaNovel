@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.backup.impl
 
 import android.net.Uri
-import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.App
@@ -12,6 +11,7 @@ import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.settings.*
 import cc.aoeiuv020.panovel.util.Pref
+import cc.aoeiuv020.string.divide
 import com.google.gson.JsonElement
 import org.jetbrains.anko.debug
 import java.io.File
