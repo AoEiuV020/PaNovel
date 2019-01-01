@@ -19,6 +19,7 @@ package cc.aoeiuv020.filepicker.controller.adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +30,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import cc.aoeiuv020.filepicker.R;
 import cc.aoeiuv020.filepicker.controller.NotifyItemChecked;
@@ -127,13 +126,10 @@ public class FileListAdapter extends BaseAdapter {
         }
         holder.type_icon.setContentDescription(item.getFilename());
         holder.name.setText(item.getFilename());
-        SimpleDateFormat sdate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        SimpleDateFormat stime = new SimpleDateFormat("hh:mm aa", Locale.getDefault());
-        Date date = new Date(item.getTime());
         if (i == 0 && item.getFilename().startsWith(context.getString(R.string.label_parent_dir))) {
             holder.type.setText(R.string.label_parent_directory);
         } else {
-            holder.type.setText(context.getString(R.string.last_edit) + sdate.format(date) + ", " + stime.format(date));
+            holder.type.setText(context.getString(R.string.last_edit) + DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), TimeUnit.SECONDS.toMillis(1)));
         }
         if (holder.fmark.getVisibility() == View.VISIBLE) {
             if (i == 0 && item.getFilename().startsWith(context.getString(R.string.label_parent_dir))) {
