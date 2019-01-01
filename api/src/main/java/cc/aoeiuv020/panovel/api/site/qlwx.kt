@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.hex
+import cc.aoeiuv020.encrypt.hex
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import okhttp3.Cookie
 import java.net.URL

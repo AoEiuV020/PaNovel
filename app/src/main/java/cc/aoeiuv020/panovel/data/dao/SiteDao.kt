@@ -1,8 +1,6 @@
 package cc.aoeiuv020.panovel.data.dao
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import cc.aoeiuv020.panovel.data.entity.Site
 import java.util.*
 
@@ -11,8 +9,14 @@ import java.util.*
  */
 @Dao
 abstract class SiteDao {
-    @Query("select * from Site order by pinnedTime desc, name asc")
+    @Query("select * from Site where hide = 0 order by pinnedTime desc, name asc")
     abstract fun list(): List<Site>
+
+    /**
+     * 同步网站列表时删除已经不再支持的网站，
+     */
+    @Delete
+    abstract fun removeSite(site: Site)
 
     /**
      * 插入前都有查询，所以不用在插入失败时尝试更新，
@@ -34,4 +38,10 @@ abstract class SiteDao {
 
     @Query("update Site set pinnedTime = :pinnedTime where name = :name")
     abstract fun updatePinnedTime(name: String, pinnedTime: Date)
+
+    @Query("update Site set hide = :hide where name = :name")
+    abstract fun updateHide(name: String, hide: Boolean)
+
+    @Update
+    abstract fun updateSite(site: Site)
 }

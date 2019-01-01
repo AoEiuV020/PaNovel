@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.base.jar.io.BufferedRandomAccessFile
 import cc.aoeiuv020.base.jar.io.readLines
+import cc.aoeiuv020.log.debug
+import cc.aoeiuv020.string.divide
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File

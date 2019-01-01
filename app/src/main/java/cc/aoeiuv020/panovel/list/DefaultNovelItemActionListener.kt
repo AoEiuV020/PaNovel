@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.list
 
-import cc.aoeiuv020.base.jar.interrupt
 import cc.aoeiuv020.base.jar.ioExecutorService
+import cc.aoeiuv020.exception.interrupt
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity

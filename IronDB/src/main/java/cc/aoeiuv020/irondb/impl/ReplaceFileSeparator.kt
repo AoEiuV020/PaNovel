@@ -1,7 +1,7 @@
 package cc.aoeiuv020.irondb.impl
 
 import cc.aoeiuv020.irondb.KeySerializer
-import java.io.File
+import cc.aoeiuv020.regex.compileRegex
 
 /**
  * 简单替换路径分隔符，因此若是名字仅这一处不同，将产生冲突，
@@ -9,9 +9,15 @@ import java.io.File
  * Created by AoEiuV020 on 2018.05.27-16:03:39.
  */
 class ReplaceFileSeparator(
-        private val replaceWith: Char = '|'
+        private val replaceWith: String = "."
 ) : KeySerializer {
+    companion object {
+        /**
+         * fat32不支持这些字符，而sdcard基本上是fat32文件系统，
+         */
+        val NOT_SUPPORT_CHARACTER = compileRegex("[/\\:|=?\";\\[\\],^]")
+    }
     override fun serialize(from: String): String {
-        return from.replace(File.separatorChar, replaceWith)
+        return from.replace(compileRegex("[/\\:|=?\";\\[\\],^]"), replaceWith)
     }
 }

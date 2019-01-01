@@ -2,8 +2,7 @@ package cc.aoeiuv020.panovel.data
 
 import android.content.Context
 import android.support.annotation.WorkerThread
-import cc.aoeiuv020.base.jar.interrupt
-import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.exception.interrupt
 import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
@@ -13,6 +12,7 @@ import cc.aoeiuv020.panovel.local.LocalNovelType
 import cc.aoeiuv020.panovel.local.Previewer
 import cc.aoeiuv020.panovel.util.noCover
 import cc.aoeiuv020.panovel.util.notNullOrReport
+import cc.aoeiuv020.regex.pick
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.io.File

@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.divide
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
+import cc.aoeiuv020.string.divide
 
 /**
  * Created by AoEiuV020 on 2018.06.08-19:34:21.

@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.regex.pick
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -16,9 +16,7 @@ class GxwztvTest : BaseNovelContextText(Gxwztv::class) {
                 "https://www.gxwztv.com/9/9814/",
                 "https://www.gxwztv.com/9/9814/166515215.html"
         ).forEach {
-            it.pick(regex)[index].let { id ->
-                assertEquals("9814", id)
-            }
+            assertEquals("9814", it.pick(regex)[index])
         }
     }
 

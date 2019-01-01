@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.regex.pick
 import java.io.File
 import java.net.URL
 

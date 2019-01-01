@@ -2,8 +2,8 @@ package cc.aoeiuv020.panovel.local
 
 import cc.aoeiuv020.base.jar.absSrc
 import cc.aoeiuv020.base.jar.absXlinkHref
-import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.textList
+import cc.aoeiuv020.regex.pick
 import net.sf.jazzlib.ZipFile
 import nl.siegmann.epublib.epub.EpubReader
 import org.jsoup.Jsoup
@@ -312,14 +312,9 @@ class EpubParserTest : ParserTest(EpubParser::class) {
             }
         }
 
-        book.coverPage.let {
-            // 封面也是一个单独页面，一般只包含一张图片，
-            assertEquals("titlepage.xhtml", it.href)
-        }
+        assertEquals("titlepage.xhtml", book.coverPage.href)
 
-        book.opfResource.let {
-            assertEquals("content.opf", it.href)
-        }
+        assertEquals("content.opf", book.opfResource.href)
 
         book.coverImage.let {
             assertEquals("cover1.jpeg", it.href)

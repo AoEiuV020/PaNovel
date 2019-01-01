@@ -5,18 +5,42 @@ import cc.aoeiuv020.irondb.Database
 import cc.aoeiuv020.irondb.Iron
 import cc.aoeiuv020.irondb.read
 import cc.aoeiuv020.irondb.write
+import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
+import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.LocationSettings
+import org.jetbrains.anko.toast
+import java.io.File
 import java.util.*
 
 /**
  * Created by AoEiuV020 on 2018.05.23-22:08:14.
  */
 class CacheManager(ctx: Context) {
-    // 所有都保存在/data/data/cc.aoeiuv020.panovel/cache/novel
-    private val root = Iron.db(ctx.cacheDir).sub(KEY_NOVEL)
-
     private val contentDBMap = WeakHashMap<Long, Database>()
+    // 所有都保存在/data/data/cc.aoeiuv020.panovel/cache/novel
+    private var root: Database
+
+    init {
+        root = initCacheLocation(ctx)
+    }
+
+    fun resetCacheLocation(ctx: Context) {
+        contentDBMap.clear()
+        root = initCacheLocation(ctx)
+    }
+
+    private fun initCacheLocation(ctx: Context): Database = try {
+        Iron.db(File(LocationSettings.cacheLocation))
+    } catch (e: Exception) {
+        Reporter.post("初始化缓存目录<${LocationSettings.cacheLocation}>失败，", e)
+        ctx.toast(ctx.getString(R.string.tip_init_cache_failed_place_holder, LocationSettings.cacheLocation))
+        // 失败一次就改成默认的，以免反复失败，
+        LocationSettings.cacheLocation = ctx.cacheDir.resolve(NAME_FOLDER).absolutePath
+        Iron.db(ctx.cacheDir)
+    }
+
     private fun getContentDB(novel: Novel) = contentDBMap.getOrPut(novel.nId) {
         root.sub(novel.site).sub(novel.author).sub(novel.name).sub(KEY_CONTENT)
     }
@@ -57,7 +81,7 @@ class CacheManager(ctx: Context) {
     }
 
     companion object {
-        const val KEY_NOVEL = "novel"
+        const val NAME_FOLDER = "novel"
         const val KEY_CHAPTERS = "chapters"
         const val KEY_CONTENT = "content"
     }

@@ -193,4 +193,3 @@ class ColorPickerPreference : com.flask.colorpicker.ColorPickerPreference {
         }
     }
 }
-

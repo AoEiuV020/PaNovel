@@ -22,7 +22,7 @@ import kotlin.reflect.KClass
  * Created by AoEiuV020 on 2018.05.16-22:54:50.
  */
 class MigrationPresenter(
-        private val ctx: Context
+        override val ctx: Context
 ) : Presenter<MigrationView>(), Pref, AnkoLogger {
     // sp file is App.ctx.packageName + "_$name"
     override val name: String = "Migration"

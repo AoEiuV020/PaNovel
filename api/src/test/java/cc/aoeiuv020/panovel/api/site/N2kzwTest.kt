@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.compilePattern
+import cc.aoeiuv020.regex.compilePattern
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -18,7 +18,7 @@ class N2kzwTest : BaseNovelContextText(N2kzw::class) {
     @Test
     fun detail() {
         detail("3/3427", "3/3427", "遮天", "辰东",
-                "http://www.2kzw.com/files/article/image//3/3427/3427s.jpg",
+                "http://www.2kzw.com/files/article/image/3/3427/3427s.jpg",
                 "冰冷与黑暗并存的宇宙深处，九具庞大的龙尸拉着一口青铜古棺，亘古长存。\n" +
                         "这是太空探测器在枯寂的宇宙中捕捉到的一幅极其震撼的画面。\n" +
                         "九龙拉棺，究竟是回到了上古，还是来到了星空的彼岸？\n" +
@@ -26,7 +26,7 @@ class N2kzwTest : BaseNovelContextText(N2kzw::class) {
                         "登天路，踏歌行，弹指遮天。",
                 null)
         detail("0/852", "0/852", "一世之尊", "爱潜水的乌贼",
-                "http://www.2kzw.com/files/article/image//0/852/852s.jpg",
+                "http://www.2kzw.com/files/article/image/0/852/852s.jpg",
                 "我这一生，不问前尘，不求来世，只轰轰烈烈，快意恩仇，败尽各族英杰，傲笑六道神魔！",
                 null)
     }

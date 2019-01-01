@@ -9,7 +9,8 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  */
 class Haxds : DslJsoupNovelContext() {init {
     // 这网站好像有点污，
-    enabled = false
+    // 废了，连不上了，
+    hide = true
     site {
         name = "海岸线文学"
         baseUrl = "https://www.haxwx11.com"

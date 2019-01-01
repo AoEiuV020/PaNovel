@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.debug
 import cc.aoeiuv020.base.jar.findAll
-import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.textList
+import cc.aoeiuv020.log.debug
+import cc.aoeiuv020.regex.pick
 import net.sf.jazzlib.ZipFile
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.TOCReference

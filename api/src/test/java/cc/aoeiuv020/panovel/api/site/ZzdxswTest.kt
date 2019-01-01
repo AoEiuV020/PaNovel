@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
+import cc.aoeiuv020.regex.pick
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -8,7 +8,9 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.06.09-19:10:45.
  */
 class ZzdxswTest : BaseNovelContextText(Zzdxsw::class) {
-    override var enabled: Boolean = false
+    init {
+        enabled = false
+    }
     @Test
     fun regex() {
         val r = "(//[^/]+)?/([^/]+)"

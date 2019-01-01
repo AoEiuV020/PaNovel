@@ -26,6 +26,8 @@ import kotlin.reflect.KProperty
  */
 interface Pref {
     val name: String
+    val ctx: Context
+        get() = App.ctx
     val sharedPreferencesName: String
         get() = App.ctx.packageName + "_$name"
     val sharedPreferences: SharedPreferences

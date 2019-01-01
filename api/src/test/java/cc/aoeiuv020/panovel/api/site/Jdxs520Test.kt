@@ -16,7 +16,7 @@ class Jdxs520Test : BaseNovelContextText(Jdxs520::class) {
     @Test
     fun detail() {
         detail("77903", "77903", "念念不忘，总裁乘胜追妻", "七爷",
-                "http://www.jdxs5200.com/files/article/image/77/77903/77903s.jpg",
+                "http://www.jdxs5200.net/files/article/image/77/77903/77903s.jpg",
                 "初见，她在下，他在上，他的口中叫着别人的名字。\n" +
                         "再见，她衣裳凌乱，披头散发，被人屈辱按在地上，狼狈不堪……\n" +
                         "他是人人敬畏的传奇人物，霍家太子爷。\n" +

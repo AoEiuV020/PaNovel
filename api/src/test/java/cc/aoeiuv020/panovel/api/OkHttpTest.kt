@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.api
 
-import cc.aoeiuv020.base.jar.info
-import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.anull.notNull
+import cc.aoeiuv020.log.info
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import okhttp3.*
 import okio.Buffer

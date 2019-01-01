@@ -1,7 +1,11 @@
 package cc.aoeiuv020.panovel.api.base
 
+import cc.aoeiuv020.anull.notNull
+import cc.aoeiuv020.atry.tryOrNul
 import cc.aoeiuv020.base.jar.*
 import cc.aoeiuv020.panovel.api.*
+import cc.aoeiuv020.regex.matches
+import cc.aoeiuv020.regex.pick
 import okhttp3.*
 import okhttp3.internal.http.HttpMethod
 import org.jsoup.nodes.Document
@@ -70,6 +74,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     override var charset: String? = null
     override var enabled: Boolean = true
+    override var hide: Boolean = false
 
     /*
     *************** interceptor ***************

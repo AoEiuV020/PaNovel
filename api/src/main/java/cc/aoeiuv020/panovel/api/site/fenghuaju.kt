@@ -1,9 +1,9 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.pick
 import cc.aoeiuv020.base.jar.text
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
+import cc.aoeiuv020.regex.pick
 
 /**
  * Created by AoEiuV020 on 2018.06.02-20:00:14.

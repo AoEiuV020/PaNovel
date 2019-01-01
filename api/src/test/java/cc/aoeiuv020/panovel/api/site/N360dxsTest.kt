@@ -1,9 +1,10 @@
 package cc.aoeiuv020.panovel.api.site
 
+import org.junit.Test
+
 /**
  * Created by AoEiuV020 on 2018.06.03-20:25:10.
  */
-/*
 class N360dxsTest : BaseNovelContextText(N360dxs::class) {
     @Test
     fun search() {
@@ -44,4 +45,3 @@ class N360dxsTest : BaseNovelContextText(N360dxs::class) {
     }
 
 }
-*/

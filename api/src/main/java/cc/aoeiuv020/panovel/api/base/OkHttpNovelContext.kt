@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.api.base
 
-import cc.aoeiuv020.base.jar.debug
-import cc.aoeiuv020.base.jar.error
-import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.anull.notNull
+import cc.aoeiuv020.log.debug
+import cc.aoeiuv020.log.error
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.panovel.api.LoggerInputStream
 import cc.aoeiuv020.panovel.api.NovelContext
