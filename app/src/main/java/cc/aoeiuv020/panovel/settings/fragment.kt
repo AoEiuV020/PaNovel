@@ -1,9 +1,11 @@
 package cc.aoeiuv020.panovel.settings
 
+import android.Manifest
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.preference.TwoStatePreference
+import android.support.v4.app.ActivityCompat
 import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
@@ -53,6 +55,18 @@ class LocationPreferenceFragment : BasePreferenceFragment(LocationSettings, R.xm
             // 缓存目录修改立即生效，
             "cacheLocation" -> DataManager.resetCacheLocation(activity.notNull())
         }
+    }
+
+    fun requestPermissions() {
+        ActivityCompat.requestPermissions(activity, arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ), 1)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        requestPermissions()
     }
 
     override fun onResume() {
