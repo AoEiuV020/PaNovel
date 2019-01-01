@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -115,6 +116,9 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
                 builder.setTitle(R.string.create_folder);
                 View view = LayoutInflater.from(context).inflate(R.layout.dialog_input_text, null);
                 final EditText input = view.findViewById(R.id.etInput);
+                ApplicationInfo applicationInfo = context.getApplicationInfo();
+                int stringId = context.getApplicationInfo().labelRes;
+                input.setText(stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId));
                 builder.setView(view);
                 setOnShowListener(new OnShowListener() {
                     @Override
