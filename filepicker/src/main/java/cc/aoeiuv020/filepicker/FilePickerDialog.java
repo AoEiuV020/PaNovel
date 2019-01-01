@@ -100,17 +100,7 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
         setContentView(R.layout.dialog_main);
         listView = (ListView) findViewById(R.id.fileList);
         select = (Button) findViewById(R.id.select);
-        int size = MarkedItemList.getFileCount();
-        if (size == 0) {
-            select.setEnabled(false);
-            int color;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                color = context.getResources().getColor(R.color.colorAccent, context.getTheme());
-            } else {
-                color = context.getResources().getColor(R.color.colorAccent);
-            }
-            select.setTextColor(Color.argb(128, Color.red(color), Color.green(color), Color.blue(color)));
-        }
+        resetSelectBottom();
         dname = (TextView) findViewById(R.id.dname);
         title = (TextView) findViewById(R.id.title);
         dir_path = (TextView) findViewById(R.id.dir_path);
@@ -125,6 +115,11 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
                  *  from MarkedItemList singleton.
                  */
                 String paths[] = MarkedItemList.getSelectedPaths();
+                if ((paths == null || paths.length == 0)
+                        && isSingleFolderMode()
+                        ) {
+                    paths = new String[]{dir_path.getText().toString()};
+                }
                 //NullPointerException fixed in v1.0.2
                 if (callbacks != null) {
                     callbacks.onSelectedFilePaths(paths);
@@ -145,31 +140,7 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
                 /*  Handler function, called when a checkbox is checked ie. a file is
                  *  selected.
                  */
-                positiveBtnNameStr = positiveBtnNameStr == null ?
-                        context.getResources().getString(R.string.choose_button_label) : positiveBtnNameStr;
-                int size = MarkedItemList.getFileCount();
-                if (size == 0) {
-                    select.setEnabled(false);
-                    int color;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        color = context.getResources().getColor(R.color.colorAccent, context.getTheme());
-                    } else {
-                        color = context.getResources().getColor(R.color.colorAccent);
-                    }
-                    select.setTextColor(Color.argb(128, Color.red(color), Color.green(color), Color.blue(color)));
-                    select.setText(positiveBtnNameStr);
-                } else {
-                    select.setEnabled(true);
-                    int color;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        color = context.getResources().getColor(R.color.colorAccent, context.getTheme());
-                    } else {
-                        color = context.getResources().getColor(R.color.colorAccent);
-                    }
-                    select.setTextColor(color);
-                    String button_label = positiveBtnNameStr + " (" + size + ") ";
-                    select.setText(button_label);
-                }
+                resetSelectBottom();
                 if (properties.selection_mode == DialogConfigs.SINGLE_MODE) {
                     /*  If a single file has to be selected, clear the previously checked
                      *  checkbox from the list.
@@ -182,6 +153,42 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
 
         //Title method added in version 1.0.5
         setTitle();
+    }
+
+    private boolean isSingleFolderMode() {
+        return getProperties().selection_mode == DialogConfigs.SINGLE_MODE
+                && getProperties().selection_type == DialogConfigs.DIR_SELECT;
+    }
+
+    private void resetSelectBottom() {
+        positiveBtnNameStr = positiveBtnNameStr == null ?
+                context.getResources().getString(R.string.choose_button_label) : positiveBtnNameStr;
+        int size = MarkedItemList.getFileCount();
+        int color = getAccentColor();
+        if (size == 0 && isSingleFolderMode()) {
+            select.setEnabled(true);
+            select.setTextColor(color);
+            select.setText(positiveBtnNameStr);
+        } else if (size == 0) {
+            select.setEnabled(false);
+            select.setTextColor(Color.argb(128, Color.red(color), Color.green(color), Color.blue(color)));
+            select.setText(positiveBtnNameStr);
+        } else {
+            select.setEnabled(true);
+            select.setTextColor(color);
+            String button_label = positiveBtnNameStr + " (" + size + ") ";
+            select.setText(button_label);
+        }
+    }
+
+    private int getAccentColor() {
+        int color;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            color = context.getResources().getColor(R.color.colorAccent, context.getTheme());
+        } else {
+            color = context.getResources().getColor(R.color.colorAccent);
+        }
+        return color;
     }
 
     private void setTitle() {
