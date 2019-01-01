@@ -1,7 +1,7 @@
 package cc.aoeiuv020.irondb.impl
 
-import cc.aoeiuv020.base.jar.hex
-import cc.aoeiuv020.base.jar.md5
+import cc.aoeiuv020.encrypt.hex
+import cc.aoeiuv020.encrypt.md5
 import cc.aoeiuv020.irondb.KeySerializer
 
 /**
