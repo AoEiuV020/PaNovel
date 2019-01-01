@@ -5,7 +5,6 @@
         android:key="cacheLocation"
         android:summary="@string/settings_cache_location_summary"
         android:title="@string/settings_cache_location"
-        app:root_dir="/"
         app:selection_type="dir_select" />
 
     <cc.aoeiuv020.filepicker.FilePickerPreference
@@ -13,7 +12,6 @@
         android:key="backupLocation"
         android:summary="@string/settings_backup_location_summary"
         android:title="@string/settings_backup_location"
-        app:root_dir="/"
         app:selection_type="dir_select" />
 
     <cc.aoeiuv020.filepicker.FilePickerPreference
@@ -21,7 +19,6 @@
         android:key="exportLocation"
         android:summary="@string/settings_export_location_summary"
         android:title="@string/settings_export_location"
-        app:root_dir="/"
         app:selection_type="dir_select" />
 
 </PreferenceScreen>
