@@ -26,6 +26,7 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -131,6 +132,9 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = input.getText().toString();
+                        if (TextUtils.isEmpty(name)) {
+                            return;
+                        }
                         File cur = new File(dir_path.getText().toString());
                         File newFolder = new File(cur, name);
                         // 无视失败情况，
@@ -147,7 +151,6 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
                     }
                 });
                 builder.show();
