@@ -12,6 +12,9 @@ abstract class SiteDao {
     @Query("select * from Site where hide = 0 order by pinnedTime desc, name asc")
     abstract fun list(): List<Site>
 
+    @Query("select * from Site")
+    abstract fun listAllSite(): List<Site>
+
     /**
      * 同步网站列表时删除已经不再支持的网站，
      */
@@ -44,4 +47,5 @@ abstract class SiteDao {
 
     @Update
     abstract fun updateSite(site: Site)
+
 }

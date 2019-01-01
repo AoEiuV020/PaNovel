@@ -107,7 +107,7 @@ object DataManager : AnkoLogger {
      * 同步所有网站到数据库，app升级时调用一次就好，
      */
     fun syncSites(): Unit = app.db.runInTransaction<Unit> {
-        val existsSites = listSites()
+        val existsSites = app.db.siteDao().listAllSite()
         existsSites.forEach { site ->
             val context = try {
                 api.getNovelContextByName(site.name)
