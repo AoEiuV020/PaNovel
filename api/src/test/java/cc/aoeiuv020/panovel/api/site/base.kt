@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelContext

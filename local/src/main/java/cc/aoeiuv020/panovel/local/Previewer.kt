@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.local
 
-import cc.aoeiuv020.base.jar.notNull
+import cc.aoeiuv020.anull.notNull
 import net.sf.jazzlib.ZipFile
 import nl.siegmann.epublib.epub.EpubReader
 import java.io.File
