@@ -15,9 +15,14 @@ class ReplaceFileSeparatorTest {
         assertEquals("123456", serializer.serialize("123456"))
         assertEquals("中文", serializer.serialize("中文"))
         assertEquals("啊o额iu鱼", serializer.serialize("啊o额iu鱼"))
-        assertEquals("123|456", serializer.serialize("123/456"))
-        assertEquals("123|456", serializer.serialize("123|456"))
+        assertEquals("123.456", serializer.serialize("123/456"))
+        assertEquals("123.456", serializer.serialize("123|456"))
         assertEquals(" \t\n", serializer.serialize(" \t\n"))
-        assertEquals("""`~!@#${'$'}%^&*()-_=+[]{}\|;:'"|?.>,<""", serializer.serialize("""`~!@#${'$'}%^&*()-_=+[]{}\|;:'"/?.>,<"""))
+        assertEquals("""`~!@#${'$'}%.&*()-_.+..{}\...'....>.<""", serializer.serialize("""`~!@#${'$'}%^&*()-_=+[]{}\|;:'"/?.>,<"""))
+    }
+
+    @Test
+    fun char() {
+        println(ReplaceFileSeparator.NOT_SUPPORT_CHARACTER)
     }
 }
