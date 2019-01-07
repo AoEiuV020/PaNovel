@@ -169,6 +169,10 @@ class Refresher(
         }
         try {
             val context = getNovelContextByName(novel.site)
+            if (context.hide || !context.enabled) {
+                logger.info { "skip <${novel.run { "$site.$author.$name.$detail" }}>" }
+                return
+            }
             val chapters = context.getNovelChaptersAsc(novel.detail)
             val hasUpdate = chapters.size > novel.chaptersCount
             novel.chaptersCount = chapters.size
