@@ -148,9 +148,10 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
     fun addResult(list: List<NovelManager>) {
         // 插入有时会导致下滑，原因不明，保存状态解决，
-        val state = rvNovel.layoutManager.onSaveInstanceState()
+        val lm = rvNovel.layoutManager ?: return
+        val state = lm.onSaveInstanceState() ?: return
         novelListAdapter.addAll(list)
-        rvNovel.layoutManager.onRestoreInstanceState(state)
+        lm.onRestoreInstanceState(state)
     }
 
     fun showOnComplete() {

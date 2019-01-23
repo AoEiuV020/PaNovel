@@ -4,6 +4,7 @@ package cc.aoeiuv020.panovel.detail
 
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -72,9 +73,9 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         // 拉到顶部才允许下拉刷新，
         // 为了支持内部嵌套列表，
         srlRefresh.setOnChildScrollUpCallback { _, _ -> !isRefreshEnable }
-        app_bar.addOnOffsetChangedListener { _, verticalOffset ->
+        app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _: AppBarLayout, verticalOffset: Int ->
             isRefreshEnable = verticalOffset == 0
-        }
+        })
         srlRefresh.isRefreshing = true
 
         presenter = NovelDetailPresenter(id)

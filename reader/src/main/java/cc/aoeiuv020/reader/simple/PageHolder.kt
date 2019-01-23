@@ -39,7 +39,7 @@ internal class PageHolder(private val reader: SimpleReader) : AnkoLogger {
                         reader.config.contentMargins.bottom.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() })
             }
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     reader.readingListener?.onReading(reader.currentChapter, getTextProgress())
                 }
             })
