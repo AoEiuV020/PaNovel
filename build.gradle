@@ -117,22 +117,22 @@ applicationModules.forEach { name ->
                 def input = signingFile.newInputStream()
                 def p = new Properties()
                 p.load(input)
-                signingConfigs {
-                    config {
-                        keyAlias p['keyAlias']
-                        keyPassword p['keyPassword']
-                        storeFile file(p['storeFile'])
-                        storePassword p['storePassword']
-                        v1SigningEnabled true
-                        v2SigningEnabled true
+                // 签名文件存在才配置签名，
+                def jks = rootProject.file(p['storeFile'])
+                if (jks.exists()) {
+                    signingConfigs {
+                        config {
+                            keyAlias p['keyAlias']
+                            keyPassword p['keyPassword']
+                            storeFile jks
+                            storePassword p['storePassword']
+                            v1SigningEnabled true
+                            v2SigningEnabled true
+                        }
                     }
-                }
-                buildTypes {
-                    debug {
-                        signingConfig signingConfigs.config
-                    }
-                    release {
-                        signingConfig signingConfigs.config
+                    buildTypes {
+                        debug.signingConfig signingConfigs.config
+                        release.signingConfig signingConfigs.config
                     }
                 }
             }
