@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.text
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
@@ -55,14 +56,18 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         return true
     }
 
-    @SuppressLint("InlinedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_novel_text)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
         mVisible = true
     }
 
