@@ -93,7 +93,7 @@ applicationModules.forEach { name ->
                 versionCode version_code.toInteger()
                 versionName version
                 multiDexEnabled true
-                testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
                 setProperty("archivesBaseName", "$rootProject.name-$versionName")
                 vectorDrawables.useSupportLibrary = true
             }
@@ -169,18 +169,18 @@ applicationModules.forEach { name ->
 
         dependencies {
             // support-v4,
-            implementation 'com.android.support:support-v4:' + support_version
+            implementation 'androidx.legacy:legacy-support-v4:' + androidx_version
             // appcompat-v7,
-            implementation 'com.android.support:appcompat-v7:' + support_version
+            implementation 'androidx.appcompat:appcompat:' + androidx_version
             // 单元测试junit,
             testImplementation 'junit:junit:' + junit_version
             // 单元测试mock，
             testImplementation 'org.mockito:mockito-core:' + mockito_version
             // 安卓测试,
-            androidTestImplementation 'com.android.support.test:runner:' + test_runner_version
-            androidTestImplementation 'com.android.support.test.espresso:espresso-core:' + test_espresso_version
+            androidTestImplementation 'androidx.test.ext:junit:' + test_runner_version
+            androidTestImplementation 'androidx.test.espresso:espresso-core:' + test_espresso_version
             // 安卓分包，
-            implementation 'com.android.support:multidex:' + multidex_version
+            implementation 'androidx.multidex:multidex:' + multidex_version
             // kotlin开发语言支持，
             implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlin_version
             // kotlin专用的安卓工具集，anko-commons,
@@ -316,7 +316,7 @@ androidModules.forEach { name ->
                 versionCode 1
                 versionName version
 
-                testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
             }
 
             buildTypes {
@@ -338,8 +338,8 @@ androidModules.forEach { name ->
             // 单元测试junit,
             testImplementation 'junit:junit:' + junit_version
             // 安卓测试,
-            androidTestImplementation 'com.android.support.test:runner:' + test_runner_version
-            androidTestImplementation 'com.android.support.test.espresso:espresso-core:' + test_espresso_version
+            androidTestImplementation 'androidx.test.ext:junit:' + test_runner_version
+            androidTestImplementation 'androidx.test.espresso:espresso-core:' + test_espresso_version
             // kotlin开发语言支持，
             implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlin_version
             // kotlin专用的安卓工具集，anko-commons,
