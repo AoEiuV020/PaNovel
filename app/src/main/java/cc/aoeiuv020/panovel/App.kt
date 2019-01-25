@@ -2,9 +2,9 @@ package cc.aoeiuv020.panovel
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.multidex.MultiDexApplication
-import android.support.v7.app.AppCompatDelegate
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDexApplication
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.data.DataManager

@@ -1,9 +1,6 @@
 package cc.aoeiuv020.panovel.bookshelf
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +22,7 @@ import org.jetbrains.anko.AnkoLogger
  *
  * Created by AoEiuV020 on 2017.10.15-17:22:28.
  */
-class BookshelfFragment : Fragment(), IView, AnkoLogger {
+class BookshelfFragment : androidx.fragment.app.Fragment(), IView, AnkoLogger {
     private val novelListAdapter: NovelListAdapter by lazy {
         NovelListAdapter(initItem = {
             // 以防万一加上问号?支持视图中没有小红点的情况，
@@ -51,9 +48,9 @@ class BookshelfFragment : Fragment(), IView, AnkoLogger {
         super.onActivityCreated(savedInstanceState)
 
         rvNovel.layoutManager = if (ListSettings.gridView) {
-            GridLayoutManager(requireContext(), if (ListSettings.largeView) 3 else 5)
+            androidx.recyclerview.widget.GridLayoutManager(requireContext(), if (ListSettings.largeView) 3 else 5)
         } else {
-            LinearLayoutManager(requireContext())
+            androidx.recyclerview.widget.LinearLayoutManager(requireContext())
         }
         rvNovel.adapter = novelListAdapter
         srlRefresh.setOnRefreshListener {

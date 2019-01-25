@@ -2,10 +2,9 @@ package cc.aoeiuv020.panovel.search
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Site
@@ -68,7 +67,7 @@ class SiteChooseActivity : AppCompatActivity(), IView {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Note: 这里不是小说列表，固定用LinearLayoutManager，
-        rvSiteList.layoutManager = LinearLayoutManager(this)
+        rvSiteList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
         presenter = SiteChoosePresenter()
         presenter.attach(this)

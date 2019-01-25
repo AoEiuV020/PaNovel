@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.settings.ReaderSettings
 import cc.aoeiuv020.panovel.util.hide

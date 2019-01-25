@@ -3,8 +3,8 @@ package cc.aoeiuv020.panovel.data
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.support.annotation.MainThread
-import android.support.annotation.WorkerThread
+import androidx.annotation.MainThread
+import androidx.annotation.WorkerThread
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*

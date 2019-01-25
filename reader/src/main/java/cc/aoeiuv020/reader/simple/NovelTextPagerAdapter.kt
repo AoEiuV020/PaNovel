@@ -1,13 +1,12 @@
 package cc.aoeiuv020.reader.simple
 
-import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.util.*
 
-internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : PagerAdapter(), AnkoLogger {
+internal class NovelTextPagerAdapter(private val simpleReader: SimpleReader) : androidx.viewpager.widget.PagerAdapter(), AnkoLogger {
     private val chapters get() = simpleReader.chapterList
     private val unusedHolders: LinkedList<PageHolder> = LinkedList()
     private val usedHolders: LinkedList<PageHolder> = LinkedList()

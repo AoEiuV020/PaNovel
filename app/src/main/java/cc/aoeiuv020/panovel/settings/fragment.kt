@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.preference.TwoStatePreference
-import android.support.v4.app.ActivityCompat
+import androidx.core.app.ActivityCompat
 import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager

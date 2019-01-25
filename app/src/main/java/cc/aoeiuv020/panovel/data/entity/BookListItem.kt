@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.data.entity
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Index
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 
 /**
  * Created by AoEiuV020 on 2018.05.24-16:18:20.

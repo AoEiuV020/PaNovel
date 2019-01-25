@@ -1,8 +1,8 @@
 package cc.aoeiuv020.panovel.server
 
 import android.content.Context
-import android.support.annotation.WorkerThread
 import android.util.Log
+import androidx.annotation.WorkerThread
 import cc.aoeiuv020.base.jar.notZero
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.jsonpath.get

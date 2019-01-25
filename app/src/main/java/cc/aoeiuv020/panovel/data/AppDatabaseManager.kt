@@ -1,7 +1,7 @@
 package cc.aoeiuv020.panovel.data
 
 import android.content.Context
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import cc.aoeiuv020.panovel.data.db.AppDatabase
 import cc.aoeiuv020.panovel.data.entity.*
 import cc.aoeiuv020.panovel.settings.OrderBy

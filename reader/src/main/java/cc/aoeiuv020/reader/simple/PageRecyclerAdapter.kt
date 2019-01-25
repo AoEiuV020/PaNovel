@@ -1,6 +1,5 @@
 package cc.aoeiuv020.reader.simple
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import org.jetbrains.anko.AnkoLogger
  */
 internal class PageRecyclerAdapter(
         val reader: SimpleReader
-) : RecyclerView.Adapter<PageRecyclerAdapter.ViewHolder>(), AnkoLogger {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<PageRecyclerAdapter.ViewHolder>(), AnkoLogger {
     private val ctx get() = reader.ctx
     private var chapterName: String = ""
     var data: List<String> = emptyList()
@@ -95,6 +94,6 @@ internal class PageRecyclerAdapter(
         notifyItemChanged(0)
     }
 
-    abstract class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    abstract class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView)
 
 }

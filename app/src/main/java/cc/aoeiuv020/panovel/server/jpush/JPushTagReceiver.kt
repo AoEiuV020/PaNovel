@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.support.v4.content.LocalBroadcastManager
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.report.Reporter
@@ -29,18 +28,18 @@ class JPushTagReceiver : BroadcastReceiver(), AnkoLogger {
                 putExtra(EXTRA_TAG_ALIAS_BEAN, tagAliasBeanString)
                 putExtra(EXTRA_MESSAGE, jPushMessageString)
             }
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
         }
 
         fun register(context: Context, receiver: JPushTagReceiver) {
             val filter = IntentFilter().apply {
                 addAction(ACTION_TAG)
             }
-            LocalBroadcastManager.getInstance(context).registerReceiver(receiver, filter)
+            androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).registerReceiver(receiver, filter)
         }
 
         fun unregister(context: Context, receiver: JPushTagReceiver) {
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
+            androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
         }
     }
 

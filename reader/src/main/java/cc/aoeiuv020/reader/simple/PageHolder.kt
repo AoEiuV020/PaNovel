@@ -1,8 +1,6 @@
 package cc.aoeiuv020.reader.simple
 
 import android.app.Activity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -20,7 +18,7 @@ internal class PageHolder(private val reader: SimpleReader) : AnkoLogger {
     val itemView: View = View.inflate(ctx, R.layout.simple_view_pager_item, null)
     var position: Int = 0
     private val textRecyclerView = itemView.textRecyclerView
-    private val layoutManager: LinearLayoutManager = LinearLayoutManager(ctx)
+    private val layoutManager: androidx.recyclerview.widget.LinearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(ctx)
     private val progressBar: ProgressBar = itemView.progressBar
     val ntrAdapter = PageRecyclerAdapter(reader)
     private var textProgress: Int? = null
@@ -38,8 +36,8 @@ internal class PageHolder(private val reader: SimpleReader) : AnkoLogger {
                         rightMargin,
                         reader.config.contentMargins.bottom.run { (toFloat() / 100 * ctx.window.decorView.height).toInt() })
             }
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                     reader.readingListener?.onReading(reader.currentChapter, getTextProgress())
                 }
             })

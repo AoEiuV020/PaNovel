@@ -1,9 +1,9 @@
 package cc.aoeiuv020.reader.simple
 
 import android.content.Context
-import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
 
 /**
  * https://stackoverflow.com/a/12283909/5615186

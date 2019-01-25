@@ -2,12 +2,9 @@ package cc.aoeiuv020.panovel.search
 
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.NovelManager
@@ -15,6 +12,7 @@ import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
+import com.google.android.material.snackbar.Snackbar
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import kotlinx.android.synthetic.main.activity_fuzzy_search.*
 import kotlinx.android.synthetic.main.novel_item_list.*
@@ -76,9 +74,9 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
         })
 
         rvNovel.layoutManager = if (ListSettings.gridView) {
-            GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
+            androidx.recyclerview.widget.GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
         } else {
-            LinearLayoutManager(ctx)
+            androidx.recyclerview.widget.LinearLayoutManager(ctx)
         }
         presenter = FuzzySearchPresenter()
         presenter.attach(this)

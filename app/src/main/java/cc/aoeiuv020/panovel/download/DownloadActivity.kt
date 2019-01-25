@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.download
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import org.jetbrains.anko.startActivity

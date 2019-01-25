@@ -1,7 +1,6 @@
 package cc.aoeiuv020.reader.simple
 
 import android.content.Context
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ internal class SimpleReader(override var ctx: Context, novel: String, private va
     : BaseNovelReader(novel, requester), ConfigChangedListener {
     private val layoutInflater = LayoutInflater.from(ctx)
     private val contentView: View = layoutInflater.inflate(R.layout.simple, parent, true)
-    private val viewPager: ViewPager = contentView.viewPager
+    private val viewPager: androidx.viewpager.widget.ViewPager = contentView.viewPager
     private val background: ImageView = contentView.ivBackground
     private val dtfRoot: DispatchTouchFrameLayout = contentView.dtfRoot
     private val ntpAdapter: NovelTextPagerAdapter
@@ -42,7 +41,7 @@ internal class SimpleReader(override var ctx: Context, novel: String, private va
 
     init {
         config.listeners.add(this)
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
                 menuListener?.hide()
             }

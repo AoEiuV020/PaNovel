@@ -2,9 +2,6 @@ package cc.aoeiuv020.panovel.history
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +19,7 @@ import kotlinx.android.synthetic.main.novel_item_list.*
  * 绝大部分照搬书架，
  * Created by AoEiuV020 on 2017.10.15-18:07:39.
  */
-class HistoryFragment : Fragment(), IView {
+class HistoryFragment : androidx.fragment.app.Fragment(), IView {
     private val novelListAdapter by lazy {
         NovelListAdapter(onError = ::showError)
     }
@@ -35,9 +32,9 @@ class HistoryFragment : Fragment(), IView {
         super.onViewCreated(view, savedInstanceState)
 
         rvNovel.layoutManager = if (ListSettings.gridView) {
-            GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
+            androidx.recyclerview.widget.GridLayoutManager(ctx, if (ListSettings.largeView) 3 else 5)
         } else {
-            LinearLayoutManager(ctx)
+            androidx.recyclerview.widget.LinearLayoutManager(ctx)
         }
         rvNovel.adapter = novelListAdapter
         srlRefresh.setOnRefreshListener {

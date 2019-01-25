@@ -4,7 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.okhttp.OkHttpUtils

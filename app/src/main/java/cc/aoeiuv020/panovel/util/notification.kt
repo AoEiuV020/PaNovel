@@ -6,8 +6,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.main.MainActivity
 import org.jetbrains.anko.AnkoLogger

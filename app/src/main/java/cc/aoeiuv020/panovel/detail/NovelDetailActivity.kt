@@ -4,11 +4,10 @@ package cc.aoeiuv020.panovel.detail
 
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
@@ -20,6 +19,7 @@ import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.noCover
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
 import org.jetbrains.anko.AnkoLogger

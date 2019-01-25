@@ -2,8 +2,8 @@ package cc.aoeiuv020.panovel.donate
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.server.ServerManager
 import cc.aoeiuv020.panovel.settings.GeneralSettings

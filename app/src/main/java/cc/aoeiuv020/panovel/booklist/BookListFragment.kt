@@ -4,8 +4,6 @@ package cc.aoeiuv020.panovel.booklist
 
 import android.app.ProgressDialog
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +27,7 @@ import org.jetbrains.anko.yesButton
  *
  * Created by AoEiuV020 on 2017.11.22-14:07:56.
  */
-class BookListFragment : Fragment(), IView, AnkoLogger {
+class BookListFragment : androidx.fragment.app.Fragment(), IView, AnkoLogger {
     private lateinit var progressDialog: ProgressDialog
     private val itemListener: BookListFragmentAdapter.ItemListener = object : BookListFragmentAdapter.ItemListener {
         override fun onClick(vh: BookListFragmentAdapter.ViewHolder) {
@@ -112,7 +110,7 @@ class BookListFragment : Fragment(), IView, AnkoLogger {
         super.onActivityCreated(savedInstanceState)
         progressDialog = ProgressDialog(context)
         // Note: 这里不是小说列表，固定用LinearLayoutManager，
-        rvNovel.layoutManager = LinearLayoutManager(context)
+        rvNovel.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         rvNovel.adapter = mAdapter
         srlRefresh.setOnRefreshListener {
             refresh()

@@ -3,7 +3,6 @@ package cc.aoeiuv020.reader.complex
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.*
-import android.support.v4.util.LruCache
 import android.text.TextPaint
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
@@ -23,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
 @SuppressWarnings("SimpleDateFormat")
 class ReaderDrawer(private val reader: ComplexReader, private val novel: String, private val requester: TextRequester)
     : PagerDrawer(), AnkoLogger {
-    val pagesCache: LruCache<Int, List<Page>?> = LruCache(8)
+    val pagesCache: androidx.collection.LruCache<Int, List<Page>?> = androidx.collection.LruCache(8)
     private lateinit var titlePaint: TextPaint
     private lateinit var textPaint: TextPaint
     private lateinit var messagePaint: TextPaint
