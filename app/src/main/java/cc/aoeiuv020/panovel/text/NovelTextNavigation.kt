@@ -1,12 +1,12 @@
 package cc.aoeiuv020.panovel.text
 
 import android.content.DialogInterface
-import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.settings.Margins

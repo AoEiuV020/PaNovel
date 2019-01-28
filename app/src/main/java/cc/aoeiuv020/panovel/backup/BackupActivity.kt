@@ -10,14 +10,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.safelyShow
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_export.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.alert

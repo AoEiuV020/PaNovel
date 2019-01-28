@@ -4,10 +4,10 @@ package cc.aoeiuv020.panovel.detail
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
@@ -19,6 +19,7 @@ import cc.aoeiuv020.panovel.util.alertError
 import cc.aoeiuv020.panovel.util.noCover
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.activity_novel_detail.*
 import kotlinx.android.synthetic.main.activity_novel_detail.view.*
 import org.jetbrains.anko.AnkoLogger
@@ -72,9 +73,9 @@ class NovelDetailActivity : AppCompatActivity(), IView, AnkoLogger {
         // 拉到顶部才允许下拉刷新，
         // 为了支持内部嵌套列表，
         srlRefresh.setOnChildScrollUpCallback { _, _ -> !isRefreshEnable }
-        app_bar.addOnOffsetChangedListener { _, verticalOffset ->
+        app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _: AppBarLayout, verticalOffset: Int ->
             isRefreshEnable = verticalOffset == 0
-        }
+        })
         srlRefresh.isRefreshing = true
 
         presenter = NovelDetailPresenter(id)

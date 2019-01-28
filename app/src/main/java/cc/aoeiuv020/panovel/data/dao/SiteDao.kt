@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.data.dao
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import cc.aoeiuv020.panovel.data.entity.Site
 import java.util.*
 
@@ -11,6 +11,9 @@ import java.util.*
 abstract class SiteDao {
     @Query("select * from Site where hide = 0 order by pinnedTime desc, name asc")
     abstract fun list(): List<Site>
+
+    @Query("select * from Site")
+    abstract fun listAllSite(): List<Site>
 
     /**
      * 同步网站列表时删除已经不再支持的网站，
@@ -44,4 +47,5 @@ abstract class SiteDao {
 
     @Update
     abstract fun updateSite(site: Site)
+
 }

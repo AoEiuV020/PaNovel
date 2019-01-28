@@ -1,7 +1,6 @@
 package cc.aoeiuv020.panovel.booklist
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import kotlinx.android.synthetic.main.book_list_item.view.*
  */
 class BookListFragmentAdapter(
         private val itemListener: ItemListener
-) : RecyclerView.Adapter<BookListFragmentAdapter.ViewHolder>() {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<BookListFragmentAdapter.ViewHolder>() {
     private var _data: MutableList<BookList> = mutableListOf()
     var data: List<BookList>
         get() = _data
@@ -36,7 +35,7 @@ class BookListFragmentAdapter(
         holder.apply(item)
     }
 
-    class ViewHolder(itemView: View, itemListener: ItemListener) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, itemListener: ItemListener) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         private val name = itemView.ivName
         private val count = itemView.ivCount
         // 提供外面的加调方法使用，

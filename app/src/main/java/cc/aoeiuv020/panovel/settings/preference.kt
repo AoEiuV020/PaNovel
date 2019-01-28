@@ -5,10 +5,10 @@ package cc.aoeiuv020.panovel.settings
 import android.content.Context
 import android.content.res.TypedArray
 import android.os.Build
-import android.support.annotation.RequiresApi
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import org.jetbrains.anko.find
 
 

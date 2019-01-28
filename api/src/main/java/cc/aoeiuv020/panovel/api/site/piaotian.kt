@@ -18,6 +18,7 @@ import java.util.*
  * Created by AoEiuV020 on 2017.10.02-16:03:02.
  */
 class Piaotian : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "飘天文学"
         baseUrl = "https://www.piaotian.com"

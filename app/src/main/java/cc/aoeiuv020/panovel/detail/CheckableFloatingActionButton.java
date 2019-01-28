@@ -1,18 +1,21 @@
 package cc.aoeiuv020.panovel.detail;
 
 import android.content.Context;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.AccessibilityDelegateCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.accessibility.AccessibilityEventCompat;
-import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.internal.CheckableImageButton;
+
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityEventCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+
 /**
- * @see android.support.design.widget.CheckableImageButton
+ * @see CheckableImageButton
  * Created by AoEiuV020 on 2017.10.04-19:52:31.
  */
 

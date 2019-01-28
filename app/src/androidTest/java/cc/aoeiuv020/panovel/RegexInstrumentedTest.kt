@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel
 
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,6 +15,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RegexInstrumentedTest {
     private val withoutEscapeRegex = Regex("]")
+    @Suppress("RegExpRedundantEscape")
     private val withEscapeRegex = Regex("\\]")
     private val str = "]"
     @Test

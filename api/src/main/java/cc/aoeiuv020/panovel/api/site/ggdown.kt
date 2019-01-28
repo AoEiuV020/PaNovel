@@ -80,11 +80,12 @@ class Ggdown : DslJsoupNovelContext() {init {
     // 网页内容不全，要拿api,
     // http://www.ggdown.com/t/t.php?id=/19&did=19447&vid=5585742
     // http://www.ggdown.com/t/t.php?did=19447&vid=5585742
+    // http://www.ggdown.com/t/t.php?id=/19&qid=19447&vid=22928333
     bookIdWithChapterIdRegex = firstThreeIntPattern
-    contentPageTemplate = "/t/t.php?did=%s&vid=%s"
+    contentPageTemplate = "/t/t.php?id=/%d&qid=%s&vid=%s"
     getNovelContentUrl {
         val (_, did, vid) = findBookIdWithChapterId(it).split("/")
-        contentPageTemplate.notNull().format(did, vid)
+        contentPageTemplate.notNull().format(did.toInt() / 1000, did, vid)
     }
     content {
         document {

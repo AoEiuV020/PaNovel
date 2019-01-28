@@ -13,10 +13,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AlertDialog
 import android.view.*
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.IView

@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.data.dao
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.data.entity.BookListItem
 import cc.aoeiuv020.panovel.data.entity.Novel

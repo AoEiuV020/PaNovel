@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.local
 
 import android.app.PendingIntent
 import android.content.Context
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.backup.BackupPresenter

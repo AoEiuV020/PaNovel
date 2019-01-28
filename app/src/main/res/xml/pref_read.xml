@@ -18,6 +18,11 @@
         android:key="keepScreenOn"
         android:title="@string/keep_screen_on" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="fullScreen"
+        android:title="@string/full_screen" />
+
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:inputType="number"

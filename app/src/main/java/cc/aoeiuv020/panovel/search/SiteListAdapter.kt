@@ -1,6 +1,5 @@
 package cc.aoeiuv020.panovel.search
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ import kotlinx.android.synthetic.main.site_list_item.view.*
 class SiteListAdapter(
         siteList: List<Site>,
         private val itemListener: ItemListener
-) : RecyclerView.Adapter<SiteListAdapter.ViewHolder>() {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<SiteListAdapter.ViewHolder>() {
     private val data: MutableList<Site> = siteList.toMutableList()
     override fun getItemCount(): Int {
         return data.size
@@ -44,7 +43,7 @@ class SiteListAdapter(
         notifyItemMoved(from, to)
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.tvName
         val ivLogo: ImageView = itemView.ivLogo
         val cbEnabled: CheckBox = itemView.cbEnabled

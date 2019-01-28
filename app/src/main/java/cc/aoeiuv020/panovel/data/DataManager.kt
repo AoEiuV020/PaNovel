@@ -3,8 +3,8 @@ package cc.aoeiuv020.panovel.data
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.support.annotation.MainThread
-import android.support.annotation.WorkerThread
+import androidx.annotation.MainThread
+import androidx.annotation.WorkerThread
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.entity.*
@@ -107,7 +107,7 @@ object DataManager : AnkoLogger {
      * 同步所有网站到数据库，app升级时调用一次就好，
      */
     fun syncSites(): Unit = app.db.runInTransaction<Unit> {
-        val existsSites = listSites()
+        val existsSites = app.db.siteDao().listAllSite()
         existsSites.forEach { site ->
             val context = try {
                 api.getNovelContextByName(site.name)

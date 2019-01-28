@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 import org.jsoup.Jsoup
+import java.io.ByteArrayOutputStream
 
 /**
  * Created by AoEiuV020 on 2018.05.10-16:48:32.
@@ -27,10 +28,13 @@ class Yssm : DslJsoupNovelContext() {init {
         }
         // 傻哔吧这网站，一次性返回所有，搜索都市直接出四千多结果，html大于1M，
         // 这里限制一下，20K大概十几个结果，
-        val byteArray = ByteArray(20 * 1000)
+        val max = 20 * 1000
         val response = response(call.notNull())
-        response.inputStream { it.read(byteArray) }
-        val cutDocument = Jsoup.parse(byteArray.inputStream(), null, response.request().url().toString())
+        val byteArrayOutputStream = ByteArrayOutputStream(max)
+        response.inputStream {
+            it.copyTo(byteArrayOutputStream, max)
+        }
+        val cutDocument = Jsoup.parse(byteArrayOutputStream.toByteArray().inputStream(), null, response.request().url().toString())
         document(cutDocument) {
             // 由于被截断，可能处理最后一个元素会出异常，无视，
             itemsIgnoreFailed("#container > div.details.list-type > ul > li") {

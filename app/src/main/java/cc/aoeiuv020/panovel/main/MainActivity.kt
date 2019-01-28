@@ -9,14 +9,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.backup.BackupActivity
@@ -39,6 +35,7 @@ import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.cancelAllNotify
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.safelyShow
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
@@ -191,7 +188,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
                 R.string.history to HistoryFragment())
 
 
-        container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        container.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -213,10 +210,10 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
     }
 
-    private fun initTab(vararg pair: Pair<Int, Fragment>) {
+    private fun initTab(vararg pair: Pair<Int, androidx.fragment.app.Fragment>) {
         val (titleIdList, fragmentList) = pair.unzip()
-        val pagerAdapter = object : FragmentPagerAdapter(supportFragmentManager) {
-            override fun getItem(position: Int): Fragment = fragmentList[position]
+        val pagerAdapter = object : androidx.fragment.app.FragmentPagerAdapter(supportFragmentManager) {
+            override fun getItem(position: Int): androidx.fragment.app.Fragment = fragmentList[position]
 
             override fun getCount(): Int = fragmentList.size
         }

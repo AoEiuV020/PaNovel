@@ -10,6 +10,10 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.10.05-00:38:40.
  */
 class YidmTest : BaseNovelContextText(Yidm::class) {
+    init {
+        // 下载不到版权受限的小说了，这个源就没什么意义了，
+        enabled = false
+    }
     @Test
     fun search() {
         search("都市")
@@ -19,7 +23,7 @@ class YidmTest : BaseNovelContextText(Yidm::class) {
     @Test
     fun detail() {
         detail("1517", "1517", "OVERLORD不死者之王", "丸山くがね",
-                "http://covercdn.yidm.com/1/1517/1517l.jpg",
+                "https://covercdn2.yidm.com/1/1517/1517l.jpg",
                 "一款席卷游戏界的网路游戏「YGGDRASIL」，" +
                         "有一天突然毫无预警地停止一切服务——原本应该是如此。" +
                         "但是不知为何它却成了一款即使过了结束时间，玩家角色依然不会登出的游戏。" +

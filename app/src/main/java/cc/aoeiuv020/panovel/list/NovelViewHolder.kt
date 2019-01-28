@@ -1,13 +1,12 @@
 package cc.aoeiuv020.panovel.list
 
 import android.content.Context
-import android.support.annotation.UiThread
-import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.UiThread
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.bookshelf.RefreshingDotView
 import cc.aoeiuv020.panovel.data.NovelManager
@@ -33,7 +32,7 @@ class NovelViewHolder(itemView: View,
                       initItem: (NovelViewHolder) -> Unit = {},
                       actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
                       onError: (String, Throwable) -> Unit
-) : RecyclerView.ViewHolder(itemView), AnkoLogger {
+) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), AnkoLogger {
     private val itemListener = DefaultNovelItemActionListener(actionDoneListener, onError)
 
     // 所有View可空，准备支持不同布局，小的布局可能大部分View都没有，

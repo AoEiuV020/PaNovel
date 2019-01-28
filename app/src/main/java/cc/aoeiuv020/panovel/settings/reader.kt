@@ -30,6 +30,8 @@ object ReaderSettings : Pref {
     var brightness: Int by Delegates.int(-1)
     // 保持屏幕长亮，
     val keepScreenOn: Boolean by Delegates.boolean(false)
+    // 启用全屏阅读，
+    val fullScreen: Boolean by Delegates.boolean(true)
     /**
      * 阅读界面点击退出全屏的延迟，
      * 有点延迟看着顺眼点，
@@ -44,11 +46,11 @@ object ReaderSettings : Pref {
      * 小说内容的留白，
      */
     val contentMargins: Margins = Margins("ContentMargins", true, 1, 3, 1, 3)
-    val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 1, 1)
+    val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 3, 1)
     val bookNameMargins: Margins = Margins("BookNameMargins", true, 50, -1, -1, 1)
-    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, 1, 1, -1, -1)
-    val timeMargins: Margins = Margins("TimeMargins", true, -1, 1, 1, -1)
-    val batteryMargins: Margins = Margins("BatteryMargins", true, 1, -1, -1, 1)
+    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, 3, 1, -1, -1)
+    val timeMargins: Margins = Margins("TimeMargins", true, -1, 1, 3, -1)
+    val batteryMargins: Margins = Margins("BatteryMargins", true, 3, -1, -1, 1)
     /**
      * 对应上面几个，也就是页眉页脚那些信息的字体大小，
      */

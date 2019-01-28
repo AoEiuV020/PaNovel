@@ -1,9 +1,8 @@
 package cc.aoeiuv020.panovel.list
 
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.settings.ItemAction
@@ -19,7 +18,7 @@ open class NovelListAdapter(
         private val initItem: (NovelViewHolder) -> Unit = {},
         actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
         private val onError: (String, Throwable) -> Unit
-) : RecyclerView.Adapter<NovelViewHolder>(), AnkoLogger {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<NovelViewHolder>(), AnkoLogger {
     private val actualActionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { action, vh ->
         when (action) {
         // CleanData固定删除元素，无视传入的listener,
