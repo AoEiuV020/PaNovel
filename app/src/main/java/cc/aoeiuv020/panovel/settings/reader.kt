@@ -30,6 +30,8 @@ object ReaderSettings : Pref {
     var brightness: Int by Delegates.int(-1)
     // 保持屏幕长亮，
     val keepScreenOn: Boolean by Delegates.boolean(false)
+    // 启用全屏阅读，
+    val fullScreen: Boolean by Delegates.boolean(false)
     /**
      * 阅读界面点击退出全屏的延迟，
      * 有点延迟看着顺眼点，
