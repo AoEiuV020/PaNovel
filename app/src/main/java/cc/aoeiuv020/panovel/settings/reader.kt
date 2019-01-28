@@ -44,11 +44,11 @@ object ReaderSettings : Pref {
      * 小说内容的留白，
      */
     val contentMargins: Margins = Margins("ContentMargins", true, 1, 3, 1, 3)
-    val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 1, 1)
+    val paginationMargins: Margins = Margins("PaginationMargins", true, -1, -1, 3, 1)
     val bookNameMargins: Margins = Margins("BookNameMargins", true, 50, -1, -1, 1)
-    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, 1, 1, -1, -1)
-    val timeMargins: Margins = Margins("TimeMargins", true, -1, 1, 1, -1)
-    val batteryMargins: Margins = Margins("BatteryMargins", true, 1, -1, -1, 1)
+    val chapterNameMargins: Margins = Margins("ChapterNameMargins", true, 3, 1, -1, -1)
+    val timeMargins: Margins = Margins("TimeMargins", true, -1, 1, 3, -1)
+    val batteryMargins: Margins = Margins("BatteryMargins", true, 3, -1, -1, 1)
     /**
      * 对应上面几个，也就是页眉页脚那些信息的字体大小，
      */
