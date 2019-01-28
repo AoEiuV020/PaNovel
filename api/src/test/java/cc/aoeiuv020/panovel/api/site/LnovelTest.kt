@@ -1,6 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.*
+import cc.aoeiuv020.encrypt.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.nio.ByteBuffer
