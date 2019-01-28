@@ -10,7 +10,6 @@ class QidianTest : BaseNovelContextText(Qidian::class) {
     @Test
     fun search() {
         search("都市")
-        search("重生之都市修仙", "十里剑神", "3548786")
         search("从前有座灵剑山", "国王陛下", "3347574")
         search("斗破苍穹", "天蚕土豆", "1209977")
         search("修真聊天群", "圣骑士的传说", "3602691")
