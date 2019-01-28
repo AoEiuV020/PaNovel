@@ -71,6 +71,7 @@ class BackupV2 : DefaultBackup() {
 
                 "adEnabled" -> editor.putBoolean(key, value.asBoolean)
                 "keepScreenOn" -> editor.putBoolean(key, value.asBoolean)
+                "fullScreen" -> editor.putBoolean(key, value.asBoolean)
                 "backPressOutOfFullScreen" -> editor.putBoolean(key, value.asBoolean)
                 "fullScreenClickNextPage" -> editor.putBoolean(key, value.asBoolean)
                 "gridView" -> editor.putBoolean(key, value.asBoolean)
