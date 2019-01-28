@@ -28,7 +28,7 @@ class Gxwztv : DslJsoupNovelContext() {init {
         }
     }
     // https://www.gxwztv.com/ba9814.shtml
-    bookIdRegex = "((/ba)|(/\\d+/))(\\d+)"
+    bookIdRegex = "((/ba)|info-|(/\\d+/))(\\d+)"
     bookIdIndex = 3
     detailPageTemplate = "/ba%s.shtml"
     detail {

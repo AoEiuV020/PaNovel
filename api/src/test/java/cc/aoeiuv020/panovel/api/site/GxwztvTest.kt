@@ -10,10 +10,11 @@ import org.junit.Test
 class GxwztvTest : BaseNovelContextText(Gxwztv::class) {
     @Test
     fun regex() {
-        val regex = "((/ba)|(/\\d+/))(\\d+)"
+        val regex = "((/ba)|info-|(/\\d+/))(\\d+)"
         val index = 3
         listOf("https://www.gxwztv.com/ba9814.shtml",
                 "https://www.gxwztv.com/9/9814/",
+                "https://m.gxwztv.com/info-9814/",
                 "https://www.gxwztv.com/9/9814/166515215.html"
         ).forEach {
             assertEquals("9814", it.pick(regex)[index])
