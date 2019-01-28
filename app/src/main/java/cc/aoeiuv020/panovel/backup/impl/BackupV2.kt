@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.backup.impl
 
 import android.net.Uri
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.App
@@ -191,7 +192,7 @@ class BackupV2 : DefaultBackup() {
         val backgroundImage = ReaderSettings.backgroundImage
         if (backgroundImage != null) {
             folder.resolve("backgroundImage").outputStream().use { output ->
-                App.ctx.contentResolver.openInputStream(backgroundImage).use { input ->
+                App.ctx.contentResolver.openInputStream(backgroundImage).notNull().use { input ->
                     input.copyTo(output)
                 }
                 output.flush()
@@ -202,7 +203,7 @@ class BackupV2 : DefaultBackup() {
         val lastBackgroundImage = ReaderSettings.lastBackgroundImage
         if (lastBackgroundImage != null) {
             folder.resolve("lastBackgroundImage").outputStream().use { output ->
-                App.ctx.contentResolver.openInputStream(lastBackgroundImage).use { input ->
+                App.ctx.contentResolver.openInputStream(lastBackgroundImage).notNull().use { input ->
                     input.copyTo(output)
                 }
                 output.flush()
@@ -213,7 +214,7 @@ class BackupV2 : DefaultBackup() {
         val font = ReaderSettings.font
         if (font != null) {
             folder.resolve("font").outputStream().use { output ->
-                App.ctx.contentResolver.openInputStream(font).use { input ->
+                App.ctx.contentResolver.openInputStream(font).notNull().use { input ->
                     input.copyTo(output)
                 }
                 output.flush()
