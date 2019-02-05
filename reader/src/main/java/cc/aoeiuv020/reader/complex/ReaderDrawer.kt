@@ -3,7 +3,9 @@ package cc.aoeiuv020.reader.complex
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.*
+import android.os.Build
 import android.text.TextPaint
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
@@ -154,21 +156,21 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         reader.autoRefreshThread.reset()
         // 只用本地变量，防止pageIndex被多线程修改，
         var index = pageIndex
-        val textHeight = textPaint.textSize.toInt()
+        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
         if (pages == null) {
             debug { "chapter $chapterIndex pages null" }
-            content.drawText("正在获取章节...", 0f, textHeight.toFloat(), textPaint)
+            drawTextBottom(content, "正在获取章节...", 0f, textHeight.toFloat(), textPaint)
             request(chapterIndex)
             return null
         }
         if (pages.isEmpty()) {
             debug { "chapter $chapterIndex pages empty" }
             var y = textHeight
-            content.drawText("本章空内容，", 0f, y.toFloat(), textPaint)
+            drawTextBottom(content, "本章空内容，", 0f, y.toFloat(), textPaint)
             y += textHeight
-            content.drawText("网络问题？", 0f, y.toFloat(), textPaint)
+            drawTextBottom(content, "网络问题？", 0f, y.toFloat(), textPaint)
             y += textHeight
-            content.drawText("试试刷新？", 0f, y.toFloat(), textPaint)
+            drawTextBottom(content, "试试刷新？", 0f, y.toFloat(), textPaint)
             return null
         }
 
@@ -204,6 +206,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
 
     private fun drawBattery(canvas: Canvas) {
         val intent = reader.ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+                .notNull()
         val battery = intent.getIntExtra("level", 0)
         val text = "$battery"
         val margins = reader.config.batteryMargins
@@ -225,7 +228,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
      * 刚好50是居中，
      */
     private fun drawMessage(canvas: Canvas, text: String, margins: ItemMargins, isBattery: Boolean = false) {
-        val textHeight = messagePaint.textSize
+        val textHeight = messagePaint.fontMetrics.run { bottom - top }
         val textWidth = messagePaint.measureText(text)
         val x: Float = if (margins.left > margins.right) {
             if (margins.left == 50) {
@@ -268,16 +271,18 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
             val mSize = messagePaint.textSize
             val bSize = mSize * (1 - 2 * a)
             messagePaint.textSize = bSize
-            canvas.drawText(text, bX, bY, messagePaint)
+            drawTextBottom(canvas, text, bX, bY, messagePaint)
             messagePaint.textSize = mSize
         } else {
-            canvas.drawText(text, x, y, messagePaint)
+            drawTextBottom(canvas, text, x, y, messagePaint)
         }
     }
 
     private fun drawContent(content: Canvas, page: Page) {
-        val textHeight = textPaint.textSize.toInt()
+        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
+        val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
 
+        val width = content.width.toFloat()
         var y = 0
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         page.lines.forEach { line ->
@@ -285,17 +290,46 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
             when (line) {
                 is Title -> {
                     y += textHeight
-                    content.drawText(line.string, 0f, y.toFloat(), titlePaint)
-                    y += reader.ctx.dip(reader.config.lineSpacing)
+                    drawTextBottom(content, line.string, 0f, y.toFloat(), titlePaint)
+                    y += lineSpacing
                 }
                 is String -> {
                     y += textHeight
-                    content.drawText(line, 0f, y.toFloat(), textPaint)
-                    y += reader.ctx.dip(reader.config.lineSpacing)
+                    if (reader.config.fitWidth
+                            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        // 调整字间距只有安卓5以上支持，
+
+                        val textWidth = textPaint.measureText(line)
+                        // 空白小于一个字才调整字间距，也就是这行确实填満了字的情况，
+                        if ((width - textWidth) < textHeight) {
+                            // 间距转int下取整处理以免最右一个字超出部分，
+                            val spacing = ((width - textWidth) / (line.length - 1))
+                                    .toInt().toFloat()
+                            // 字间距一个单位是一字宽，
+                            textPaint.letterSpacing = spacing / textPaint.textSize
+                        }
+                    }
+                    drawTextBottom(content, line, 0f, y.toFloat(), textPaint)
+                    // 去掉字间距以免影响后续计算，
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        textPaint.letterSpacing = 0f
+                    }
+                    y += lineSpacing
                 }
                 is ParagraphSpacing -> y += paragraphSpacing
             }
+            if (reader.config.fitHeight) {
+                y += page.fitLineSpacing
+            }
         }
+    }
+
+    /**
+     * @param y 文字矩形左下角的y值，不是基线的，
+     */
+    private fun drawTextBottom(canvas: Canvas, text: String, x: Float, y: Float, p: TextPaint) {
+        // 减去基线距离，
+        canvas.drawText(text, x, y - p.descent(), p)
     }
 
     private fun drawBackground(background: Canvas) {
@@ -339,10 +373,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     private fun typesetting(chapter: String, list: List<String>): List<Page> {
         val pages = mutableListOf<Page>()
         var height = 0
+        var fitHeight = 0
         val lines = mutableListOf<Any>()
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
-        val textHeight = textPaint.textSize.toInt()
+        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
         (listOf(chapter) + list).forEachIndexed { index, str ->
             // 不支持图片，得到段就直接转成String,
             val paragraph = if (index == 0) str else requester.requestParagraph(str).toString()
@@ -352,9 +387,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 height += textHeight
                 verbose { "typesetting height $height/${contentSize.height}" }
                 if (height > contentSize.height) {
+                    // 铺满高度需要添加的间距，
+                    // 转int下取整以免最后一行超出底部，
+                    // 最后一个行间距也要删除，
+                    val space = ((contentSize.height - fitHeight))
+                    val fitLineSpacing = (space.toFloat() / (lines.size - 1))
+                            .toInt()
                     height = textHeight
                     debug { "add lines size ${lines.size}" }
-                    pages.add(Page(ArrayList(lines)))
+                    pages.add(Page(ArrayList(lines), fitLineSpacing))
                     lines.clear()
                 }
                 count = textPaint.breakText(paragraph.substring(start), true, contentSize.width.toFloat(), null)
@@ -364,12 +405,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 } else {
                     lines.add(line)
                 }
+                fitHeight = height
+                // 行间距只加在文字下方，不会加在段间距下方，
                 height += lineSpacing
                 start += count
             }
             height += paragraphSpacing
             lines.add(ParagraphSpacing(paragraphSpacing))
         }
+        // 多出来的最后一页，
         if (lines.isNotEmpty()) {
             debug { "add lines size ${lines.size}" }
             pages.add(Page(ArrayList(lines)))

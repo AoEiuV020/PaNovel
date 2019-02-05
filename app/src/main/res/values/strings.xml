@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">爬小说</string>
     <string name="settings">设置</string>
     <string name="loading">加载中…%s</string>
@@ -242,5 +242,9 @@
     <string name="settings_export_location">导出路径</string>
     <string name="settings_export_location_summary">导出小说所在的路径，</string>
     <string name="full_screen">全屏阅读</string>
+    <string name="fit_width">宽铺满</string>
+    <string name="fit_width_summary">自动调整字间距以达到左右顶格的效果，仅安卓5以上有效，</string>
+    <string name="fit_height">高铺满</string>
+    <string name="fit_height_summary">自动调整行间距以达到上下顶格的效果，</string>
 
 </resources>

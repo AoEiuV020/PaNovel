@@ -51,6 +51,7 @@ class BookListFragment : androidx.fragment.app.Fragment(), IView, AnkoLogger {
 
     fun showRemoveBookshelfComplete() {
         showComplete(requireContext().getString(R.string.remove_bookshelf_complete))
+        (activity as? MainActivity)?.refreshBookshelf()
     }
 
     fun showRemoving() {
@@ -63,6 +64,7 @@ class BookListFragment : androidx.fragment.app.Fragment(), IView, AnkoLogger {
 
     fun showAddBookshelfComplete() {
         showComplete(requireContext().getString(R.string.add_bookshelf_complete))
+        (activity as? MainActivity)?.refreshBookshelf()
     }
 
     fun showAdding() {

@@ -8,9 +8,9 @@
         android:inputType="number|numberSigned"
         android:key="brightness"
         android:maxLines="1"
-        android:summary="-1为跟随系统，"
         android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:summary="-1为跟随系统，"
         android:title="@string/brightness" />
 
     <SwitchPreference
@@ -25,8 +25,8 @@
 
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
-        android:inputType="number"
         android:defaultValue="60"
+        android:inputType="number"
         android:key="autoSaveReadStatus"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -69,8 +69,8 @@
         android:title="@string/center_percent" />
 
     <cc.aoeiuv020.panovel.settings.EditTextPreference
-        android:inputType="text"
         android:defaultValue="HH:mm"
+        android:inputType="text"
         android:key="dateFormat"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -96,6 +96,18 @@
         android:singleLine="true"
         android:title="@string/auto_refresh_interval" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="fitWidth"
+        android:summary="@string/fit_width_summary"
+        android:title="@string/fit_width" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="fitHeight"
+        android:summary="@string/fit_height_summary"
+        android:title="@string/fit_height" />
+
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:defaultValue="26"
@@ -108,8 +120,8 @@
 
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
-        android:inputType="number"
         android:defaultValue="12"
+        android:inputType="number"
         android:key="messageSize"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -117,8 +129,8 @@
         android:title="@string/message_size" />
 
     <cc.aoeiuv020.panovel.settings.ListPreference
-        android:entries="@array/animation_names"
         android:defaultValue="SIMULATION"
+        android:entries="@array/animation_names"
         android:entryValues="@array/animation_values"
         android:key="animationMode"
         android:title="@string/animation" />
@@ -135,8 +147,8 @@
 
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
-        android:inputType="number"
         android:defaultValue="13"
+        android:inputType="number"
         android:key="lineSpacing"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -155,8 +167,8 @@
 
     <cc.aoeiuv020.panovel.settings.ColorPickerPreference
         android:defaultValue="0xffffe3aa"
-        android:title="@string/background_color"
         android:key="backgroundColor"
+        android:title="@string/background_color"
         app:alphaSlider="true"
         app:lightnessSlider="true"
         app:wheelType="CIRCLE" />

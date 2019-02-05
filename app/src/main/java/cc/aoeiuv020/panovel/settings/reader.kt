@@ -24,6 +24,8 @@ object ReaderSettings : Pref {
      */
     var autoSaveReadStatus: Int by Delegates.int(60)
     var fullScreenClickNextPage: Boolean by Delegates.boolean(false)
+    var fitWidth: Boolean by Delegates.boolean(true)
+    var fitHeight: Boolean by Delegates.boolean(true)
     var volumeKeyScroll: Boolean by Delegates.boolean(true)
     var centerPercent: Float by Delegates.float(0.5f)
     // 亮度，0-255, 负数代表亮度跟随系统，
@@ -102,6 +104,8 @@ object ReaderSettings : Pref {
             tfFont,
             centerPercent,
             autoRefreshInterval,
-            fullScreenClickNextPage
+            fullScreenClickNextPage,
+            fitWidth,
+            fitHeight
     )
 }

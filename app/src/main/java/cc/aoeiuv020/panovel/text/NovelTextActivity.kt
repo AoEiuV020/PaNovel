@@ -674,7 +674,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
         }.setCancelable(false).create().also {
             // 去除对话框的灰背景，
-            it.window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            it.window.notNullOrReport().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         }.safelyShow()
         // 弹对话框时退出全屏，
         hide()
@@ -699,8 +699,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
                     selectChapter(index)
                 }.create().apply {
                     listView.isFastScrollEnabled = true
+                    // 不好办，光post不稳定，两次好点，
                     listView.post {
-                        listView.setSelection(novel.readAtChapterIndex)
+                        listView.post {
+                            listView.setSelection(novel.readAtChapterIndex)
+                        }
                     }
                 }.safelyShow()
     }
