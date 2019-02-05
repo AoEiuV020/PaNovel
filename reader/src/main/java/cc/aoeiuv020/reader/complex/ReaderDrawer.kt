@@ -156,7 +156,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         reader.autoRefreshThread.reset()
         // 只用本地变量，防止pageIndex被多线程修改，
         var index = pageIndex
-        val textHeight = textPaint.textSize.toInt()
+        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
         if (pages == null) {
             debug { "chapter $chapterIndex pages null" }
             drawTextBottom(content, "正在获取章节...", 0f, textHeight.toFloat(), textPaint)
@@ -228,7 +228,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
      * 刚好50是居中，
      */
     private fun drawMessage(canvas: Canvas, text: String, margins: ItemMargins, isBattery: Boolean = false) {
-        val textHeight = messagePaint.textSize
+        val textHeight = messagePaint.fontMetrics.run { bottom - top }
         val textWidth = messagePaint.measureText(text)
         val x: Float = if (margins.left > margins.right) {
             if (margins.left == 50) {
@@ -279,7 +279,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     }
 
     private fun drawContent(content: Canvas, page: Page) {
-        val textHeight = textPaint.textSize.toInt()
+        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
 
         val width = content.width.toFloat()
         var y = 0
@@ -301,12 +301,14 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                         val textWidth = textPaint.measureText(line)
                         // 空白小于一个字才调整字间距，也就是这行确实填満了字的情况，
                         if ((width - textWidth) < textHeight) {
-                            val spacing = (width - textWidth) / (line.length - 1)
+                            // 间距转int下取整处理以免最右一个字超出部分，
+                            val spacing = ((width - textWidth) / (line.length - 1))
+                                    .toInt().toFloat()
                             // 字间距一个单位是一字宽，
                             textPaint.letterSpacing = spacing / textPaint.textSize
                         }
                     }
-                    content.drawText(line, 0f, y.toFloat(), textPaint)
+                    drawTextBottom(content, line, 0f, y.toFloat(), textPaint)
                     // 去掉字间距以免影响后续计算，
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         textPaint.letterSpacing = 0f
@@ -370,7 +372,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         val lines = mutableListOf<Any>()
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
-        val textHeight = textPaint.textSize.toInt()
+        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
         (listOf(chapter) + list).forEachIndexed { index, str ->
             // 不支持图片，得到段就直接转成String,
             val paragraph = if (index == 0) str else requester.requestParagraph(str).toString()
