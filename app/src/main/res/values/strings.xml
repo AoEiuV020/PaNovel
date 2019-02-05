@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">爬小说</string>
     <string name="settings">设置</string>
     <string name="loading">加载中…%s</string>
