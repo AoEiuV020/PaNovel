@@ -3,7 +3,9 @@ package cc.aoeiuv020.reader.complex
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.*
+import android.os.Build
 import android.text.TextPaint
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.pager.Pager
 import cc.aoeiuv020.pager.PagerDrawer
 import cc.aoeiuv020.pager.Size
@@ -204,6 +206,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
 
     private fun drawBattery(canvas: Canvas) {
         val intent = reader.ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+                .notNull()
         val battery = intent.getIntExtra("level", 0)
         val text = "$battery"
         val margins = reader.config.batteryMargins
@@ -278,6 +281,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     private fun drawContent(content: Canvas, page: Page) {
         val textHeight = textPaint.textSize.toInt()
 
+        val width = content.width.toFloat()
         var y = 0
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
         page.lines.forEach { line ->
@@ -290,6 +294,19 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 }
                 is String -> {
                     y += textHeight
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        // 调整字间距只有安卓5以上支持，
+
+                        // 先去掉字间距以计算需要的
+                        textPaint.letterSpacing = 0f
+                        val textWidth = textPaint.measureText(line)
+                        // 空白小于一个字才调整字间距，也就是这行确实填満了字的情况，
+                        if ((width - textWidth) < textHeight) {
+                            val spacing = (width - textWidth) / (line.length - 1)
+                            // 字间距一个单位是一字宽，
+                            textPaint.letterSpacing = spacing / textPaint.textSize
+                        }
+                    }
                     content.drawText(line, 0f, y.toFloat(), textPaint)
                     y += reader.ctx.dip(reader.config.lineSpacing)
                 }
