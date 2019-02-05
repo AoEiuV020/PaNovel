@@ -99,6 +99,10 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
     private lateinit var migrationPresenter: MigrationPresenter
 
+    fun refreshBookshelf() {
+        bookshelfFragment?.refresh()
+    }
+
     override fun showDowngrade(from: VersionName, to: VersionName) {
         debug {
             "showDowngrade <${from.name} to ${to.name}>"
