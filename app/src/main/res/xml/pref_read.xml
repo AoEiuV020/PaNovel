@@ -102,6 +102,12 @@
         android:summary="@string/fit_width_summary"
         android:title="@string/fit_width" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="fitHeight"
+        android:summary="@string/fit_height_summary"
+        android:title="@string/fit_height" />
+
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
         android:defaultValue="26"

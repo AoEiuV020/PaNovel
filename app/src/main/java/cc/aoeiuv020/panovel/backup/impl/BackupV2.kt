@@ -76,6 +76,7 @@ class BackupV2 : DefaultBackup() {
                 "backPressOutOfFullScreen" -> editor.putBoolean(key, value.asBoolean)
                 "fullScreenClickNextPage" -> editor.putBoolean(key, value.asBoolean)
                 "fitWidth" -> editor.putBoolean(key, value.asBoolean)
+                "fitHeight" -> editor.putBoolean(key, value.asBoolean)
                 "gridView" -> editor.putBoolean(key, value.asBoolean)
                 "largeView" -> editor.putBoolean(key, value.asBoolean)
                 "reportCrash" -> editor.putBoolean(key, value.asBoolean)

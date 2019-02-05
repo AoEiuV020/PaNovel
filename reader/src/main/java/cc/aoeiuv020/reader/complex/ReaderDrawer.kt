@@ -279,7 +279,6 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     }
 
     private fun drawContent(content: Canvas, page: Page) {
-        content.drawColor(0xffff0000.toInt())
         val textHeight = textPaint.fontMetricsInt.run { bottom - top }
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
 
@@ -319,7 +318,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 }
                 is ParagraphSpacing -> y += paragraphSpacing
             }
-            y += page.fitLineSpacing
+            if (reader.config.fitHeight) {
+                y += page.fitLineSpacing
+            }
         }
     }
 
