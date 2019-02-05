@@ -298,8 +298,6 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                             && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         // 调整字间距只有安卓5以上支持，
 
-                        // 先去掉字间距以计算需要的
-                        textPaint.letterSpacing = 0f
                         val textWidth = textPaint.measureText(line)
                         // 空白小于一个字才调整字间距，也就是这行确实填満了字的情况，
                         if ((width - textWidth) < textHeight) {
@@ -309,6 +307,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                         }
                     }
                     content.drawText(line, 0f, y.toFloat(), textPaint)
+                    // 去掉字间距以免影响后续计算，
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        textPaint.letterSpacing = 0f
+                    }
                     y += reader.ctx.dip(reader.config.lineSpacing)
                 }
                 is ParagraphSpacing -> y += paragraphSpacing
