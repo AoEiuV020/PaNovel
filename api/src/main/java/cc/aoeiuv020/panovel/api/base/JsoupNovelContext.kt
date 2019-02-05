@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api.base
 
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.base.jar.ownTextList
 import cc.aoeiuv020.base.jar.ownTextListSplitWhitespace
 import cc.aoeiuv020.regex.pick
@@ -114,27 +115,33 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
      * TODO: 改成query可以为空，默认就返回当前元素，
      */
     protected fun Element.requireElements(query: String, name: String = TAG_LIST): Elements = try {
-        select(query)
+        select(query).notEmpty(query)
     } catch (e: Exception) {
         throw IllegalStateException("解析[$name]($query)失败，", e)
     }
 
     protected inline fun <T> Element.requireElements(query: String, name: String = TAG_LIST, block: (Elements) -> T): T = try {
-        select(query).let(block)
+        select(query).notEmpty(query).let(block)
     } catch (e: Exception) {
         throw IllegalStateException("解析[$name]($query)失败，", e)
     }
 
     protected fun Element.requireElement(query: String, name: String = TAG_ELEMENT): Element = try {
-        select(query).first()
+        select(query).first().notNull(query)
     } catch (e: Exception) {
         throw IllegalStateException("解析[$name]($query)失败，", e)
     }
 
     protected inline fun <T> Element.requireElement(query: String, name: String = TAG_ELEMENT, block: (Element) -> T): T = try {
-        select(query).first().let(block)
+        select(query).first().notNull(query).let(block)
     } catch (e: Exception) {
         throw IllegalStateException("解析[$name]($query)失败，", e)
+    }
+
+    protected fun Elements.notEmpty(query: String = ""): Elements = apply {
+        if (isEmpty()) {
+            throw IllegalStateException("解析元素${query}结果为空，")
+        }
     }
 
     protected fun Element.getElements(query: String): Elements? = try {
