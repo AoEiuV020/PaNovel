@@ -279,7 +279,9 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     }
 
     private fun drawContent(content: Canvas, page: Page) {
+        content.drawColor(0xffff0000.toInt())
         val textHeight = textPaint.fontMetricsInt.run { bottom - top }
+        val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
 
         val width = content.width.toFloat()
         var y = 0
@@ -290,7 +292,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 is Title -> {
                     y += textHeight
                     drawTextBottom(content, line.string, 0f, y.toFloat(), titlePaint)
-                    y += reader.ctx.dip(reader.config.lineSpacing)
+                    y += lineSpacing
                 }
                 is String -> {
                     y += textHeight
@@ -313,10 +315,11 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         textPaint.letterSpacing = 0f
                     }
-                    y += reader.ctx.dip(reader.config.lineSpacing)
+                    y += lineSpacing
                 }
                 is ParagraphSpacing -> y += paragraphSpacing
             }
+            y += page.fitLineSpacing
         }
     }
 
@@ -369,6 +372,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     private fun typesetting(chapter: String, list: List<String>): List<Page> {
         val pages = mutableListOf<Page>()
         var height = 0
+        var fitHeight = 0
         val lines = mutableListOf<Any>()
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
@@ -382,9 +386,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 height += textHeight
                 verbose { "typesetting height $height/${contentSize.height}" }
                 if (height > contentSize.height) {
+                    // 铺满高度需要添加的间距，
+                    // 转int下取整以免最后一行超出底部，
+                    // 最后一个行间距也要删除，
+                    val space = ((contentSize.height - fitHeight))
+                    val fitLineSpacing = (space.toFloat() / (lines.size - 1))
+                            .toInt()
                     height = textHeight
                     debug { "add lines size ${lines.size}" }
-                    pages.add(Page(ArrayList(lines)))
+                    pages.add(Page(ArrayList(lines), fitLineSpacing))
                     lines.clear()
                 }
                 count = textPaint.breakText(paragraph.substring(start), true, contentSize.width.toFloat(), null)
@@ -394,12 +404,15 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 } else {
                     lines.add(line)
                 }
+                fitHeight = height
+                // 行间距只加在文字下方，不会加在段间距下方，
                 height += lineSpacing
                 start += count
             }
             height += paragraphSpacing
             lines.add(ParagraphSpacing(paragraphSpacing))
         }
+        // 多出来的最后一页，
         if (lines.isNotEmpty()) {
             debug { "add lines size ${lines.size}" }
             pages.add(Page(ArrayList(lines)))
