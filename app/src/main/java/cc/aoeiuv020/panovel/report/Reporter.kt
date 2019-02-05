@@ -8,7 +8,7 @@ import cc.aoeiuv020.panovel.api.NoInternetException
 import cc.aoeiuv020.panovel.settings.OtherSettings
 import com.tencent.bugly.crashreport.CrashReport
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
+import org.jetbrains.anko.error
 import java.net.UnknownHostException
 
 /**
@@ -51,7 +51,7 @@ object Reporter : AnkoLogger {
 
     fun post(message: String) {
         val e = IllegalStateException(message)
-        debug(message, e)
+        error(message, e)
         postException(e)
     }
 
@@ -60,7 +60,7 @@ object Reporter : AnkoLogger {
     }
 
     fun post(message: String, e: Throwable) {
-        debug(message, e)
+        error(message, e)
         postException(IllegalStateException(message, e))
     }
 
