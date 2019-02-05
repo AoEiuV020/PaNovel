@@ -159,18 +159,18 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         val textHeight = textPaint.textSize.toInt()
         if (pages == null) {
             debug { "chapter $chapterIndex pages null" }
-            content.drawText("正在获取章节...", 0f, textHeight.toFloat(), textPaint)
+            drawTextBottom(content, "正在获取章节...", 0f, textHeight.toFloat(), textPaint)
             request(chapterIndex)
             return null
         }
         if (pages.isEmpty()) {
             debug { "chapter $chapterIndex pages empty" }
             var y = textHeight
-            content.drawText("本章空内容，", 0f, y.toFloat(), textPaint)
+            drawTextBottom(content, "本章空内容，", 0f, y.toFloat(), textPaint)
             y += textHeight
-            content.drawText("网络问题？", 0f, y.toFloat(), textPaint)
+            drawTextBottom(content, "网络问题？", 0f, y.toFloat(), textPaint)
             y += textHeight
-            content.drawText("试试刷新？", 0f, y.toFloat(), textPaint)
+            drawTextBottom(content, "试试刷新？", 0f, y.toFloat(), textPaint)
             return null
         }
 
@@ -271,10 +271,10 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
             val mSize = messagePaint.textSize
             val bSize = mSize * (1 - 2 * a)
             messagePaint.textSize = bSize
-            canvas.drawText(text, bX, bY, messagePaint)
+            drawTextBottom(canvas, text, bX, bY, messagePaint)
             messagePaint.textSize = mSize
         } else {
-            canvas.drawText(text, x, y, messagePaint)
+            drawTextBottom(canvas, text, x, y, messagePaint)
         }
     }
 
@@ -289,7 +289,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
             when (line) {
                 is Title -> {
                     y += textHeight
-                    content.drawText(line.string, 0f, y.toFloat(), titlePaint)
+                    drawTextBottom(content, line.string, 0f, y.toFloat(), titlePaint)
                     y += reader.ctx.dip(reader.config.lineSpacing)
                 }
                 is String -> {
@@ -313,6 +313,14 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 is ParagraphSpacing -> y += paragraphSpacing
             }
         }
+    }
+
+    /**
+     * @param y 文字矩形左下角的y值，不是基线的，
+     */
+    private fun drawTextBottom(canvas: Canvas, text: String, x: Float, y: Float, p: TextPaint) {
+        // 减去基线距离，
+        canvas.drawText(text, x, y - p.descent(), p)
     }
 
     private fun drawBackground(background: Canvas) {
