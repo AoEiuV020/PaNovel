@@ -294,7 +294,8 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                 }
                 is String -> {
                     y += textHeight
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (reader.config.fitWidth
+                            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         // 调整字间距只有安卓5以上支持，
 
                         // 先去掉字间距以计算需要的

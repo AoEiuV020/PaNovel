@@ -242,5 +242,7 @@
     <string name="settings_export_location">导出路径</string>
     <string name="settings_export_location_summary">导出小说所在的路径，</string>
     <string name="full_screen">全屏阅读</string>
+    <string name="fit_width">行铺满</string>
+    <string name="fit_width_summary">调整字间距以达到左右顶格的效果，仅安卓5以上有效，</string>
 
 </resources>
