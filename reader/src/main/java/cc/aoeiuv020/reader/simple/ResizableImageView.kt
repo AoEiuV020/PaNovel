@@ -3,13 +3,13 @@ package cc.aoeiuv020.reader.simple
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import androidx.appcompat.widget.AppCompatImageView
+import com.github.chrisbanes.photoview.PhotoView
 
 /**
  * https://stackoverflow.com/a/12283909/5615186
  * Created by AoEiuV020 on 2018.06.11-10:56:37.
  */
-class ResizableImageView : AppCompatImageView {
+class ResizableImageView : PhotoView {
     constructor(context: Context)
             : super(context)
 

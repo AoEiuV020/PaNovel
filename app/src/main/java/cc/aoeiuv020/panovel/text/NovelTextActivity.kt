@@ -35,6 +35,7 @@ import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import cc.aoeiuv020.regex.pick
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.dialog_select_color_scheme.view.*
 import org.jetbrains.anko.*
@@ -189,9 +190,14 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         }
 
         override fun requestImage(image: Image, view: ImageView) {
+            val glidUrl = object : GlideUrl(image.url) {
+                override fun getHeaders(): MutableMap<String, String> {
+                    return mutableMapOf("Referer" to urlTextView.text.toString())
+                }
+            }
             Glide.with(ctx.applicationContext)
                     .asDrawable()
-                    .load(image.url)
+                    .load(glidUrl)
                     .into(view)
         }
 

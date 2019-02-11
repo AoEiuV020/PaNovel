@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.download.DownloadingNotificationManager
 import cc.aoeiuv020.panovel.local.LocalNovelProvider
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.DownloadSettings
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import org.jetbrains.anko.doAsync
@@ -68,7 +69,7 @@ class NovelManager(
                 return it
             }
         }
-        val dnm: DownloadingNotificationManager = dnmLocal.get()
+        val dnm: DownloadingNotificationManager = dnmLocal.get().notNullOrReport()
         dnm.downloadStart(novel, index, chapter.name)
         return try {
             provider.getNovelContent(chapter) { offset, length ->
@@ -154,6 +155,7 @@ class NovelManager(
     private fun refreshDetail() {
         provider.updateNovelDetail()
         // 写入数据库，包括名字作者和extra都以详情页返回结果为准，
+        // FIXME: 隐患，如果更新名字作者的话数据库里可能存在同一本小说的两个记录，然后再修改就会报错#2067，
         app.updateDetail(novel)
     }
 

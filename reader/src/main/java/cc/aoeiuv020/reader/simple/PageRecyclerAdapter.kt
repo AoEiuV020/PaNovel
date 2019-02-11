@@ -35,8 +35,7 @@ internal class PageRecyclerAdapter(
                 TextViewHolder(view, this)
             }
             PageRecyclerAdapter.ItemType.IMAGE -> {
-                val view = LayoutInflater.from(ctx).inflate(R.layout.simple_image_item, parent, false)
-                ImageViewHolder(view, this)
+                ImageViewHolder.create(ctx, parent, this)
             }
         }
     }
@@ -54,7 +53,7 @@ internal class PageRecyclerAdapter(
             }
             is ImageViewHolder -> {
                 val line = reader.requester.requestParagraph(data[index])
-                holder.setImage(line as Image)
+                holder.setImage(reader, index, line as Image)
             }
         }
     }

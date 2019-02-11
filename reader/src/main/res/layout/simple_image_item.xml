@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cc.aoeiuv020.reader.simple.ResizableImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ivImage"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</cc.aoeiuv020.reader.simple.ResizableImageView>
+    <TextView
+        android:id="@+id/tvPage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="#141414"
+        android:textSize="48sp" />
+
+
+    <cc.aoeiuv020.reader.simple.ResizableImageView
+        android:id="@+id/ivImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

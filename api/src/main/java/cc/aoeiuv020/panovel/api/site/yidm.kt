@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.anull.notNull
+import cc.aoeiuv020.base.jar.ImageUtil
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.NovelDetail
@@ -207,7 +208,7 @@ class Yidm : DslJsoupNovelContext() {init {
                 try {
                     line.pick("\\{\\\$FULLPATH\\\$\\}(img\\S*)")
                             .first()
-                            .let { "![img](${URL(rootUrl, it)})" }
+                            .let { ImageUtil.getImageFromUrl(URL(rootUrl, it).toString()) }
                 } catch (_: Exception) {
                     // 该行不是图片，
                     line.trim().takeIf { it.isNotEmpty() }
