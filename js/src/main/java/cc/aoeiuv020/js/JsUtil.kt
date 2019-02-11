@@ -9,7 +9,11 @@ object JsUtil {
     fun run(js: String): String {
         val ctx = Context.enter()
         val scope = ctx.initStandardObjects()
-        val result = ctx.evaluateString(scope, js, "<cmd>", 1, null)
+        val result = ctx.evaluateString(scope, js, "<string>", 1, null)
         return Context.toString(result)
     }
+
+    fun create(): JsContext = JsContext.create(Context.enter())
+
+    fun release() = Context.exit()
 }
