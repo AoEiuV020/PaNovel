@@ -161,7 +161,7 @@ fun imgText(img: Element): String? {
             ?: img.absXlinkHref().takeIf(String::isNotBlank)
             )?.let {
         // 只记录完整路径，
-        "![img]($it)"
+        ImageUtil.getImageFromUrl(it)
     }
 }
 

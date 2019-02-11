@@ -598,7 +598,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
     protected inner class _NovelContentParser(root: Element)
         : _Parser<List<String>>(root) {
-        private lateinit var novelContent: List<String>
+        lateinit var novelContent: List<String>
         // 查到的可以是一个元素，也可以是一列元素，
         fun items(query: String, parent: Element = root, block: (Element) -> List<String> = { it.textList() }) {
             novelContent = parent.requireElements(query, name = TAG_CONTENT).flatMap {

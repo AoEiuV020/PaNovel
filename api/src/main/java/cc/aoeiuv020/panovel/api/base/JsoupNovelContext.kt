@@ -36,6 +36,7 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
         const val TAG_STATUS = "状态"
         const val TAG_UPDATE_TIME = "更新时间"
         const val TAG_GENRE = "类型"
+        const val TAG_SCRIPT = "脚本"
 
     }
 
