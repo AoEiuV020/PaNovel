@@ -516,6 +516,24 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
         }
 
+        fun items(list: List<Element>, init: _NovelChapterParser.() -> Unit = {
+            name = root.text()
+            if (extra == null) {
+                // 默认从该元素的href路径中找到chapterId，用于拼接章节正文地址，
+                extra = findBookIdWithChapterId(root.absHref())
+            }
+        }) {
+            novelChapterList = list.mapNotNull {
+                // 解析不通过的章节直接无视，不抛异常，
+                tryOrNul {
+                    _NovelChapterParser(it).run {
+                        init()
+                        parse()
+                    }
+                }
+            }
+        }
+
         override fun parse(): List<NovelChapter> = novelChapterList
     }
 

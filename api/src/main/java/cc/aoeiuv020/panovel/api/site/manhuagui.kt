@@ -55,11 +55,18 @@ class Manhuagui : JsNovelContext() {init {
     }
     chapters {
         document {
-            items("div[id^=chapter-list] > ul> li > a") {
+            // 先番外，再单行本，最后单话，
+            // https://www.manhuagui.com/comic/17332/
+            val list = root.requireElements("div[id^=chapter-list]").flatMap {
+                it.requireElements("> ul").reversed()
+            }.flatMap {
+                it.requireElements("> li > a")
+            }.reversed()
+            items(list) {
                 name = root.title()
                 extra = findBookIdWithChapterId(root.absHref())
             }
-        }.reversed()
+        }
     }
     // https://www.manhuagui.com/comic/19785/406233.html
     bookIdWithChapterIdRegex = firstTwoIntPattern
