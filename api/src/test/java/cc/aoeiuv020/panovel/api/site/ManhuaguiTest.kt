@@ -12,6 +12,7 @@ class ManhuaguiTest : BaseNovelContextText(Manhuagui::class) {
         search("魔王")
         search("穷神", "助野嘉昭", "2492")
         search("修真聊天群", "火力熊猫", "25630")
+        search("枪之勇者重生录", "にぃと,アネコユサギ", "25878")
     }
 
     @Test
@@ -41,6 +42,10 @@ class ManhuaguiTest : BaseNovelContextText(Manhuagui::class) {
                         "突然有一天，潜水良久的他突然发现……群里每一个群员，竟然全部是修真者，能移山倒海、长生千年的那种！\n" +
                         "啊啊啊啊，世界观在一夜间彻底崩碎啦！",
                 "2018-11-20 00:00:00")
+        detail("25878", "25878", "枪之勇者重生录", "にぃと,アネコユサギ",
+                "https://cf.hamreus.com/cpic/h/25878.jpg",
+                "成为枪之勇者被召唤到异世界的北村元康。经历死亡的危机得到了时间回溯的能力。",
+                "2019-01-28 00:00:00")
     }
 
     @Test

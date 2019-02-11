@@ -28,7 +28,10 @@ class Manhuagui : JsNovelContext() {init {
                 // 可能有额外的名字在a后面跟个small,
                 name("> div.book-detail > dl > dt > a")
                 // 可能有多个作者，逗号隔开，
-                author("> div.book-detail > dl > dd:nth-child(4) > span", block = pickString("作者：(\\S*)"))
+                author = root.requireElements(query = "> div.book-detail > dl > dd:nth-child(4) > span > a", name = TAG_AUTHOR_NAME)
+                        .joinToString(",") {
+                            it.text()
+                        }
             }
         }
     }
@@ -40,7 +43,10 @@ class Manhuagui : JsNovelContext() {init {
         document {
             novel {
                 name("div.book-detail.pr.fr > div.book-title > h1")
-                author("div.book-detail.pr.fr > ul > li:nth-child(2) > span:nth-child(2)", block = pickString("漫画作者：(\\S*)"))
+                author = root.requireElements(query = "div.book-detail.pr.fr > ul > li:nth-child(2) > span:nth-child(2) > a", name = TAG_AUTHOR_NAME)
+                        .joinToString(",") {
+                            it.text()
+                        }
             }
             image("div.book-cover.fl > p > img")
             update("div.book-detail.pr.fr > ul > li.status > span > span:nth-child(3)", format = "yyyy-MM-dd")
