@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'org.mozilla:rhino:' + rhino_version
+}

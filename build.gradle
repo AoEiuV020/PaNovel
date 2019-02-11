@@ -5,7 +5,7 @@ buildscript {
         // 统一配置所有安卓应用模块，
         applicationModules = ['app']
         // 统一配置所有java库模块，
-        javaModules = ["api", "local", "baseJar", "IronDB", "refresher", "server"]
+        javaModules = ["api", "local", "baseJar", "IronDB", "refresher", "server", "js"]
         // 统一配置所有android库模块，
         androidModules = ["pager", "reader", 'filepicker']
         // 读取所有库的版本信息，
