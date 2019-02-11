@@ -99,6 +99,9 @@
 -dontoptimize
 -dontpreverify
 
+# rhino, https://github.com/mozilla/rhino/issues/388
+-keep class org.mozilla.** { *; }
+
 
 #apk 包内所有 class 的内部结构
 -dump class_files.txt
