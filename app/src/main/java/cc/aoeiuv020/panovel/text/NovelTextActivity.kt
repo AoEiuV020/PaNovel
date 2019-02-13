@@ -35,10 +35,17 @@ import cc.aoeiuv020.reader.AnimationMode
 import cc.aoeiuv020.reader.ReaderConfigName.*
 import cc.aoeiuv020.regex.pick
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import kotlinx.android.synthetic.main.activity_novel_text.*
 import kotlinx.android.synthetic.main.dialog_select_color_scheme.view.*
 import org.jetbrains.anko.*
+import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
 import java.util.concurrent.TimeUnit
@@ -189,16 +196,37 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
             }
         }
 
-        override fun requestImage(image: Image, view: ImageView) {
-            val glidUrl = object : GlideUrl(image.url) {
+        override fun requestImage(
+                image: Image,
+                exceptionHandler: (Throwable) -> Unit,
+                block: (File) -> Unit
+        ) {
+            val glideUrl = object : GlideUrl(image.url) {
                 override fun getHeaders(): MutableMap<String, String> {
                     return mutableMapOf("Referer" to urlTextView.text.toString())
                 }
             }
             Glide.with(ctx.applicationContext)
-                    .asDrawable()
-                    .load(glidUrl)
-                    .into(view)
+                    .downloadOnly()
+                    .load(glideUrl)
+                    .listener(object : RequestListener<File?> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<File?>?, isFirstResource: Boolean): Boolean {
+                            exceptionHandler(e.notNullOrReport())
+                            // 一般来说就是网络问题，
+                            // TODO: smart case? Contracts,
+                            Reporter.post("加载图片<${image.url}>失败", e.notNullOrReport())
+                            return true
+                        }
+
+                        override fun onResourceReady(resource: File?, model: Any?, target: Target<File?>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            block(resource.notNullOrReport())
+                            return true
+                        }
+                    })
+                    .into(object : SimpleTarget<File>() {
+                        override fun onResourceReady(resource: File?, transition: Transition<in File>?) {
+                        }
+                    })
         }
 
         override fun requestChapter(index: Int, refresh: Boolean): List<String> {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,8 +14,10 @@
         android:textSize="48sp" />
 
 
-    <cc.aoeiuv020.reader.simple.ResizableImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        tools:ignore="ContentDescription" />
 </FrameLayout>

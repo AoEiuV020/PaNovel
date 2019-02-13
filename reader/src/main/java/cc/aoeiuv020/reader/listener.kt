@@ -1,6 +1,6 @@
 package cc.aoeiuv020.reader
 
-import android.widget.ImageView
+import java.io.File
 
 /**
  *
@@ -13,9 +13,14 @@ interface TextRequester {
     // 支持图片就判断一下，否则直接toString,
     fun requestParagraph(string: String): Any
 
-    // 请求图片，传入视图，
-    // TODO: 改成传入回调，可以用于ImageView以外的地方，
-    fun requestImage(image: Image, view: ImageView)
+    // 请求图片，回调图片文件，
+    fun requestImage(
+            image: Image,
+            exceptionHandler: (Throwable) -> Unit = {
+                it.printStackTrace()
+            },
+            block: (File) -> Unit
+    )
 }
 
 /**
