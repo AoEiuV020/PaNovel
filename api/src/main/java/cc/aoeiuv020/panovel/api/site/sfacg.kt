@@ -7,8 +7,6 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstIntPattern
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.regex.pick
-import com.google.gson.JsonObject
-import org.jsoup.Jsoup
 
 /**
  *
@@ -121,19 +119,12 @@ class Sfacg : DslJsoupNovelContext() { init {
             val bookId = it.pick(firstIntPattern).first()
             get {
                 url = "https://api.sfacg.com/Chaps/$bookId?expand=content%2CneedFireMoney%2CoriginNeedFireMoney%2Ctsukkomi&autoOrder=true"
-                header {
-                    "TODO" to "TODO"
-                }
             }
             response {
                 val content = it.jsonPath.get<String>("$.data.expand.content")
                 content.split("\r\n").mapNotNull { it.trim().takeIf { it.isNotBlank() } }
             }
         }
-    }
-
-    cookieFilter {
-        put("TODO")
     }
 }
 }
