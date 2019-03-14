@@ -1,12 +1,11 @@
 package cc.aoeiuv020.reader.simple
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cc.aoeiuv020.reader.INovelReader
-import cc.aoeiuv020.reader.Image
-import cc.aoeiuv020.reader.R
+import cc.aoeiuv020.reader.*
 import kotlinx.android.synthetic.main.simple_image_item.view.*
 import org.jetbrains.anko.dip
 
@@ -28,16 +27,6 @@ internal class ImageViewHolder(
     private val tvPage = itemView.tvPage
     private val ivImage = itemView.ivImage
 
-    init {
-        ivImage.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            if (itemView.height != v.height) {
-                itemView.layoutParams = itemView.layoutParams.apply {
-                    height = v.height
-                }
-            }
-        }
-    }
-
     fun setImage(reader: INovelReader, index: Int, image: Image) {
         tvPage.text = (index + 1).toString()
         tvPage.setTextColor(reader.config.textColor)
@@ -52,6 +41,21 @@ internal class ImageViewHolder(
             }
 
         }
-        prAdapter.reader.requester.requestImage(image, ivImage)
+        itemView.layoutParams = itemView.layoutParams.apply {
+            height = ViewGroup.LayoutParams.MATCH_PARENT
+        }
+        ivImage.setImageDrawable(null)
+        tvPage.show()
+        ivImage.tag = index
+        prAdapter.reader.requester.requestImage(image) { file ->
+            if (ivImage.tag != index) {
+                return@requestImage
+            }
+            tvPage.hide()
+            itemView.layoutParams = itemView.layoutParams.apply {
+                height = ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+            ivImage.setImageURI(Uri.fromFile(file))
+        }
     }
 }

@@ -156,7 +156,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         reader.autoRefreshThread.reset()
         // 只用本地变量，防止pageIndex被多线程修改，
         var index = pageIndex
-        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
+        val textHeight = textPaint.getFontMetricsInt(null)
         if (pages == null) {
             debug { "chapter $chapterIndex pages null" }
             drawTextBottom(content, "正在获取章节...", 0f, textHeight.toFloat(), textPaint)
@@ -228,7 +228,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
      * 刚好50是居中，
      */
     private fun drawMessage(canvas: Canvas, text: String, margins: ItemMargins, isBattery: Boolean = false) {
-        val textHeight = messagePaint.fontMetrics.run { bottom - top }
+        val textHeight = messagePaint.getFontMetricsInt(null).toFloat()
         val textWidth = messagePaint.measureText(text)
         val x: Float = if (margins.left > margins.right) {
             if (margins.left == 50) {
@@ -279,7 +279,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     }
 
     private fun drawContent(content: Canvas, page: Page) {
-        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
+        val textHeight = textPaint.getFontMetricsInt(null)
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
 
         val width = content.width.toFloat()
@@ -377,7 +377,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
         val lines = mutableListOf<Any>()
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
-        val textHeight = textPaint.fontMetricsInt.run { bottom - top }
+        val textHeight = textPaint.getFontMetricsInt(null)
         (listOf(chapter) + list).forEachIndexed { index, str ->
             // 不支持图片，得到段就直接转成String,
             val paragraph = if (index == 0) str else requester.requestParagraph(str).toString()

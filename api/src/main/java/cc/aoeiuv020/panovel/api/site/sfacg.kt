@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.path
+import cc.aoeiuv020.jsonpath.get
+import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstIntPattern
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
@@ -100,6 +102,28 @@ class Sfacg : DslJsoupNovelContext() { init {
             // vip章节仅有的一行没有包在p里，
             // 普通章节有"#ChapterBody > p",
             items("#ChapterBody")
+        }
+    }
+    content {
+        // vip章节和普通章节规则不一致，不统一处理，
+        try {
+            // http://book.sfacg.com/Novel/123589/204084/1887037/
+            val bookId = it.pick(firstThreeIntPattern).first()
+            document {
+                // vip章节仅有的一行没有包在p里，
+                // 普通章节有"#ChapterBody > p",
+                items("#ChapterBody")
+            }
+        } catch (e: Exception) {
+            // http://book.sfacg.com/vip/c/1725750/
+            val bookId = it.pick(firstIntPattern).first()
+            get {
+                url = "https://api.sfacg.com/Chaps/$bookId?expand=content%2CneedFireMoney%2CoriginNeedFireMoney%2Ctsukkomi&autoOrder=true"
+            }
+            response {
+                val content = it.jsonPath.get<String>("$.data.expand.content")
+                content.split("\r\n").mapNotNull { it.trim().takeIf { it.isNotBlank() } }
+            }
         }
     }
 }

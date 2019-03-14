@@ -216,6 +216,10 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
         }
 
+        fun put(value: String) {
+            cookies.add(Cookie.parse(httpUrl, value).notNull())
+        }
+
         fun filter(): MutableList<Cookie> = cookies
     }
 
