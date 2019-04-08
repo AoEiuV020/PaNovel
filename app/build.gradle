@@ -2,7 +2,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
     defaultConfig {
-        applicationId "cc.aoeiuv020.panovel"
+        applicationId "cc.aoeiuv020.panovel.pt"
         ndk {
             // 极光只支持这些，
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
