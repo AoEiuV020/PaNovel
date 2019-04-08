@@ -41,7 +41,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:' + glide_version
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
     implementation 'com.github.QuadFlask:colorpicker:0.0.13'
-    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
+    implementation 'com.github.hackware1993:MagicIndicator:1.6.0'
     implementation project(':api')
     implementation project(':reader')
     implementation 'com.tencent.bugly:crashreport:2.6.6'
