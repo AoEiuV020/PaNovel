@@ -36,7 +36,7 @@
 
     <cc.aoeiuv020.panovel.settings.IntEditTextPreference
         android:capitalize="words"
-        android:defaultValue="0"
+        android:defaultValue="2"
         android:inputType="number|numberSigned"
         android:key="autoDownloadCount"
         android:maxLines="1"
