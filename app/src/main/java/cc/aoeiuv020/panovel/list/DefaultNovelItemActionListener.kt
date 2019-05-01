@@ -13,6 +13,7 @@ import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ItemAction.*
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.text.NovelTextActivity
+import cc.aoeiuv020.panovel.util.uiInput
 import cc.aoeiuv020.panovel.util.uiSelect
 import org.jetbrains.anko.*
 
@@ -225,8 +226,10 @@ class DefaultNovelItemActionListener(
             val type = ctx.uiSelect(ctx.getString(R.string.file_type), items, defaultIndex)?.let { selectIndex ->
                 types[selectIndex]
             } ?: interrupt("没有选择文件类型，")
+            val charset = ctx.uiInput(ctx.getString(R.string.file_charset), Charsets.UTF_8.name())
+                    ?: interrupt("没有文件编码，")
 
-            NovelExporter.export(vh.ctx, type, vh.novelManager)
+            NovelExporter.export(vh.ctx, type, charset, vh.novelManager)
         }
     }
 

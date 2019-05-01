@@ -3,16 +3,18 @@ package cc.aoeiuv020.panovel.local
 import cc.aoeiuv020.regex.pick
 import java.io.File
 import java.net.URL
+import java.nio.charset.Charset
 
 /**
  * Created by AoEiuV020 on 2018.06.19-22:17:27.
  */
 class TextExporter(
-        private val file: File
+        private val file: File,
+        private val charset: String
 ) : LocalNovelExporter {
     private val imagePattern = "^!\\[img\\]\\((.*)\\)$"
     override fun export(info: LocalNovelInfo, contentProvider: ContentProvider, progressCallback: (Int, Int) -> Unit) {
-        file.outputStream().bufferedWriter().use { output ->
+        file.outputStream().bufferedWriter(Charset.forName(charset)).use { output ->
 
             val chapters = info.chapters
             val total = chapters.size
