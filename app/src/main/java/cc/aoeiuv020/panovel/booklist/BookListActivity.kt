@@ -100,6 +100,12 @@ class BookListActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.start()
     }
 
+    override fun onRestart() {
+        // 阅读后回来时要刷新，
+        refresh()
+        super.onRestart()
+    }
+
     override fun onDestroy() {
         if (::presenter.isInitialized) {
             presenter.detach()
