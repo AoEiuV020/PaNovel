@@ -32,6 +32,7 @@ object DataManager : AnkoLogger {
     lateinit var cookie: CookieManager
     lateinit var cache: CacheManager
     lateinit var server: ServerManager
+    @SuppressLint("StaticFieldLeak")
     lateinit var local: LocalManager
     @SuppressLint("StaticFieldLeak")
     lateinit var download: DownloadManager
