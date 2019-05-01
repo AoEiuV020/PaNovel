@@ -34,6 +34,7 @@
         <activity
             android:name=".text.NovelTextActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTop"
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".main.MainActivity"
