@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -32,6 +33,7 @@ import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
+import cc.aoeiuv020.panovel.settings.InterfaceSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.cancelAllNotify
@@ -224,7 +226,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
             override fun getCount(): Int = fragmentList.size
         }
-        
+
 
         container.adapter = pagerAdapter
 
@@ -254,17 +256,19 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             }
         }
         magic_indicator.navigator = commonNavigator
-        var titleContainer = commonNavigator.titleContainer
+        val titleContainer = commonNavigator.titleContainer
         titleContainer.showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
         titleContainer.dividerDrawable = object : ColorDrawable() {
             override fun getIntrinsicWidth(): Int {
-                return UIUtil.dip2px(this@MainActivity, 15.0)
+                return dip(15)
             }
         }
 
-  
         ViewPagerHelper.bind(magic_indicator, container)
 
+        if (InterfaceSettings.tabGravityCenter) {
+            llIndicator.gravity = Gravity.CENTER_HORIZONTAL
+        }
     }
 
     override fun onResume() {

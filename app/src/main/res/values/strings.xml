@@ -246,5 +246,8 @@
     <string name="fit_width_summary">自动调整字间距以达到左右顶格的效果，仅安卓5以上有效，</string>
     <string name="fit_height">高铺满</string>
     <string name="fit_height_summary">自动调整行间距以达到上下顶格的效果，</string>
+    <string name="pref_header_interface">界面设置</string>
+    <string name="tab_gravity_center">标签居中</string>
+    <string name="tab_gravity_center_summary">主页的几个标签居中显示，否则靠左，</string>
 
 </resources>

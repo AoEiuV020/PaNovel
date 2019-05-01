@@ -15,6 +15,10 @@
         android:title="@string/pref_header_read" />
 
     <header
+        android:fragment="cc.aoeiuv020.panovel.settings.InterfacePreferenceFragment"
+        android:title="@string/pref_header_interface" />
+
+    <header
         android:fragment="cc.aoeiuv020.panovel.settings.DownloadPreferenceFragment"
         android:title="@string/pref_header_download" />
 

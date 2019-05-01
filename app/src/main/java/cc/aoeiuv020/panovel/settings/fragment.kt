@@ -83,3 +83,5 @@ class LocationPreferenceFragment : BasePreferenceFragment(LocationSettings, R.xm
 class ServerPreferenceFragment : BasePreferenceFragment(ServerSettings, R.xml.pref_server)
 
 class OthersPreferenceFragment : BasePreferenceFragment(OtherSettings, R.xml.pref_others)
+
+class InterfacePreferenceFragment : BasePreferenceFragment(InterfaceSettings, R.xml.pref_interface)
