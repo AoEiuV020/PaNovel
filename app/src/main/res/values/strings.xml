@@ -255,5 +255,8 @@
     <string name="tip_not_select_file_type">没有选择文件类型，</string>
     <string name="tip_no_novel_name">没有小说名，</string>
     <string name="tip_no_author_name">没有作者名，</string>
+    <string name="check_update">检查更新</string>
+    <string name="tip_no_new_version">已经是最新版本</string>
+    <string name="tip_update_failed">检测更新失败</string>
 
 </resources>

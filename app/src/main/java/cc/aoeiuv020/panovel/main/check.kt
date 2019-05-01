@@ -9,6 +9,7 @@ import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.okhttp.string
+import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.regex.compilePattern
@@ -65,11 +66,19 @@ object Check : Pref, AnkoLogger {
         }
     }
 
-    fun asyncCheckVersion(ctx: Context) {
+    /**
+     * @param tip 无更新或者更新失败是否提示，
+     */
+    fun asyncCheckVersion(ctx: Context, tip: Boolean = false) {
         ctx.doAsync({ e ->
             val message = "检测更新失败，"
             Reporter.post(message, e)
             error(message, e)
+            if (tip) {
+                ctx.runOnUiThread {
+                    ctx.toast(ctx.getString(R.string.tip_update_failed))
+                }
+            }
         }) {
             val currentVersionName = VersionUtil.getAppVersionName(ctx)
             val newestVersionName = getNewestVersionName()
@@ -88,7 +97,14 @@ object Check : Pref, AnkoLogger {
                     getChangeLogFromAssert(ctx, cachedVersionName)
                 }
                 // 没有更新也不是刚更新完，直接返回，
-                else -> return@doAsync
+                else -> {
+                    if (tip) {
+                        uiThread { ctx ->
+                            ctx.toast(ctx.getString(R.string.tip_no_new_version))
+                        }
+                    }
+                    return@doAsync
+                }
             }
             // 缓存当前版本，以便更新后对比，
             cachedVersionName = currentVersionName
