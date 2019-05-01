@@ -23,7 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <!--suppress DeprecatedClassUsageInspection -->
+        <activity android:name=".search.SiteSettingsActivity" />
+        <!-- suppress DeprecatedClassUsageInspection -->
         <meta-data
             android:name="cc.aoeiuv020.panovel.util.JarGlideModule"
             android:value="GlideModule" />
@@ -34,6 +35,7 @@
         <activity
             android:name=".text.NovelTextActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTop"
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".main.MainActivity"
@@ -54,9 +56,7 @@
         <activity android:name=".booklist.BookListActivity" />
         <activity
             android:name=".donate.DonateActivity"
-            android:label="@string/donate" />
-
-        <!-- User defined.  For test only  用户自定义的广播接收器 -->
+            android:label="@string/donate" /> <!-- User defined.  For test only  用户自定义的广播接收器 -->
         <receiver
             android:name=".server.jpush.MyReceiver"
             android:enabled="true"

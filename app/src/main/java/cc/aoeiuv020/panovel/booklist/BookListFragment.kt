@@ -87,6 +87,9 @@ class BookListFragment : androidx.fragment.app.Fragment(), IView, AnkoLogger {
             val layout = View.inflate(context, R.layout.dialog_editor, null)
             customView = layout
             val etName = layout.editText
+            etName.setText(bookList.name)
+            etName.setSelection(0, etName.text.length)
+            etName.hint = bookList.name
             yesButton {
                 val name = etName.text.toString()
                 if (name.isNotEmpty()) {

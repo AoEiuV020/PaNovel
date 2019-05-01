@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package cc.aoeiuv020.panovel.settings
 
 import android.content.Context
@@ -44,6 +46,7 @@ class SettingsActivity : AppCompatPreferenceActivity(), AnkoLogger {
                 || ServerPreferenceFragment::class.java.name == fragmentName
                 || OthersPreferenceFragment::class.java.name == fragmentName
                 || CacheClearPreferenceFragment::class.java.name == fragmentName
+                || InterfacePreferenceFragment::class.java.name == fragmentName
                 || AboutFragment::class.java.name == fragmentName
                 || DisclaimerFragment::class.java.name == fragmentName
     }

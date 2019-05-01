@@ -1,9 +1,12 @@
+@file:Suppress("DEPRECATION")
+
 package cc.aoeiuv020.panovel.util
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.preference.PreferenceFragment
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
@@ -116,17 +119,19 @@ class UriDelegate(
     }
 
     override fun setValue(thisRef: Pref, property: KProperty<*>, value: android.net.Uri?) {
-        if (backField == value) {
+        if (getValue(thisRef, property) == value) {
             return
         }
         // 先赋值为空，之后通过getValue拿uri, 因为有个判断，这个不为空就拿不到文件，
         backField = null
         val file = getFile(thisRef, property)
         if (value == null) {
-            file.delete()
+            if (!file.delete()) {
+                throw Exception("delete failed,")
+            }
         } else {
             file.outputStream().use { output ->
-                App.ctx.contentResolver.openInputStream(value).use { input ->
+                App.ctx.contentResolver.openInputStream(value).notNull().use { input ->
                     input.copyTo(output)
                 }
                 output.flush()
@@ -172,7 +177,7 @@ sealed class PrefDelegate<T>(
             key: kotlin.String?
     ) : PrefDelegate<kotlin.String>(key) {
         override fun getValue(sp: SharedPreferences, key: kotlin.String): kotlin.String {
-            return sp.getString(key, default)
+            return sp.getString(key, default).notNull()
         }
 
         override fun setValue(editor: SharedPreferences.Editor, key: kotlin.String, value: kotlin.String) {

@@ -13,8 +13,10 @@ import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ItemAction.*
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.text.NovelTextActivity
+import cc.aoeiuv020.panovel.util.uiInput
 import cc.aoeiuv020.panovel.util.uiSelect
 import org.jetbrains.anko.*
+import java.nio.charset.UnsupportedCharsetException
 
 /**
  * Created by AoEiuV020 on 2018.05.23-12:49:51.
@@ -34,7 +36,7 @@ class DefaultNovelItemActionListener(
             OpenDetail -> NovelDetailActivity.start(vh.ctx, vh.novel)
             RefineSearch -> FuzzySearchActivity.start(vh.ctx, vh.novel)
             Export -> exportNovel(vh)
-        // TODO: 有点混乱不统一，改支之前考虑清楚，主要是有的操作需要更新vh界面，
+            // TODO: 有点混乱不统一，改支之前考虑清楚，主要是有的操作需要更新vh界面，
             AddBookshelf -> vh.addBookshelf() // vh里再反过来调用onStarChanged，
             RemoveBookshelf -> vh.removeBookshelf() // vh里再反过来调用onStarChanged，
             Refresh -> vh.refresh()
@@ -72,7 +74,7 @@ class DefaultNovelItemActionListener(
                 }
 
             }
-        // 返回false不消费长按事件，
+            // 返回false不消费长按事件，
             None -> return false
         }
         actionDoneListener(action, vh)
@@ -224,9 +226,20 @@ class DefaultNovelItemActionListener(
             val defaultIndex = 0
             val type = ctx.uiSelect(ctx.getString(R.string.file_type), items, defaultIndex)?.let { selectIndex ->
                 types[selectIndex]
-            } ?: interrupt("没有选择文件类型，")
+            } ?: interrupt(ctx.getString(R.string.tip_no_file_type))
+            val charset = if (type == LocalNovelType.TEXT) {
+                ctx.uiInput(ctx.getString(R.string.file_charset), Charsets.UTF_8.name())?.let {
+                    try {
+                        charset(it)
+                    } catch (e: UnsupportedCharsetException) {
+                        interrupt(ctx.getString(R.string.tip_not_support_charset, it))
+                    }
+                } ?: interrupt(ctx.getString(R.string.tip_no_charset))
+            } else {
+                Charsets.UTF_8
+            }
 
-            NovelExporter.export(vh.ctx, type, vh.novelManager)
+            NovelExporter.export(vh.ctx, type, charset, vh.novelManager)
         }
     }
 

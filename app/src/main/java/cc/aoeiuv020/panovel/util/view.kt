@@ -12,6 +12,7 @@ import android.graphics.Canvas
 import android.os.BaseBundle
 import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -244,7 +245,8 @@ fun Context.uiInput(
         name: String,
         default: String,
         // 默认就等一分钟，
-        timeout: Long = TimeUnit.MINUTES.toMillis(1)
+        timeout: Long = TimeUnit.MINUTES.toMillis(1),
+        multiLine: Boolean = false
 ): String? {
     // TODO: 考虑试试kotlin的协程，
     val thread = Thread.currentThread()
@@ -258,6 +260,9 @@ fun Context.uiInput(
                 val layout = View.inflate(ctx, R.layout.dialog_editor, null)
                 customView = layout
                 val etName = layout.editText
+                if (multiLine) {
+                    etName.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                }
                 etName.setText(default)
                 yesButton {
                     result = etName.text.toString()

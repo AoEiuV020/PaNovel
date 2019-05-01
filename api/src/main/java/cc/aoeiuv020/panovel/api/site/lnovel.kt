@@ -17,6 +17,7 @@ import java.nio.charset.Charset
  * Created by AoEiuV020 on 2018.09.04-03:46:55.
  */
 class Lnovel : DslJsoupNovelContext() {init {
+    enabled = false
     site {
         name = "lnovel"
         baseUrl = "https://lnovel.cc/"

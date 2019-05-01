@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/gray_color"
+              android:orientation="vertical">
 
 
     <LinearLayout
@@ -19,10 +20,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="@dimen/reader_settings_text_size"
             android:singleLine="true"
             android:text="@string/previous_chapter"
-            android:textColor="@android:color/primary_text_dark" />
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="@dimen/reader_settings_text_size"/>
 
         <SeekBar
             android:id="@+id/sbTextProgress"
@@ -30,17 +31,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="0" />
+            android:max="0"/>
 
         <TextView
             android:id="@+id/tvNextChapter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="@dimen/reader_settings_text_size"
             android:singleLine="true"
             android:text="@string/next_chapter"
-            android:textColor="@android:color/primary_text_dark" />
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="@dimen/reader_settings_text_size"/>
 
     </LinearLayout>
 
@@ -55,53 +56,65 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/reader_settings_image_size"
             android:layout_weight="1"
+            android:padding="@dimen/reader_setting_padding"
+            android:scaleType="centerInside"
             android:tint="@android:color/white"
             app:srcCompat="@drawable/ic_list"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
         <cc.aoeiuv020.panovel.text.CheckableImageView
             android:id="@+id/ivStar"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/reader_settings_image_size"
             android:layout_weight="1"
+            android:padding="@dimen/reader_setting_padding"
+            android:scaleType="centerInside"
             android:tint="@android:color/white"
-            app:srcCompat="@drawable/ic_favorite_selector" />
+            app:srcCompat="@drawable/ic_favorite_selector"/>
 
         <ImageView
             android:id="@+id/ivColor"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/reader_settings_image_size"
             android:layout_weight="1"
+            android:padding="@dimen/reader_setting_padding"
+            android:scaleType="centerInside"
             android:tint="@android:color/white"
             app:srcCompat="@drawable/ic_color_lens"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
         <ImageView
             android:id="@+id/ivRefresh"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/reader_settings_image_size"
             android:layout_weight="1"
+            android:padding="@dimen/reader_setting_padding"
+            android:scaleType="centerInside"
             android:tint="@android:color/white"
             app:srcCompat="@drawable/ic_refresh"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
         <ImageView
             android:id="@+id/ivDownload"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/reader_settings_image_size"
             android:layout_weight="1"
+            android:padding="@dimen/reader_setting_padding"
+            android:scaleType="centerInside"
             android:tint="@android:color/white"
             app:srcCompat="@android:drawable/stat_sys_download_done"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
         <ImageView
             android:id="@+id/ivSettings"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/reader_settings_image_size"
             android:layout_weight="1"
+            android:padding="@dimen/reader_setting_padding"
+            android:scaleType="centerInside"
             android:tint="@android:color/white"
             app:srcCompat="@drawable/ic_settings"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
     </LinearLayout>
 </LinearLayout>

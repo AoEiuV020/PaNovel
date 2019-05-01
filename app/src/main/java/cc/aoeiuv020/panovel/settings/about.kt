@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package cc.aoeiuv020.panovel.settings
 
 import android.app.Fragment
@@ -6,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.main.Check
 import cc.aoeiuv020.panovel.server.ServerManager
 import cc.aoeiuv020.panovel.util.VersionUtil
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import cc.aoeiuv020.panovel.util.safelyShow
 import cc.aoeiuv020.regex.compilePattern
 import cc.aoeiuv020.regex.pick
@@ -59,6 +63,11 @@ class AboutFragment : Fragment() {
                 }
                 yesButton { it.dismiss() }
             }.safelyShow()
+        }
+
+        tvUpdate.setOnClickListener {
+            // 异步检查是否有更新，
+            Check.asyncCheckVersion(activity.notNullOrReport(), true)
         }
     }
 }

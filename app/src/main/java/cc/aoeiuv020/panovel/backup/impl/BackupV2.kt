@@ -38,6 +38,10 @@ class BackupV2 : DefaultBackup() {
                 "List" -> importPref(ListSettings, file)
                 "Other" -> importPref(OtherSettings, file)
                 "Reader" -> importPref(ReaderSettings, file)
+                "Download" -> importPref(DownloadSettings, file)
+                "Interface" -> importPref(InterfaceSettings, file)
+                "Location" -> importPref(LocationSettings, file)
+                "Server" -> importPref(ServerSettings, file)
                 "Reader_BatteryMargins" -> importPref(ReaderSettings.batteryMargins, file)
                 "Reader_BookNameMargins" -> importPref(ReaderSettings.bookNameMargins, file)
                 "Reader_ChapterNameMargins" -> importPref(ReaderSettings.chapterNameMargins, file)
@@ -57,7 +61,7 @@ class BackupV2 : DefaultBackup() {
         var count = 0
         file.readText().toBean<Map<String, JsonElement>>().forEach { (key, value) ->
             when (key) {
-            // 枚举，保存字符串，
+                // 枚举，保存字符串，
                 "animationMode" -> editor.putString(key, value.asString)
                 "shareExpiration" -> editor.putString(key, value.asString)
                 "onCheckUpdateClick" -> editor.putString(key, value.asString)
@@ -81,6 +85,7 @@ class BackupV2 : DefaultBackup() {
                 "largeView" -> editor.putBoolean(key, value.asBoolean)
                 "reportCrash" -> editor.putBoolean(key, value.asBoolean)
                 "volumeKeyScroll" -> editor.putBoolean(key, value.asBoolean)
+                "tabGravityCenter" -> editor.putBoolean(key, value.asBoolean)
                 "animationSpeed" -> editor.putFloat(key, value.asFloat)
                 "centerPercent" -> editor.putFloat(key, value.asFloat)
                 "dotSize" -> editor.putFloat(key, value.asFloat)
@@ -178,6 +183,7 @@ class BackupV2 : DefaultBackup() {
         @Suppress("RemoveExplicitTypeArguments")
         var count = listOf<Pref>(
                 GeneralSettings, ListSettings, OtherSettings, ReaderSettings,
+                DownloadSettings, InterfaceSettings, LocationSettings, ServerSettings,
                 ReaderSettings.batteryMargins,
                 ReaderSettings.bookNameMargins,
                 ReaderSettings.chapterNameMargins,

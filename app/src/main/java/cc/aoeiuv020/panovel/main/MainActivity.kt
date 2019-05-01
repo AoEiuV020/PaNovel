@@ -7,11 +7,14 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
@@ -30,6 +33,7 @@ import cc.aoeiuv020.panovel.open.OpenManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
+import cc.aoeiuv020.panovel.settings.InterfaceSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.cancelAllNotify
@@ -39,6 +43,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
 import net.lucode.hackware.magicindicator.ViewPagerHelper
+import net.lucode.hackware.magicindicator.buildins.UIUtil
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
@@ -222,6 +227,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             override fun getCount(): Int = fragmentList.size
         }
 
+
         container.adapter = pagerAdapter
 
         val commonNavigator = CommonNavigator(this)
@@ -244,13 +250,25 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             override fun getIndicator(context: Context): IPagerIndicator {
                 val indicator = LinePagerIndicator(context)
                 indicator.mode = LinePagerIndicator.MODE_EXACTLY
+                indicator.lineWidth = UIUtil.dip2px(context, 10.0).toFloat()
                 indicator.setColors(Color.WHITE)
                 return indicator
             }
         }
         magic_indicator.navigator = commonNavigator
+        val titleContainer = commonNavigator.titleContainer
+        titleContainer.showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
+        titleContainer.dividerDrawable = object : ColorDrawable() {
+            override fun getIntrinsicWidth(): Int {
+                return dip(15)
+            }
+        }
+
         ViewPagerHelper.bind(magic_indicator, container)
 
+        if (InterfaceSettings.tabGravityCenter) {
+            llIndicator.gravity = Gravity.CENTER_HORIZONTAL
+        }
     }
 
     override fun onResume() {
