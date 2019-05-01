@@ -249,5 +249,11 @@
     <string name="pref_header_interface">界面设置</string>
     <string name="tab_gravity_center">标签居中</string>
     <string name="tab_gravity_center_summary">主页的几个标签居中显示，否则靠左，</string>
+    <string name="tip_no_charset">没有文件编码，</string>
+    <string name="tip_not_support_charset">不支持的文件编码&lt;%s&gt;，</string>
+    <string name="tip_no_file_type">没有选择文件类型，</string>
+    <string name="tip_not_select_file_type">没有选择文件类型，</string>
+    <string name="tip_no_novel_name">没有小说名，</string>
+    <string name="tip_no_author_name">没有作者名，</string>
 
 </resources>

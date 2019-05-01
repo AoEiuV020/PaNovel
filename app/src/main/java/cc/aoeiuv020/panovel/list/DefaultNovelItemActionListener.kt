@@ -225,10 +225,10 @@ class DefaultNovelItemActionListener(
             val defaultIndex = 0
             val type = ctx.uiSelect(ctx.getString(R.string.file_type), items, defaultIndex)?.let { selectIndex ->
                 types[selectIndex]
-            } ?: interrupt("没有选择文件类型，")
+            } ?: interrupt(ctx.getString(R.string.tip_no_file_type))
             val charset = if (type == LocalNovelType.TEXT) {
                 ctx.uiInput(ctx.getString(R.string.file_charset), Charsets.UTF_8.name())
-                        ?: interrupt("没有文件编码，")
+                        ?: interrupt(ctx.getString(R.string.tip_no_charset))
             } else {
                 Charsets.UTF_8.name()
             }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import cc.aoeiuv020.exception.interrupt
 import cc.aoeiuv020.irondb.Iron
+import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.local.ImportRequireValue
@@ -26,7 +27,9 @@ import java.nio.charset.UnsupportedCharsetException
  *
  * Created by AoEiuV020 on 2018.06.12-20:16:51.
  */
-class LocalManager(ctx: Context) : AnkoLogger {
+class LocalManager(
+        private val ctx: Context
+) : AnkoLogger {
 
     // 所有临时文件都保存在/data/data/cc.aoeiuv020.panovel/cache/local
     // 为了线程安全搞的，但貌似并不需要，一次只会导入一本，
@@ -63,10 +66,10 @@ class LocalManager(ctx: Context) : AnkoLogger {
         // defaultType要作为单选框的默认值，必须是存在的type,
         val defaultType = previewer.guessType() ?: LocalNovelType.TEXT
         val actualTypeSuffix = requestInput(ImportRequireValue.TYPE, defaultType.suffix)
-                ?: interrupt("没有选择文件类型，")
+                ?: interrupt(ctx.getString(R.string.tip_not_select_file_type))
         val actualType = LocalNovelType.values().firstOrNull {
             it.suffix == actualTypeSuffix
-        } ?: interrupt("不支持的文件类型，")
+        } ?: interrupt(ctx.getString(R.string.tip_no_file_type))
         debug {
             "importLocalNovel file type: ${actualType.suffix}"
         }
@@ -79,9 +82,9 @@ class LocalManager(ctx: Context) : AnkoLogger {
                 try {
                     charset(it)
                 } catch (e: UnsupportedCharsetException) {
-                    interrupt("不支持的文件编码<$it>，")
+                    interrupt(ctx.getString(R.string.tip_not_support_charset, it))
                 }
-            } ?: interrupt("没有文件编码，")
+            } ?: interrupt(ctx.getString(R.string.tip_no_charset))
             debug {
                 "importLocalNovel file charset: $actualCharset"
             }
@@ -108,11 +111,11 @@ class LocalManager(ctx: Context) : AnkoLogger {
         }
         val name = requestInput(ImportRequireValue.NAME, info.name
                 ?: defaultName)
-                ?: interrupt("没有小说名，")
+                ?: interrupt(ctx.getString(R.string.tip_no_novel_name))
         val author = requestInput(ImportRequireValue.AUTHOR, info.author
         // 没有作者名就用小说名顶一下，当成默认值给用户改，
                 ?: name)
-                ?: interrupt("没有作者名，")
+                ?: interrupt(ctx.getString(R.string.tip_no_author_name))
 
         // 最终导入的小说就永久保存在这里了，
         val file = saveNovel(previewer.file, suffix, author, name)
