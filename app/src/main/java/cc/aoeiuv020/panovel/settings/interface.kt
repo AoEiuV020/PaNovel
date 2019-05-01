@@ -8,7 +8,7 @@ import cc.aoeiuv020.panovel.util.Pref
  */
 object InterfaceSettings : Pref {
     override val name: String
-        get() = "Download"
+        get() = "Interface"
     /**
      * 标签居中显示，
      */
