@@ -21,13 +21,14 @@ import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.io.InputStream
 import java.net.URL
+import java.nio.charset.Charset
 
 /**
  * Created by AoEiuV020 on 2018.05.28-18:53:01.
  */
 class NovelExporter(
         private val type: LocalNovelType,
-        private val charset: String,
+        private val charset: Charset,
         private val file: File,
         private val progressCallback: (Int, Int) -> Unit
 ) : AnkoLogger {
@@ -37,7 +38,7 @@ class NovelExporter(
         override val loggerTag: String
             get() = "NovelExporter"
 
-        fun export(ctx: Context, type: LocalNovelType, charset: String, novelManager: NovelManager) {
+        fun export(ctx: Context, type: LocalNovelType, charset: Charset, novelManager: NovelManager) {
             val novel = novelManager.novel
             // 本地小说的site就是后缀，不要重复了，
             val fileName = if (novel.site.startsWith(".")) {

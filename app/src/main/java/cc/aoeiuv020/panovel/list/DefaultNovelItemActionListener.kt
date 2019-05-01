@@ -16,6 +16,7 @@ import cc.aoeiuv020.panovel.text.NovelTextActivity
 import cc.aoeiuv020.panovel.util.uiInput
 import cc.aoeiuv020.panovel.util.uiSelect
 import org.jetbrains.anko.*
+import java.nio.charset.UnsupportedCharsetException
 
 /**
  * Created by AoEiuV020 on 2018.05.23-12:49:51.
@@ -227,10 +228,15 @@ class DefaultNovelItemActionListener(
                 types[selectIndex]
             } ?: interrupt(ctx.getString(R.string.tip_no_file_type))
             val charset = if (type == LocalNovelType.TEXT) {
-                ctx.uiInput(ctx.getString(R.string.file_charset), Charsets.UTF_8.name())
-                        ?: interrupt(ctx.getString(R.string.tip_no_charset))
+                ctx.uiInput(ctx.getString(R.string.file_charset), Charsets.UTF_8.name())?.let {
+                    try {
+                        charset(it)
+                    } catch (e: UnsupportedCharsetException) {
+                        interrupt(ctx.getString(R.string.tip_not_support_charset, it))
+                    }
+                } ?: interrupt(ctx.getString(R.string.tip_no_charset))
             } else {
-                Charsets.UTF_8.name()
+                Charsets.UTF_8
             }
 
             NovelExporter.export(vh.ctx, type, charset, vh.novelManager)

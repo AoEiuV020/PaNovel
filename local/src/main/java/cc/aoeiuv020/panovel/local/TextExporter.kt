@@ -10,11 +10,11 @@ import java.nio.charset.Charset
  */
 class TextExporter(
         private val file: File,
-        private val charset: String
+        private val charset: Charset
 ) : LocalNovelExporter {
     private val imagePattern = "^!\\[img\\]\\((.*)\\)$"
     override fun export(info: LocalNovelInfo, contentProvider: ContentProvider, progressCallback: (Int, Int) -> Unit) {
-        file.outputStream().bufferedWriter(Charset.forName(charset)).use { output ->
+        file.outputStream().bufferedWriter(charset).use { output ->
 
             val chapters = info.chapters
             val total = chapters.size
