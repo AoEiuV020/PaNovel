@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.preference.PreferenceFragment
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.gson.toJson
@@ -126,7 +127,7 @@ class UriDelegate(
             file.delete()
         } else {
             file.outputStream().use { output ->
-                App.ctx.contentResolver.openInputStream(value).use { input ->
+                App.ctx.contentResolver.openInputStream(value).notNull().use { input ->
                     input.copyTo(output)
                 }
                 output.flush()
@@ -172,7 +173,7 @@ sealed class PrefDelegate<T>(
             key: kotlin.String?
     ) : PrefDelegate<kotlin.String>(key) {
         override fun getValue(sp: SharedPreferences, key: kotlin.String): kotlin.String {
-            return sp.getString(key, default)
+            return sp.getString(key, default).notNull()
         }
 
         override fun setValue(editor: SharedPreferences.Editor, key: kotlin.String, value: kotlin.String) {
