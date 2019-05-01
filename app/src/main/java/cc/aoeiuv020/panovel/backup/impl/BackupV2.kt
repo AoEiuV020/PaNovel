@@ -85,6 +85,7 @@ class BackupV2 : DefaultBackup() {
                 "largeView" -> editor.putBoolean(key, value.asBoolean)
                 "reportCrash" -> editor.putBoolean(key, value.asBoolean)
                 "volumeKeyScroll" -> editor.putBoolean(key, value.asBoolean)
+                "tabGravityCenter" -> editor.putBoolean(key, value.asBoolean)
                 "animationSpeed" -> editor.putFloat(key, value.asFloat)
                 "centerPercent" -> editor.putFloat(key, value.asFloat)
                 "dotSize" -> editor.putFloat(key, value.asFloat)
