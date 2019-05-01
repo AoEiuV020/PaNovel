@@ -5,7 +5,9 @@ import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.notNullOrReport
+import cc.aoeiuv020.regex.compileRegex
 import okhttp3.Cookie
+import okhttp3.Headers
 import okhttp3.HttpUrl
 import org.jetbrains.anko.*
 
@@ -56,6 +58,29 @@ class SiteSettingsPresenter(
                 }
             }.toMap()
             context.replaceCookies(cookieMap)
+            uiThread {
+                success()
+            }
+        }
+    }
+
+    fun setHeader(input: (String) -> String?, success: () -> Unit) {
+        view?.doAsync({ e ->
+            val message = "设置Header失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+
+            val old = context.headers.toList().joinToString("\n") { (name, value) ->
+                "$name: $value"
+            }
+            val new = input(old)
+                    ?: return@doAsync
+            val headers: Headers = Headers.of(*new.split(compileRegex("\n|(: *)")).toTypedArray())
+            context.replaceHeaders(headers)
             uiThread {
                 success()
             }

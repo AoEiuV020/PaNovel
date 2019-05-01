@@ -260,5 +260,6 @@
     <string name="tip_update_failed">检测更新失败</string>
     <string name="header">Header</string>
     <string name="tip_set_cookie_success">更新成功</string>
+    <string name="tip_set_header_success">更新成功</string>
 
 </resources>

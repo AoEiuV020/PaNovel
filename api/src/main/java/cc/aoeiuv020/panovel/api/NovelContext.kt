@@ -7,6 +7,7 @@ import cc.aoeiuv020.log.debug
 import cc.aoeiuv020.panovel.api.site.*
 import com.google.gson.Gson
 import okhttp3.Cookie
+import okhttp3.Headers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -118,6 +119,36 @@ abstract class NovelContext {
             cookiesFile?.writeText(value.toJson(gson))
         }
 
+    private val headersFile: File?
+        get() = mFilesDir?.resolve("headers")
+    private var _headers: Map<String, String>? = null
+    // name to Cookie,
+    // 虽然浏览器支持相同name的不同cookie，按domain和path区分，但是这里一个context只有一个网站，不会有多个name,
+    var headers: Map<String, String>
+        @Synchronized
+        get() = _headers ?: (headersFile?.let { file ->
+            try {
+                file.readText().toBean<Map<String, String>>(gson)
+            } catch (e: Exception) {
+                // 读取失败说明文件损坏，直接删除，下次保存，
+                file.delete()
+                null
+            }
+        } ?: mapOf()).also {
+            _headers = it
+        }
+        @Synchronized
+        private set(value) {
+            logger.debug {
+                "setheaders $value"
+            }
+            if (value == _headers) {
+                return
+            }
+            _headers = value
+            headersFile?.writeText(value.toJson(gson))
+        }
+
     fun cleanData() {
         mFilesDir?.deleteRecursively()
     }
@@ -160,6 +191,17 @@ abstract class NovelContext {
     fun removeCookies() {
         // 只要赋值了就会覆盖本地保存的，
         this.cookies = mapOf()
+    }
+
+    /**
+     * 覆盖保存headers,
+     */
+    fun replaceHeaders(headers: Headers) {
+        val map = HashMap<String, String>(headers.size())
+        repeat(headers.size()) {
+            map[headers.name(it)] = headers.value(it)
+        }
+        this.headers = map
     }
 
     /**

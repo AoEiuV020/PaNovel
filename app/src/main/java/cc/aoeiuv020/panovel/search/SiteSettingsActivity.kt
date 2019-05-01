@@ -46,11 +46,17 @@ class SiteSettingsActivity : AppCompatActivity(), IView, AnkoLogger {
 
     fun init() {
         llCookie.setOnClickListener {
-
             presenter.setCookie({ cookies ->
                 uiInput(getString(R.string.cookie), cookies)
             }, {
                 showMessage(getString(R.string.tip_set_cookie_success))
+            })
+        }
+        llHeader.setOnClickListener {
+            presenter.setHeader({ header ->
+                uiInput(getString(R.string.header), header, multiLine = true)
+            }, {
+                showMessage(getString(R.string.tip_set_header_success))
             })
         }
     }
