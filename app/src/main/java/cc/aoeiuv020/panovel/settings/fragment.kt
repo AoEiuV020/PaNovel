@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package cc.aoeiuv020.panovel.settings
 
 import android.Manifest
