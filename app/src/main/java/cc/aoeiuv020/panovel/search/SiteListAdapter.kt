@@ -44,8 +44,9 @@ class SiteListAdapter(
     }
 
     inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
-        val tvName: TextView = itemView.tvName
-        val ivLogo: ImageView = itemView.ivLogo
+        private val tvName: TextView = itemView.tvName
+        private val ivLogo: ImageView = itemView.ivLogo
+        private val ivSettings: ImageView = itemView.ivSettings
         val cbEnabled: CheckBox = itemView.cbEnabled
         lateinit var site: Site
 
@@ -63,6 +64,9 @@ class SiteListAdapter(
             itemView.setOnLongClickListener {
                 itemListener.onItemLongClick(this)
             }
+            ivSettings.setOnClickListener {
+                itemListener.onSettingsClick(site)
+            }
         }
 
         fun bind(data: Site) {
@@ -77,6 +81,7 @@ class SiteListAdapter(
         fun onEnabledChanged(site: Site)
         fun onSiteSelect(site: Site)
         fun onItemLongClick(vh: ViewHolder): Boolean
+        fun onSettingsClick(site: Site)
     }
 
 }

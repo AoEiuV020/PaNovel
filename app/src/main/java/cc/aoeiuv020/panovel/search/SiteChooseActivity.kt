@@ -59,6 +59,10 @@ class SiteChooseActivity : AppCompatActivity(), IView {
             }
             return true
         }
+
+        override fun onSettingsClick(site: Site) {
+            SiteSettingsActivity.start(ctx, site.name)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

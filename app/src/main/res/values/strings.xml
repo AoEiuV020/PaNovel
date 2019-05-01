@@ -175,7 +175,7 @@
     <string name="auto_save_read_status_second">自动保存阅读进度(s)</string>
     <string name="download_chapters_count">下载章节数</string>
     <string name="all">全部</string>
-    <string name="cookie">cookie</string>
+    <string name="cookie">Cookie</string>
     <string name="notify_novel_update">通知小说更新</string>
     <string name="notify_novel_update_summary">收到小说更新推送时是否弹出通知小说更新，</string>
     <string name="download_chapters_count_summary">-1为每次询问，0为剩下全部，</string>
@@ -258,5 +258,7 @@
     <string name="check_update">检查更新</string>
     <string name="tip_no_new_version">已经是最新版本</string>
     <string name="tip_update_failed">检测更新失败</string>
+    <string name="header">Header</string>
+    <string name="tip_set_cookie_success">更新成功</string>
 
 </resources>

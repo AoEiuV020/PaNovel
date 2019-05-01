@@ -150,6 +150,13 @@ abstract class NovelContext {
         }
     }
 
+    /**
+     * 覆盖保存cookies,
+     */
+    fun replaceCookies(cookies: Map<String, Cookie>) {
+        this.cookies = cookies
+    }
+
     fun removeCookies() {
         // 只要赋值了就会覆盖本地保存的，
         this.cookies = mapOf()
