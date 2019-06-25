@@ -11,7 +11,7 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 class Dajiadu : DslJsoupNovelContext() {init {
     site {
         name = "大家读书院"
-        baseUrl = "https://www.dajiadu.net"
+        baseUrl = "https://www.dajiadu8.com"
         logo = "https://www.dajiadu.net/themes/2100/logo.gif"
     }
     search {
