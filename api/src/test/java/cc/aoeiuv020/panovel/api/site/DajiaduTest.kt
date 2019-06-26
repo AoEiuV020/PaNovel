@@ -8,6 +8,7 @@ import org.junit.Test
 class DajiaduTest : BaseNovelContextText(Dajiadu::class) {
     @Test
     fun search() {
+        // 这网站搜索可能随机失败，刷新又好，
         search("都市")
         search("择天记", "猫腻", "20/20274")
         search("寒门崛起", "朱郎才尽", "23/23752")
@@ -45,6 +46,7 @@ class DajiaduTest : BaseNovelContextText(Dajiadu::class) {
 
     @Test
     fun content() {
+        // 这有可能出现153行再刷新又变成152, 网站有毒吧大概，
         content("20/20274/5294150",
                 "世界是相对的。",
                 "十四岁的少年道士，下山。q",
