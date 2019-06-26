@@ -30,8 +30,8 @@ class FenghuajuTest : BaseNovelContextText(Fenghuaju::class) {
     @Test
     fun chapters() {
         chapters("18_18819", "第一章 骗子", "18_18819/2", null,
-                "第一千二百五十章 张悬传授的绝招（上）", "18_18819/1338", "2018-06-02 19:38:40",
-                1334)
+                "第一千二百五十章 张悬传授的绝招（上）", "18_18819/1267", "2018-06-02 19:38:40",
+                1263)
     }
 
     @Test
