@@ -8,7 +8,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 class Mianhuatang : DslJsoupNovelContext() {init {
     site {
         name = "棉花糖小说"
-        baseUrl = "http://www.mianhuatang520.com"
+        baseUrl = "https://www.mianhuatang2.com"
         logo = "http://www.mianhuatang520.com/css/logo.png"
     }
     search {
@@ -61,6 +61,9 @@ class Mianhuatang : DslJsoupNovelContext() {init {
     content {
         document {
             items("#zjneirong")
+        }.dropLastWhile { line ->
+            line == "本站小说txt下载无须注册，即下即看！"
+                    || line == "本站域名变为 www.mianhuatang2.com"
         }
     }
 }
