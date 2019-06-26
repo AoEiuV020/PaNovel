@@ -55,7 +55,7 @@ class ManhuaguiTest : BaseNovelContextText(Manhuagui::class) {
                 16)
         chapters("25630", "宋·迎新春·书航", "25630/394126", null,
                 "103 这是在鞭尸啊！", "25630/403295", null,
-                105)
+                112)
     }
 
     @Test
