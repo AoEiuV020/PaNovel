@@ -9,7 +9,6 @@ class LreadTest : BaseNovelContextText(Lread::class) {
     @Test
     fun search() {
         search("都市")
-        search("道君", "跃千愁", "53677")
         search("飞剑问道", "我吃西红柿", "88917")
     }
 
