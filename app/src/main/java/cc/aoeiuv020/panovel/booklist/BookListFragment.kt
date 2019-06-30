@@ -37,6 +37,7 @@ class BookListFragment : androidx.fragment.app.Fragment(), IView, AnkoLogger {
         override fun onLongClick(vh: BookListFragmentAdapter.ViewHolder): Boolean {
             val list = listOf(R.string.remove to { remove(vh) },
                     R.string.rename to { rename(vh.bookList) },
+                    R.string.copy to { copy(vh.bookList) },
                     R.string.share to { shareBookList(vh.bookList) },
                     R.string.add_bookshelf to { addBookshelf(vh.bookList) },
                     R.string.remove_bookshelf to { removeBookshelf(vh.bookList) })
@@ -79,6 +80,27 @@ class BookListFragment : androidx.fragment.app.Fragment(), IView, AnkoLogger {
 
     private fun remove(vh: BookListFragmentAdapter.ViewHolder) {
         presenter.remove(vh.bookList)
+    }
+
+    private fun copy(bookList: BookList) {
+        requireContext().alert {
+            titleResource = R.string.copy
+            val layout = View.inflate(context, R.layout.dialog_editor, null)
+            customView = layout
+            val etName = layout.editText
+            etName.setText(bookList.name)
+            etName.setSelection(0, etName.text.length)
+            etName.hint = bookList.name
+            yesButton {
+                val name = etName.text.toString()
+                if (name.isNotEmpty()) {
+                    presenter.copyBookList(bookList, name)
+                } else {
+                    // 改名为空的话直接无视，懒得报错了，
+                }
+            }
+            etName.post { etName.showKeyboard() }
+        }.safelyShow()
     }
 
     private fun rename(bookList: BookList) {

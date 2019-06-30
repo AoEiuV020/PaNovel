@@ -120,6 +120,22 @@ class AppDatabaseManager(context: Context) {
     fun renameBookList(bookList: BookList, name: String) =
             db.bookListDao().updateBookListName(bookList.nId, name)
 
+    fun copyBookList(bookList: BookList, name: String) = db.runInTransaction {
+        val newBookListId = newBookList(name)
+        val list = db.bookListDao().queryNovel(bookList.nId)
+        list.forEach {
+            // 导入书单里的小说对象没有id, 要查一下，不存在就插入小说，
+            val novel = queryOrNewNovel(NovelMinimal(it))
+            if (!checkSiteSupport(novel)) {
+                // 网站不在支持列表就不添加，
+                // 基本信息已经写入数据库也无所谓了，
+                return@forEach
+            }
+            // 然后再把这小说加入这书单，
+            addToBookList(newBookListId, novel)
+        }
+    }
+
     fun removeBookList(bookList: BookList) = db.bookListDao().deleteList(bookList)
 
     /**

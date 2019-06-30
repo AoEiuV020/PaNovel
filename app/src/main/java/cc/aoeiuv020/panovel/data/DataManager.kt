@@ -252,6 +252,7 @@ object DataManager : AnkoLogger {
 
     fun allBookList() = app.allBookList()
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)
+    fun copyBookList(bookList: BookList, name: String) = app.copyBookList(bookList, name)
     fun removeBookList(bookList: BookList) = app.removeBookList(bookList)
     fun newBookList(name: String) = app.newBookList(name)
 
