@@ -12,7 +12,7 @@ import java.net.URL
 class Siluke : DslJsoupNovelContext() {init {
     site {
         name = "思路客"
-        baseUrl = "http://www.siluke.org"
+        baseUrl = "https://www.siluke.org"
         logo = "http://www.siluke.org/templates/images/logo.png"
     }
     search {

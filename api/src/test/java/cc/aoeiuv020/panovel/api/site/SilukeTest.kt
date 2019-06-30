@@ -16,12 +16,12 @@ class SilukeTest : BaseNovelContextText(Siluke::class) {
     @Test
     fun detail() {
         detail("68917", "68917", "料理王", "葱爆洋葱",
-                "http://www.siluke.org/files/article/image/68/68917/68917s.jpg",
+                "https://www.siluke.org/files/article/image/68/68917/68917s.jpg",
                 "他叫陈小灶。\n" +
                         "但人们更习惯叫他——料理王！",
                 "2017-03-22 00:00:00")
         detail("37247", "37247", "万界天尊", "血红",
-                "http://www.siluke.org/files/article/image/37/37247/37247s.jpg",
+                "https://www.siluke.org/files/article/image/37/37247/37247s.jpg",
                 "天为何物？\n" +
                         "高高在上，威严莫测，是法则，是戒律，是无情，是冷酷。\n" +
                         "天意，何也？\n" +
