@@ -338,6 +338,19 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
     }
 
+    private fun downloadAll() {
+        ctx.doAsync({ e ->
+            val message = "全部下载失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            ctx.runOnUiThread {
+                showError(message, e)
+            }
+        }) {
+            DataManager.downloadAll()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             0 -> data?.extras?.getString("SCAN_RESULT")?.let {
@@ -361,6 +374,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             R.id.scan -> scan()
             R.id.open -> open()
             R.id.subscript -> subscript()
+            R.id.cacheAll -> downloadAll()
             R.id.source -> SiteChooseActivity.start(this)
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()

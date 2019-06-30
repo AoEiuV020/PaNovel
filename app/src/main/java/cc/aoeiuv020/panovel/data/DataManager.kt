@@ -395,4 +395,10 @@ object DataManager : AnkoLogger {
         }
     }
 
+    @WorkerThread
+    fun downloadAll() {
+        debug { "downloadAll called" }
+        download.downloadAll(listBookshelf())
+    }
+
 }

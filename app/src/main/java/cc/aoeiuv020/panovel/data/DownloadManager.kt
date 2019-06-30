@@ -27,6 +27,14 @@ class DownloadManager(
         }
     }
 
+    fun downloadAll(list: List<NovelManager>) {
+        for (novelManager in list) {
+            debug { "downloadAll " }
+            download(novelManager, 0, Int.MAX_VALUE)
+            // TODO: 考虑改成等待异步线程一本一本下载，
+        }
+    }
+
     fun download(novelManager: NovelManager, fromIndex: Int, count: Int) {
         if (count <= 0) return
         val novel = novelManager.novel

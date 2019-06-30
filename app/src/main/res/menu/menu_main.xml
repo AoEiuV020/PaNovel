@@ -32,6 +32,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/cacheAll"
+        android:title="@string/cache_all"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/settings"
         android:title="@string/settings"
         app:showAsAction="never" />

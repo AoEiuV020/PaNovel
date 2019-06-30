@@ -265,5 +265,6 @@
     <string name="source">书源</string>
     <string name="subscript_toast">订阅提示</string>
     <string name="subscript_toast_summary">添加移出书架时会订阅更新提醒的推送，订阅成功时是否弹出toast提示，</string>
+    <string name="cache_all">缓存全部</string>
 
 </resources>
