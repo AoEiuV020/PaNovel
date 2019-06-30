@@ -95,6 +95,7 @@ class AppDatabaseManager(context: Context) {
     fun siteEnabledChange(site: Site) = db.siteDao().updateEnabled(site.name, site.enabled)
     @Suppress("unused")
     fun siteHideChange(site: Site) = db.siteDao().updateEnabled(site.name, site.hide)
+
     fun history(historyCount: Int): List<Novel> = db.novelDao().history(historyCount)
     fun getBookList(bookListId: Long): BookList = db.bookListDao().queryBookList(bookListId)
     fun inBookList(bookListId: Long, list: List<Novel>): List<Boolean> = db.runInTransaction<List<Boolean>> {
@@ -122,16 +123,32 @@ class AppDatabaseManager(context: Context) {
     fun removeBookList(bookList: BookList) = db.bookListDao().deleteList(bookList)
 
     /**
-     * 书单直接插入，名字可以重复，
+     * 书单直接插入，名字可以重复，uuid不能重复，
      */
-    fun newBookList(name: String) =
-            db.bookListDao().insert(BookList(id = null, name = name, createTime = Date()))
+    fun newBookList(name: String, uuid: String = UUID.randomUUID().toString()) =
+            db.bookListDao().insert(BookList(id = null, name = name, createTime = Date(), uuid = uuid))
+
+    /**
+     * 创建新的书单或者清空已经存在的书单中的小说以添加新书，
+     */
+    private fun createOrResetBookList(name: String, uuid: String): Long {
+        val bookList = db.bookListDao().queryBookListByUuid(uuid)
+        return if (bookList == null) {
+            newBookList(name, uuid)
+        } else {
+            db.bookListDao().resetBookList(bookList.nId)
+            if (name != bookList.name) {
+                renameBookList(bookList, name)
+            }
+            bookList.nId
+        }
+    }
 
     /**
      * 导入书单，先新建个书单，再一本本插入，
      */
-    fun importBookList(name: String, list: List<NovelMinimal>) = db.runInTransaction {
-        val bookListId = newBookList(name)
+    fun importBookList(name: String, list: List<NovelMinimal>, uuid: String) = db.runInTransaction {
+        val bookListId = createOrResetBookList(name, uuid)
         list.forEach {
             // 导入书单里的小说对象没有id, 要查一下，不存在就插入小说，
             val novel = queryOrNewNovel(it)
@@ -158,6 +175,7 @@ class AppDatabaseManager(context: Context) {
     fun cleanHistory() = db.novelDao().cleanHistory()
     @Suppress("unused")
     fun updateSiteInfo(site: Site) = db.siteDao().updateSiteInfo(site.name, site.baseUrl, site.logo)
+
     fun hasUpdateNovelList(): List<Novel> = db.novelDao().hasUpdateNovelList()
     fun clean(novel: Novel) = db.novelDao().delete(novel)
     /**

@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.dialog_shared.view.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.yesButton
+import java.util.*
 
 /**
  *
@@ -29,7 +30,7 @@ object Share {
      * 当前第二版，
      * 第一版的没有版本号，
      */
-    private const val VERSION: Int = 2
+    private const val VERSION: Int = 3
 
     fun check(url: String): Boolean {
         return paste.check(url)
@@ -37,7 +38,7 @@ object Share {
 
     fun shareBookList(bookList: BookList, shareExpiration: Expiration): String {
         val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
-        val bookListBean = BookListBean(bookList.name, novelList, VERSION)
+        val bookListBean = BookListBean(bookList.name, novelList, VERSION, bookList.uuid)
         return paste.upload(PasteUbuntu.PasteUbuntuData(bookListBean.toJson(App.gson), expiration = shareExpiration))
     }
 
@@ -49,8 +50,13 @@ object Share {
         val bookListJson = text.toBean<JsonObject>(App.gson)
         val version = bookListJson.get("version")?.asJsonPrimitive?.asInt
         val bookListBean: BookListBean = when (version) {
-            2 -> {
+            3 -> {
                 App.gson.fromJson(bookListJson, type<BookListBean>())
+            }
+            2 -> {
+                App.gson.fromJson<BookListBean2>(bookListJson, type<BookListBean2>()).let {
+                    BookListBean(it.name, it.list, it.version, UUID.randomUUID().toString())
+                }
             }
             else -> {
                 // 旧版version为null,
@@ -58,10 +64,10 @@ object Share {
                 BookListBean(oldBookListBean.name, oldBookListBean.list.map {
                     // 旧版的extra为完整地址，直接拿来，就算写进数据库了，刷新详情页后也会被新版的bookId覆盖，
                     NovelMinimal(site = it.site, author = it.author, name = it.name, detail = it.requester.extra)
-                }, VERSION)
+                }, VERSION, UUID.randomUUID().toString())
             }
         }
-        DataManager.importBookList(bookListBean.name, bookListBean.list)
+        DataManager.importBookList(bookListBean.name, bookListBean.list, bookListBean.uuid)
         return bookListBean.list.size
     }
 

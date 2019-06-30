@@ -263,7 +263,9 @@ object DataManager : AnkoLogger {
         app.queryOrNewNovel(NovelMinimal(it))
     }
 
-    fun importBookList(name: String, list: List<NovelMinimal>) = app.importBookList(name, list)
+    fun importBookList(name: String, list: List<NovelMinimal>, uuid: String = UUID.randomUUID().toString()) =
+            app.importBookList(name, list, uuid)
+
     fun addToBookshelf(bookList: BookList) {
         app.addBookshelf(bookList)
         // 向极光订阅对应tag,

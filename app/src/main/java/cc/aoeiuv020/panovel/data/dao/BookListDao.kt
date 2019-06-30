@@ -34,6 +34,9 @@ abstract class BookListDao {
     @Query("delete from BookListItem where bookListId = :bookListId and novelId = :novelId")
     abstract fun deleteIfExists(bookListId: Long, novelId: Long)
 
+    @Query("delete from BookListItem where bookListId = :bookListId")
+    abstract fun resetBookList(bookListId: Long)
+
     /**
      * 操作太快可能重复，无视，
      */
@@ -55,6 +58,9 @@ abstract class BookListDao {
 
     @Query("select * from BookList where id = :id")
     abstract fun queryBookList(id: Long): BookList
+
+    @Query("select * from BookList where uuid = :uuid")
+    abstract fun queryBookListByUuid(uuid: String): BookList?
 
     @Query("select * from BookList")
     abstract fun list(): List<BookList>
