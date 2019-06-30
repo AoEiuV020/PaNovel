@@ -90,7 +90,7 @@ class AppDatabaseManager(context: Context) {
 
     fun updateReadStatus(novel: Novel) = db.novelDao().updateReadStatus(novel.nId,
             novel.readAtChapterIndex, novel.readAtTextIndex,
-            novel.readAtChapterName, novel.readTime)
+            novel.readAtChapterName, novel.readTime, novel.pinnedTime)
 
     fun siteEnabledChange(site: Site) = db.siteDao().updateEnabled(site.name, site.enabled)
     @Suppress("unused")

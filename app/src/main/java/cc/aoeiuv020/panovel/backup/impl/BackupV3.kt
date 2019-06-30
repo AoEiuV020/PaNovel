@@ -9,13 +9,14 @@ import cc.aoeiuv020.panovel.backup.BackupOption
 import cc.aoeiuv020.panovel.backup.BackupOption.*
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.NovelMinimal
-import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
+import cc.aoeiuv020.panovel.data.entity.NovelWithProgressAndPinnedTime
 import cc.aoeiuv020.panovel.settings.*
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.Pref
 import com.google.gson.JsonElement
 import org.jetbrains.anko.debug
 import java.io.File
+import java.util.*
 
 /**
  * Created by AoEiuV020 on 2018.05.30-20:40:56.
@@ -35,13 +36,14 @@ class BackupV3 : DefaultBackup() {
         return file.useLines { s ->
             s.map { line ->
                 val a = line.split(',')
-                NovelWithProgress(
+                NovelWithProgressAndPinnedTime(
                         a[0],
                         a[1],
                         a[2],
                         a[3],
                         a[4].toInt(),
-                        a[5].toInt()
+                        a[5].toInt(),
+                        Date(a[6].toLong())
                 )
             }.let {
                 DataManager.importNovelWithProgress(it)
@@ -181,13 +183,13 @@ class BackupV3 : DefaultBackup() {
     // 无头csv格式，其实就是逗号分隔，
     private fun exportProgress(file: File): Int {
         val list = DataManager.exportNovelProgress().map {
-            NovelWithProgress(it)
+            NovelWithProgressAndPinnedTime(it)
         }
         var count = 0
         file.outputStream().bufferedWriter().use { output ->
             list.forEach { n ->
                 if (n.readAtChapterIndex > 0 || n.readAtTextIndex > 0) {
-                    output.appendln(listOf(n.site, n.author, n.name, n.detail, n.readAtChapterIndex, n.readAtTextIndex).joinToString(","))
+                    output.appendln(listOf(n.site, n.author, n.name, n.detail, n.readAtChapterIndex, n.readAtTextIndex, n.pinnedTime.time).joinToString(","))
                     count++
                 }
             }

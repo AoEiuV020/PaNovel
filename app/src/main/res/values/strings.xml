@@ -269,7 +269,7 @@
     <string name="backup_option_bookshelf">书架</string>
     <string name="backup_option_settings">设置</string>
     <string name="backup_option_book_list">书单</string>
-    <string name="backup_option_progress">阅读进度(书架+书单)</string>
+    <string name="backup_option_progress">阅读进度(书架+书单+置顶)</string>
     <string name="backup_default_old_path">默认旧路径</string>
     <string name="backup_default_new_path">默认新路径</string>
     <string name="backup_other_path">其他</string>

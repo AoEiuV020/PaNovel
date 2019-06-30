@@ -341,7 +341,7 @@ object DataManager : AnkoLogger {
     /**
      * 小说导入进度，
      */
-    fun importNovelWithProgress(list: Sequence<NovelWithProgress>): Int = app.db.runInTransaction<Int> {
+    fun importNovelWithProgress(list: Sequence<NovelWithProgressAndPinnedTime>): Int = app.db.runInTransaction<Int> {
         debug { "$list" }
         var count = 0
         list.forEach {
@@ -354,12 +354,11 @@ object DataManager : AnkoLogger {
             }
             novel.readAtChapterIndex = it.readAtChapterIndex
             novel.readAtTextIndex = it.readAtTextIndex
+            novel.pinnedTime = it.pinnedTime
             // 顺便更新下阅读至的章节名，
             if (novel.chapters != null) {
                 novel.readAtChapterName = cache.loadChapters(novel)?.getOrNull(novel.readAtChapterIndex)?.name ?: ""
             }
-            // 不调用方法updateBookshelf，因为这个方法包含订阅更新推送，
-            app.updateBookshelf(novel)
             // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
             updateReadStatus(novel)
             ++count
