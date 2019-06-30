@@ -120,6 +120,7 @@ class BackupV2 : DefaultBackup() {
                 "singleNotification" -> editor.putBoolean(key, value.asBoolean)
                 "notifyPinnedOnly" -> editor.putBoolean(key, value.asBoolean)
                 "dotNotifyUpdate" -> editor.putBoolean(key, value.asBoolean)
+                "subscriptToast" -> editor.putBoolean(key, value.asBoolean)
                 "bottom" -> editor.putInt(key, value.asInt)
                 "left" -> editor.putInt(key, value.asInt)
                 "right" -> editor.putInt(key, value.asInt)

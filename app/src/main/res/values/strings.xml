@@ -263,5 +263,7 @@
     <string name="tip_set_cookie_success">更新成功</string>
     <string name="tip_set_header_success">更新成功</string>
     <string name="source">书源</string>
+    <string name="subscript_toast">订阅提示</string>
+    <string name="subscript_toast_summary">添加移出书架时会订阅更新提醒的推送，订阅成功时是否弹出toast提示，</string>
 
 </resources>

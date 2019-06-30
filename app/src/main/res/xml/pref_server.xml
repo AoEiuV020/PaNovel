@@ -25,4 +25,10 @@
         android:summary="@string/ask_update_summary"
         android:title="@string/ask_update" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="subscriptToast"
+        android:summary="@string/subscript_toast_summary"
+        android:title="@string/subscript_toast" />
+
 </PreferenceScreen>

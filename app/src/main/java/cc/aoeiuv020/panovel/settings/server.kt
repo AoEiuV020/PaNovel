@@ -27,4 +27,8 @@ object ServerSettings : Pref {
      * 省流量用，
      */
     var askUpdate: Boolean by Delegates.boolean(true)
+    /**
+     * 添加移出书架时会订阅更新提醒的推送，订阅成功时是否弹出toast提示，
+     */
+    var subscriptToast: Boolean by Delegates.boolean(true)
 }
