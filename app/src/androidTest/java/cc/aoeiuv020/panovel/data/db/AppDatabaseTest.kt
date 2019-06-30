@@ -4,8 +4,10 @@ import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import cc.aoeiuv020.panovel.data.entity.BookList
 import cc.aoeiuv020.panovel.data.entity.Site
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -66,6 +68,34 @@ class AppDatabaseTest {
         val result = Site(name, baseUrl, logo, enabled, pinnedTime, hide)
         println(result)
         assertEquals(site, result)
+    }
+
+    @Test
+    fun migration45Test() {
+        val db4 = helper.createDatabase(TEST_DB, 4)
+        val bookList = BookList(id = 555, name = "测试书单")
+        db4.execSQL("INSERT OR ABORT INTO `BookList`(`id`,`name`,`createTime`) VALUES (?,?,?)", arrayOf(
+                bookList.id,
+                bookList.name,
+                bookList.createTime.time
+        ))
+        db4.close()
+        // 如果迁移后的数据库信息不匹配，这句就会报错，
+        val db5 = helper.runMigrationsAndValidate(TEST_DB, 5, true, AppDatabase.MIGRATION_4_5)
+        val c = db5.query("select * from BookList;")
+        println(c.columnNames.joinToString())
+        assertEquals(1, c.count)
+        c.moveToNext()
+        val id = c.getLong(c.getColumnIndexOrThrow("id"))
+        val name = c.getString(c.getColumnIndexOrThrow("name"))
+        val createTime = Date(c.getLong(c.getColumnIndexOrThrow("createTime")))
+        val uuid = c.getString(c.getColumnIndexOrThrow("uuid"))
+        val result = BookList(id, name, createTime, uuid)
+        println(result)
+        assertEquals(bookList.id, result.id)
+        assertEquals(bookList.name, result.name)
+        assertEquals(bookList.createTime, result.createTime)
+        assertTrue(bookList.uuid.isNotBlank())
     }
 
     companion object {
