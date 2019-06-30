@@ -309,6 +309,35 @@ object DataManager : AnkoLogger {
         server.addTags(novelList)
     }
 
+    /**
+     * 小说导入进度，
+     */
+    fun importNovelWithProgress(list: Sequence<NovelWithProgress>): Int = app.db.runInTransaction<Int> {
+        debug { "$list" }
+        var count = 0
+        list.forEach {
+            // 查询或插入，得到小说对象，再更新进度，
+            val novel = app.queryOrNewNovel(NovelMinimal(it))
+            if (!app.checkSiteSupport(novel)) {
+                // 网站不在支持列表就不添加，
+                // 基本信息已经写入数据库也无所谓了，
+                return@forEach
+            }
+            novel.readAtChapterIndex = it.readAtChapterIndex
+            novel.readAtTextIndex = it.readAtTextIndex
+            // 顺便更新下阅读至的章节名，
+            if (novel.chapters != null) {
+                novel.readAtChapterName = cache.loadChapters(novel)?.getOrNull(novel.readAtChapterIndex)?.name ?: ""
+            }
+            // 不调用方法updateBookshelf，因为这个方法包含订阅更新推送，
+            app.updateBookshelf(novel)
+            // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
+            updateReadStatus(novel)
+            ++count
+        }
+        count
+    }
+
     fun cleanAllCache() {
         cache.cleanAll()
         api.cleanCache()
@@ -401,6 +430,10 @@ object DataManager : AnkoLogger {
     fun downloadAll() {
         debug { "downloadAll called" }
         download.downloadAll(listBookshelf())
+    }
+
+    fun exportNovelProgress(): List<Novel> {
+        return app.exportNovelProgress()
     }
 
 }

@@ -69,23 +69,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="默认旧路径" />
+            android:text="@string/backup_default_old_path" />
 
         <RadioButton
             android:id="@+id/rbDefaultNewUri"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="默认新路径"
-            tools:text="默认新路径" />
+            android:text="@string/backup_default_new_path" />
 
         <RadioButton
             android:id="@+id/rbOtherPath"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="其他"
-            tools:text="其他" />
+            android:text="@string/backup_other_path" />
     </RadioGroup>
 
     <EditText
@@ -98,7 +96,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="其他路径"
+        android:hint="@string/backup_hint_other_path"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/btnChoose"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="选择"
+        android:text="@string/backup_button_select"
         app:layout_constraintBaseline_toBaselineOf="@+id/etOtherPath"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -138,21 +136,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="书架(含进度)" />
+                android:text="@string/backup_option_bookshelf" />
 
             <CheckBox
                 android:id="@+id/cbSettings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="设置" />
+                android:text="@string/backup_option_settings" />
 
             <CheckBox
                 android:id="@+id/cbBookList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="书单" />
+                android:text="@string/backup_option_book_list" />
+
+            <CheckBox
+                android:id="@+id/cbProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/backup_option_progress" />
 
         </LinearLayout>
     </ScrollView>

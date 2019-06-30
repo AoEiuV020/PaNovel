@@ -44,6 +44,9 @@ abstract class NovelDao {
     @Query("select * from Novel where site = :site and author = :author and name = :name")
     abstract fun query(site: String, author: String, name: String): Novel?
 
+    @Query("select Novel.* from Novel left join (select * from BookListItem group by novelId) as BookListItem on BookListItem.novelId = Novel.id where bookListId notnull")
+    abstract fun listImportant(): List<Novel>
+
     @Query("update Novel set name = :name, author = :author, detail = :detail, image = :image, introduction = :introduction, updateTime = :updateTime, chapters = :chapters where id = :id")
     abstract fun updateNovelDetail(id: Long, name: String, author: String, detail: String, image: String, introduction: String, updateTime: Date, chapters: String)
 

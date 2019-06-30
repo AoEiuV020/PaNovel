@@ -6,5 +6,6 @@ package cc.aoeiuv020.panovel.backup
 enum class BackupOption {
     Bookshelf,
     BookList,
+    Progress,
     Settings,
 }

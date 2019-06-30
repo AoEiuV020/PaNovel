@@ -182,4 +182,12 @@ class AppDatabaseManager(context: Context) {
      * 导入小说时，如果已经存在，就覆盖所有信息，
      */
     fun updateAll(novel: Novel) = db.novelDao().update(novel)
+
+    /**
+     * 返回需要备份进度的小说，
+     * 也就是书架或者书单中有出现的，
+     */
+    fun exportNovelProgress(): List<Novel> {
+        return db.novelDao().listImportant()
+    }
 }
