@@ -7,6 +7,8 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.03-17:17:27.
  */
 class Biqugebook : DslJsoupNovelContext() {init {
+    // 网站倒闭了大概，域名都没了，
+    hide = true
     site {
         name = "笔趣阁book"
         baseUrl = "http://www.biqugebook.com"

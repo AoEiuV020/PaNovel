@@ -12,7 +12,7 @@ import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 @Dao
 abstract class BookListDao {
 
-    @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId")
+    @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId order by pinnedTime desc, max(receiveUpdateTime, readTime) desc")
     abstract fun queryNovel(bookListId: Long): List<Novel>
 
     // 小数点.开头的是本地小说，不要，
@@ -33,6 +33,9 @@ abstract class BookListDao {
 
     @Query("delete from BookListItem where bookListId = :bookListId and novelId = :novelId")
     abstract fun deleteIfExists(bookListId: Long, novelId: Long)
+
+    @Query("delete from BookListItem where bookListId = :bookListId")
+    abstract fun resetBookList(bookListId: Long)
 
     /**
      * 操作太快可能重复，无视，
@@ -55,6 +58,9 @@ abstract class BookListDao {
 
     @Query("select * from BookList where id = :id")
     abstract fun queryBookList(id: Long): BookList
+
+    @Query("select * from BookList where uuid = :uuid")
+    abstract fun queryBookListByUuid(uuid: String): BookList?
 
     @Query("select * from BookList")
     abstract fun list(): List<BookList>

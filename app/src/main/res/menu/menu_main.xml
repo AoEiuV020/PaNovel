@@ -22,13 +22,18 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/backup"
-        android:title="@string/backup"
+        android:id="@+id/source"
+        android:title="@string/source"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/subscript"
         android:title="@string/subscript"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/cacheAll"
+        android:title="@string/cache_all"
         app:showAsAction="never" />
 
     <item

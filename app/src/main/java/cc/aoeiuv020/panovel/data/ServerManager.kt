@@ -11,6 +11,7 @@ import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
 import cc.aoeiuv020.panovel.server.jpush.TagAliasBean
 import cc.aoeiuv020.panovel.server.jpush.TagAliasOperatorHelper
 import cc.aoeiuv020.panovel.server.toServer
+import cc.aoeiuv020.panovel.settings.ServerSettings
 import org.jetbrains.anko.doAsync
 import java.util.concurrent.atomic.AtomicInteger
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
@@ -64,7 +65,9 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
         val message = "成功订阅小说<${novelList.singleOrNull()?.run { "$site.$author.$name" }
                 ?: "${novelList.size}本"}>"
         // 收到订阅结果就简单弹个通知，
-        ExampleUtil.showToast(message, App.ctx)
+        if (ServerSettings.subscriptToast) {
+            ExampleUtil.showToast(message, App.ctx)
+        }
     }) {
         val addTagsReceiver = JPushTagReceiver()
         // 只响应最后一次订阅的回调，
@@ -87,7 +90,9 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
         val message = "成功取消订阅小说<${novelList.singleOrNull()?.run { "$site.$author.$name" }
                 ?: "${novelList.size}本"}>"
         // 收到订阅结果就简单弹个通知，
-        ExampleUtil.showToast(message, App.ctx)
+        if (ServerSettings.subscriptToast) {
+            ExampleUtil.showToast(message, App.ctx)
+        }
     }) {
         val removeTagsReceiver = JPushTagReceiver()
         // 只响应最后一次订阅的回调，

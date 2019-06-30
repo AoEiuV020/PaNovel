@@ -9,6 +9,7 @@ import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
 import android.view.MenuItem
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.backup.BackupActivity
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 
@@ -57,5 +58,12 @@ class SettingsActivity : AppCompatPreferenceActivity(), AnkoLogger {
             else -> return super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    override fun onHeaderClick(header: Header, position: Int) {
+        when (header.id.toInt()) {
+            R.id.pref_backup -> BackupActivity.start(this)
+            else -> super.onHeaderClick(header, position)
+        }
     }
 }

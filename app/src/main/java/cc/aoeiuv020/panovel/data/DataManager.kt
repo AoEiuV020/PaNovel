@@ -252,6 +252,7 @@ object DataManager : AnkoLogger {
 
     fun allBookList() = app.allBookList()
     fun renameBookList(bookList: BookList, name: String) = app.renameBookList(bookList, name)
+    fun copyBookList(bookList: BookList, name: String) = app.copyBookList(bookList, name)
     fun removeBookList(bookList: BookList) = app.removeBookList(bookList)
     fun newBookList(name: String) = app.newBookList(name)
 
@@ -263,7 +264,9 @@ object DataManager : AnkoLogger {
         app.queryOrNewNovel(NovelMinimal(it))
     }
 
-    fun importBookList(name: String, list: List<NovelMinimal>) = app.importBookList(name, list)
+    fun importBookList(name: String, list: List<NovelMinimal>, uuid: String = UUID.randomUUID().toString()) =
+            app.importBookList(name, list, uuid)
+
     fun addToBookshelf(bookList: BookList) {
         app.addBookshelf(bookList)
         // 向极光订阅对应tag,
@@ -307,6 +310,63 @@ object DataManager : AnkoLogger {
         server.addTags(novelList)
     }
 
+    /**
+     * 小说导入书架，不包含进度，
+     */
+    fun importBookshelf(list: List<NovelMinimal>) = app.db.runInTransaction {
+        debug { "$list" }
+        val novelList = list.mapNotNull {
+            // 查询或插入，得到小说对象，再更新进度，
+            val novel = app.queryOrNewNovel(it)
+            if (!app.checkSiteSupport(novel)) {
+                // 网站不在支持列表就不添加，
+                // 基本信息已经写入数据库也无所谓了，
+                return@mapNotNull null
+            }
+            // 顺便更新下阅读至的章节名，
+            if (novel.chapters != null) {
+                novel.readAtChapterName = cache.loadChapters(novel)?.getOrNull(novel.readAtChapterIndex)?.name ?: ""
+            }
+            // 加入书架，
+            novel.bookshelf = true
+            // 不调用方法updateBookshelf，因为这个方法包含订阅更新推送，
+            app.updateBookshelf(novel)
+            // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
+            updateReadStatus(novel)
+            novel
+        }
+        // 向极光订阅/取消对应tag,
+        server.addTags(novelList)
+    }
+
+    /**
+     * 小说导入进度，
+     */
+    fun importNovelWithProgress(list: Sequence<NovelWithProgressAndPinnedTime>): Int = app.db.runInTransaction<Int> {
+        debug { "$list" }
+        var count = 0
+        list.forEach {
+            // 查询或插入，得到小说对象，再更新进度，
+            val novel = app.queryOrNewNovel(NovelMinimal(it))
+            if (!app.checkSiteSupport(novel)) {
+                // 网站不在支持列表就不添加，
+                // 基本信息已经写入数据库也无所谓了，
+                return@forEach
+            }
+            novel.readAtChapterIndex = it.readAtChapterIndex
+            novel.readAtTextIndex = it.readAtTextIndex
+            novel.pinnedTime = it.pinnedTime
+            // 顺便更新下阅读至的章节名，
+            if (novel.chapters != null) {
+                novel.readAtChapterName = cache.loadChapters(novel)?.getOrNull(novel.readAtChapterIndex)?.name ?: ""
+            }
+            // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
+            updateReadStatus(novel)
+            ++count
+        }
+        count
+    }
+
     fun cleanAllCache() {
         cache.cleanAll()
         api.cleanCache()
@@ -346,7 +406,7 @@ object DataManager : AnkoLogger {
      */
     @WorkerThread
     fun importLocalNovel(ctx: Context, uri: Uri, requestInput: (ImportRequireValue, String) -> String?): Novel {
-        val (novel, chapterList) = ctx.contentResolver.openInputStream(uri).use { input ->
+        val (novel, chapterList) = ctx.contentResolver.openInputStream(uri).notNullOrReport(uri.toString()).use { input ->
             local.importLocalNovel(input, uri.toString(), requestInput)
         }
         app.queryOrNewNovel(NovelMinimal(novel)).let { exists ->
@@ -393,6 +453,16 @@ object DataManager : AnkoLogger {
                 null
             }
         }
+    }
+
+    @WorkerThread
+    fun downloadAll() {
+        debug { "downloadAll called" }
+        download.downloadAll(listBookshelf())
+    }
+
+    fun exportNovelProgress(): List<Novel> {
+        return app.exportNovelProgress()
     }
 
 }

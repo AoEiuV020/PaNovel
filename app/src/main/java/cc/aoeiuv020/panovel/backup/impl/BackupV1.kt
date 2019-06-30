@@ -105,6 +105,7 @@ class BackupV1 : DefaultBackup(), AnkoLogger {
                 }
                 count
             }
+            else -> 0
         }
     }
 

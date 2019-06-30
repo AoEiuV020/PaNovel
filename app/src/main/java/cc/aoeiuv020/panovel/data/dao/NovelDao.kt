@@ -44,6 +44,9 @@ abstract class NovelDao {
     @Query("select * from Novel where site = :site and author = :author and name = :name")
     abstract fun query(site: String, author: String, name: String): Novel?
 
+    @Query("select Novel.* from Novel left join (select * from BookListItem group by novelId) as BookListItem on BookListItem.novelId = Novel.id where bookListId notnull")
+    abstract fun listImportant(): List<Novel>
+
     @Query("update Novel set name = :name, author = :author, detail = :detail, image = :image, introduction = :introduction, updateTime = :updateTime, chapters = :chapters where id = :id")
     abstract fun updateNovelDetail(id: Long, name: String, author: String, detail: String, image: String, introduction: String, updateTime: Date, chapters: String)
 
@@ -64,8 +67,8 @@ abstract class NovelDao {
     @Query("update Novel set pinnedTime = :pinnedTime where id = :id")
     abstract fun updatePinnedTime(id: Long, pinnedTime: Date)
 
-    @Query("update Novel set readAtChapterIndex = :readAtChapterIndex, readAtTextIndex = :readAtTextIndex, readAtChapterName = :readAtChapterName, readTime = :readTime where id = :id")
-    abstract fun updateReadStatus(id: Long, readAtChapterIndex: Int, readAtTextIndex: Int, readAtChapterName: String, readTime: Date)
+    @Query("update Novel set readAtChapterIndex = :readAtChapterIndex, readAtTextIndex = :readAtTextIndex, readAtChapterName = :readAtChapterName, readTime = :readTime, pinnedTime = :pinnedTime where id = :id")
+    abstract fun updateReadStatus(id: Long, readAtChapterIndex: Int, readAtTextIndex: Int, readAtChapterName: String, readTime: Date, pinnedTime: Date)
 
     // 筛阅读时间，不能是最小值，考虑到时区，无论怎么处理，给个一天的限制没问题，
     @Query("select * from Novel where readTime > 86400000 order by readTime desc limit :count")

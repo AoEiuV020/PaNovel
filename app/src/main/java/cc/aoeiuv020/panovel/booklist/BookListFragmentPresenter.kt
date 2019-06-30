@@ -71,6 +71,23 @@ class BookListFragmentPresenter : Presenter<BookListFragment>() {
         }
     }
 
+    fun copyBookList(bookList: BookList, newName: String) {
+        view?.doAsync({ e ->
+            val message = "书单重命名失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.activity?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+            DataManager.copyBookList(bookList, newName)
+            uiThread {
+                // 干脆整个刷新，没必要找麻烦，
+                view?.refresh()
+            }
+        }
+    }
+
     fun remove(bookList: BookList) {
         view?.doAsync({ e ->
             val message = "删除书单失败，"

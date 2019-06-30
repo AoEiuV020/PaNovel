@@ -16,7 +16,7 @@ class MianhuatangTest : BaseNovelContextText(Mianhuatang::class) {
     @Test
     fun detail() {
         detail("8326615", "8326615", "漫威世界的术士", "火之高兴",
-                "http://images2.mianhuatang520.com/images2/20170924/201709241855035253.jpg",
+                "https://images.mianhuatang2.com/images2/20190423/201904231359030670.jpg",
                 "恶魔是我的奴仆，邪能是我的力量，暗影与烈焰伴我左右，我是一名术士。" +
                         "一名术士行走在漫威的世界里。（没系统，靠自己吧少年。）" +
                         "欢迎加入漫威世界的术士书友群，群号码：177873494",
@@ -27,7 +27,7 @@ class MianhuatangTest : BaseNovelContextText(Mianhuatang::class) {
     fun chapters() {
         chapters("8326615", "关于更新", "8326615/81992178", null,
                 "第573章 另有安排", "8326615/82245484", null,
-                588)
+                586)
     }
 
     @Test

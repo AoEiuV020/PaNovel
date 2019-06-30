@@ -29,15 +29,15 @@ class YmoxuanTest : BaseNovelContextText(Ymoxuan::class) {
     fun chapters() {
         chapters("31577", "第一章 嬉命小丑", "31/31577/29700048", null,
                 "第一百八十九章 强强联手", "31/31577/166511765", null,
-                1032)
+                1020)
     }
 
     @Test
     fun content() {
         content("31/31577/29700048",
                 "欲望是进步的动力，也孕育了毁灭。",
-                "新的开始，求第一个收藏、推荐、点击，谢谢大家！）",
-                30)
+                ";",
+                29)
     }
 
 }

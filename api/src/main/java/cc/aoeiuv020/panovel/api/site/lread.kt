@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.href
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.regex.pick
 
 /**
  * Created by AoEiuV020 on 2018.06.03-19:35:33.
@@ -16,22 +18,26 @@ class Lread : DslJsoupNovelContext() {init {
             // https://www.lread.net/modules/article/search.php?searchkey=%B6%BC%CA%D0
             // 电脑版搜索不可用，手机版可用，
             // https://m.lread.net/s.php
-            // s=%B6%BC%CA%D0&type=articlename
-            charset = "GBK"
+            // keyword=%E9%83%BD%E5%B8%82&t=1
+            charset = "UTF-8"
             url = "//m.lread.net/s.php"
             data {
-                "type" to "articlename"
-                "s" to it
+                "t" to "1"
+                "keyword" to it
             }
         }
         // 搜索结果可能过多，但是页面不太大，无所谓了，
         document {
-            items("body > div.main > div.searchresult > p") {
-                name("> a:nth-child(1)")
-                author("> span > a")
+            items("div[class^=hot_sale]") {
+                extra("> p.title > a") { a ->
+                    a.href().pick("_(\\d*)").first()
+                }
+                name("> p.title > a")
+                author("> p.author > a")
             }
         }
     }
+    // https://m.lread.net/book/88917.html
     // https://www.lread.net/read/88917/
     detailPageTemplate = "/read/%s/"
     detail {

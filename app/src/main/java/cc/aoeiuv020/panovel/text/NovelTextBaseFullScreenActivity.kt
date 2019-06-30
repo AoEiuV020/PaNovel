@@ -84,6 +84,14 @@ abstract class NovelTextBaseFullScreenActivity : AppCompatActivity(), AnkoLogger
         hide()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+
+        if (!mVisible) {
+            hide()
+        }
+    }
+
     fun toggle() {
         if (mVisible) {
             hide()

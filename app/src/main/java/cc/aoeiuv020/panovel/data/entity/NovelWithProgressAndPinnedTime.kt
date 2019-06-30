@@ -1,12 +1,11 @@
 package cc.aoeiuv020.panovel.data.entity
 
-import cc.aoeiuv020.panovel.api.NovelItem
-import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
+import java.util.*
 
 /**
- * Created by AoEiuV020 on 2018.05.28-16:30:44.
+ * Created by AoEiuV020 on 2018.05.31-12:48:03.
  */
-data class NovelMinimal(
+data class NovelWithProgressAndPinnedTime(
         /**
          * 网站名，
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
@@ -28,20 +27,28 @@ data class NovelMinimal(
          * 必须存在，不可空，一本小说至少要有["site", "author“， ”name", "detail"],
          * [cc.aoeiuv020.panovel.api.NovelItem.extra]
          */
-        var detail: String
+        var detail: String,
+
+        // 阅读进度，
+
+        /**
+         * 阅读进度，
+         * 阅读至的章节索引，
+         */
+        var readAtChapterIndex: Int = 0,
+        /**
+         * 章节内的阅读进度，
+         * 看到第几页或者第几个字，具体没决定，
+         */
+        var readAtTextIndex: Int = 0,
+        /**
+         * 置顶时间，书架按这个排序，
+         * 不置顶的给个最小时间，
+         * 不过这样不好判断是否置顶，对比0时间的话，可能有时区问题，
+         * 没法设置个按钮置顶时显示取消置顶，
+         */
+        var pinnedTime: Date = Date(0)
 ) {
-    constructor(novelItem: NovelItem)
-            : this(novelItem.site, novelItem.author, novelItem.name, novelItem.extra)
-
-    constructor(novel: ServerNovel)
-            : this(novel.site, novel.author, novel.name, novel.detail)
-
     constructor(novel: Novel)
-            : this(novel.site, novel.author, novel.name, novel.detail)
-
-    constructor(novel: NovelWithProgress)
-            : this(novel.site, novel.author, novel.name, novel.detail)
-
-    constructor(novel: NovelWithProgressAndPinnedTime)
-            : this(novel.site, novel.author, novel.name, novel.detail)
+            : this(novel.site, novel.author, novel.name, novel.detail, novel.readAtChapterIndex, novel.readAtTextIndex, novel.pinnedTime)
 }

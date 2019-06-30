@@ -8,6 +8,7 @@ import org.junit.Test
 class Jdxs520Test : BaseNovelContextText(Jdxs520::class) {
     @Test
     fun search() {
+        // 这网站可能搜索结果可能随机出现乱码开头，刷新又好，
         search("都市")
         search("念念不忘，总裁乘胜追妻", "七爷", "77903")
         search("圣墟", "辰东", "45887")

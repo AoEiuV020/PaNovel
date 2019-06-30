@@ -8,6 +8,8 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.03-22:25:57.
  */
 class Gulizw : DslJsoupNovelContext() {init {
+    // 网站倒闭了大概，域名都没了，
+    hide = true
     site {
         name = "谷粒网"
         baseUrl = "http://www.gulizw.com"

@@ -3,7 +3,9 @@ package cc.aoeiuv020.panovel.api.base
 import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.log.debug
 import cc.aoeiuv020.log.error
+import cc.aoeiuv020.log.info
 import cc.aoeiuv020.okhttp.OkHttpUtils
+import cc.aoeiuv020.okhttp.sslAllowAll
 import cc.aoeiuv020.panovel.api.LoggerInputStream
 import cc.aoeiuv020.panovel.api.NovelContext
 import okhttp3.*
@@ -29,6 +31,7 @@ abstract class OkHttpNovelContext : NovelContext() {
     protected open val clientBuilder: OkHttpClient.Builder
         // 每次都生成新的builder，以免一个网站加的设置影响到其他网站，
         get() = OkHttpUtils.client.newBuilder()
+                .sslAllowAll()
                 .addInterceptor(LogInterceptor())
                 .addInterceptor(HeaderInterceptor())
                 .cookieJar(cookieJar)
@@ -133,7 +136,7 @@ abstract class OkHttpNovelContext : NovelContext() {
     private inner class LogInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
-            logger.debug { "connect ${request.url()}" }
+            logger.info { "connect ${request.url()}" }
             logger.debug {
                 val buffer = Buffer()
                 request.body()?.writeTo(buffer)

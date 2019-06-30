@@ -31,6 +31,10 @@
         android:title="@string/pref_header_server" />
 
     <header
+        android:id="@+id/pref_backup"
+        android:title="@string/pref_backup" />
+
+    <header
         android:fragment="cc.aoeiuv020.panovel.settings.OthersPreferenceFragment"
         android:title="@string/pref_others" />
 

@@ -10,7 +10,7 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 class Guanshuwang : DslJsoupNovelContext() {init {
     site {
         name = "官术网"
-        baseUrl = "http://www.biyuwu.cc"
+        baseUrl = "https://www.biyuwu.cc"
         logo = "http://www.biyuwu.cc/images/logo.gif"
     }
     search {

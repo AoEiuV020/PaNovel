@@ -16,7 +16,7 @@ class GuanshuwangTest : BaseNovelContextText(Guanshuwang::class) {
     @Test
     fun detail() {
         detail("86/86047", "86/86047", "剑来", "烽火戏诸侯",
-                "http://www.biyuwu.cc/coverimages/86/86047/86047s.jpg",
+                "https://www.biyuwu.cc/coverimages/86/86047/86047s.jpg",
                 "大千世界，无奇不有。\n" +
                         "我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！",
                 "2018-06-01 23:59:55")

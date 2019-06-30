@@ -48,6 +48,7 @@ class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
         val options = mutableSetOf<BackupOption>()
         cbBookshelf.isChecked && options.add(BackupOption.Bookshelf)
         cbBookList.isChecked && options.add(BackupOption.BookList)
+        cbProgress.isChecked && options.add(BackupOption.Progress)
         cbSettings.isChecked && options.add(BackupOption.Settings)
         return options
     }

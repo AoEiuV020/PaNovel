@@ -36,6 +36,7 @@
     <string name="pref_header_general">全局设置</string>
     <string name="pref_header_list">列表设置</string>
     <string name="pref_header_read">阅读设置</string>
+    <string name="pref_backup">备份</string>
     <string name="pref_others">杂项</string>
     <string name="pref_cache_clear">清除缓存</string>
     <string name="pref_clear">清除</string>
@@ -76,7 +77,7 @@
     <string name="back_press_out_of_fullScreen">返回键退出全屏</string>
     <string name="donate">捐赠</string>
     <string name="jump_to_we_chat">跳到微信</string>
-    <string name="explain">说明</string>
+    <string name="explain">Q&amp;A</string>
     <string name="cache">缓存</string>
     <string name="confirm_clear">确认清除</string>
     <string name="removing">正在清除…%s</string>
@@ -261,5 +262,19 @@
     <string name="header">Header</string>
     <string name="tip_set_cookie_success">更新成功</string>
     <string name="tip_set_header_success">更新成功</string>
+    <string name="source">书源</string>
+    <string name="subscript_toast">订阅提示</string>
+    <string name="subscript_toast_summary">添加移出书架时会订阅更新提醒的推送，订阅成功时是否弹出toast提示，</string>
+    <string name="cache_all">缓存全部</string>
+    <string name="backup_option_bookshelf">书架</string>
+    <string name="backup_option_settings">设置</string>
+    <string name="backup_option_book_list">书单</string>
+    <string name="backup_option_progress">阅读进度(书架+书单+置顶)</string>
+    <string name="backup_default_old_path">默认旧路径</string>
+    <string name="backup_default_new_path">默认新路径</string>
+    <string name="backup_other_path">其他</string>
+    <string name="backup_hint_other_path">其他路径</string>
+    <string name="backup_button_select">选择</string>
+    <string name="copy">复制</string>
 
 </resources>

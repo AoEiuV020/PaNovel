@@ -16,7 +16,7 @@ class AilelebaTest : BaseNovelContextText(Aileleba::class) {
     @Test
     fun detail() {
         detail("163455", "163455", "最强榜单", "38大虾",
-                "http://www.aileleba.com/files/article/image/163/163455/163455s.jpg",
+                "https://www.ailelela.com/files/article/image/163/163455/163455s.jpg",
                 "在遥远东方，有一个碾压福布斯，胡润富豪榜的草根综合榜单。\n" +
                         "这个榜单直接覆盖全球所有人。\n" +
                         "这个榜单更精确专业，被用户戏称刨祖坟好手。\n" +
@@ -38,7 +38,7 @@ class AilelebaTest : BaseNovelContextText(Aileleba::class) {
     fun content() {
         content("163455/zhangjie38969947",
                 "市府邀请自己！",
-                "还真是老三的儿子！",
+                "还真是老三的儿子！百度搜索乐安宣書網(乐安宣书网https://www.ailelela.com)",
                 53)
     }
 

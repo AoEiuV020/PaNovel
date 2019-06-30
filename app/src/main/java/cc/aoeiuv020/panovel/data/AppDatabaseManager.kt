@@ -90,11 +90,12 @@ class AppDatabaseManager(context: Context) {
 
     fun updateReadStatus(novel: Novel) = db.novelDao().updateReadStatus(novel.nId,
             novel.readAtChapterIndex, novel.readAtTextIndex,
-            novel.readAtChapterName, novel.readTime)
+            novel.readAtChapterName, novel.readTime, novel.pinnedTime)
 
     fun siteEnabledChange(site: Site) = db.siteDao().updateEnabled(site.name, site.enabled)
     @Suppress("unused")
     fun siteHideChange(site: Site) = db.siteDao().updateEnabled(site.name, site.hide)
+
     fun history(historyCount: Int): List<Novel> = db.novelDao().history(historyCount)
     fun getBookList(bookListId: Long): BookList = db.bookListDao().queryBookList(bookListId)
     fun inBookList(bookListId: Long, list: List<Novel>): List<Boolean> = db.runInTransaction<List<Boolean>> {
@@ -119,19 +120,51 @@ class AppDatabaseManager(context: Context) {
     fun renameBookList(bookList: BookList, name: String) =
             db.bookListDao().updateBookListName(bookList.nId, name)
 
+    fun copyBookList(bookList: BookList, name: String) = db.runInTransaction {
+        val newBookListId = newBookList(name)
+        val list = db.bookListDao().queryNovel(bookList.nId)
+        list.forEach {
+            // 导入书单里的小说对象没有id, 要查一下，不存在就插入小说，
+            val novel = queryOrNewNovel(NovelMinimal(it))
+            if (!checkSiteSupport(novel)) {
+                // 网站不在支持列表就不添加，
+                // 基本信息已经写入数据库也无所谓了，
+                return@forEach
+            }
+            // 然后再把这小说加入这书单，
+            addToBookList(newBookListId, novel)
+        }
+    }
+
     fun removeBookList(bookList: BookList) = db.bookListDao().deleteList(bookList)
 
     /**
-     * 书单直接插入，名字可以重复，
+     * 书单直接插入，名字可以重复，uuid不能重复，
      */
-    fun newBookList(name: String) =
-            db.bookListDao().insert(BookList(id = null, name = name, createTime = Date()))
+    fun newBookList(name: String, uuid: String = UUID.randomUUID().toString()) =
+            db.bookListDao().insert(BookList(id = null, name = name, createTime = Date(), uuid = uuid))
+
+    /**
+     * 创建新的书单或者清空已经存在的书单中的小说以添加新书，
+     */
+    private fun createOrResetBookList(name: String, uuid: String): Long {
+        val bookList = db.bookListDao().queryBookListByUuid(uuid)
+        return if (bookList == null) {
+            newBookList(name, uuid)
+        } else {
+            db.bookListDao().resetBookList(bookList.nId)
+            if (name != bookList.name) {
+                renameBookList(bookList, name)
+            }
+            bookList.nId
+        }
+    }
 
     /**
      * 导入书单，先新建个书单，再一本本插入，
      */
-    fun importBookList(name: String, list: List<NovelMinimal>) = db.runInTransaction {
-        val bookListId = newBookList(name)
+    fun importBookList(name: String, list: List<NovelMinimal>, uuid: String) = db.runInTransaction {
+        val bookListId = createOrResetBookList(name, uuid)
         list.forEach {
             // 导入书单里的小说对象没有id, 要查一下，不存在就插入小说，
             val novel = queryOrNewNovel(it)
@@ -158,10 +191,19 @@ class AppDatabaseManager(context: Context) {
     fun cleanHistory() = db.novelDao().cleanHistory()
     @Suppress("unused")
     fun updateSiteInfo(site: Site) = db.siteDao().updateSiteInfo(site.name, site.baseUrl, site.logo)
+
     fun hasUpdateNovelList(): List<Novel> = db.novelDao().hasUpdateNovelList()
     fun clean(novel: Novel) = db.novelDao().delete(novel)
     /**
      * 导入小说时，如果已经存在，就覆盖所有信息，
      */
     fun updateAll(novel: Novel) = db.novelDao().update(novel)
+
+    /**
+     * 返回需要备份进度的小说，
+     * 也就是书架或者书单中有出现的，
+     */
+    fun exportNovelProgress(): List<Novel> {
+        return db.novelDao().listImportant()
+    }
 }

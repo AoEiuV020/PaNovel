@@ -15,10 +15,21 @@ class BookListBean(
         @SerializedName("list")
         val list: List<NovelMinimal>,
         @SerializedName("version")
+        val version: Int,
+        @SerializedName("uuid")
+        val uuid: String
+)
+
+class BookListBean2(
+        @SerializedName("name")
+        val name: String,
+        @SerializedName("list")
+        val list: List<NovelMinimal>,
+        @SerializedName("version")
         val version: Int
 )
 
-class OldBookListBean(
+class BookListBean1(
         @SerializedName("name")
         val name: String,
         @SerializedName("list")

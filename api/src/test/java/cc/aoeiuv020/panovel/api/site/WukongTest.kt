@@ -16,12 +16,12 @@ class WukongTest : BaseNovelContextText(Wukong::class) {
     @Test
     fun detail() {
         detail("885", "885", "神藏", "打眼",
-                "http://www.wukong.la/files/article/image/0/885/885s.jpg",
+                "https://www.wukong.la/files/article/image/0/885/885s.jpg",
                 "一念之间，沧海桑田\n" +
                         "打眼带你进入古玩的世界！！！",
                 "2018-06-05 12:32:00")
         detail("11", "11", "不朽凡人", "鹅是老五",
-                "http://www.wukong.la/files/article/image/0/11/11s.jpg",
+                "https://www.wukong.la/files/article/image/0/11/11s.jpg",
                 "我，只有凡根，一介凡人！我，叫莫无忌！我，要不朽！",
                 "2017-12-31 12:44:00")
     }

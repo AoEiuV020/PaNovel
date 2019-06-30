@@ -18,6 +18,7 @@ abstract class DefaultBackup : IBackup, AnkoLogger {
     private fun getOptionName(option: BackupOption): String = when (option) {
         BackupOption.Bookshelf -> "书架"
         BackupOption.BookList -> "书单"
+        BackupOption.Progress -> "进度"
         BackupOption.Settings -> "设置"
     }
 

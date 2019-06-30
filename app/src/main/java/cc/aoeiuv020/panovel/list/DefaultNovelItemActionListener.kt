@@ -64,9 +64,7 @@ class DefaultNovelItemActionListener(
                         R.string.cancel_pinned to CancelPinned,
 
                         R.string.clean_cache to CleanCache,
-                        R.string.clean_this_novel to CleanData,
-
-                        R.string.history to Refresh
+                        R.string.clean_this_novel to CleanData
                 )
                 vh.ctx.selector(vh.ctx.getString(R.string.title_more_action),
                         list.unzip().first.map { vh.ctx.getString(it) }) { _, i ->

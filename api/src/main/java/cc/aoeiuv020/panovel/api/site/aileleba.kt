@@ -14,7 +14,7 @@ import java.util.*
 class Aileleba : DslJsoupNovelContext() {init {
     site {
         name = "乐安宣书网"
-        baseUrl = "http://www.aileleba.com/"
+        baseUrl = "https://www.ailelela.com/"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=ed8bde7afb03918fd7d13dc2613c264b/86de0c0a304e251f1b666d62ab86c9177d3e5386.jpg"
     }
     search {
@@ -23,7 +23,7 @@ class Aileleba : DslJsoupNovelContext() {init {
             // 电脑版搜索页面没有作者名，会出点问题，用手机版代替，
             // http://m.aileleba.com/s.php
             charset = "GBK"
-            url = "//m.aileleba.com/s.php"
+            url = "//m.ailelela.com/s.php"
             data {
                 "type" to "articlename"
                 "s" to it

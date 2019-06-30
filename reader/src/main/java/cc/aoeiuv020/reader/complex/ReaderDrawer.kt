@@ -371,13 +371,18 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
     }
 
     private fun typesetting(chapter: String, list: List<String>): List<Page> {
+        // 额外使用一个textPaint以免被当前页渲染过程调整字间距影响到，
+        val typesettingTextPaint = TextPaint(this.textPaint)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            typesettingTextPaint.letterSpacing = 0f
+        }
         val pages = mutableListOf<Page>()
         var height = 0
         var fitHeight = 0
         val lines = mutableListOf<Any>()
         val lineSpacing = reader.ctx.dip(reader.config.lineSpacing)
         val paragraphSpacing = reader.ctx.dip(reader.config.paragraphSpacing)
-        val textHeight = textPaint.getFontMetricsInt(null)
+        val textHeight = typesettingTextPaint.getFontMetricsInt(null)
         (listOf(chapter) + list).forEachIndexed { index, str ->
             // 不支持图片，得到段就直接转成String,
             val paragraph = if (index == 0) str else requester.requestParagraph(str).toString()
@@ -398,7 +403,7 @@ class ReaderDrawer(private val reader: ComplexReader, private val novel: String,
                     pages.add(Page(ArrayList(lines), fitLineSpacing))
                     lines.clear()
                 }
-                count = textPaint.breakText(paragraph.substring(start), true, contentSize.width.toFloat(), null)
+                count = typesettingTextPaint.breakText(paragraph.substring(start), true, contentSize.width.toFloat(), null)
                 val line = paragraph.substring(start, start + count)
                 if (index == 0) {
                     lines.add(Title(line))
