@@ -5,6 +5,7 @@ import cc.aoeiuv020.log.debug
 import cc.aoeiuv020.log.error
 import cc.aoeiuv020.log.info
 import cc.aoeiuv020.okhttp.OkHttpUtils
+import cc.aoeiuv020.okhttp.sslAllowAll
 import cc.aoeiuv020.panovel.api.LoggerInputStream
 import cc.aoeiuv020.panovel.api.NovelContext
 import okhttp3.*
@@ -30,6 +31,7 @@ abstract class OkHttpNovelContext : NovelContext() {
     protected open val clientBuilder: OkHttpClient.Builder
         // 每次都生成新的builder，以免一个网站加的设置影响到其他网站，
         get() = OkHttpUtils.client.newBuilder()
+                .sslAllowAll()
                 .addInterceptor(LogInterceptor())
                 .addInterceptor(HeaderInterceptor())
                 .cookieJar(cookieJar)
