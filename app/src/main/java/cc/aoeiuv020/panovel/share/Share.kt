@@ -60,8 +60,8 @@ object Share {
             }
             1 -> {
                 // 旧版version为null,
-                val oldBookListBean: OldBookListBean = App.gson.fromJson(bookListJson, type<OldBookListBean>())
-                BookListBean(oldBookListBean.name, oldBookListBean.list.map {
+                val bookListBean1: BookListBean1 = App.gson.fromJson(bookListJson, type<BookListBean1>())
+                BookListBean(bookListBean1.name, bookListBean1.list.map {
                     // 旧版的extra为完整地址，直接拿来，就算写进数据库了，刷新详情页后也会被新版的bookId覆盖，
                     NovelMinimal(site = it.site, author = it.author, name = it.name, detail = it.requester.extra)
                 }, VERSION, UUID.randomUUID().toString())

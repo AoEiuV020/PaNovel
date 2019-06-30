@@ -29,7 +29,7 @@ class BookListBean2(
         val version: Int
 )
 
-class OldBookListBean(
+class BookListBean1(
         @SerializedName("name")
         val name: String,
         @SerializedName("list")
