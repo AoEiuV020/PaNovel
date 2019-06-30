@@ -12,7 +12,7 @@ import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 @Dao
 abstract class BookListDao {
 
-    @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId")
+    @Query("select Novel.* from BookListItem left join Novel on BookListItem.novelId = Novel.id where BookListItem.bookListId = :bookListId order by pinnedTime desc, max(receiveUpdateTime, readTime) desc")
     abstract fun queryNovel(bookListId: Long): List<Novel>
 
     // 小数点.开头的是本地小说，不要，
