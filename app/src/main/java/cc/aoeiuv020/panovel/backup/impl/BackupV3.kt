@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.backup.BackupOption
 import cc.aoeiuv020.panovel.backup.BackupOption.*
 import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.settings.*
 import cc.aoeiuv020.panovel.share.Share
@@ -162,8 +163,8 @@ class BackupV3 : DefaultBackup() {
     }
 
     private fun importBookshelf(file: File): Int {
-        val list = file.readText().toBean<List<NovelWithProgress>>()
-        DataManager.importBookshelfWithProgress(list)
+        val list = file.readText().toBean<List<NovelMinimal>>()
+        DataManager.importBookshelf(list)
         return list.size
     }
 
@@ -197,7 +198,7 @@ class BackupV3 : DefaultBackup() {
     // 书架只导出一个文件，
     private fun exportBookshelf(file: File): Int {
         val list = DataManager.listBookshelf().map {
-            NovelWithProgress(it.novel)
+            NovelMinimal(it.novel)
         }
         file.writeText(list.toJson())
         return list.size

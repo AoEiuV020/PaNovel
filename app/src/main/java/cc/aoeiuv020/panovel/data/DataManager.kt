@@ -310,6 +310,35 @@ object DataManager : AnkoLogger {
     }
 
     /**
+     * 小说导入书架，不包含进度，
+     */
+    fun importBookshelf(list: List<NovelMinimal>) = app.db.runInTransaction {
+        debug { "$list" }
+        val novelList = list.mapNotNull {
+            // 查询或插入，得到小说对象，再更新进度，
+            val novel = app.queryOrNewNovel(it)
+            if (!app.checkSiteSupport(novel)) {
+                // 网站不在支持列表就不添加，
+                // 基本信息已经写入数据库也无所谓了，
+                return@mapNotNull null
+            }
+            // 顺便更新下阅读至的章节名，
+            if (novel.chapters != null) {
+                novel.readAtChapterName = cache.loadChapters(novel)?.getOrNull(novel.readAtChapterIndex)?.name ?: ""
+            }
+            // 加入书架，
+            novel.bookshelf = true
+            // 不调用方法updateBookshelf，因为这个方法包含订阅更新推送，
+            app.updateBookshelf(novel)
+            // 普通更新阅读进度，比起来少了阅读时间，无所谓了，
+            updateReadStatus(novel)
+            novel
+        }
+        // 向极光订阅/取消对应tag,
+        server.addTags(novelList)
+    }
+
+    /**
      * 小说导入进度，
      */
     fun importNovelWithProgress(list: Sequence<NovelWithProgress>): Int = app.db.runInTransaction<Int> {
