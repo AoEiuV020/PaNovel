@@ -180,12 +180,16 @@ class BackupV3 : DefaultBackup() {
         val list = DataManager.exportNovelProgress().map {
             NovelWithProgress(it)
         }
+        var count = 0
         file.outputStream().bufferedWriter().use { output ->
             list.forEach { n ->
-                output.appendln(listOf(n.site, n.author, n.name, n.detail, n.readAtChapterIndex, n.readAtTextIndex).joinToString(","))
+                if (n.readAtChapterIndex > 0 || n.readAtTextIndex > 0) {
+                    output.appendln(listOf(n.site, n.author, n.name, n.detail, n.readAtChapterIndex, n.readAtTextIndex).joinToString(","))
+                    count++
+                }
             }
         }
-        return list.size
+        return count
     }
 
     // 书架只导出一个文件，
