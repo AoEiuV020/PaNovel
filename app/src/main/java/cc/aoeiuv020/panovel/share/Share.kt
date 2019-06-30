@@ -58,7 +58,7 @@ object Share {
                     BookListBean(it.name, it.list, it.version, UUID.randomUUID().toString())
                 }
             }
-            else -> {
+            1 -> {
                 // 旧版version为null,
                 val oldBookListBean: OldBookListBean = App.gson.fromJson(bookListJson, type<OldBookListBean>())
                 BookListBean(oldBookListBean.name, oldBookListBean.list.map {
@@ -66,6 +66,7 @@ object Share {
                     NovelMinimal(site = it.site, author = it.author, name = it.name, detail = it.requester.extra)
                 }, VERSION, UUID.randomUUID().toString())
             }
+            else -> throw IllegalStateException("APP版本太低")
         }
         DataManager.importBookList(bookListBean.name, bookListBean.list, bookListBean.uuid)
         return bookListBean.list.size
