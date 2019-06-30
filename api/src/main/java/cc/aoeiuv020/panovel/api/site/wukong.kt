@@ -11,7 +11,7 @@ import java.net.URL
 class Wukong : DslJsoupNovelContext() {init {
     site {
         name = "悟空看书"
-        baseUrl = "http://www.wukong.la"
+        baseUrl = "https://www.wukong.la"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=95ca1b6f75310a55c424defc87474387/930dadd12f2eb938f9acfb6ed9628535e7dd6f50.jpg"
     }
     search {
@@ -30,8 +30,8 @@ class Wukong : DslJsoupNovelContext() {init {
         document {
             if (URL(root.ownerDocument().location()).path.startsWith("/book/")) {
                 single {
-                    name("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-10 > h1")
-                    author("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-10 > p.booktag > a:nth-child(1)")
+                    name("h1.bookTitle")
+                    author("p.booktag > a:nth-child(1)")
                 }
             } else {
                 items("body > div.container.body-content > div.panel.panel-default > table > tbody > tr:not(:nth-child(1))") {
@@ -47,18 +47,18 @@ class Wukong : DslJsoupNovelContext() {init {
     detail {
         document {
             novel {
-                name("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-10 > h1")
-                author("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-10 > p.booktag > a:nth-child(1)")
+                name("h1.bookTitle")
+                author("p.booktag > a:nth-child(1)")
             }
-            image("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-2.col-xs-4.hidden-xs > img")
-            update("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-10 > p:nth-child(3) > span", format = "yyyy-MM-dd HH:mm", block = pickString("（(.*)）"))
+            image("img.img-thumbnail")
+            update("div.col-md-10 > p:nth-child(3) > span", format = "yyyy-MM-dd HH:mm", block = pickString("（(.*)）"))
             introduction("#bookIntro", block = ownLinesString())
         }
     }
     chapters {
         document {
             items("#list-chapterAll > dl > dd > a")
-            lastUpdate("body > div.container.body-content > div:nth-child(3) > div > div > div.col-md-10 > p:nth-child(3) > span", format = "yyyy-MM-dd HH:mm", block = pickString("（(.*)）"))
+            lastUpdate("div.col-md-10 > p:nth-child(3) > span", format = "yyyy-MM-dd HH:mm", block = pickString("（(.*)）"))
         }
     }
     bookIdWithChapterIdRegex = firstTwoIntPattern
