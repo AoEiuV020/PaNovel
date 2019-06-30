@@ -38,18 +38,18 @@ object Share {
 
     fun shareBookList(bookList: BookList, shareExpiration: Expiration): String {
         val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
-        val bookListBean = BookListBean(bookList.name, novelList, VERSION, bookList.uuid)
-        return paste.upload(PasteUbuntu.PasteUbuntuData(bookListBean.toJson(App.gson), expiration = shareExpiration))
+        return paste.upload(PasteUbuntu.PasteUbuntuData(exportBookList(bookList, novelList), expiration = shareExpiration))
     }
 
-    /**
-     * @return 返回导入的书单中的小说数量，
-     */
-    fun receiveBookList(url: String): Int {
-        val text = paste.download(url)
+    fun exportBookList(bookList: BookList, novelList: List<NovelMinimal>): String {
+        val bookListBean = BookListBean(bookList.name, novelList, VERSION, bookList.uuid)
+        return bookListBean.toJson(App.gson)
+    }
+
+    fun importBookList(text: String): BookListBean {
         val bookListJson = text.toBean<JsonObject>(App.gson)
         val version = bookListJson.get("version")?.asJsonPrimitive?.asInt
-        val bookListBean: BookListBean = when (version) {
+        return when (version) {
             3 -> {
                 App.gson.fromJson(bookListJson, type<BookListBean>())
             }
@@ -68,6 +68,14 @@ object Share {
             }
             else -> throw IllegalStateException("APP版本太低")
         }
+    }
+
+    /**
+     * @return 返回导入的书单中的小说数量，
+     */
+    fun receiveBookList(url: String): Int {
+        val text = paste.download(url)
+        val bookListBean = importBookList(text)
         DataManager.importBookList(bookListBean.name, bookListBean.list, bookListBean.uuid)
         return bookListBean.list.size
     }

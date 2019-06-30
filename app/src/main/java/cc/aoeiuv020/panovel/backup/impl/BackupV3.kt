@@ -8,11 +8,10 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.backup.BackupOption
 import cc.aoeiuv020.panovel.backup.BackupOption.*
 import cc.aoeiuv020.panovel.data.DataManager
-import cc.aoeiuv020.panovel.data.entity.NovelMinimal
 import cc.aoeiuv020.panovel.data.entity.NovelWithProgress
 import cc.aoeiuv020.panovel.settings.*
+import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.Pref
-import cc.aoeiuv020.string.divide
 import com.google.gson.JsonElement
 import org.jetbrains.anko.debug
 import java.io.File
@@ -153,10 +152,13 @@ class BackupV3 : DefaultBackup() {
     }
 
     private fun importBookList(folder: File): Int = folder.listFiles().sumBy { file ->
-        val name = file.name.divide('|').second
-        val novelList = file.readText().toBean<List<NovelMinimal>>()
-        DataManager.importBookList(name, novelList)
-        novelList.size
+        val bookListBean = Share.importBookList(file.readText())
+        DataManager.importBookList(
+                bookListBean.name,
+                bookListBean.list,
+                bookListBean.uuid
+        )
+        bookListBean.list.size
     }
 
     private fun importBookshelf(file: File): Int {
@@ -210,7 +212,7 @@ class BackupV3 : DefaultBackup() {
             // 只取小说必须的几个参数，相关数据类不能被混淆，
             // 不包括本地小说，
             val novelList = DataManager.getNovelMinimalFromBookList(bookList.nId)
-            folder.resolve(fileName).writeText(novelList.toJson())
+            folder.resolve(fileName).writeText(Share.exportBookList(bookList, novelList))
             novelList.size
         }
     }
