@@ -36,6 +36,7 @@
     <string name="pref_header_general">全局设置</string>
     <string name="pref_header_list">列表设置</string>
     <string name="pref_header_read">阅读设置</string>
+    <string name="pref_backup">备份</string>
     <string name="pref_others">杂项</string>
     <string name="pref_cache_clear">清除缓存</string>
     <string name="pref_clear">清除</string>
@@ -261,5 +262,6 @@
     <string name="header">Header</string>
     <string name="tip_set_cookie_success">更新成功</string>
     <string name="tip_set_header_success">更新成功</string>
+    <string name="source">书源</string>
 
 </resources>

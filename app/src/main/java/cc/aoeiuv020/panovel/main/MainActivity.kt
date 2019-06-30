@@ -18,7 +18,6 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.backup.BackupActivity
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.data.DataManager
@@ -339,10 +338,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         }
     }
 
-    private fun backup() {
-        BackupActivity.start(this)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             0 -> data?.extras?.getString("SCAN_RESULT")?.let {
@@ -362,11 +357,11 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> SettingsActivity.start(this)
-            R.id.search -> SiteChooseActivity.start(this)
+            R.id.search -> FuzzySearchActivity.start(this)
             R.id.scan -> scan()
             R.id.open -> open()
             R.id.subscript -> subscript()
-            R.id.backup -> backup()
+            R.id.source -> SiteChooseActivity.start(this)
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)
