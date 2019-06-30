@@ -346,7 +346,7 @@ object DataManager : AnkoLogger {
      */
     @WorkerThread
     fun importLocalNovel(ctx: Context, uri: Uri, requestInput: (ImportRequireValue, String) -> String?): Novel {
-        val (novel, chapterList) = ctx.contentResolver.openInputStream(uri).use { input ->
+        val (novel, chapterList) = ctx.contentResolver.openInputStream(uri).notNullOrReport(uri.toString()).use { input ->
             local.importLocalNovel(input, uri.toString(), requestInput)
         }
         app.queryOrNewNovel(NovelMinimal(novel)).let { exists ->
