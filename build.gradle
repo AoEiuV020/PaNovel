@@ -14,6 +14,7 @@ buildscript {
             def input = versionFile.newInputStream()
             def p = new Properties()
             p.load(input)
+            input.close()
             p.forEach { k, v ->
                 ext.set(k, v)
             }
@@ -25,6 +26,7 @@ buildscript {
             def input = publishFile.newInputStream()
             pub = new Properties()
             pub.load(input)
+            input.close()
         }
     }
     repositories {
@@ -42,7 +44,6 @@ buildscript {
         classpath 'org.jetbrains.dokka:dokka-gradle-plugin:' + dokka_version
         // 使用dokka给kotlin-android模块生成javadoc文档，
         classpath 'org.jetbrains.dokka:dokka-android-gradle-plugin:' + dokka_version
-        // TODO: 使用了过时api, 等升级解决，variantOutput.getPackageLibrary，
         // 使用bintray-release上传bintray也就是jcenter，
         classpath 'com.novoda:bintray-release:' + bintray_version
     }
@@ -118,6 +119,7 @@ applicationModules.forEach { name ->
                 def input = signingFile.newInputStream()
                 def p = new Properties()
                 p.load(input)
+                input.close()
                 // 签名文件存在才配置签名，
                 def jks = rootProject.file(p['storeFile'])
                 if (jks.exists()) {
@@ -261,7 +263,7 @@ javaModules.forEach { name ->
             artifactId = name
             publishVersion = version
             desc = "Java library $name."
-            website = 'https://github.com/AoEiuV020/AndroidDemo'
+            website = 'https://github.com/AoEiuV020/KotlinDemo'
             groupId = group
             if (hasPublish) {
                 dryRun = false
@@ -391,7 +393,7 @@ androidModules.forEach { name ->
             artifactId = name
             publishVersion = version
             desc = "Android library $name."
-            website = 'https://github.com/AoEiuV020/AndroidDemo'
+            website = 'https://github.com/AoEiuV020/KotlinDemo'
             groupId = group
             if (hasPublish) {
                 dryRun = false
