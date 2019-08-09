@@ -28,6 +28,7 @@ steps:
   inputs:
     contents: '**/*.apk'
     targetFolder: '$(build.artifactStagingDirectory)'
+- script: "rm -rf $(build.artifactStagingDirectory)/app/"
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: PaNovel'
