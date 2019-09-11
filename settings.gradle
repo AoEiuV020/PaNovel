@@ -1,4 +1,6 @@
-include ':app', ':js'
+rootProject.name = 'PaNovel'
+include ':app'
+include ':js'
 include ':api'
 include ':pager'
 include ':server'
