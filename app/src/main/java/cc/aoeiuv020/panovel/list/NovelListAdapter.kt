@@ -19,6 +19,9 @@ open class NovelListAdapter(
         actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
         private val onError: (String, Throwable) -> Unit
 ) : androidx.recyclerview.widget.RecyclerView.Adapter<NovelViewHolder>(), AnkoLogger {
+    init {
+        super.setHasStableIds(true)
+    }
     private val actualActionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { action, vh ->
         when (action) {
         // CleanData固定删除元素，无视传入的listener,
@@ -84,6 +87,10 @@ open class NovelListAdapter(
     override fun onBindViewHolder(holder: NovelViewHolder, position: Int) {
         val novel = _data[position]
         holder.apply(novel, refreshTime)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return data[position].novel.nId
     }
 
 
