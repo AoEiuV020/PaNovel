@@ -82,6 +82,8 @@ class Refresher(
                 }
                 executor.shutdown()
                 isRunning = false
+                // 有时候出现抛异常却没有停止的情况，原因不明，直接自杀，
+                System.exit(1)
             }
         }
     }
