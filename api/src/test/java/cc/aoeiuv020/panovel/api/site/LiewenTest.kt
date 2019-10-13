@@ -16,7 +16,7 @@ class LiewenTest : BaseNovelContextText(Liewen::class) {
     @Test
     fun detail() {
         detail("15/15090", "15/15090", "斗战狂潮", "骷髅精灵",
-                "https://www.liewen.cc/files/article/image/15/15090/15090s.jpg",
+                "https://www.liewen.la/files/article/image/15/15090/15090s.jpg",
                 "双月当空，无限可能的英魂世界\n" +
                         "孤寂黑暗，神秘古怪的嬉命小丑\n" +
                         "百城联邦，三大帝国，异族横行，魂兽霸幽\n" +
@@ -24,7 +24,7 @@ class LiewenTest : BaseNovelContextText(Liewen::class) {
                         "重点是……二年级的废柴学长王同学，如何使用嬉命轮盘，撬动整个世界，伙伴们，请注意，学长来了！！！",
                 "2018-06-06 00:05:00")
         detail("5/5024", "5/5024", "万古神帝", "飞天鱼",
-                "https://www.liewen.cc/files/article/image/5/5024/5024s.jpg",
+                "https://www.liewen.la/files/article/image/5/5024/5024s.jpg",
                 "八百年前，明帝之子张若尘，被他的未婚妻池瑶公主杀死，一代天骄，就此陨落。\n" +
                         "八百年后，张若尘重新活了过来，却现曾经杀死他的未婚妻，\n" +
                         "已经统一昆仑界，开辟出第一中央帝国，号称“池瑶女皇”。\n" +
