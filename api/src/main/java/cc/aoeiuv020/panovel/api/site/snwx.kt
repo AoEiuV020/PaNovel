@@ -12,8 +12,8 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 class Snwx : DslJsoupNovelContext() {init {
     site {
         name = "少年文学"
-        baseUrl = "https://www.snwx8.com"
-        logo = "https://www.snwx8.com/xiaoyi/images/logo.gif"
+        baseUrl = "https://www.snwxx.com"
+        logo = "https://www.snwxx.com/xiaoyi/images/logo.gif"
     }
     cookieFilter {
         // 删除cookie绕开搜索时间间隔限制，
@@ -38,7 +38,7 @@ class Snwx : DslJsoupNovelContext() {init {
         }
     }
     bookIdRegex = firstTwoIntPattern
-    // https://www.snwx8.com/book/66/66076/
+    // https://www.snwxx.com/book/66/66076/
     detailPageTemplate = "/book/%s/"
     detail {
         document {
