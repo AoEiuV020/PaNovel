@@ -13,7 +13,7 @@ class Ggdown : DslJsoupNovelContext() {init {
     site {
         name = "格格党"
         baseUrl = "https://www.ggdownxs.com"
-        logo = "http://www.ggdown.com/themes/yssm/logo.gif"
+        logo = "https://www.ggdownxs.com/themes/yssm/logo.gif"
     }
     search {
         get {
