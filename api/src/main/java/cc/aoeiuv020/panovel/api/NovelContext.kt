@@ -37,7 +37,7 @@ abstract class NovelContext {
                 Zhuishu(), N2kzw(), Shu8(), N52ranwen(), Kuxiaoshuo(),
                 Zzdxsw(), Zhuaji(), Uctxt(), Lnovel(), Yidm(),
 
-                Manhuagui()
+                Manhuagui(),SiFang()
         )
 
         // 用于存取cookie,

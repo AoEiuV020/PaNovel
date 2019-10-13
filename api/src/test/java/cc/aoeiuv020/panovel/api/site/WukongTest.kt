@@ -9,7 +9,7 @@ class WukongTest : BaseNovelContextText(Wukong::class) {
     @Test
     fun search() {
         search("都市")
-        search("神藏", "打眼", "885")
+        search("我的宝藏男神藏不住了", "鱼酱二千", "54740")
         search("不朽凡人", "鹅是老五", "11")
     }
 

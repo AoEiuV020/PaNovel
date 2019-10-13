@@ -18,9 +18,6 @@ import kotlin.reflect.KClass
 // 传入class为了在初始化logger前配置log级别，
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
-    @Suppress("MemberVisibilityCanBePrivate")
-    protected val context: NovelContext = clazz.java.newInstance()
-    protected open var enabled = context.enabled
     protected val folder: File = File(System.getProperty("java.io.tmpdir", "."))
             .resolve("PaNovel")
             .resolve("api")
@@ -35,6 +32,10 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         NovelContext.cache(cacheDir)
         NovelContext.files(filesDir)
     }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    protected val context: NovelContext = clazz.java.newInstance()
+    protected open var enabled = context.enabled
 
     protected fun search(name: String, author: String, extra: String, count: Int = 3): NovelItem? {
         if (context.hide || !enabled) return null

@@ -2,9 +2,11 @@ package cc.aoeiuv020.panovel.share
 
 import cc.aoeiuv020.base.jar.jsoupConnect
 import cc.aoeiuv020.okhttp.OkHttpUtils
+import cc.aoeiuv020.okhttp.url
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import okhttp3.FormBody
 import okhttp3.Request
+import java.net.URL
 
 /**
  * 网上贴文本，免费还无限制，
@@ -38,9 +40,11 @@ internal class PasteUbuntu {
         return OkHttpUtils.client.newBuilder().followRedirects(false)
                 .build()
                 .newCall(request)
-                .execute()
-                .header("Location")
-                .notNullOrReport()
+                .execute().let { response ->
+                    val l = response.header("Location")
+                            .notNullOrReport()
+                    URL(URL(response.url()), l).toString()
+                }
     }
 
     fun download(url: String): String {

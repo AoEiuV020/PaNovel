@@ -31,6 +31,9 @@ abstract class OkHttpNovelContext : NovelContext() {
     protected open val clientBuilder: OkHttpClient.Builder
         // 每次都生成新的builder，以免一个网站加的设置影响到其他网站，
         get() = OkHttpUtils.client.newBuilder()
+/*
+                .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("localhost", 8080)))
+*/
                 .sslAllowAll()
                 .addInterceptor(LogInterceptor())
                 .addInterceptor(HeaderInterceptor())

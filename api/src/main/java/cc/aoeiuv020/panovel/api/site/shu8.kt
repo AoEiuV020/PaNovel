@@ -12,12 +12,12 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 class Shu8 : DslJsoupNovelContext() {init {
     site {
         name = "书吧小说网"
-        baseUrl = "http://shu8.cc"
-        logo = "http://shu8.cc/static/css/logo.png"
+        baseUrl = "https://88xs.us"
+        logo = "https://88xs.us/static/css/logo.png"
     }
     search {
         get {
-            // http://shu8.cc/modules/article/search.php?searchtype=articlename&searchkey=%B6%BC%CA%D0&page=1
+            // https://88xs.us/modules/article/search.php?searchtype=articlename&searchkey=%B6%BC%CA%D0&page=1
             charset = "GBK"
             url = "/modules/article/search.php"
             data {
@@ -39,7 +39,7 @@ class Shu8 : DslJsoupNovelContext() {init {
             }
         }
     }
-    // http://shu8.cc/xs/61/61453/
+    // https://88xs.us/xs/61/61453/
     bookIdRegex = firstTwoIntPattern
     detailPageTemplate = "/xs/%s/"
     detail { _ ->
@@ -60,7 +60,7 @@ class Shu8 : DslJsoupNovelContext() {init {
             items("#main > div.box.mt10 > div.book_list > ul > li > a")
         }.reverseRemoveDuplication()
     }
-    // http://shu8.cc/xs/61/61453/16115143.html
+    // https://88xs.us/xs/61/61453/16115143.html
     bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/xs/%s.html"
     content {

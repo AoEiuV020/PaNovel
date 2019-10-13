@@ -16,7 +16,7 @@ class ZhuishuTest : BaseNovelContextText(Zhuishu::class) {
     @Test
     fun detail() {
         detail("56867", "56867", "圣武星辰", "乱世狂刀",
-                "https://www.bimo.cc/cover/56/56867.jpg",
+                "https://www.mangg.net/cover/56/56867.jpg",
                 "事情是这样的，2017年夏天，在太阳系之外，位于紫薇星域的几大超级武道宗门，" +
                         "要修筑一座史无前例的大型传送阵法，以方便他们对于银河系南部星域的开发，" +
                         "而这座阵法的仙力脉冲正好要经过地球，所以，地球要被强拆了。\n" +

@@ -9,8 +9,8 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 class Gxwztv : DslJsoupNovelContext() {init {
     site {
         name = "梧州中文台"
-        baseUrl = "https://www.gxwztv.com"
-        logo = "https://www.gxwztv.com/images/logo.png"
+        baseUrl = "https://www.ztv.la"
+        logo = "https://www.ztv.la/images/logo.png"
     }
     search {
         get {

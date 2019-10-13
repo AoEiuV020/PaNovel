@@ -33,7 +33,7 @@ class KuxiaoshuoTest : BaseNovelContextText(Kuxiaoshuo::class) {
     fun chapters() {
         chapters("2_2715", "第一章 沙漠中的彼岸花", "2_2715/17380548", null,
                 "第1088章 阳间命运的十字路口", "2_2715/151851897", "2018-06-09 00:00:00",
-                1104)
+                1103)
         chapters("1_1947", "楔子：身世之谜，时空灰烬", "1_1947/16176821", null,
                 "第1770章 求情", "1_1947/160124928", "2018-06-09 00:00:00",
                 1776)
@@ -42,7 +42,7 @@ class KuxiaoshuoTest : BaseNovelContextText(Kuxiaoshuo::class) {
     @Test
     fun content() {
         content("2_2715/17380548",
-                "大漠孤烟直，长河落日圆。",
+                "大漠孤烟直，长河落日圆。２３ＵＳ．ＣＯＭ",
                 "有异常之事吗？楚风加快脚步，赶到山脚下，临近牧民的栖居地。",
                 59)
         content("1_1947/151847211",

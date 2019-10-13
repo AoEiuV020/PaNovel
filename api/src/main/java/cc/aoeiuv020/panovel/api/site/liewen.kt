@@ -10,12 +10,12 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 class Liewen : DslJsoupNovelContext() {init {
     site {
         name = "猎文网"
-        baseUrl = "https://www.liewen.cc"
-        logo = "https://www.liewen.cc/images/logo.gif"
+        baseUrl = "https://www.liewen.la"
+        logo = "https://www.liewen.la/images/logo.gif"
     }
     search {
         get {
-            // https://www.liewen.cc/search.php?keyword=%E9%83%BD%E5%B8%82
+            // https://www.liewen.la/search.php?keyword=%E9%83%BD%E5%B8%82
             url = "/search.php"
             data {
                 "keyword" to it
@@ -28,7 +28,7 @@ class Liewen : DslJsoupNovelContext() {init {
             }
         }
     }
-    // https://www.liewen.cc/b/5/5024/
+    // https://www.liewen.la/b/5/5024/
     bookIdRegex = firstTwoIntPattern
     detailPageTemplate = "/b/%s/"
     detail {
@@ -48,7 +48,7 @@ class Liewen : DslJsoupNovelContext() {init {
             lastUpdate("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
         }
     }
-    // https://www.liewen.cc/b/5/5024/13777631.html
+    // https://www.liewen.la/b/5/5024/13777631.html
     bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/b/%s.html"
     content {

@@ -82,6 +82,8 @@ class Refresher(
                 }
                 executor.shutdown()
                 isRunning = false
+                // 有时候出现抛异常却没有停止的情况，原因不明，直接自杀，
+                System.exit(1)
             }
         }
     }
@@ -100,17 +102,23 @@ class Refresher(
                 val bookListJson = text.toBean<JsonObject>()
                 val version = bookListJson.get("version")?.asJsonPrimitive?.asInt
                 val bookListBean: BookListBean = when (version) {
-                    2 -> {
+                    3 -> {
                         bookListJson.jsonPath.get()
                     }
-                    else -> {
+                    2 -> {
+                        bookListJson.jsonPath.get<BookListBean2>().let {
+                            BookListBean(it.name, it.list, it.version, UUID.randomUUID().toString())
+                        }
+                    }
+                    1 -> {
                         // 旧版version为null,
-                        val oldBookListBean: OldBookListBean = bookListJson.jsonPath.get()
-                        BookListBean(oldBookListBean.name, oldBookListBean.list.map {
+                        val bookListBean1: BookListBean1 = bookListJson.jsonPath.get()
+                        BookListBean(bookListBean1.name, bookListBean1.list.map {
                             // 旧版的extra为完整地址，直接拿来，就算写进数据库了，刷新详情页后也会被新版的bookId覆盖，
                             NovelMinimal(site = it.site, author = it.author, name = it.name, detail = it.requester.extra)
-                        }, 2)
+                        }, 3, UUID.randomUUID().toString())
                     }
+                    else -> throw IllegalStateException("APP版本太低")
                 }
                 bookListBean.list.forEach {
                     logger.info {
