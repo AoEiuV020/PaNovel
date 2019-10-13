@@ -8,8 +8,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 class Zhuishu : DslJsoupNovelContext() {init {
     site {
         name = "追书网"
-        baseUrl = "https://www.bimo.cc"
-        logo = "https://www.bimo.cc/images/logo.gif"
+        baseUrl = "https://www.mangg.net"
+        logo = "https://www.mangg.net/images/logo.gif"
     }
     search {
         get {
