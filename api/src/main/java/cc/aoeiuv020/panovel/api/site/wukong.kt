@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.title
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
@@ -30,13 +31,17 @@ class Wukong : DslJsoupNovelContext() {init {
         document {
             if (URL(root.ownerDocument().location()).path.startsWith("/book/")) {
                 single {
-                    name("h1.bookTitle")
-                    author("p.booktag > a:nth-child(1)")
+                    name("h1.bookTitle") {
+                        it.ownText()
+                    }
+                    author("h1.bookTitle > small > a")
                 }
             } else {
-                items("body > div.container.body-content > div.panel.panel-default > table > tbody > tr:not(:nth-child(1))") {
-                    name("> td:nth-child(1) > a")
-                    author("> td:nth-child(3)")
+                items("div.panel-body > div > div:nth-child(1) > div") {
+                    name("> div > div.caption > h4 > a") {
+                        it.title()
+                    }
+                    author("> div > div.caption > small", block = pickString("(\\S*) / 著"))
                 }
             }
         }
@@ -47,8 +52,10 @@ class Wukong : DslJsoupNovelContext() {init {
     detail {
         document {
             novel {
-                name("h1.bookTitle")
-                author("p.booktag > a:nth-child(1)")
+                name("h1.bookTitle") {
+                    it.ownText()
+                }
+                author("h1.bookTitle > small > a")
             }
             image("img.img-thumbnail")
             update("div.col-md-10 > p:nth-child(3) > span", format = "yyyy-MM-dd HH:mm", block = pickString("（(.*)）"))
@@ -69,6 +76,7 @@ class Wukong : DslJsoupNovelContext() {init {
         }.dropWhile {
             it.startsWith("悟空看书")
                     || it.startsWith("www.wukong.la")
+                    || it == "最新章节！"
         }.dropLastWhile {
             it == "-->>"
         }
