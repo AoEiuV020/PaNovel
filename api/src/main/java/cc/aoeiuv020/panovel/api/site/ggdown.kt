@@ -12,7 +12,7 @@ import java.net.URL
 class Ggdown : DslJsoupNovelContext() {init {
     site {
         name = "格格党"
-        baseUrl = "http://www.ggdown.com"
+        baseUrl = "https://www.ggdownxs.com"
         logo = "http://www.ggdown.com/themes/yssm/logo.gif"
     }
     search {
@@ -54,7 +54,7 @@ class Ggdown : DslJsoupNovelContext() {init {
             <p class="book-stats">
                             <b>状态：</b>连载中&nbsp;&nbsp;<b>字数：</b>1243532&nbsp;&nbsp;<b>更新时间：</b>2018/2/12 10:20:33</p>
              */
-            update("#content > div:nth-child(1) > div > div.book-info > p.book-stats", format = "yyyy/MM/dd HH:mm:ss", block = pickString("更新时间：(.*)"))
+            update("#content > div:nth-child(1) > div > div.book-info > p.book-stats", format = "yyyy-MM-dd", block = pickString("更新时间：(.*)"))
             /*
 <p class="book-intro">黑风城战记是一本非常优秀的穿越小说，由格格党（http://www.ggdown.com）转载更新，并且已经更新到最新章节第226章 【白冢谷】,版权归原作者耳雅所有<br>    《黑风城战记》是《龙图案卷集》的续篇，由十个战役组成，地点是西北要塞黑风城，同时也有破案情节贯穿于战役中~~
     恶帝城的建立打破了西北的平静，正邪之战一触即发~~
