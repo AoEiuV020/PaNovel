@@ -36,9 +36,9 @@ class Syxs : DslJsoupNovelContext() {init {
                 <td class="odd">2018-05-21 05:26:24</td>
             </tr>
              */
-            items("table.grid > tbody:not(:nth-child(1)) > tr") {
-                name("> td:nth-child(2) > a")
-                author("> td:nth-child(4)")
+            items("#bookcase_list > tr") {
+                name("> td:nth-child(1) > a")
+                author("> td:nth-child(3)")
             }
         }
     }
