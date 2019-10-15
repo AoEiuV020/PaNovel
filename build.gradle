@@ -140,6 +140,10 @@ applicationModules.forEach { name ->
                 }
             }
 
+            // 高版本as中installRelease不会依赖assembleRelease也就不会复制apk,
+            afterEvaluate {
+                installRelease.dependsOn 'assembleRelease'
+            }
             // release打包后复制出安装包和混淆映射mapping文件到release目录下，
             // 以便发布上传，
             applicationVariants.all { variant ->
