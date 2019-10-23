@@ -133,6 +133,16 @@ object ServerManager : AnkoLogger {
                 config = service.config()
             }
         }
+        config.apiUrl?.let { apiUrl ->
+            try {
+                service = NovelServiceImpl(ServerAddress.new(apiUrl))
+                config = service.config()
+            } catch (e: Exception) {
+                warn("get config failed: " + service.host, e)
+                service = NovelServiceImpl(ServerAddress.getDefault())
+                config = service.config()
+            }
+        }
         val minVersion = VersionName(config.minVersion)
         info { "getService minVersion $minVersion/$currentVersion" }
         return if (currentVersion < minVersion) {

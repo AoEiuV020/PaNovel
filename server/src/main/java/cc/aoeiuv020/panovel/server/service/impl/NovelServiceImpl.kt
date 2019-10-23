@@ -83,10 +83,12 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
     }
 
     override fun minVersion(): String {
+        logger.debug { "minVersion" }
         return post(serverAddress.minVersionUrl, Any())
     }
 
     override fun config(): Config {
+        logger.debug { "config" }
         return post(serverAddress.config, Any())
     }
 }
