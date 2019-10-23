@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit
  * Created by AoEiuV020 on 2018.04.05-10:07:57.
  */
 class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService {
+    override val host get() = serverAddress.host
     private val logger: Logger = LoggerFactory.getLogger(NovelServiceImpl::class.java.simpleName)
     private val client: OkHttpClient = OkHttpUtils.client.newBuilder()
             // 超时设置短一些，连不上就放弃，不是很重要，

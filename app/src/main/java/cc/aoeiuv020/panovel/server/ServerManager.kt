@@ -1,14 +1,12 @@
 package cc.aoeiuv020.panovel.server
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.WorkerThread
 import cc.aoeiuv020.base.jar.notZero
 import cc.aoeiuv020.gson.toBean
 import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.panovel.App
-import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
@@ -113,17 +111,32 @@ object ServerManager : AnkoLogger {
         // 如果版本过低，直接返回空，不继续，
         if (outOfVersion) return null
 
-        val service = if (BuildConfig.DEBUG && Log.isLoggable(loggerTag, Log.DEBUG)) {
-            info { "debug mode," }
-            NovelServiceImpl(ServerAddress.getAndroidTest())
+        var defaultServer = true
+        var service = if (ServerSettings.serverAddress.isNotBlank()) {
+            info { "server: " + ServerSettings.serverAddress }
+            defaultServer = false
+            NovelServiceImpl(ServerAddress.new(ServerSettings.serverAddress))
         } else {
             NovelServiceImpl(ServerAddress.getDefault())
         }
         val currentVersion = VersionName(VersionUtil.getAppVersionName(App.ctx))
-        val config = service.config().also { this.config = it }
+        var config: Config
+        try {
+            config = service.config()
+        } catch (e: Exception) {
+            warn("get config failed: " + service.host, e)
+            if (defaultServer) {
+                // 默认服务器获取config失败就不继续了，
+                throw e
+            } else {
+                service = NovelServiceImpl(ServerAddress.getDefault())
+                config = service.config()
+            }
+        }
         val minVersion = VersionName(config.minVersion)
         info { "getService minVersion $minVersion/$currentVersion" }
         return if (currentVersion < minVersion) {
+            // 如果版本过低，直接返回空，不继续，
             outOfVersion = true
             null
         } else {
