@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <cc.aoeiuv020.panovel.settings.EditTextPreference
-        android:defaultValue=""
+    <EditTextPreference
+        android:hint="http://example.com"
         android:inputType="text"
         android:key="serverAddress"
         android:maxLines="1"
