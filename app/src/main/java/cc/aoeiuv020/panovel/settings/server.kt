@@ -10,6 +10,10 @@ object ServerSettings : Pref {
     override val name: String
         get() = "Server"
     /**
+     * 服务器地址，，
+     */
+    var serverAddress: String by Delegates.string("")
+    /**
      * 收到小说更新推送时是否弹出通知小说更新，
      */
     var notifyNovelUpdate: Boolean by Delegates.boolean(true)

@@ -177,6 +177,7 @@
     <string name="download_chapters_count">下载章节数</string>
     <string name="all">全部</string>
     <string name="cookie">Cookie</string>
+    <string name="notify_server_address">服务器地址</string>
     <string name="notify_novel_update">通知小说更新</string>
     <string name="notify_novel_update_summary">收到小说更新推送时是否弹出通知小说更新，</string>
     <string name="download_chapters_count_summary">-1为每次询问，0为剩下全部，</string>

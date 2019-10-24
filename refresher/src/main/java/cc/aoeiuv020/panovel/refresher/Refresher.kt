@@ -36,6 +36,13 @@ class Refresher(
         getBookshelf(bookshelfList, config.requireBookshelf)
         isRunning = true
         service = NovelServiceImpl(address)
+        val apiUrl = service.config().apiUrl
+        if (apiUrl != null) {
+            service = NovelServiceImpl(ServerAddress.new(apiUrl))
+        }
+        logger.info {
+            "server: ${service.host}"
+        }
         var lastTime = 0L
         var lastCount = 0
         while (isRunning) {

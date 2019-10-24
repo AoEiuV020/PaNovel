@@ -140,6 +140,13 @@ applicationModules.forEach { name ->
                 }
             }
 
+            // 高版本as中installRelease不会依赖assembleRelease也就不会复制apk,
+            afterEvaluate {
+                // 没配置签名的话，就没有installRelease，
+                if (tasks.findByName('installRelease')) {
+                    installRelease.dependsOn 'assembleRelease'
+                }
+            }
             // release打包后复制出安装包和混淆映射mapping文件到release目录下，
             // 以便发布上传，
             applicationVariants.all { variant ->

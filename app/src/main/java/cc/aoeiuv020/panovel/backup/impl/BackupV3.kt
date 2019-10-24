@@ -136,6 +136,7 @@ class BackupV3 : DefaultBackup() {
                 "dateFormat" -> editor.putString(key, value.asString)
                 "segmentIndentation" -> editor.putString(key, value.asString)
                 "enabled" -> editor.putBoolean(key, value.asBoolean)
+                "serverAddress" -> editor.putString(key, value.asString)
                 "notifyNovelUpdate" -> editor.putBoolean(key, value.asBoolean)
                 "askUpdate" -> editor.putBoolean(key, value.asBoolean)
                 "singleNotification" -> editor.putBoolean(key, value.asBoolean)
