@@ -20,7 +20,7 @@ class NovelServiceImplTest {
 
     @Before
     fun setUp() {
-        service = NovelServiceImpl(ServerAddress.new("niao.aoeiuv020.cc"))
+        service = NovelServiceImpl(ServerAddress.getDefault())
     }
 
     @Test
