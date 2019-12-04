@@ -126,6 +126,9 @@ class Sfacg : DslJsoupNovelContext() { init {
             }
         }
     }
+    header {
+        userAgent = "boluobao/4.3.20(android;28)/TENCENT"
+    }
 }
 }
 
