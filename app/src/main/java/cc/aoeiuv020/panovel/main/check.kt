@@ -9,6 +9,7 @@ import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.okhttp.string
+import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.*
@@ -149,7 +150,6 @@ object Check : Pref, AnkoLogger {
         }
     }
 
-    private const val AOEIUV020_SIGNATURE = "F473239FE5E994CC7FF64F505D0F0BB6F8E3CB8C"
     private const val RELEASE_COOLAPK = "https://www.coolapk.com/apk/167994"
     private const val RELEASE_GITHUB = "https://github.com/AoEiuV020/PaNovel/releases"
     private const val LATEST_RELEASE_GITHUB = "https://api.github.com/repos/AoEiuV020/PaNovel/releases/latest"
@@ -160,12 +160,16 @@ object Check : Pref, AnkoLogger {
      * @return 忽略或者通过都返回true,
      */
     private fun checkSignature(ctx: Context): Boolean {
+        @Suppress("SENSELESS_COMPARISON")
+        if (BuildConfig.SIGNATURE == null) {
+            return true
+        }
         if (ignoreSignatureCheck) {
             return true
         }
         val apkSign = signature.takeIf(String::isNotEmpty)
                 ?: SignatureUtil.getAppSignature(ctx).also { signature = it }
-        return apkSign == AOEIUV020_SIGNATURE
+        return apkSign == BuildConfig.SIGNATURE
     }
 
     fun asyncCheckSignature(ctx: Context) {
