@@ -160,6 +160,7 @@ object Check : Pref, AnkoLogger {
      * @return 忽略或者通过都返回true,
      */
     private fun checkSignature(ctx: Context): Boolean {
+        info { "checkSignature " + BuildConfig.SIGNATURE }
         @Suppress("SENSELESS_COMPARISON")
         if (BuildConfig.SIGNATURE == null) {
             return true
@@ -169,7 +170,8 @@ object Check : Pref, AnkoLogger {
         }
         val apkSign = signature.takeIf(String::isNotEmpty)
                 ?: SignatureUtil.getAppSignature(ctx).also { signature = it }
-        return apkSign == BuildConfig.SIGNATURE
+        info { "apkSign = $apkSign" }
+        return BuildConfig.SIGNATURE.equals(apkSign, ignoreCase = true)
     }
 
     fun asyncCheckSignature(ctx: Context) {

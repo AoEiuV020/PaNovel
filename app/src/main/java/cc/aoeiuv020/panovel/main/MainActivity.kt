@@ -16,7 +16,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
@@ -179,10 +178,8 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             start()
         }
 
-        if (!BuildConfig.DEBUG) {
-            // 异步检查签名，
-            Check.asyncCheckSignature(this)
-        }
+        // 异步检查签名，
+        Check.asyncCheckSignature(this)
 
         // 异步检查是否有更新，
         Check.asyncCheckVersion(this)
