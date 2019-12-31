@@ -16,7 +16,7 @@ class Syxs : DslJsoupNovelContext() {init {
     charset = "GBK"
     site {
         name = "31小说"
-        baseUrl = "http://www.xx31xs.org"
+        baseUrl = "http://www.31xs.org"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=e8432cdf06d162d985ee621421dfa950/47e082d8bc3eb135d9b1d5a0aa1ea8d3fc1f44a6.jpg"
     }
     search {
