@@ -16,7 +16,7 @@ class YmoxuanTest : BaseNovelContextText(Ymoxuan::class) {
     @Test
     fun detail() {
         detail("31577", "31577", "斗战狂潮", "骷髅精灵",
-                "http://r.ymoxuan.com/jieqi/cover/31/31577/31577s.jpg",
+                "http://r.m.ymxxs.com/jieqi/cover/31/31577/31577s.jpg",
                 "双月当空，无限可能的英魂世界\n" +
                         "孤寂黑暗，神秘古怪的嬉命小丑\n" +
                         "百城联邦，三大帝国，异族横行，魂兽霸幽\n" +

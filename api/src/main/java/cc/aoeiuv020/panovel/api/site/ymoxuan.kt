@@ -10,8 +10,8 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 class Ymoxuan : DslJsoupNovelContext() {init {
     site {
         name = "衍墨轩"
-        baseUrl = "https://www.ymoxuan.com"
-        logo = "http://r.ymoxuan.com/image/logo.gif"
+        baseUrl = "https://www.ymxxs.com"
+        logo = "https://www.ymxxs.com/image/logo.gif"
     }
     search {
         get {
