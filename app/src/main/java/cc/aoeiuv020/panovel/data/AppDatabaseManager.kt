@@ -57,11 +57,19 @@ class AppDatabaseManager(context: Context) {
     fun query(site: String, author: String, name: String): Novel? =
             db.novelDao().query(site, author, name)
 
-    fun updateDetail(novel: Novel) = db.novelDao().updateNovelDetail(
-            novel.nId,
-            novel.name, novel.author, novel.detail,
-            novel.image, novel.introduction, novel.updateTime, novel.nChapters
-    )
+    fun updateDetail(novel: Novel) = db.runInTransaction {
+        // 兼容更新名字作者的情况，避免因改名成数据库已经存在的小说导致更新异常，
+        // 这种情况改本地持有的小说对象
+        val existsNovel = query(novel.site, novel.author, novel.name)
+        if (existsNovel != null) {
+            novel.id = existsNovel.id
+        }
+        db.novelDao().updateNovelDetail(
+                novel.nId,
+                novel.name, novel.author, novel.detail,
+                novel.image, novel.introduction, novel.updateTime, novel.nChapters
+        )
+    }
 
     fun updateChapters(
             novel: Novel
