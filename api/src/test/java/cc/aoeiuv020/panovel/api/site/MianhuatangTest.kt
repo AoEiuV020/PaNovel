@@ -8,8 +8,7 @@ import org.junit.Test
 class MianhuatangTest : BaseNovelContextText(Mianhuatang::class) {
     @Test
     fun search() {
-        search("元尊", "天蚕土豆", "8328778")
-        search("漫威世界的术士", "火之高兴", "8326615")
+        search("修真聊天群", "圣骑士的传说", "8273148")
     }
 
     @Test
@@ -24,9 +23,9 @@ class MianhuatangTest : BaseNovelContextText(Mianhuatang::class) {
 
     @Test
     fun chapters() {
-        chapters("8326615", "关于更新", "8326615/82763935", null,
-                "第988章", "8326615/83441341", null,
-                1004)
+        chapters("8326615", "第一章，周围没术士吧？我穿个越", "8326615/81992180", null,
+                "第1029章", "8326615/84174452", null,
+                1057)
     }
 
     @Test

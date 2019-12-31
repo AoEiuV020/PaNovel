@@ -11,10 +11,10 @@ class Mianhuatang : DslJsoupNovelContext() {init {
     site {
         name = "棉花糖小说"
         baseUrl = "https://www.mianhuatang2.com"
-        logo = "http://www.mianhuatang520.com/css/logo.png"
+        logo = "https://www.mianhuatang2.com/css/logo.png"
     }
     search {
-        // http://www.mianhuatang520.com/search.aspx?bookname=%B6%BC%CA%D0
+        // https://www.mianhuatang2.com/search.aspx?bookname=%D0%DE%D5%E6
         get {
             url = "/search.aspx"
             charset = "GBK"
