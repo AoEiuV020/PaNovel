@@ -23,7 +23,7 @@ class ZhuishuTest : BaseNovelContextText(Zhuishu::class) {
                         "而地球人对此，一无所知。",
                 "2018-06-07 19:40:02")
         detail("58054", "58054", "霸武神王", "乌山云雨",
-                "https://www.bimo.cc/cover/58/58054.jpg",
+                "https://www.mangg.net/cover/58/58054.jpg",
                 "快递小哥叶枫获得公司奖励的一部最新款菠萝X型号手机时，意外穿越异世，开启神秘系统，化身英俊潇洒小镖师，且看他——\n" +
                         "脚踢九天仙王，拳打幽冥魔君！\n" +
                         "天上地下，唯我独尊！\n" +
