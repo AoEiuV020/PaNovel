@@ -9,6 +9,7 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.06-12:42:10.
  */
 class Exiaoshuo : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "E小说"
         baseUrl = "https://www.exiaoshuo.cc"
