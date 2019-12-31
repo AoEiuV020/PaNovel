@@ -10,6 +10,7 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.05-18:24:49.
  */
 class Siluke : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "思路客"
         baseUrl = "https://www.siluke.org"
