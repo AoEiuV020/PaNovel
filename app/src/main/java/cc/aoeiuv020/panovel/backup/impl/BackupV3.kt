@@ -104,6 +104,7 @@ class BackupV3 : DefaultBackup() {
                 "fitHeight" -> editor.putBoolean(key, value.asBoolean)
                 "gridView" -> editor.putBoolean(key, value.asBoolean)
                 "largeView" -> editor.putBoolean(key, value.asBoolean)
+                "refreshOnSearch" -> editor.putBoolean(key, value.asBoolean)
                 "reportCrash" -> editor.putBoolean(key, value.asBoolean)
                 "volumeKeyScroll" -> editor.putBoolean(key, value.asBoolean)
                 "tabGravityCenter" -> editor.putBoolean(key, value.asBoolean)

@@ -2,6 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="refreshOnSearch"
+        android:title="@string/refresh_on_search" />
+
     <cc.aoeiuv020.panovel.settings.ListPreference
         android:entries="@array/expiration_names"
         android:defaultValue="NONE"
