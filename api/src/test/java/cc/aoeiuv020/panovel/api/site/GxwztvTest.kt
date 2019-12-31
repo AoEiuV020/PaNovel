@@ -31,7 +31,7 @@ class GxwztvTest : BaseNovelContextText(Gxwztv::class) {
     @Test
     fun detail() {
         detail("9814", "9814", "帝霸", "厌笔萧生",
-                "http://r.gxwztv.com/files/article/image/9/9814/9814s.jpg",
+                "http://r.ztv.la/files/article/image/9/9814/9814s.jpg",
                 "千万年前，李七夜栽下一株翠竹。" +
                         "八百万年前，李七夜养了一条鲤鱼。" +
                         "五百万年前，李七夜收养一个小女孩。" +
