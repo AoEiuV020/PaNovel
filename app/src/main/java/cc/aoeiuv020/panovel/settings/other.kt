@@ -13,6 +13,11 @@ object OtherSettings : Pref {
         get() = "Other"
 
     /**
+     * 搜索时直接刷新章节，
+     * 默认关闭是要搜索完成后下拉才会刷新搜索结果的章节，
+     */
+    var refreshOnSearch: Boolean by Delegates.boolean(false)
+    /**
      * 书单分享后网上保存的时限，
      */
     var shareExpiration: Expiration by Delegates.enum(Expiration.NONE)

@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstIntPattern
 
 class SiFang : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "四方中文网"
         baseUrl = "http://www.sifangbook.com"

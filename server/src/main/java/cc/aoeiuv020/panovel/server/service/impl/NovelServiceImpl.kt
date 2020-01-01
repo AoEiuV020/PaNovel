@@ -3,21 +3,17 @@ package cc.aoeiuv020.panovel.server.service.impl
 import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.gson.type
 import cc.aoeiuv020.log.debug
+import cc.aoeiuv020.log.info
 import cc.aoeiuv020.okhttp.OkHttpUtils
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.common.bookId
 import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.server.common.toJson
-import cc.aoeiuv020.panovel.server.dal.model.Config
-import cc.aoeiuv020.panovel.server.dal.model.MobRequest
-import cc.aoeiuv020.panovel.server.dal.model.MobResponse
-import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
+import cc.aoeiuv020.panovel.server.dal.model.*
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
-import okhttp3.MediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.*
+import okio.Buffer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.reflect.Type
@@ -31,11 +27,30 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
     override val host get() = serverAddress.host
     private val logger: Logger = LoggerFactory.getLogger(NovelServiceImpl::class.java.simpleName)
     private val client: OkHttpClient = OkHttpUtils.client.newBuilder()
+            .addInterceptor(LogInterceptor())
             // 超时设置短一些，连不上就放弃，不是很重要，
             .connectTimeout(3, TimeUnit.SECONDS)
             .readTimeout(3, TimeUnit.SECONDS)
             .writeTimeout(3, TimeUnit.SECONDS)
             .build()
+
+    private inner class LogInterceptor : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
+            logger.info { "connect ${request.url()}" }
+            logger.debug {
+                val buffer = Buffer()
+                request.body()?.writeTo(buffer)
+                "body ${buffer.readUtf8()}"
+            }
+            val response = chain.proceed(request)
+            logger.debug { "response ${response.request().url()}" }
+            // 应该没有不是网络请求的情况，但是不了解okhttp的缓存，但还是不要在这里用可能抛异常的拓展方法requestHeaders，
+            logger.debug { "request.headers ${response.networkResponse()?.request()?.headers()}" }
+            logger.debug { "response.headers ${response.headers()}" }
+            return response
+        }
+    }
 
     private inline fun <reified T> post(url: String, any: Any): T =
             post(url, any, type<T>())
@@ -53,7 +68,6 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
         val call = client.newCall(request)
         // .string()会关闭body,
         val response: MobResponse = call.execute().body().notNull().string().notNull()
-                .also { logger.debug { "response: $it" } }
                 .toBean()
         if (!response.isSuccess()) {
             // 只能说可能是上传的参数不对，
@@ -90,5 +104,10 @@ class NovelServiceImpl(private val serverAddress: ServerAddress) : NovelService 
     override fun config(): Config {
         logger.debug { "config" }
         return post(serverAddress.config, Any())
+    }
+
+    override fun message(): Message {
+        logger.debug { "message" }
+        return post(serverAddress.message, Any())
     }
 }

@@ -111,7 +111,7 @@ abstract class OkHttpNovelContext : NovelContext() {
                 .url(url)
                 .apply {
                     defaultHeaders.forEach { (key, value) ->
-                        addHeader(key, value)
+                        header(key, value)
                     }
                 }
                 .build()
@@ -160,7 +160,7 @@ abstract class OkHttpNovelContext : NovelContext() {
             if (headers.isNotEmpty()) {
                 val requestBuilder = request.newBuilder()
                 headers.map { (name, value) ->
-                    requestBuilder.addHeader(name, value)
+                    requestBuilder.header(name, value)
                 }
                 request = requestBuilder.build()
             }

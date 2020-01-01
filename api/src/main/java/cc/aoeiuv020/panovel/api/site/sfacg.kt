@@ -107,8 +107,6 @@ class Sfacg : DslJsoupNovelContext() { init {
     content {
         // vip章节和普通章节规则不一致，不统一处理，
         try {
-            // http://book.sfacg.com/Novel/123589/204084/1887037/
-            val bookId = it.pick(firstThreeIntPattern).first()
             document {
                 // vip章节仅有的一行没有包在p里，
                 // 普通章节有"#ChapterBody > p",
@@ -125,6 +123,9 @@ class Sfacg : DslJsoupNovelContext() { init {
                 content.split("\r\n").mapNotNull { it.trim().takeIf { it.isNotBlank() } }
             }
         }
+    }
+    header {
+        userAgent = "boluobao/4.3.20(android;28)/TENCENT"
     }
 }
 }

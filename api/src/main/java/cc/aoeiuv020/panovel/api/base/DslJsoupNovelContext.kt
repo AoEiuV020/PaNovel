@@ -793,7 +793,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             requestBuilder.url(httpUrlBuilder.build())
             // 存在headerMap就只用headerMap，否则设置默认ua,
             headerMap.forEach { (name, value) ->
-                requestBuilder.addHeader(name, value)
+                requestBuilder.header(name, value)
             }
             return client.newCall(requestBuilder.build())
         }

@@ -14,6 +14,7 @@ import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
 import cc.aoeiuv020.panovel.share.PasteUbuntu
 import com.google.gson.JsonObject
 import org.slf4j.LoggerFactory
+import java.net.URL
 import java.util.*
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
@@ -102,10 +103,14 @@ class Refresher(
                 "正在获取书架 $url"
             }
             try {
-                if (!paste.check(url)) {
-                    return@forEach
+                val text = if (url.startsWith("file://")) {
+                    URL(url).readText()
+                } else {
+                    if (!paste.check(url)) {
+                        return@forEach
+                    }
+                    paste.download(url)
                 }
-                val text = paste.download(url)
                 val bookListJson = text.toBean<JsonObject>()
                 val version = bookListJson.get("version")?.asJsonPrimitive?.asInt
                 val bookListBean: BookListBean = when (version) {

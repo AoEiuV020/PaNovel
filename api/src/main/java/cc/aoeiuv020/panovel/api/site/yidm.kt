@@ -19,6 +19,7 @@ import java.util.concurrent.Semaphore
 class Yidm : DslJsoupNovelContext() {init {
     // 轻小说网站默认不开启，
     enabled = false
+    hide = true
     site {
         name = "迷糊轻小说"
         baseUrl = "http://www.yidm.com"

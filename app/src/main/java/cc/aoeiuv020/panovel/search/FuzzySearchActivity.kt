@@ -11,6 +11,7 @@ import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.settings.ListSettings
+import cc.aoeiuv020.panovel.settings.OtherSettings
 import cc.aoeiuv020.panovel.util.getStringExtra
 import com.google.android.material.snackbar.Snackbar
 import com.miguelcatalan.materialsearchview.MaterialSearchView
@@ -122,6 +123,9 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
         this.name = name
         this.author = author
         novelListAdapter.clear()
+        if (OtherSettings.refreshOnSearch) {
+            novelListAdapter.refresh()
+        }
         presenter.search(name, author)
     }
 

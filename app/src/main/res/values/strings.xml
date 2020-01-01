@@ -277,5 +277,6 @@
     <string name="backup_hint_other_path">其他路径</string>
     <string name="backup_button_select">选择</string>
     <string name="copy">复制</string>
+    <string name="refresh_on_search">搜索时刷新章节</string>
 
 </resources>

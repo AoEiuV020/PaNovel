@@ -10,6 +10,7 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
  * Created by AoEiuV020 on 2018.06.08-19:09:23.
  */
 class Shu8 : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "书吧小说网"
         baseUrl = "https://88xs.us"

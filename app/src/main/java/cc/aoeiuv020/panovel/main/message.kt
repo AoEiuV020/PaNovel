@@ -1,14 +1,11 @@
 package cc.aoeiuv020.panovel.main
 
 import android.content.Context
-import cc.aoeiuv020.okhttp.OkHttpUtils
-import cc.aoeiuv020.okhttp.string
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.server.common.toBean
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
 import cc.aoeiuv020.panovel.util.safelyShow
-import com.google.gson.JsonObject
 import org.jetbrains.anko.*
 
 /**
@@ -19,23 +16,23 @@ object DevMessage : Pref, AnkoLogger {
     override val name: String
         get() = "DevMessage"
     private var cachedMessage: String by Delegates.string("")
-    private const val MESSAGE_URL = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/static/static/message.json"
     fun asyncShowMessage(ctx: Context) {
         ctx.doAsync({ e ->
             val message = "获取来自开发者的消息失败，"
             Reporter.post(message, e)
             error(message, e)
         }) {
-            val jsonObject: JsonObject = OkHttpUtils.get(MESSAGE_URL).string().toBean()
-            val message = jsonObject.get("message")?.asString
-            if (message == null || message.isBlank() || message == cachedMessage) {
+            val message = DataManager.server.getMessage() ?: return@doAsync
+            val messageTitle = message.title
+            val messageContent = message.content
+            if (messageContent == null || messageContent.isBlank() || messageContent == cachedMessage) {
                 return@doAsync
             }
-            cachedMessage = message
+            cachedMessage = messageContent
             uiThread {
                 ctx.alert {
-                    title = jsonObject.get("title")?.asString ?: "来自开发者的消息"
-                    this.message = message
+                    title = messageTitle ?: "来自开发者的消息"
+                    this.message = messageContent
                     yesButton { }
                 }.safelyShow()
             }

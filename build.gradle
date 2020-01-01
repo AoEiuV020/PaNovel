@@ -115,6 +115,7 @@ applicationModules.forEach { name ->
             // debug和release使用相同签名，以便用debug包覆盖release包从而调试，
             // 如果没有，就会使用默认debug签名，
             def signingFile = rootProject.file('signing.properties')
+            String sha1 = null
             if (signingFile.exists()) {
                 def input = signingFile.newInputStream()
                 def p = new Properties()
@@ -137,7 +138,32 @@ applicationModules.forEach { name ->
                         debug.signingConfig signingConfigs.config
                         release.signingConfig signingConfigs.config
                     }
+                    def signingConfig = signingConfigs.config
+                    if (signingConfig != null) {
+                        //noinspection UnnecessaryQualifiedReference
+                        def keyStore = java.security.KeyStore.getInstance(
+                                signingConfig.getStoreType() != null ?
+                                        signingConfig.getStoreType() : KeyStore.getDefaultType())
+                        FileInputStream fis = new FileInputStream(signingConfig.getStoreFile())
+                        keyStore.load(fis, signingConfig.getStorePassword().toCharArray())
+                        fis.close()
+                        char[] keyPassword = signingConfig.getKeyPassword().toCharArray()
+                        //noinspection UnnecessaryQualifiedReference
+                        def entry = keyStore.getEntry(
+                                signingConfig.getKeyAlias(),
+                                new java.security.KeyStore.PasswordProtection(keyPassword))
+                        if (entry != null) {
+                            //noinspection UnnecessaryQualifiedReference
+                            def digest = java.security.MessageDigest.getInstance("SHA-1")
+                            sha1 = digest.digest(entry.getCertificate().encoded).encodeHex().toString()
+                        }
+                    }
                 }
+            }
+            if (sha1 == null) {
+                defaultConfig.buildConfigField('String', "SIGNATURE", 'null')
+            } else {
+                defaultConfig.buildConfigField('String', "SIGNATURE", '"' + sha1 + '"')
             }
 
             // 高版本as中installRelease不会依赖assembleRelease也就不会复制apk,

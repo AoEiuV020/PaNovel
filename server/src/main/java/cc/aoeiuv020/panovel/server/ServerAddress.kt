@@ -8,7 +8,7 @@ class ServerAddress(
         val host: String
 ) {
     companion object {
-        private const val PANOVEL_HOST = "http://panovel.aoeiuv020.cc"
+        private const val PANOVEL_HOST = "http://panovel.aoeiuv020.com"
 
         fun getAndroidTest(): ServerAddress = new("http://panoveltest.aoeiuv020.cc")
         fun getDefault(): ServerAddress = new(PANOVEL_HOST)
@@ -35,4 +35,7 @@ class ServerAddress(
 
     val config: String
         get() = "$host/novel/config"
+
+    val message: String
+        get() = "$host/novel/message"
 }

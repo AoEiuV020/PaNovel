@@ -155,7 +155,6 @@ class NovelManager(
     private fun refreshDetail() {
         provider.updateNovelDetail()
         // 写入数据库，包括名字作者和extra都以详情页返回结果为准，
-        // FIXME: 隐患，如果更新名字作者的话数据库里可能存在同一本小说的两个记录，然后再修改就会报错#2067，
         app.updateDetail(novel)
     }
 

@@ -18,6 +18,7 @@ import java.nio.charset.Charset
  */
 class Lnovel : DslJsoupNovelContext() {init {
     enabled = false
+    hide = true
     site {
         name = "lnovel"
         baseUrl = "https://lnovel.cc/"

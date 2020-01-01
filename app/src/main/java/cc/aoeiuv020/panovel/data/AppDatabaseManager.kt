@@ -20,18 +20,25 @@ class AppDatabaseManager(context: Context) {
             author = novelMinimal.author, name = novelMinimal.name, detail = novelMinimal.detail)
 
     private fun queryOrNewNovel(site: String, author: String, name: String, detail: String): Novel = db.runInTransaction<Novel> {
-        query(site, author, name)?.also {
+        var exists = query(site, author, name)
+        if (exists == null) {
+            exists = query(site, detail)
+        }
+        if (exists != null) {
             // 如果查询到了，判断下detail是否一致，
-            if (it.detail != detail) {
+            if (exists.detail != detail) {
                 // 如果detail不一致，以晚得到的，也就是传入的参数detail为准，
                 // 以防万一数据库中的detail无效时，可以通过再次模糊搜索，刷新detail,
-                it.detail = detail
-                db.novelDao().updateDetailOnly(it.nId, it.detail)
+                exists.detail = detail
+                db.novelDao().updateDetailOnly(exists.nId, exists.detail)
             }
-        } ?: Novel(site = site, author = author, name = name, detail = detail).also {
-            // 数据库里没有，需要插入，
-            // 插入后确保novel要有这个id,
-            it.id = db.novelDao().insert(it)
+            return@runInTransaction exists
+        } else {
+            return@runInTransaction Novel(site = site, author = author, name = name, detail = detail).also {
+                // 数据库里没有，需要插入，
+                // 插入后确保novel要有这个id,
+                it.id = db.novelDao().insert(it)
+            }
         }
     }
 
@@ -57,11 +64,23 @@ class AppDatabaseManager(context: Context) {
     fun query(site: String, author: String, name: String): Novel? =
             db.novelDao().query(site, author, name)
 
-    fun updateDetail(novel: Novel) = db.novelDao().updateNovelDetail(
-            novel.nId,
-            novel.name, novel.author, novel.detail,
-            novel.image, novel.introduction, novel.updateTime, novel.nChapters
-    )
+    fun query(site: String, detail: String): Novel? =
+            db.novelDao().query(site, detail)
+
+    fun updateDetail(novel: Novel) = db.runInTransaction {
+        // 兼容更新名字作者的情况，避免因改名成数据库已经存在的小说导致更新异常，
+        // 这种情况改本地持有的小说对象,
+        // 只是以防万一，在主要靠查询时的处理，
+        val existsNovel = query(novel.site, novel.author, novel.name)
+        if (existsNovel != null) {
+            novel.id = existsNovel.id
+        }
+        db.novelDao().updateNovelDetail(
+                novel.nId,
+                novel.name, novel.author, novel.detail,
+                novel.image, novel.introduction, novel.updateTime, novel.nChapters
+        )
+    }
 
     fun updateChapters(
             novel: Novel
