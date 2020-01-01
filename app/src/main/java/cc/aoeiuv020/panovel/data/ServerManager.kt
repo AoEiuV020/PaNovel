@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.server.ServerManager
 import cc.aoeiuv020.panovel.server.common.md5
+import cc.aoeiuv020.panovel.server.dal.model.Message
 import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.jpush.ExampleUtil
 import cc.aoeiuv020.panovel.server.jpush.JPushTagReceiver
@@ -14,7 +15,6 @@ import cc.aoeiuv020.panovel.server.toServer
 import cc.aoeiuv020.panovel.settings.ServerSettings
 import org.jetbrains.anko.doAsync
 import java.util.concurrent.atomic.AtomicInteger
-import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 
 /**
  * TODO: 极光tag相关只有异步，这里只处理一个一个请求的情况，并发操作无视错乱，
@@ -114,4 +114,6 @@ class ServerManager(@Suppress("UNUSED_PARAMETER") ctx: Context) {
     fun touchUpdate(novel: Novel) = ServerManager.touch(novel.toServer())
     fun askUpdate(list: List<Novel>): Map<Long, QueryResponse> =
             ServerManager.queryList(list.map { it.nId to it.toServer() }.toMap())
+
+    fun getMessage(): Message? = ServerManager.message()
 }

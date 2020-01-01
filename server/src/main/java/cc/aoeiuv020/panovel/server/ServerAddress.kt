@@ -35,4 +35,7 @@ class ServerAddress(
 
     val config: String
         get() = "$host/novel/config"
+
+    val message: String
+        get() = "$host/novel/message"
 }

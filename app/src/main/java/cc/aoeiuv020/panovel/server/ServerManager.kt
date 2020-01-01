@@ -12,6 +12,7 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.server.common.bookId
 import cc.aoeiuv020.panovel.server.dal.model.Config
+import cc.aoeiuv020.panovel.server.dal.model.Message
 import cc.aoeiuv020.panovel.server.dal.model.QueryResponse
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
@@ -100,6 +101,14 @@ object ServerManager : AnkoLogger {
         val service = getService() ?: return
         val result = service.touch(novel)
         debug { "上传<${novel.run { "$site.$author.$name" }}>更新返回: $result" }
+    }
+
+    fun message(): Message? {
+        debug { "message ：" }
+        val service = getService() ?: return null
+        val result = service.message()
+        debug { "获取开发者消息返回: $result" }
+        return result
     }
 
     @Synchronized
