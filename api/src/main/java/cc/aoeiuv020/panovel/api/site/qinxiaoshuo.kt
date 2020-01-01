@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
  * Created by AoEiuV020 on 2018.09.04-03:46:55.
  */
 class Qinxiaoshuo : DslJsoupNovelContext() {init {
+    enabled = false
     site {
         name = "亲小说"
         baseUrl = "https://www.qinxiaoshuo.com"
