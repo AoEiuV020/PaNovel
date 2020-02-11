@@ -75,10 +75,9 @@ class N2kzw : DslJsoupNovelContext() {init {
     bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/%s.html"
     content {
-        // 第一段固定是章节名，
         document {
             items("#content")
-        }.drop(1)
+        }
     }
 }
 }
