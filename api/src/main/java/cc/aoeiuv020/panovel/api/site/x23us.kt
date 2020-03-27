@@ -8,6 +8,10 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  * Created by AoEiuV020 on 2018.06.08-18:01:41.
  */
 class X23us : DslJsoupNovelContext() {init {
+    /*
+    网站边不上了，有个x23us.us但布局完全不同，
+     */
+    hide = true
     site {
         name = "顶点小说"
         baseUrl = "https://www.x23us.com"
