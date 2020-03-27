@@ -9,6 +9,10 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  * Created by AoEiuV020 on 2018.06.07-13:30:33.
  */
 class Zaidudu : DslJsoupNovelContext() {init {
+    /*
+    网站变成其他行业了，应该是倒闭了域名卖了，
+     */
+    hide = true
     site {
         name = "再读读"
         baseUrl = "http://www.zaidudu.net"
