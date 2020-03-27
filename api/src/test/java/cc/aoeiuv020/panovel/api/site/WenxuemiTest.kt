@@ -9,7 +9,6 @@ class WenxuemiTest : BaseNovelContextText(Wenxuemi::class) {
     @Test
     fun search() {
         search("都市")
-        search("牧神记", "宅猪", "22/22768")
         search("大道朝天", "猫腻", "24/24163")
     }
 
