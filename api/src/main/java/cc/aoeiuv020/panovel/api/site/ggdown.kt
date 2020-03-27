@@ -10,6 +10,10 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.03-15:46:06.
  */
 class Ggdown : DslJsoupNovelContext() {init {
+    /*
+    有个ggdown.cc但是布局不一样，
+     */
+    hide = true
     site {
         name = "格格党"
         baseUrl = "https://www.ggdownxs.com"
