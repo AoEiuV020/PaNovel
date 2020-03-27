@@ -11,17 +11,13 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
  * Created by AoEiuV020 on 2018.03.14-01:35:36.
  */
 class Syxs : DslJsoupNovelContext() {init {
-    // 这网站有时候会乱码，原因不明，可能是部分页面没有明确编码，
-    // 这里指定一下编码，
-    charset = "GBK"
     site {
         name = "31小说"
-        baseUrl = "http://www.31xs.org"
+        baseUrl = "http://www.31xiaoshuo.org"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=e8432cdf06d162d985ee621421dfa950/47e082d8bc3eb135d9b1d5a0aa1ea8d3fc1f44a6.jpg"
     }
     search {
         get {
-            charset = "GBK"
             url = "/search.php"
             data {
                 "keyword" to it
