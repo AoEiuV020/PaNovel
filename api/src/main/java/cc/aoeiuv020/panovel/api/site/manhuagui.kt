@@ -13,8 +13,8 @@ import com.google.gson.annotations.SerializedName
  * Created by AoEiuV020 on 2019.02.11-17:20:32.
  */
 class Manhuagui : JsNovelContext() {init {
-    // 漫画源默认不开启，
-    // 想想还是开启，正好用于搜索小说的漫画版，
+    // 连接超时，网站可能被墙了，
+    enabled = false
     site {
         name = "漫画柜"
         baseUrl = "https://www.manhuagui.com"

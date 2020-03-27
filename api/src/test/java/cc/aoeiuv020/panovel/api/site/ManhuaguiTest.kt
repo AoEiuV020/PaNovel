@@ -60,7 +60,7 @@ class ManhuaguiTest : BaseNovelContextText(Manhuagui::class) {
 
     @Test
     fun content() {
-        content("25630/403295")!!.let {
+        content("25630/403295")?.let {
             it.forEach {
                 println(it)
             }
