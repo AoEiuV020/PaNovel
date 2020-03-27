@@ -8,7 +8,7 @@ import org.junit.Test
 class MianhuatangTest : BaseNovelContextText(Mianhuatang::class) {
     @Test
     fun search() {
-        search("修真聊天群", "圣骑士的传说", "8273148")
+        search("元尊", "天蚕土豆", "8328778")
     }
 
     @Test

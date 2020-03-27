@@ -8,13 +8,14 @@ import cc.aoeiuv020.regex.pick
  * Created by AoEiuV020 on 2018.06.03-11:12:05.
  */
 class Mianhuatang : DslJsoupNovelContext() {init {
+    // 这网站搜索会随机失败，好像是太快会失败，
     site {
         name = "棉花糖小说"
-        baseUrl = "https://www.mianhuatang2.com"
-        logo = "https://www.mianhuatang2.com/css/logo.png"
+        baseUrl = "http://www.mianhuatang520.com"
+        logo = "http://www.mianhuatang520.com/css/logo.png"
     }
     search {
-        // https://www.mianhuatang2.com/search.aspx?bookname=%D0%DE%D5%E6
+        // http://www.mianhuatang520.com/search.aspx?bookname=%D0%DE%D5%E6
         get {
             url = "/search.aspx"
             charset = "GBK"
@@ -75,7 +76,7 @@ class Mianhuatang : DslJsoupNovelContext() {init {
             }
         }
     }
-    // https://www.mianhuatang2.com/xs/8326615/82763935.htm
+    // http://www.mianhuatang520.com/xs/8326615/82763935.htm
     contentPageTemplate = "/xs/%s.htm"
     content {
         document {
