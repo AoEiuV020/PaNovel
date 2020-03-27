@@ -18,7 +18,7 @@ class Liewen : DslJsoupNovelContext() {init {
             // https://www.liewen.la/search.php?keyword=%E9%83%BD%E5%B8%82
             url = "/search.php"
             data {
-                "keyword" to it
+                "q" to it
             }
         }
         document {
@@ -39,7 +39,7 @@ class Liewen : DslJsoupNovelContext() {init {
             }
             image("#fmimg > img")
             update("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
-            introduction("#intro > p:not(:nth-last-child(1))")
+            introduction("#intro")
         }
     }
     chapters {
