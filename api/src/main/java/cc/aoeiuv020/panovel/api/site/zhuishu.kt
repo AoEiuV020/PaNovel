@@ -1,5 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.base.jar.textList
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 
 /**
@@ -13,10 +14,10 @@ class Zhuishu : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            // https://www.zhuishu.tw/search.aspx?keyword=%E9%83%BD%E5%B8%82
-            url = "/search.aspx"
+            // https://www.mangg.net/search.php?q=%E9%83%BD%E5%B8%82
+            url = "/search.php"
             data {
-                "keyword" to it
+                "q" to it
             }
         }
         document {
@@ -37,7 +38,7 @@ class Zhuishu : DslJsoupNovelContext() {init {
             }
             image("#fmimg > img")
             update("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
-            introduction("#intro > p:not(:nth-last-child(1))")
+            introduction("#intro")
         }
     }
     chapters {
@@ -51,7 +52,10 @@ class Zhuishu : DslJsoupNovelContext() {init {
     contentPageTemplate = "/id%s.html"
     content {
         document {
-            items("#content")
+            items("#content", block = { e ->
+                // 这网站正文第一行开关都有个utf8bom,不会被当成空白符过滤掉，
+                e.textList().map { it.removePrefix("\ufeff").trimStart() }
+            })
         }
     }
 }
