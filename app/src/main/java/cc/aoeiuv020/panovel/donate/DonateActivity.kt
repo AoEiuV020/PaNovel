@@ -9,7 +9,7 @@ import cc.aoeiuv020.panovel.server.ServerManager
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.util.hide
 import kotlinx.android.synthetic.main.activity_donate.*
-import org.jetbrains.anko.browse
+import org.jetbrains.anko.ctx
 import org.jetbrains.anko.startActivity
 import java.util.concurrent.TimeUnit
 
@@ -28,25 +28,24 @@ class DonateActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         lPaypal.setOnClickListener {
-            Donate.paypal.start(this@DonateActivity)
+            Donate.paypal.pay(ctx)
         }
 
         lAlipay.setOnClickListener {
-            Donate.alipay.start(this@DonateActivity)
+            Donate.alipay.pay(ctx)
         }
 
         lWeChatPay.setOnClickListener {
-            Donate.weChatPay.start(this@DonateActivity)
+            Donate.weChatPay.pay(ctx)
         }
 
         val redPacketUrl = ServerManager.config?.redPacket
-                ?: "https://qr.alipay.com/c1x06390qprcokz0xvccv13"
-        if (redPacketUrl.isEmpty()) {
+        if (redPacketUrl.isNullOrBlank()) {
             // 这样可以在服务器端控制这张图片的显示隐藏，
             ivRedPacket.hide()
         }
         ivRedPacket.setOnClickListener {
-            browse(redPacketUrl)
+            Donate.alipay.red(ctx)
         }
 
         tvDonateExplain.text = assets.open("Donate.txt").reader().readText()
