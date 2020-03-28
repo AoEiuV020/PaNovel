@@ -40,13 +40,6 @@ abstract class JsoupNovelContext : OkHttpNovelContext() {
 
     }
 
-    /**
-     * 有的网站没有指定编码，只能在这里强行指定，
-     * null表示用默认的，一般可以，
-     * 有点混乱，一般在parse前指定，不用这里的，
-     */
-    protected open val charset: String? get() = null
-
     protected fun parse(extra: String, listener: ((Long, Long) -> Unit)? = null): Document = parse(connect(absUrl(extra)), listener = listener)
     protected fun parse(input: InputStream, charset: String?, baseUri: String): Document = try {
         Jsoup.parse(input, charset, baseUri)

@@ -1,10 +1,11 @@
 package cc.aoeiuv020.panovel.donate
 
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
+import android.annotation.SuppressLint
+import android.content.*
 import android.widget.ImageView
+import androidx.core.content.ContextCompat.getSystemService
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import cc.aoeiuv020.panovel.util.safelyShow
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.browse
@@ -22,14 +23,14 @@ sealed class Donate {
         val weChatPay = WeChatPay()
     }
 
-    abstract fun start(context: Context)
+    abstract fun pay(context: Context)
 
     class Paypal : Donate() {
         companion object {
             private val name = "AoEiuV020"
         }
 
-        override fun start(context: Context) {
+        override fun pay(context: Context) {
             context.browse("https://www.paypal.me/$name")
         }
     }
@@ -40,10 +41,37 @@ sealed class Donate {
     class Alipay : Donate() {
         companion object {
             private val payCode = "FKX01135QSJ7NYBPR0PK01"
+            private val scanUri = "alipayqr://platformapi/startapp?saId=10000007"
+            private val redCode = "685703214"
         }
 
-        override fun start(context: Context) {
+        override fun pay(context: Context) {
             context.browse("https://QR.ALIPAY.COM/$payCode")
+        }
+
+        fun open(context: Context) {
+            try {
+                val packageManager = context.packageManager
+                val intent = packageManager.getLaunchIntentForPackage("com.eg.android.AlipayGphone")
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                context.toast("你好像没有安装支付宝")
+            }
+        }
+
+        @SuppressLint("SetTextI18n")
+        fun red(context: Context) {
+            context.alert {
+                message = "打开支付宝首页搜“$redCode”领红包，\n或者截图到支付宝扫码"
+                positiveButton("支付宝") {
+                    open(context)
+                }
+                negativeButton(R.string.copy) {
+                    val cm: ClipboardManager = getSystemService<ClipboardManager>(context, ClipboardManager::class.java).notNullOrReport()
+                    cm.primaryClip = ClipData.newPlainText("alipayRedCode", redCode)
+                    open(context)
+                }
+            }.safelyShow()
         }
     }
 
@@ -58,7 +86,7 @@ sealed class Donate {
             private val TENCENT_EXTRA_ACTIVITY_BIZSHORTCUT = "LauncherUI.From.Scaner.Shortcut"
         }
 
-        override fun start(context: Context) {
+        override fun pay(context: Context) {
             context.alert {
                 val ivQR = ImageView(context)
                 ivQR.setImageResource(qrcodeId)

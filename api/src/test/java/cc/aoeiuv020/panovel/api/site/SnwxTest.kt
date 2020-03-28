@@ -20,6 +20,8 @@ class SnwxTest : BaseNovelContextText(Snwx::class) {
 
     @Test
     fun detail() {
+        // 这网站域名两个像是随机用的，
+        // https://www.snwxx.com/files/article/image/66/66076/66076s.jpg
         detail("66/66076", "66/66076", "祖魔", "一夜风云起",
                 "https://www.snwx8.com/files/article/image/66/66076/66076s.jpg",
                 "祖魔的简介：一个超级世家大家族少爷，却天生丹田堵塞，难以修真！本有着疼爱自己的父母，却一夜之间家族没落，自此身负血海深仇！" +

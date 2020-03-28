@@ -75,10 +75,10 @@ class N2kzw : DslJsoupNovelContext() {init {
     bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/%s.html"
     content {
-        // 第一段固定是章节名，
+        // 有些小说第一行是章节名，但不是所有，所以不能删除第一行，
         document {
             items("#content")
-        }.drop(1)
+        }
     }
 }
 }

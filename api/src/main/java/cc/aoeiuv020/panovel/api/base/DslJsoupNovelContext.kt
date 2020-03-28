@@ -264,7 +264,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _Search(name: String)
         : _Requester(name) {
 
-        fun document(document: Document = parse(call.notNull(), charset),
+        fun document(document: Document = parse(call.notNull(), forceCharset ?: charset),
                      init: _NovelItemListParser.() -> Unit): List<NovelItem> =
                 _NovelItemListParser(document).also(init).parse()
     }
@@ -340,7 +340,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _Detail(extra: String) : _Requester(extra) {
         fun document(
                 document: Document = parse(call
-                        ?: connect(getNovelDetailUrl(extra)), charset),
+                        ?: connect(getNovelDetailUrl(extra)), forceCharset ?: charset),
                 init: _NovelDetailParser.() -> Unit
         ): NovelDetail =
                 _NovelDetailParser(extra, document).also(init).parse()
@@ -463,7 +463,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _Chapters(extra: String) : _Requester(extra) {
         fun document(
                 document: Document = parse(call
-                        ?: connect(getNovelChapterUrl(extra)), charset),
+                        ?: connect(getNovelChapterUrl(extra)), forceCharset ?: charset),
                 init: _NovelChapterListParser.() -> Unit
         ): List<NovelChapter> =
                 _NovelChapterListParser(document).also(init).parse()
@@ -612,7 +612,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     ) : _Requester(extra, listener) {
         fun document(
                 document: Document = parse(call
-                        ?: connect(getNovelContentUrl(extra)), charset,
+                        ?: connect(getNovelContentUrl(extra)), forceCharset ?: charset,
                         listener),
                 init: _NovelContentParser.() -> Unit
         ): List<String> = _NovelContentParser(document).also(init).parse()
@@ -737,7 +737,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
         fun <T> response(block: _Response.(String) -> T): T {
             return inputStream {
-                val body = it.reader(Charset.forName(charset ?: defaultCharset)).readText()
+                val body = it.reader(Charset.forName((forceCharset ?: charset)
+                        ?: defaultCharset)).readText()
                 block(body)
             }
         }
@@ -776,7 +777,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 // post,
                 // 编码可以空，会是默认UTF-8,
                 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                val bodyBuilder = FormBody.Builder(charset?.let { Charset.forName(charset) })
+                val bodyBuilder = FormBody.Builder((forceCharset
+                        ?: charset)?.let { Charset.forName(charset) })
                 dataMap?.forEach { (name, value) ->
                     bodyBuilder.add(name, value)
                 }
@@ -784,8 +786,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             } else {
                 // get,
                 dataMap?.forEach { (name, value) ->
-                    val eName = URLEncoder.encode(name, charset ?: defaultCharset)
-                    val eValue = URLEncoder.encode(value, charset ?: defaultCharset)
+                    val eName = URLEncoder.encode(name, forceCharset ?: charset ?: defaultCharset)
+                    val eValue = URLEncoder.encode(value, forceCharset ?: charset ?: defaultCharset)
                     httpUrlBuilder.addEncodedQueryParameter(eName, eValue)
                 }
                 requestBuilder.method(method.notNull(), null)

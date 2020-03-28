@@ -17,7 +17,7 @@ class Wenxuemi : DslJsoupNovelContext() {init {
         get {
             url = "/search.php"
             data {
-                "keyword" to it
+                "q" to it
             }
         }
         document {
@@ -38,7 +38,7 @@ class Wenxuemi : DslJsoupNovelContext() {init {
             }
             image("#fmimg > img")
             update("#info > p:nth-child(4)", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
-            introduction("#intro > p:not(:nth-last-child(1))")
+            introduction("#intro")
         }
     }
     chapters {
