@@ -10,7 +10,7 @@ class Yunduwu : DslJsoupNovelContext() {init {
     site {
         name = "云读物"
         baseUrl = "https://www.yunduwu.com"
-        logo = "https://www.yunduwu.com/novel/category/id/5"
+        logo = "https://www.yunduwu.com/upload/carousel/20191122/157441363654181.jpg"
     }
     search {
         get {
