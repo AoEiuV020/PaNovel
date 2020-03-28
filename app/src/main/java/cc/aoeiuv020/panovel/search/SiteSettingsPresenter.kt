@@ -10,6 +10,7 @@ import okhttp3.Cookie
 import okhttp3.Headers
 import okhttp3.HttpUrl
 import org.jetbrains.anko.*
+import java.nio.charset.Charset
 
 /**
  * Created by AoEiuV020 on 2019.05.01-19:56:11.
@@ -81,6 +82,29 @@ class SiteSettingsPresenter(
                     ?: return@doAsync
             val headers: Headers = Headers.of(*new.split(compileRegex("\n|(: *)")).toTypedArray())
             context.replaceHeaders(headers)
+            uiThread {
+                success()
+            }
+        }
+    }
+
+    fun setCharset(input: (String) -> String?, success: () -> Unit) {
+        view?.doAsync({ e ->
+            val message = "设置编码失败，"
+            Reporter.post(message, e)
+            error(message, e)
+            view?.runOnUiThread {
+                view?.showError(message, e)
+            }
+        }) {
+
+            val old = context.forceCharset ?: context.charset ?: context.defaultCharset
+            val new = input(old)
+                    ?: return@doAsync
+            if (new.isNotBlank()) {
+                Charset.forName(new)
+            }
+            context.forceCharset = new
             uiThread {
                 success()
             }

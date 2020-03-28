@@ -59,6 +59,13 @@ class SiteSettingsActivity : AppCompatActivity(), IView, AnkoLogger {
                 showMessage(getString(R.string.tip_set_header_success))
             })
         }
+        llCharset.setOnClickListener {
+            presenter.setCharset({
+                uiInput(getString(R.string.site_charset), it)
+            }, {
+                showMessage(getString(R.string.tip_set_header_success))
+            })
+        }
     }
 
     fun showError(message: String, e: Throwable) {

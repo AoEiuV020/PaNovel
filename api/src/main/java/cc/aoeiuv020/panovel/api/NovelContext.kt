@@ -149,6 +149,50 @@ abstract class NovelContext {
             headersFile?.writeText(value.toJson(gson))
         }
 
+    /**
+     * 网站爬虫类里指定的编码，
+     */
+    open val charset: String? get() = null
+    val defaultCharset: String = "UTF-8"
+    private val charsetFile: File?
+        get() = mFilesDir?.resolve("charset")
+    /**
+     * 强制指定编码的缓存，
+     */
+    private var _charset: String? = null
+    /**
+     * 强制指定编码，
+     */
+    var forceCharset: String?
+        @Synchronized
+        get() = _charset ?: (charsetFile?.let { file ->
+            try {
+                file.readText().toBean<String>(gson)
+            } catch (e: Exception) {
+                // 读取失败说明文件损坏，直接删除，下次保存，
+                file.delete()
+                null
+            }
+        }).also {
+            _charset = it
+        }
+        @Synchronized
+        set(value) {
+            logger.debug {
+                "set charset $value"
+            }
+            if (value == _charset) {
+                return
+            }
+            if (!value.isNullOrBlank()) {
+                _charset = value
+                charsetFile?.writeText(value.toJson(gson))
+            } else {
+                _charset = null
+                charsetFile?.delete()
+            }
+        }
+
     fun cleanData() {
         mFilesDir?.deleteRecursively()
     }

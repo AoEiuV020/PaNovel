@@ -68,9 +68,6 @@ abstract class OkHttpNovelContext : NovelContext() {
         return cookies
     }
 
-    protected val defaultCharset: String = "UTF-8"
-
-
     protected fun Response.requestHeaders(): Headers = networkResponse().notNull().request().headers()
 
     /**
