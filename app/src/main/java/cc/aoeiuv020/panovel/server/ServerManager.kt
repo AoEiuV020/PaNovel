@@ -160,6 +160,7 @@ object ServerManager : AnkoLogger {
             null
         } else {
             novelService = service
+            this.config = config
             service
         }
     }
