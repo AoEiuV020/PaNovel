@@ -33,8 +33,8 @@ class Syxs : DslJsoupNovelContext() {init {
             </tr>
              */
             items("#bookcase_list > tr") {
-                name("> td:nth-child(1) > a")
-                author("> td:nth-child(3)")
+                name("> td > a")
+                author("> td:nth-child(4)")
             }
         }
     }
