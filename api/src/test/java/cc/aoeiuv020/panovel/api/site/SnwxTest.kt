@@ -20,20 +20,20 @@ class SnwxTest : BaseNovelContextText(Snwx::class) {
 
     @Test
     fun detail() {
-        // 这网站域名两个像是随机用的，
-        // https://www.snwxx.com/files/article/image/66/66076/66076s.jpg
+        // 这网站域名两个像是随机用的，3和8,后来主页换成3了，其他应该也都是3了，
+        // https://www.snwx3.com/files/article/image/66/66076/66076s.jpg
         detail("66/66076", "66/66076", "祖魔", "一夜风云起",
-                "https://www.snwx8.com/files/article/image/66/66076/66076s.jpg",
+                "https://www.snwx3.com/files/article/image/66/66076/66076s.jpg",
                 "祖魔的简介：一个超级世家大家族少爷，却天生丹田堵塞，难以修真！本有着疼爱自己的父母，却一夜之间家族没落，自此身负血海深仇！" +
                         "恋人的背叛，父母的离去，最终让他指天怒骂！天道不公，以万物为刍狗！既然天已无道，我愿舍身成魔！以血染天，以杀破道！",
                 null)
         // TODO: 获取不到封面，麻烦，是图片有地址但下载不到，要加上onError,
         detail("257/257710", "257/257710", "都市超级神尊", "小萌靓",
-                "https://www.snwx8.com/files/article/image/257/257710/257710s.jpg",
+                "https://www.snwx3.com/files/article/image/257/257710/257710s.jpg",
                 "仙医重生，得逆天系统，开挂打脸一切不服者！昔日萧炎，装逼略逊。仙尊北玄，稍有风骚。数装逼大乘者，还看今朝！",
                 null)
         detail("28/28152", "28/28152", "大道独行", "雾外江山",
-                "https://www.snwx8.com/files/article/image/28/28152/28152s.jpg",
+                "https://www.snwx3.com/files/article/image/28/28152/28152s.jpg",
                 "null",
                 null)
     }

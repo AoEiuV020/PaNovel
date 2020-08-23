@@ -10,10 +10,12 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
  * Created by AoEiuV020 on 2018.03.07-02:42:57.
  */
 class Snwx : DslJsoupNovelContext() {init {
+    // 这网站搜索功能重定向到百度去了，暂不支持，
+    enabled = false
     site {
         name = "少年文学"
-        baseUrl = "https://www.snwxx.com"
-        logo = "https://www.snwxx.com/xiaoyi/images/logo.gif"
+        baseUrl = "https://www.snwx3.com"
+        logo = "https://www.snwx3.com/xiaoyi/images/logo.gif"
     }
     cookieFilter {
         // 删除cookie绕开搜索时间间隔限制，
