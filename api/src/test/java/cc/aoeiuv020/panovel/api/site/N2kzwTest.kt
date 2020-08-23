@@ -11,7 +11,6 @@ class N2kzwTest : BaseNovelContextText(N2kzw::class) {
     @Test
     fun search() {
         search("都市")
-        search("遮天", "辰东", "3/3427")
         search("一世之尊", "爱潜水的乌贼", "0/852")
     }
 
