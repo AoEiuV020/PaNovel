@@ -279,5 +279,15 @@
     <string name="copy">复制</string>
     <string name="refresh_on_search">搜索时刷新章节</string>
     <string name="site_charset">网站编码</string>
+    <string name="channel_name_default">默认通知</string>
+    <string name="channel_description_default">备用，</string>
+    <string name="channel_name_update">小说更新</string>
+    <string name="channel_description_update">小说刷新出新章节时通过该通知提示有更新，</string>
+    <string name="channel_name_download">章节缓存</string>
+    <string name="channel_description_download">缓存大量章节时通过该通知提示缓存进度，已下载章节数/总章节数，</string>
+    <string name="channel_name_downloading">正文下载</string>
+    <string name="channel_description_downloading">正文较大情况下载比较费时，通过该通知提示下载进度，已下载字节数/总字节数，</string>
+    <string name="channel_name_export">导出小说</string>
+    <string name="channel_description_export">导出小说时通知提示导出进度和结果，</string>
 
 </resources>

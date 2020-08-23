@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.settings.DownloadSettings
+import cc.aoeiuv020.panovel.util.NotificationChannelId
 import cc.aoeiuv020.panovel.util.NotifyLoopProxy
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.intentFor
@@ -24,9 +25,7 @@ class DownloadingNotificationManager(
     private val nb: NotificationCompat.Builder by lazy {
         val intent = ctx.intentFor<MainActivity>()
         val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
-        @Suppress("DEPRECATION")
-        // 用过时的通知，可以兼容api26,
-        val notificationBuilder = NotificationCompat.Builder(ctx)
+        val notificationBuilder = NotificationCompat.Builder(ctx, NotificationChannelId.downloading)
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)

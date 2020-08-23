@@ -18,6 +18,7 @@ import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
 import cc.aoeiuv020.panovel.settings.ServerSettings
+import cc.aoeiuv020.panovel.util.NotificationChannelId
 import cc.aoeiuv020.panovel.util.VersionName
 import cc.aoeiuv020.panovel.util.VersionUtil
 import cc.aoeiuv020.panovel.util.notify
@@ -75,14 +76,16 @@ object ServerManager : AnkoLogger {
                             text = localNovel.lastChapterName,
                             title = it.getString(R.string.notify_has_update_title_placeholder, localNovel.name),
                             bigText = bitText,
-                            time = localNovel.receiveUpdateTime.notZero()?.time)
+                            time = localNovel.receiveUpdateTime.notZero()?.time,
+                            channelId = NotificationChannelId.update)
                 }
             } else {
                 uiThread {
                     it.notify(id = localNovel.nId.toInt(),
                             text = localNovel.lastChapterName,
                             title = it.getString(R.string.notify_has_update_title_placeholder, localNovel.name),
-                            time = localNovel.receiveUpdateTime.notZero()?.time)
+                            time = localNovel.receiveUpdateTime.notZero()?.time,
+                            channelId = NotificationChannelId.update)
                 }
             }
         }
