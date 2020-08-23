@@ -10,6 +10,8 @@ import cc.aoeiuv020.regex.compileRegex
  * Created by AoEiuV020 on 2018.06.09-20:24:35.
  */
 class Uctxt : DslJsoupNovelContext() {init {
+    // 网站没了，
+    hide = true
     site {
         name = "UC书盟"
         baseUrl = "http://www.uctxt.com"
