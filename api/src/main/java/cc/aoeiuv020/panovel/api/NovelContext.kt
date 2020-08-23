@@ -280,6 +280,12 @@ abstract class NovelContext {
      */
     open val hide: Boolean = false
 
+    /**
+     * 这个网站是否需要登录，
+     * 暂未实现具体功能，只做标记，
+     */
+    open val login: Boolean = false
+
     abstract val site: NovelSite
 
     /**

@@ -11,9 +11,9 @@ class QinxiaoshuoTest : BaseNovelContextText(Qinxiaoshuo::class) {
     fun search() {
         search("异世界")
         search("都市")
-        search("OVERLORD", "", "OVERLORD")
+        search("OVERLORD", "丸山くがね", "OVERLORD")
         // 全名太长，搜索失败，
-        search("为美好的世界献上祝福！(给予这个绝美的世界以祝福！)", "", URLEncoder.encode("为美好的世界献上祝福！(给予这个绝美的世界以祝福！)", "utf-8").toLowerCase())
+        search("为美好的世界献上祝福！(给予这个绝美的世界以祝福！)", "晓なつめ", URLEncoder.encode("为美好的世界献上祝福！(给予这个绝美的世界以祝福！)", "utf-8").toLowerCase())
     }
 
     @Test
@@ -22,7 +22,7 @@ class QinxiaoshuoTest : BaseNovelContextText(Qinxiaoshuo::class) {
                 "为美好的世界献上祝福！(给予这个绝美的世界以祝福！)", "晓なつめ",
                 "http://static.qinxiaoshuo.com:4000/bookimg/1609.jpg",
                 "喜爱游戏的家里蹲少年佐藤和真的人生突然闭幕……但是他的眼前出现自称女神的美少女。转生到异世界的和真就此为了满足食衣住而努力工作！原本只想安稳度日的和真，却因为带去的女神接二连三引发问题，甚至被魔王军盯上了!?",
-                "2019-12-23 10:27:42")
+                "2019-08-19 23:00:00")
         detail("OVERLORD", "OVERLORD",
                 "OVERLORD", "丸山くがね",
                 "http://static.qinxiaoshuo.com:4000/bookimg/1545.jpg",
@@ -35,12 +35,12 @@ class QinxiaoshuoTest : BaseNovelContextText(Qinxiaoshuo::class) {
     fun chapters() {
         chapters(URLEncoder.encode("为美好的世界献上祝福！(给予这个绝美的世界以祝福！)", "utf-8").toLowerCase(),
                 "转载信息", "0/1609/5d77d1cb56fec85e5b100448", null,
-                "后记", "0/1609/5d77d1da56fec85e5b100552", "2019-12-23 10:27:42",
+                "后记", "0/1609/5d77d1da56fec85e5b100552", "2019-08-19 23:00:00",
                 267)
         chapters("OVERLORD",
                 "prologue", "0/1545/5d77d0d856fec85e5b0ffccc", null,
-                "后记", "0/1545/5d77d0df56fec85e5b0ffd51", "2019-12-23 10:27:42",
-                134)
+                "作者杂感", "0/1545/5ea3edf4e5337d4bcf7e81b5", "2020-04-25 15:59:00",
+                142)
     }
 
     @Test

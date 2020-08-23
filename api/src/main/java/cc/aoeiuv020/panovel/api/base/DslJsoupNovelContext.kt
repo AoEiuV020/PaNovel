@@ -75,6 +75,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     override var charset: String? = null
     override var enabled: Boolean = true
     override var hide: Boolean = false
+    override var login: Boolean = false
 
     /*
     *************** interceptor ***************
@@ -472,7 +473,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     protected inner class _NovelChapterListParser(root: Element)
         : _Parser<List<NovelChapter>>(root) {
         private var volumesList: List<Element>? = null
-        private lateinit var novelChapterList: List<NovelChapter>
+        lateinit var novelChapterList: List<NovelChapter>
 
         @SuppressWarnings("SimpleDateFormat")
         fun lastUpdate(query: String, parent: Element = root, format: String, block: (Element) -> String = { it.text() }) =
