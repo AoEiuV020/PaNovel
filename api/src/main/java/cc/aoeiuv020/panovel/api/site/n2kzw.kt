@@ -15,8 +15,8 @@ import org.jsoup.nodes.Element
 class N2kzw : DslJsoupNovelContext() {init {
     site {
         name = "2k中文网"
-        baseUrl = "http://www.2kzw.com"
-        logo = "http://www.2kzw.com/17mb/images/logo.png"
+        baseUrl = "https://www.2kzw.com"
+        logo = "https://www.2kzw.com/17mb/images/logo.png"
     }
     // 这网站所有名字都是/遮天(精校版)/官道无疆(校对版)/
     val pickName = { e: Element ->

@@ -33,10 +33,7 @@ import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.settings.InterfaceSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
-import cc.aoeiuv020.panovel.util.VersionName
-import cc.aoeiuv020.panovel.util.cancelAllNotify
-import cc.aoeiuv020.panovel.util.loading
-import cc.aoeiuv020.panovel.util.safelyShow
+import cc.aoeiuv020.panovel.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_editor.view.*
@@ -162,6 +159,8 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        initNotificationChannel()
 
         progressDialog = ProgressDialog(this)
         if (!isTaskRoot) {

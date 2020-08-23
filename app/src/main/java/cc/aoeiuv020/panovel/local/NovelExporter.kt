@@ -10,6 +10,7 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.main.MainActivity
 import cc.aoeiuv020.panovel.settings.LocationSettings
+import cc.aoeiuv020.panovel.util.NotificationChannelId
 import cc.aoeiuv020.panovel.util.NotifyLoopProxy
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import com.bumptech.glide.Glide
@@ -58,9 +59,7 @@ class NovelExporter(
             val nb: NotificationCompat.Builder by lazy {
                 val intent = ctx.intentFor<MainActivity>()
                 val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
-                // 用过时的通知，可以兼容api26,
-                @Suppress("DEPRECATION")
-                val notificationBuilder = NotificationCompat.Builder(ctx)
+                val notificationBuilder = NotificationCompat.Builder(ctx, NotificationChannelId.export)
                         .setOnlyAlertOnce(true)
                         .setAutoCancel(true)
                         .setContentTitle(ctx.getString(R.string.exporting_title_placeholder, novel.name))

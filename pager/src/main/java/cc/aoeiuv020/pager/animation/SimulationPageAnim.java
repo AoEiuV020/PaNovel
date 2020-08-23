@@ -11,6 +11,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.view.View;
 
 import cc.aoeiuv020.pager.IMargins;
@@ -56,6 +57,9 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private float mMaxLength;
     private Integer mMainColor = null;
 
+    // 适配 android 高版本无法使用 XOR 的问题
+    private Path mXORPath;
+
     public SimulationPageAnim(AnimationConfig config) {
         super(config);
         init();
@@ -69,6 +73,7 @@ public class SimulationPageAnim extends HorizonPageAnim {
     private void init() {
         mPath0 = new Path();
         mPath1 = new Path();
+        mXORPath = new Path();
         mMaxLength = (float) Math.hypot(mBackgroundWidth, mBackgroundHeight);
         mPaint = new Paint();
 
@@ -357,7 +362,20 @@ public class SimulationPageAnim extends HorizonPageAnim {
         float rotateDegrees;
         canvas.save();
         try {
-            canvas.clipPath(mPath0, Region.Op.XOR);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                mXORPath.reset();
+                mXORPath.moveTo(0f, 0f);
+                mXORPath.lineTo(canvas.getWidth(), 0f);
+                mXORPath.lineTo(canvas.getWidth(), canvas.getHeight());
+                mXORPath.lineTo(0f, canvas.getHeight());
+                mXORPath.close();
+
+                // 取 path 的补集，作为 canvas 的交集
+                mXORPath.op(mPath0, Path.Op.XOR);
+                canvas.clipPath(mXORPath);
+            } else {
+                canvas.clipPath(mPath0, Region.Op.XOR);
+            }
             canvas.clipPath(mPath1, Region.Op.INTERSECT);
         } catch (Exception e) {
             // TODO: handle exception
@@ -393,7 +411,20 @@ public class SimulationPageAnim extends HorizonPageAnim {
         mPath1.close();
         canvas.save();
         try {
-            canvas.clipPath(mPath0, Region.Op.XOR);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                mXORPath.reset();
+                mXORPath.moveTo(0f, 0f);
+                mXORPath.lineTo(canvas.getWidth(), 0f);
+                mXORPath.lineTo(canvas.getWidth(), canvas.getHeight());
+                mXORPath.lineTo(0f, canvas.getHeight());
+                mXORPath.close();
+
+                // 取 path 的补给，作为 canvas 的交集
+                mXORPath.op(mPath0, Path.Op.XOR);
+                canvas.clipPath(mXORPath);
+            } else {
+                canvas.clipPath(mPath0, Region.Op.XOR);
+            }
             canvas.clipPath(mPath1, Region.Op.INTERSECT);
         } catch (Exception e) {
         }
@@ -483,7 +514,21 @@ public class SimulationPageAnim extends HorizonPageAnim {
         mPath0.close();
 
         canvas.save();
-        canvas.clipPath(path, Region.Op.XOR);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mXORPath.reset();
+            mXORPath.moveTo(0f, 0f);
+            mXORPath.lineTo(canvas.getWidth(), 0f);
+            mXORPath.lineTo(canvas.getWidth(), canvas.getHeight());
+            mXORPath.lineTo(0f, canvas.getHeight());
+            mXORPath.close();
+
+            // 取 path 的补给，作为 canvas 的交集
+            mXORPath.op(path, Path.Op.XOR);
+            canvas.clipPath(mXORPath);
+        } else {
+            canvas.clipPath(path, Region.Op.XOR);
+        }
         canvas.drawBitmap(bitmap, 0, 0, null);
         try {
             canvas.restore();

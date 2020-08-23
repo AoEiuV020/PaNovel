@@ -1,6 +1,11 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.jsonpath.get
+import cc.aoeiuv020.jsonpath.jsonPath
+import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.regex.pick
+import com.google.gson.annotations.SerializedName
 
 /**
  * 日本轻小说书源，
@@ -8,7 +13,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
  * Created by AoEiuV020 on 2018.09.04-03:46:55.
  */
 class Qinxiaoshuo : DslJsoupNovelContext() {init {
-    enabled = false
+    login = true
     site {
         name = "亲小说"
         baseUrl = "https://www.qinxiaoshuo.com"
@@ -23,10 +28,9 @@ class Qinxiaoshuo : DslJsoupNovelContext() {init {
             }
         }
         document {
-            items("#body > div.book_list > div.book_item") {
-                name("> div.item_right > div.item_name > a")
-                // 搜索结果没给作者，
-                author = ""
+            items("div.book > div.book_info > div.items") {
+                name("> h3 > a")
+                author("> div:nth-child(2)", block = pickString("作者: (.*)"))
             }
         }
     }
@@ -36,21 +40,26 @@ class Qinxiaoshuo : DslJsoupNovelContext() {init {
     detail {
         document {
             novel {
-                name("#book_info_right > h1")
-                author("#book_info_right > p:nth-child(4) > a")
+                name("#main_box > div.show_info > div > h1")
+                author("#main_box > div.show_info > div > div:nth-child(2) > div:nth-child(1) > a")
             }
-            image("#book_info > img")
-            update("#body > div.branch > div.branch_head > div.head_left > p:nth-child(2)",
-                    format = "yyyy-MM-dd HH:mm:ss", block = pickString("更新时间:(.*)"))
-            introduction("#book_intro")
+            image("#main_box > div.show_info > img")
+            update("#main_box > div.show_info > div > div:nth-child(4) > div:nth-child(1)",
+                    format = "yyyy-MM-dd HH:mm", block = pickString("更新时间：(.*)"))
+            introduction("#main_box > div.show_info > div > textarea")
         }
     }
+    // https://www.qinxiaoshuo.com/api/user/book/get/1609
     chapters {
         document {
-            volumes("#body > div.branch > div[class^='volume']")
-            items("> div.chapters > a")
-            lastUpdate("#body > div.branch > div.branch_head > div.head_left > p:nth-child(2)",
-                    format = "yyyy-MM-dd HH:mm:ss", block = pickString("更新时间:(.*)"))
+            val id = root.select("img#background_cover").attr("src").pick("/(\\d*).jpg").first()
+            val url = "https://www.qinxiaoshuo.com/api/user/book/get/$id"
+            val jsonPath = responseBody(connect(url, true)).string().jsonPath
+            novelChapterList = jsonPath.get<List<Chapter>>("$.Volumes[*].Chapters[*]").map {
+                NovelChapter(it.chapterName, "0/" + id + "/" + it.chapterId)
+            }
+            lastUpdate("#main_box > div.show_info > div > div:nth-child(4) > div:nth-child(1)",
+                    format = "yyyy-MM-dd HH:mm", block = pickString("更新时间：(.*)"))
         }
     }
     // https://www.qinxiaoshuo.com/read/0/1609/5d77d1cb56fec85e5b10044c.html
@@ -62,4 +71,19 @@ class Qinxiaoshuo : DslJsoupNovelContext() {init {
         }.toMutableList().dropLastWhile { it == "本章已完，搜索\"亲小说网\"看最新轻小说" }
     }
 }
+
+    data class Chapter(
+            @SerializedName("Chapter_id")
+            val chapterId: String,
+            @SerializedName("Chapter_name")
+            val chapterName: String,
+            @SerializedName("Next_chapter_id")
+            val nextChapterId: String,
+            @SerializedName("Pre_chapter_id")
+            val preChapterId: String,
+            @SerializedName("Pv")
+            val pv: Int,
+            @SerializedName("Translator_name")
+            val translatorName: String
+    )
 }

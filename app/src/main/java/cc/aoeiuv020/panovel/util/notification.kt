@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.util
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
@@ -8,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.main.MainActivity
 import org.jetbrains.anko.AnkoLogger
@@ -17,6 +20,64 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by AoEiuV020 on 2018.10.06-19:33:43.
  */
+
+object NotificationChannelId {
+    const val default = BuildConfig.APPLICATION_ID + ".default"
+    const val update = BuildConfig.APPLICATION_ID + ".update"
+    const val download = BuildConfig.APPLICATION_ID + ".download"
+    const val downloading = BuildConfig.APPLICATION_ID + ".downloading"
+    const val export = BuildConfig.APPLICATION_ID + ".export"
+}
+
+/**
+ * 初始化项目中用到的通知渠道，
+ */
+fun Context.initNotificationChannel() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        return
+    }
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.createNotificationChannel(
+            NotificationChannel(
+                    NotificationChannelId.default,
+                    getString(R.string.channel_name_default),
+                    NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = getString(R.string.channel_description_default)
+            }
+    )
+    notificationManager.createNotificationChannel(
+            NotificationChannel(
+                    NotificationChannelId.update,
+                    getString(R.string.channel_name_update),
+                    NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = getString(R.string.channel_description_update)
+            }
+    )
+    notificationManager.createNotificationChannel(
+            NotificationChannel(
+                    NotificationChannelId.download,
+                    getString(R.string.channel_name_download),
+                    NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = getString(R.string.channel_description_download)
+            }
+    )
+    notificationManager.createNotificationChannel(
+            NotificationChannel(
+                    NotificationChannelId.downloading,
+                    getString(R.string.channel_name_downloading),
+                    NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = getString(R.string.channel_description_downloading)
+            }
+    )
+    notificationManager.createNotificationChannel(
+            NotificationChannel(
+                    NotificationChannelId.export,
+                    getString(R.string.channel_name_export),
+                    NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = getString(R.string.channel_description_export)
+            }
+    )
+}
 
 /**
  * 用来代理循环通知的情况，
@@ -33,6 +94,7 @@ class NotifyLoopProxy(
     }
 
     private val handler = Handler(Looper.getMainLooper())
+
     // System services not available to Activities before onCreate()
     private val manager by lazy { NotificationManagerCompat.from(ctx) }
 
@@ -137,11 +199,11 @@ class NotifyLoopProxy(
     }
 }
 
-fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null, bigText: String? = null) {
+fun Context.notify(id: Int, text: String? = null, title: String? = null, icon: Int = R.mipmap.ic_launcher_foreground, time: Long? = null, bigText: String? = null, channelId: String = NotificationChannelId.default) {
     val intent = intentFor<MainActivity>()
     val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
-    @Suppress("DEPRECATION")
-    val nb = NotificationCompat.Builder(this)
+
+    val nb = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(text)
             .setAutoCancel(true)

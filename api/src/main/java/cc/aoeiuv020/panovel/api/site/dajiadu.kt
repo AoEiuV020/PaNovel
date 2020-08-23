@@ -12,7 +12,7 @@ class Dajiadu : DslJsoupNovelContext() {init {
     site {
         name = "大家读书院"
         baseUrl = "https://www.dajiadu8.com"
-        logo = "https://www.dajiadu.net/themes/2100/logo.gif"
+        logo = "https://www.dajiadu8.com/17mb/style/logo.png"
     }
     search {
         get {
@@ -28,50 +28,43 @@ class Dajiadu : DslJsoupNovelContext() {init {
             }
         }
         document {
-            if (root.ownerPath().startsWith("/files/article/info/")) {
+            if (root.ownerPath().endsWith("/")) {
                 single {
-                    name("#content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > span:nth-child(1) > h1:nth-child(1)")
-                    author("#content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
+                    name("span.novelname")
+                    author("span.novelauthor", block = pickString("作\\s*者：(\\S*)"))
                 }
             } else {
-                items(".grid > tbody:nth-child(2) > tr:not(:nth-child(1))") {
-                    name("> td:nth-child(1) > a:nth-child(1)")
-                    author("> td:nth-child(3)")
+                items("ul.list_ul > li") {
+                    name("> p.p1 > a")
+                    author("> p.p3")
                 }
             }
         }
     }
-    // http://www.dajiadu.net/files/article/info/38/38909.htm
+    // https://www.dajiadu8.com/46/46084/
     bookIdRegex = firstTwoIntPattern
-    detailPageTemplate = "/files/article/info/%s.htm"
+    detailPageTemplate = "/%s/"
     detail {
         document {
             novel {
-                name("#content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > span:nth-child(1) > h1:nth-child(1)")
-                author("#content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
+                name("span.novelname")
+                author("span.novelauthor", block = pickString("作\\s*者：(\\S*)"))
             }
-            image("#content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > img:nth-child(1)")
-            update("#content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(3) > td:nth-child(1)", format = "yyyy-MM-dd", block = pickString("最后更新：(.*)"))
-            introduction("#content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2)", block = ownLinesString())
+            image("div.catalog_pic > img")
+            introduction("div.catalognovel_intro", block = ownLinesString())
         }
     }
-    // http://www.dajiadu.net/files/article/html/38/38909/index.html
-    chaptersPageTemplate = "/files/article/html/%s/index.html"
     chapters {
         document {
-            items("#booktext > ul > li > a")
+            items("> ul > li > a", root.select("div.index_listbox > div.listchapter").last())
         }
     }
-    // http://www.dajiadu.net/files/article/html/38/38909/11492189.html
+    // https://www.dajiadu8.com/46/46084/13555452.html
     bookIdWithChapterIdRegex = firstThreeIntPattern
-    contentPageTemplate = "/files/article/html/%s.html"
+    contentPageTemplate = "/%s.html"
     content {
         document {
-            /*
-            <span class="copy">更多精彩小说，欢迎访问大家读书院 http://www.dajiadu.net</span>
-             */
-            // 最后一段最后可能有一两个无意义字母，搞不定，
-            items("#center > div:not(#centerin)", block = ownLinesSplitWhitespace())
+            items("div.chapter_content", block = ownLinesSplitWhitespace())
         }
     }
 }

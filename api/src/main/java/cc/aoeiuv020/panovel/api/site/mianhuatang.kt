@@ -2,13 +2,15 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.base.jar.href
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
+import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 import cc.aoeiuv020.regex.pick
 
 /**
  * Created by AoEiuV020 on 2018.06.03-11:12:05.
  */
 class Mianhuatang : DslJsoupNovelContext() {init {
-    // 这网站搜索会随机失败，好像是太快会失败，
+    // 这网站搜索已经没结束了，但其他功能正常，
+    enabled = false
     site {
         name = "棉花糖小说"
         baseUrl = "http://www.mianhuatang520.com"
@@ -18,7 +20,6 @@ class Mianhuatang : DslJsoupNovelContext() {init {
         // http://www.mianhuatang520.com/search.aspx?bookname=%D0%DE%D5%E6
         get {
             url = "/search.aspx"
-            charset = "GBK"
             data {
                 "bookname" to it
             }
@@ -71,8 +72,7 @@ class Mianhuatang : DslJsoupNovelContext() {init {
              */
             items("dd > a") {
                 name = root.text()
-                val cid = root.href().removeSuffix(".htm")
-                extra = "$it/$cid"
+                extra = root.href().pick(firstTwoIntPattern).first()
             }
         }
     }

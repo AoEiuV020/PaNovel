@@ -103,12 +103,16 @@ abstract class OkHttpNovelContext : NovelContext() {
     protected fun Response.url(): String = this.request().url().toString()
 
 
-    protected fun connect(url: String): Call {
+    protected fun connect(url: String, post: Boolean = false): Call {
         val request = Request.Builder()
                 .url(url)
                 .apply {
                     defaultHeaders.forEach { (key, value) ->
                         header(key, value)
+                    }
+                    if (post) {
+                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        post(RequestBody.create(null, ""))
                     }
                 }
                 .build()
