@@ -9,6 +9,8 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 import java.net.URL
 
 class N168kanshu : DslJsoupNovelContext() {init {
+    // UnknownHostException
+    hide = true
     site {
         name = "168看书网"
         baseUrl = "https://www.168kanshu.com"
