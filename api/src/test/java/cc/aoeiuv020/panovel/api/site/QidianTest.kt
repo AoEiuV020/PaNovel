@@ -52,5 +52,9 @@ class QidianTest : BaseNovelContextText(Qidian::class) {
                 "2019年5月20日，星期一。",
                 "是误加吗？",
                 98)
+        content("3602691/89970621",
+                "要不要回拨个电话给客服，问问是究竟是怎么回事？毕竟是一千万的金额！",
+                "...",
+                4)
     }
 }
