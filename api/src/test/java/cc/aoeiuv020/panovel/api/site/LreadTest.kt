@@ -15,7 +15,7 @@ class LreadTest : BaseNovelContextText(Lread::class) {
     @Test
     fun detail() {
         detail("88917", "88917", "飞剑问道", "我吃西红柿",
-                "https://www.lread.net/files/article/image/88/88917/88917s.jpg",
+                "https://www.6ks.net/files/article/image/88/88917/88917s.jpg",
                 "在这个世界，有狐仙、河神、水怪、大妖，也有求长生的修行者。\n" +
                         "修行者们，\n" +
                         "开法眼，可看妖魔鬼怪。\n" +
