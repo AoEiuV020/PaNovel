@@ -1,9 +1,6 @@
 package cc.aoeiuv020.panovel.api.site
 
-import cc.aoeiuv020.base.jar.title
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
-import cc.aoeiuv020.panovel.api.firstIntPattern
-import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 import java.net.URL
 
 /**
@@ -12,7 +9,7 @@ import java.net.URL
 class Wukong : DslJsoupNovelContext() {init {
     site {
         name = "悟空看书"
-        baseUrl = "https://www.wukong.la"
+        baseUrl = "https://www.wkxs.net"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=95ca1b6f75310a55c424defc87474387/930dadd12f2eb938f9acfb6ed9628535e7dd6f50.jpg"
     }
     search {
@@ -29,52 +26,51 @@ class Wukong : DslJsoupNovelContext() {init {
             }
         }
         document {
-            if (URL(root.ownerDocument().location()).path.startsWith("/book/")) {
+            if (URL(root.ownerDocument().location()).path.startsWith("/book_")) {
                 single {
-                    name("h1.bookTitle") {
+                    name("#info > h1") {
                         it.ownText()
                     }
-                    author("h1.bookTitle > small > a")
+                    author("#info > h1 > small > a")
                 }
             } else {
-                items("div.panel-body > div > div:nth-child(1) > div") {
-                    name("> div > div.caption > h4 > a") {
-                        it.title()
-                    }
-                    author("> div > div.caption > small", block = pickString("(\\S*) / 著"))
+                items("#main > table > tbody > tr:not([align='center'])") {
+                    name("> td > a")
+                    author("> td:nth-child(3)")
                 }
             }
         }
     }
-    // http://www.wukong.la/book/885/
-    bookIdRegex = firstIntPattern
-    detailPageTemplate = "/book/%s/"
+    // https://www.wkxs.net/book_885/
+    bookIdRegex = "/book_(\\d+)"
+    detailPageTemplate = "/book_%s/"
     detail {
         document {
             novel {
-                name("h1.bookTitle") {
+                name("#info > h1") {
                     it.ownText()
                 }
-                author("h1.bookTitle > small > a")
+                author("#info > h1 > small > a")
             }
-            image("img.img-thumbnail")
-            update("div.col-md-10 > p:nth-child(3) > span", format = "yyyy-MM-dd HH:mm", block = pickString("（(.*)）"))
-            introduction("#bookIntro", block = ownLinesString())
+            image("#picbox > div > img")
+            update("#info > div.update", format = "yyyy-MM-dd HH:mm", block = pickString(".*（([^（]*)）"))
+            introduction("#intro", block = ownLinesString())
         }
     }
     chapters {
         document {
-            items("#list-chapterAll > dl > dd > a")
-            lastUpdate("div.col-md-10 > p:nth-child(3) > span", format = "yyyy-MM-dd HH:mm", block = pickString("（(.*)）"))
+            items("body > div.zjbox > dl > dd > a")
+            lastUpdate("#info > div.update", format = "yyyy-MM-dd HH:mm", block = pickString(".*（([^（]*)）"))
         }
     }
-    bookIdWithChapterIdRegex = firstTwoIntPattern
-    contentPageTemplate = "/book/%s.html"
+    bookIdWithChapterIdRegex = "/book_(\\d+/\\d+)"
+    contentPageTemplate = "/book_%s.html"
     content {
         document {
-            items("#htmlContent", block = ownLinesSplitWhitespace())
+            items("#content", block = ownLinesSplitWhitespace())
         }.dropWhile {
             it.startsWith("悟空看书")
+                    || it.startsWith("www.wkxs.net")
                     || it.startsWith("www.wukong.la")
                     || it == "最新章节！"
         }.dropLastWhile {
