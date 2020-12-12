@@ -4,9 +4,7 @@ import cc.aoeiuv020.atry.tryOrNul
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
-import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 import cc.aoeiuv020.regex.compilePattern
-import cc.aoeiuv020.string.divide
 import org.jsoup.nodes.Element
 
 /**
@@ -24,25 +22,16 @@ class N2kzw : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            // http://www.2kzw.com/modules/article/search.php?searchtype=articlename&searchkey=%B6%BC%CA%D0&page=1
-            charset = "GBK"
-            url = "/modules/article/search.php"
+            // https://www.2kzw.com/search/
+            url = "/search/"
             data {
-                "searchtype" to "articlename"
                 "searchkey" to it
-                // 加上&page=1可以避开搜索时间间隔的限制，
-                // 也可以通过不加载cookies避开搜索时间间隔的限制，
-                "page" to "1"
             }
         }
         document {
-            single("^/\\d+/\\d+/") {
-                name("#info > h1", block = pickName)
-                author("#info > p:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
-            }
-            items("#nr") {
-                name("> td:nth-child(1) > a", block = pickName)
-                author("> td:nth-child(3)")
+            items("div.category-div") {
+                name("> div > div.flex.flex-between.commend-title > a", block = pickName)
+                author("> div > div.flex.flex-between.commend-title > span")
             }
         }
     }
@@ -52,32 +41,37 @@ class N2kzw : DslJsoupNovelContext() {init {
     detail {
         document {
             novel {
-                name("#info > h1", block = pickName)
-                author("#info > p:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
+                name("div.w100 > h1", block = pickName)
+                author("div.w100 > div.w100 > span", block = pickString("作\\s*者：(\\S*)"))
             }
-            // https://www.2kzw.com/files/article/image/3/3426/3426s.jpg
+            update("div[class=dispc] > span", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
+            // https://www.2kzw.com/images/14/14196.jpg
             tryOrNul {
-                image = site.baseUrl + "/files/article/image/$it/${it.divide('/').second}s.jpg"
+                image = site.baseUrl + "/images/$it.jpg"
             }
-            introduction("#intro > p")
+            introduction("div.info-main-intro")
         }
     }
     chapters {
         document {
-            items("#list > dl > dd > a")
+            items("div.container.border3-2.mt8.mb20 > div > a")
+            lastUpdate("div[class=dispc] > span", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
         }
-                .reverseRemoveDuplication()
-                // https://www.2kzw.com/0/852/
-                // 开头的缓存章节莫名多了一个中间章节，两次去重可以去掉，
-                .reverseRemoveDuplication()
     }
-    // http://www.2kzw.com/5/5798/6586941.html
+    // https://www.2kzw.com/38/38424/30595033.html
     bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/%s.html"
     content {
         // 有些小说第一行是章节名，但不是所有，所以不能删除第一行，
         document {
-            items("#content")
+            items("#article")
+        }
+    }
+
+    cookieFilter {
+        removeAll {
+            // 删除cookie绕开搜索时间间隔限制，
+            it.name() == "ss_search_delay"
         }
     }
 }
