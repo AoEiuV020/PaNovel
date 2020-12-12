@@ -42,7 +42,7 @@ class KuxiaoshuoTest : BaseNovelContextText(Kuxiaoshuo::class) {
     @Test
     fun content() {
         content("2_2715/17380548",
-                "大漠孤烟直，长河落日圆。２３ＵＳ．ＣＯＭ",
+                "大漠孤烟直，长河落日圆。",
                 "有异常之事吗？楚风加快脚步，赶到山脚下，临近牧民的栖居地。",
                 59)
         content("1_1947/151847211",
