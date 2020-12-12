@@ -40,13 +40,13 @@ class Qinxiaoshuo : DslJsoupNovelContext() {init {
     detail {
         document {
             novel {
-                name("#main_box > div.show_info > div > h1")
-                author("#main_box > div.show_info > div > div:nth-child(2) > div:nth-child(1) > a")
+                name("div.right > h1")
+                author("div.right > div.info_item:nth-child(2) > div:nth-child(1) > a")
             }
-            image("#main_box > div.show_info > img")
-            update("#main_box > div.show_info > div > div:nth-child(4) > div:nth-child(1)",
+            image("div.show_info > img")
+            update("div.right > div.info_item:nth-child(4) > div:nth-child(1)",
                     format = "yyyy-MM-dd HH:mm", block = pickString("更新时间：(.*)"))
-            introduction("#main_box > div.show_info > div > textarea")
+            introduction("textarea.intro")
         }
     }
     // https://www.qinxiaoshuo.com/api/user/book/get/1609
@@ -58,7 +58,7 @@ class Qinxiaoshuo : DslJsoupNovelContext() {init {
             novelChapterList = jsonPath.get<List<Chapter>>("$.Volumes[*].Chapters[*]").map {
                 NovelChapter(it.chapterName, "0/" + id + "/" + it.chapterId)
             }
-            lastUpdate("#main_box > div.show_info > div > div:nth-child(4) > div:nth-child(1)",
+            lastUpdate("div.right > div.info_item:nth-child(4) > div:nth-child(1)",
                     format = "yyyy-MM-dd HH:mm", block = pickString("更新时间：(.*)"))
         }
     }
@@ -69,6 +69,12 @@ class Qinxiaoshuo : DslJsoupNovelContext() {init {
         document {
             items("#chapter_content")
         }.toMutableList().dropLastWhile { it == "本章已完，搜索\"亲小说网\"看最新轻小说" }
+    }
+    cookieFilter {
+        // J0FCs41M
+        if (!contains("token")) {
+            put("token=5fd4c4ea9999497cb43c12d6:1:1607779562:54f84b2213c80c4d99b662eb7a294030")
+        }
     }
 }
 

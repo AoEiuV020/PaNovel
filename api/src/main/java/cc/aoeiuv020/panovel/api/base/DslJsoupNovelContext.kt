@@ -221,6 +221,12 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             cookies.add(Cookie.parse(httpUrl, value).notNull())
         }
 
+        fun contains(name: String): Boolean {
+            return cookies.any {
+                it.name() == name
+            }
+        }
+
         fun filter(): MutableList<Cookie> = cookies
     }
 
