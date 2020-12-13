@@ -114,27 +114,33 @@ class N123du : DslJsoupNovelContext() {init {
     content {
         synchronized(lock) {
             var index = extra.lastDivide(':').second.toInt()
-            var pageUrl: String = getNovelContentUrl(extra)
+            var chapterUrl: String = getNovelContentUrl(extra)
             while (index > 0) {
-                call = connect(pageUrl)
-                pageUrl = checkAndParse {
+                call = connect(chapterUrl)
+                chapterUrl = checkAndParse {
                     root.getElements("li > a").notNull().first { it.html().startsWith("下一章：") }
                             .absHref()
                 }.notNull("pageUrl")
                 index--
             }
-            call = connect(pageUrl)
-            checkAndParse {
-                // 正文的id是可变的，同时文字的顺序是可能反的，同时p可能是不存在的，
-                val div = root.requireElement("div#DivContentBG > div[id]", TAG_CONTENT)
-                val js = root.getElements("div#DivContentBG script:not([language])")?.map { it.html() }?.firstOrNull { it.contains("eval") && it.contains("String.fromCharCode") && it.contains(div.id()) }
-                if (js != null) {
-                    // 这时候文字是反的，
-                    div.textList().reversed().map { it.reversed() }
-                } else {
-                    div.textList()
-                }.also { novelContent = it }
-            }.notNull("content")
+            var next: String? = chapterUrl
+            val ret = mutableListOf<String>()
+            while (next != null) {
+                call = connect(next)
+                checkAndParse {
+                    // 正文的id是可变的，同时文字的顺序是可能反的，同时p可能是不存在的，
+                    val div = root.requireElement("div#DivContentBG > div[id]", TAG_CONTENT)
+                    val js = root.getElements("div#DivContentBG script:not([language])")?.map { it.html() }?.firstOrNull { it.contains("eval") && it.contains("String.fromCharCode") && it.contains(div.id()) }
+                    next = root.getElement("#PageSet > a:nth-last-child(1)")?.absHref()
+                    if (js != null) {
+                        // 这时候文字是反的，
+                        div.textList().reversed().map { it.reversed() }
+                    } else {
+                        div.textList()
+                    }.also { novelContent = it }
+                }.notNull("content").also { ret.addAll(it) }
+            }
+            ret
         }
     }
 }
