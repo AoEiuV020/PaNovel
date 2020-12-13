@@ -79,6 +79,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private var chaptersAsc: List<NovelChapter> = listOf()
     private var navigation: NovelTextNavigation? = null
     private lateinit var reader: INovelReader
+
     // 缓存传入的索引，阅读器准备好后跳到这一章，-1表示最后一章，
     private var index: Int? = null
     private var text: Int? = null
@@ -109,7 +110,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
         alertDialog = AlertDialog.Builder(this).create()
         progressDialog = ProgressDialog(this)
 
-        val id = intent?.getLongExtra(cc.aoeiuv020.panovel.data.entity.Novel.KEY_ID, -1L)
+        val id = intent?.getLongExtra(Novel.KEY_ID, -1L)
         debug { "receive id: $id" }
         if (id == null || id == -1L) {
             Reporter.unreachable()
@@ -615,6 +616,7 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     private val tempColorPref = object : Pref {
         override val name: String
             get() = "TempColor"
+
         // 默认值没有用，
         var textColor: Int by Delegates.int(0xff000000.toInt())
         var backgroundColor: Int by Delegates.int(0xffffe3aa.toInt())
@@ -729,16 +731,11 @@ class NovelTextActivity : NovelTextBaseFullScreenActivity(), IView {
     fun showContents(cachedList: Collection<String>) {
         AlertDialog.Builder(ctx)
                 .setTitle(R.string.contents)
-                .setAdapter(NovelContentsAdapter(ctx, novel, chaptersAsc, cachedList)) { _, index ->
+                .setSingleChoiceItems(NovelContentsAdapter(ctx, novel, chaptersAsc, cachedList), novel.readAtChapterIndex) { dialog, index ->
                     selectChapter(index)
+                    dialog.dismiss()
                 }.create().apply {
                     listView.isFastScrollEnabled = true
-                    // 不好办，光post不稳定，两次好点，
-                    listView.post {
-                        listView.post {
-                            listView.setSelection(novel.readAtChapterIndex)
-                        }
-                    }
                 }.safelyShow()
     }
 

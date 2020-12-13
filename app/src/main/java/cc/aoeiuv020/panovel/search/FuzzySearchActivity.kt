@@ -177,7 +177,10 @@ class FuzzySearchActivity : AppCompatActivity(), IView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> searchView.showSearch()
+            R.id.search -> {
+                searchView.showSearch()
+                searchView.setQuery(presenter.name, false)
+            }
             android.R.id.home -> onBackPressed()
             else -> return super.onOptionsItemSelected(item)
         }

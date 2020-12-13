@@ -4,7 +4,7 @@
 [![Build Status](https://dev.azure.com/aoeiuv020/PaNovel/_apis/build/status/AoEiuV020.PaNovel.Master?branchName=master)](https://dev.azure.com/aoeiuv020/PaNovel/_build/latest?definitionId=1&branchName=master)
 
 ## 应用简介
-这是有理想的小说神器，目前支持<40>个网站，
+这是有理想的小说神器，目前支持<35>个网站，
 支持阅读本地.txt以及.epub小说，
 
 【库】  

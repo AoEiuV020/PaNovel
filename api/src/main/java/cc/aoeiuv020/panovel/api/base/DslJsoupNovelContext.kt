@@ -221,6 +221,12 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             cookies.add(Cookie.parse(httpUrl, value).notNull())
         }
 
+        fun contains(name: String): Boolean {
+            return cookies.any {
+                it.name() == name
+            }
+        }
+
         fun filter(): MutableList<Cookie> = cookies
     }
 
@@ -285,7 +291,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
 
         fun single(init: _NovelItemParser.() -> Unit) {
             novelItemList = listOf(
-                    _NovelItemParser(root).run {
+                    _NovelItemParser(0, root).run {
                         // 搜索结果只有一个，认为是跳转到详情页了，没法用items, 默认直接从地址找bookId,
                         extra = findBookId(root.ownerDocument().location())
                         init()
@@ -299,9 +305,9 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 // 调用single方法生效了，也就是跳到详情页了，
                 return
             }
-            novelItemList = parent.requireElements(query).mapNotNull {
+            novelItemList = parent.requireElements(query).mapIndexedNotNull { index, element ->
                 try {
-                    _NovelItemParser(it).run {
+                    _NovelItemParser(index, element).run {
                         init()
                         parse()
                     }
@@ -316,8 +322,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
                 // 调用single方法生效了，也就是跳到详情页了，
                 return
             }
-            novelItemList = parent.requireElements(query).map {
-                _NovelItemParser(it).run {
+            novelItemList = parent.requireElements(query).mapIndexed { index, element ->
+                _NovelItemParser(index, element).run {
                     init()
                     parse()
                 }
@@ -367,7 +373,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
             }
 
         fun novel(init: _NovelItemParser.() -> Unit) {
-            novel = _NovelItemParser(root).run {
+            novel = _NovelItemParser(0, root).run {
                 // 默认流程，findBookId(detailExtra) -> _novelDetail.extra -> novel.extra,
                 extra = this@_NovelDetailParser._novelDetail.extra
                 init()
@@ -636,7 +642,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     *************** novel ***************
      */
 
-    protected inner class _NovelItemParser(root: Element) : _Parser<NovelItem>(root) {
+    protected inner class _NovelItemParser(val index: Int, root: Element) : _Parser<NovelItem>(root) {
         private val _novelItem = _NovelItem()
         var name: String?
             get() = _novelItem.name
@@ -712,7 +718,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     @DslTag
     protected abstract inner class _Requester(
-            protected val extra: String,
+            val extra: String,
             protected val listener: ((Long, Long) -> Unit)? = null
     ) {
         var call: Call? = null

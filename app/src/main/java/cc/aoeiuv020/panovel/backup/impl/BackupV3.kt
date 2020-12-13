@@ -13,6 +13,7 @@ import cc.aoeiuv020.panovel.data.entity.NovelWithProgressAndPinnedTime
 import cc.aoeiuv020.panovel.settings.*
 import cc.aoeiuv020.panovel.share.Share
 import cc.aoeiuv020.panovel.util.Pref
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import com.google.gson.JsonElement
 import org.jetbrains.anko.debug
 import java.io.File
@@ -53,7 +54,7 @@ class BackupV3 : DefaultBackup() {
 
     private fun importSettings(folder: File): Int {
         val list = folder.listFiles()
-        return list.sumBy { file ->
+        return list.notNullOrReport().sumBy { file ->
             when (file.name) {
                 "General" -> importPref(GeneralSettings, file)
                 "List" -> importPref(ListSettings, file)
@@ -104,6 +105,7 @@ class BackupV3 : DefaultBackup() {
                 "fitHeight" -> editor.putBoolean(key, value.asBoolean)
                 "gridView" -> editor.putBoolean(key, value.asBoolean)
                 "largeView" -> editor.putBoolean(key, value.asBoolean)
+                "pinnedBackgroundColor" -> editor.putInt(key, value.asInt)
                 "refreshOnSearch" -> editor.putBoolean(key, value.asBoolean)
                 "reportCrash" -> editor.putBoolean(key, value.asBoolean)
                 "volumeKeyScroll" -> editor.putBoolean(key, value.asBoolean)
@@ -156,7 +158,7 @@ class BackupV3 : DefaultBackup() {
         return count
     }
 
-    private fun importBookList(folder: File): Int = folder.listFiles().sumBy { file ->
+    private fun importBookList(folder: File): Int = folder.listFiles().notNullOrReport().sumBy { file ->
         val bookListBean = Share.importBookList(file.readText())
         DataManager.importBookList(
                 bookListBean.name,

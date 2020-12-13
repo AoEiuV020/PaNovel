@@ -16,11 +16,11 @@ class SyxsTest : BaseNovelContextText(Syxs::class) {
     @Test
     fun detail() {
         detail("0/116", "0/116", "斗罗大陆III龙王传说", "唐家三少",
-                "http://www.31xiaoshuo.org/img/0/116/116s.jpg",
+                "http://img31xsorg.cdn.bcebos.com/img/0/116/116s.jpg",
                 "伴随着魂导科技的进步，斗罗大陆上的人类征服了海洋，又发现了两片大陆。魂兽也随着人类魂师的猎杀无度走向灭亡，沉睡无数年的魂兽之王在星斗大森林最后的净土苏醒，它要带领仅...",
                 "2018-08-24 07:02:07")
         detail("5/5821", "5/5821", "天刑纪", "曳光",
-                "http://www.31xiaoshuo.org/img/5/5821/5821s.jpg",
+                "http://img31xsorg.cdn.bcebos.com/img/5/5821/5821s.jpg",
                 "今朝修仙不为仙，只为春色花满园来日九星冲牛斗，且看天刑开纪元。",
                 "2018-05-20 23:33:08")
     }

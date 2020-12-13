@@ -13,7 +13,7 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 class Syxs : DslJsoupNovelContext() {init {
     site {
         name = "31小说"
-        baseUrl = "http://www.31xiaoshuo.org"
+        baseUrl = "http://www.31xiaoshuo.com"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=e8432cdf06d162d985ee621421dfa950/47e082d8bc3eb135d9b1d5a0aa1ea8d3fc1f44a6.jpg"
     }
     search {

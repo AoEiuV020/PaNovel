@@ -8,8 +8,7 @@ import cc.aoeiuv020.regex.pick
  * Created by AoEiuV020 on 2018.06.03-14:54:37.
  */
 class Qingkan : DslJsoupNovelContext() {init {
-    // 被墙了？ERR_EMPTY_RESPONSE
-    enabled = false
+    hide = true
     site {
         name = "请看小说"
         baseUrl = "https://www.qingkan9.com"

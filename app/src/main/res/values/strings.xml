@@ -289,5 +289,6 @@
     <string name="channel_description_downloading">正文较大情况下载比较费时，通过该通知提示下载进度，已下载字节数/总字节数，</string>
     <string name="channel_name_export">导出小说</string>
     <string name="channel_description_export">导出小说时通知提示导出进度和结果，</string>
+    <string name="top_background_color">置顶背景色</string>
 
 </resources>

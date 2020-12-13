@@ -1,6 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--suppress AndroidElementNotAllowed -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="Deprecated">
     <PreferenceCategory android:title="@string/settings_view">
 
         <SwitchPreference
@@ -12,6 +14,14 @@
             android:defaultValue="true"
             android:key="largeView"
             android:title="@string/large_view" />
+
+        <cc.aoeiuv020.panovel.settings.ColorPickerPreference
+            android:defaultValue="0xffefefef"
+            android:key="pinnedBackgroundColor"
+            android:title="@string/top_background_color"
+            app:alphaSlider="true"
+            app:lightnessSlider="true"
+            app:wheelType="CIRCLE" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_bookshelf">

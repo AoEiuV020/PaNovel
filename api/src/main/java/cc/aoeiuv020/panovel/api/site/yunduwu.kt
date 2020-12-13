@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 
 class Yunduwu : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "云读物"
         baseUrl = "https://www.yunduwu.com"
