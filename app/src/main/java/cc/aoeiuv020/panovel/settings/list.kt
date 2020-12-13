@@ -10,11 +10,13 @@ object ListSettings : Pref {
     override val name: String
         get() = "List"
     var gridView: Boolean by Delegates.boolean(false)
-    var largeView: Boolean  by Delegates.boolean(true)
+    var largeView: Boolean by Delegates.boolean(true)
+    var pinnedBackgroundColor: Int by Delegates.int(0xffefefef.toInt())
 
     // 书架的小红点设置，
     var dotColor: Int by Delegates.int(0xffff0000.toInt())
     var dotSize: Float by Delegates.float(16f)
+
     /**
      * 小红点提示有更新，
      * 是则提示刷出更新的时间在阅读时间之后，

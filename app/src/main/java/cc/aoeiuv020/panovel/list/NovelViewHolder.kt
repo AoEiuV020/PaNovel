@@ -147,6 +147,11 @@ class NovelViewHolder(itemView: View,
 
     private fun show(novelManager: NovelManager) {
         this.novelManager = novelManager
+        if (novel.pinnedTime.time > TimeUnit.DAYS.toMillis(1)) {
+            itemView.setBackgroundColor(ListSettings.pinnedBackgroundColor)
+        } else {
+            itemView.background = null
+        }
         name?.text = novel.name
         author?.text = novel.author
         site?.text = novel.site
