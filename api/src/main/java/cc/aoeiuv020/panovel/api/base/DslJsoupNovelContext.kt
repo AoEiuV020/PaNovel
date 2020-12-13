@@ -718,7 +718,7 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
      */
     @DslTag
     protected abstract inner class _Requester(
-            protected val extra: String,
+            val extra: String,
             protected val listener: ((Long, Long) -> Unit)? = null
     ) {
         var call: Call? = null

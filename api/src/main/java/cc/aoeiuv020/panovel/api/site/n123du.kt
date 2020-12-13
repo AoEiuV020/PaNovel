@@ -1,9 +1,13 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.anull.notNull
+import cc.aoeiuv020.base.jar.absSrc
+import cc.aoeiuv020.base.jar.textList
 import cc.aoeiuv020.base.jar.textListSplitWhitespace
+import cc.aoeiuv020.js.JsUtil
+import cc.aoeiuv020.okhttp.get
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
-import cc.aoeiuv020.regex.compilePattern
+import cc.aoeiuv020.regex.compileRegex
 
 /**
  *
@@ -25,12 +29,29 @@ class N123du : DslJsoupNovelContext() {init {
                 "q" to it
             }
         }
-        document {
-            items("div.DivMargin > a.Title") {
-                name(":root")
-                author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+        val finalCall = call.notNull()
+        var retry = false
+        var ret = document {
+            if (root.getElements("div.DivMargin").isNullOrEmpty()) {
+                retry = checkCookie()
+                novelItemList = emptyList()
+            } else {
+                items("div.DivMargin > a.Title") {
+                    name(":root")
+                    author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+                }
             }
         }
+        if (retry) {
+            call = finalCall.clone()
+            ret = document {
+                items("div.DivMargin > a.Title") {
+                    name(":root")
+                    author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+                }
+            }
+        }
+        ret
     }
     // https://www.123ds.org/dudu-40/705684/
     bookIdRegex = "/dudu-(\\d+/\\d+)"
@@ -64,24 +85,56 @@ class N123du : DslJsoupNovelContext() {init {
     bookIdWithChapterIdRegex = "/dudu-(\\d+/\\d+/\\d+)"
     contentPageTemplate = "/dudu-%s.html"
     content {
-        document {
-            // 正文的id是可变的，
-            items("div#DivContentBG > div > p")
-        }
-    }
-    cookieFilter {
-        // 必须要有这个cookie才能搜索，不知道有效期，需要动态获取js再请求cookie, 可以浏览器搜索一次先，
-        removeAll {
-            it.name() != "nxgmnmry"
-        }
-        if (!contains("nxgmnmry")) {
-            if (httpUrl.toString().contains("/Search/")) {
-                put("nxgmnmry=6d28ae85fcb92a08")
-            } else if (compilePattern(".*/dudu-.*.html".notNull()).matcher(httpUrl.toString()).matches()) {
-                put("nxgmnmry=45be5760a98afb5a")
+        call = connect(getNovelContentUrl(extra))
+        val finalCall = call.notNull()
+        var retry = false
+        var ret = document {
+            if (root.getElements("div#DivContentBG").isNullOrEmpty()) {
+                retry = checkCookie()
+                novelContent = emptyList()
+            } else {
+                parseContent()
             }
         }
+        if (retry) {
+            call = finalCall.clone()
+            ret = document {
+                parseContent()
+            }
+        }
+        ret
     }
 }
+
+    private fun _NovelContentParser.parseContent() {
+        // 正文的id是可变的，同时文字的顺序是可能反的，同时p可能是不存在的，
+        val div = root.requireElement("div#DivContentBG > div[id]", TAG_CONTENT)
+        val js = root.getElements("div#DivContentBG script:not([language])")?.map { it.html() }?.firstOrNull { it.contains("eval") && it.contains("String.fromCharCode") && it.contains(div.id()) }
+        novelContent = if (js != null) {
+            // 这时候文字是反的，
+            div.textList().reversed().map { it.reversed() }
+        } else {
+            div.textList()
+        }
+    }
+
+    private fun _Parser<Any>.checkCookie(): Boolean {
+        val c2e = root.getElement("script[language=javascript]")
+        val js2 = root.getElement("script[type=text/javascript]")?.absSrc()
+        if (c2e != null && !js2.isNullOrEmpty()) {
+            val js = JsUtil.create()
+            js.run(c2e.html())
+            var ret2 = responseBody(client.get(js2)).string()
+            ret2 = ret2.replaceFirst(compileRegex(".*function ajax"), "function ajax")
+            ret2 = ret2.replaceFirst(compileRegex("Ajax.open.*"), "")
+            js.run(ret2)
+            val path = js.run("ajax(c2);")
+            val ret3 = responseBody(client.get(baseHttpUrl.newBuilder().encodedPath(path).build().toString())).string()
+            if (ret3 == "ok") {
+                return true
+            }
+        }
+        return false
+    }
 }
 

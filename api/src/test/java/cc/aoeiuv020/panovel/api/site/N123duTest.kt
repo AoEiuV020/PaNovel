@@ -9,6 +9,7 @@ import org.junit.Test
 class N123duTest : BaseNovelContextText(N123du::class) {
     @Test
     fun search() {
+        // 搜索还是可能失败，
         search("都市")
         search("柯南之我就是不务正业", "歇会再来", "40/705684")
     }
@@ -33,9 +34,28 @@ class N123duTest : BaseNovelContextText(N123du::class) {
 
     @Test
     fun content() {
+        // 文字不倒序，有p，
         content("40/705684/36287633",
                 "“你是组织的最后的杀手了，我们决定打开次元壁，让你进行特训。”",
                 "陈百成下了车，没让宫本家的小两口陪同，自己进入了学校，这种转学手续还需要人陪就太丢了。…。",
                 40)
+    }
+
+    @Test
+    fun contentReversed() {
+        // 文字倒序，没有p,
+        content("40/705684/41483404",
+                "\"",
+                "如果你还没注册会员就先注册个会员吧，使用书架书签更方便哦。",
+                11)
+    }
+
+    @Test
+    fun contentReversedP() {
+        // 文字倒序，有p,
+        content("34/238403/17427794",
+                "?ABO，非常小众的一个题材。",
+                "??。",
+                39)
     }
 }
