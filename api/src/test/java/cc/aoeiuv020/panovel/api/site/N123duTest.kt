@@ -9,7 +9,6 @@ import org.junit.Test
 class N123duTest : BaseNovelContextText(N123du::class) {
     @Test
     fun search() {
-        // 搜索还是可能失败，
         search("都市")
         search("柯南之我就是不务正业", "歇会再来", "40/705684")
     }

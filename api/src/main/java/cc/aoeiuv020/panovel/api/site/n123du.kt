@@ -21,37 +21,39 @@ class N123du : DslJsoupNovelContext() {init {
         logo = "https://www.123ds.org/SiteFiles/images/NavBG.Gif"
     }
     search {
-        post {
-            // https://www.123ds.org/Search/
-            url = "/Search/"
-            charset = "GBK"
-            data {
-                "q" to it
-            }
-        }
-        val finalCall = call.notNull()
-        var retry = false
-        var ret = document {
-            if (root.getElements("div.DivMargin").isNullOrEmpty()) {
-                retry = checkCookie()
-                novelItemList = emptyList()
-            } else {
-                items("div.DivMargin > a.Title") {
-                    name(":root")
-                    author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+        synchronized(lock) {
+            post {
+                // https://www.123ds.org/Search/
+                url = "/Search/"
+                charset = "GBK"
+                data {
+                    "q" to it
                 }
             }
-        }
-        if (retry) {
-            call = finalCall.clone()
-            ret = document {
-                items("div.DivMargin > a.Title") {
-                    name(":root")
-                    author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+            val finalCall = call.notNull()
+            var retry = false
+            var ret = document {
+                if (root.getElements("div.DivMargin").isNullOrEmpty()) {
+                    retry = checkCookie()
+                    novelItemList = emptyList()
+                } else {
+                    items("div.DivMargin > a.Title") {
+                        name(":root")
+                        author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+                    }
                 }
             }
+            if (retry) {
+                call = finalCall.clone()
+                ret = document {
+                    items("div.DivMargin > a.Title") {
+                        name(":root")
+                        author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+                    }
+                }
+            }
+            ret
         }
-        ret
     }
     // https://www.123ds.org/dudu-40/705684/
     bookIdRegex = "/dudu-(\\d+/\\d+)"
@@ -85,26 +87,30 @@ class N123du : DslJsoupNovelContext() {init {
     bookIdWithChapterIdRegex = "/dudu-(\\d+/\\d+/\\d+)"
     contentPageTemplate = "/dudu-%s.html"
     content {
-        call = connect(getNovelContentUrl(extra))
-        val finalCall = call.notNull()
-        var retry = false
-        var ret = document {
-            if (root.getElements("div#DivContentBG").isNullOrEmpty()) {
-                retry = checkCookie()
-                novelContent = emptyList()
-            } else {
-                parseContent()
+        synchronized(lock) {
+            call = connect(getNovelContentUrl(extra))
+            val finalCall = call.notNull()
+            var retry = false
+            var ret = document {
+                if (root.getElements("div#DivContentBG").isNullOrEmpty()) {
+                    retry = checkCookie()
+                    novelContent = emptyList()
+                } else {
+                    parseContent()
+                }
             }
-        }
-        if (retry) {
-            call = finalCall.clone()
-            ret = document {
-                parseContent()
+            if (retry) {
+                call = finalCall.clone()
+                ret = document {
+                    parseContent()
+                }
             }
+            ret
         }
-        ret
     }
 }
+
+    private val lock = Any()
 
     private fun _NovelContentParser.parseContent() {
         // 正文的id是可变的，同时文字的顺序是可能反的，同时p可能是不存在的，
