@@ -17,6 +17,11 @@ jobs:
         java-version: 1.8
     - name: Build with Gradle
       run: |
+        echo "${{ secrets.SIGNING_KEY }}" |base64 -d > signing.jks
+        echo storeFile=signing.jks > signing.properties
+        echo storePassword=${{ secrets.KEY_STORE_PASSWORD }} >> signing.properties
+        echo keyAlias=${{ secrets.ALIAS }} >> signing.properties
+        echo keyPassword=${{ secrets.KEY_PASSWORD }} >> signing.properties
         chmod +x gradlew
         ./gradlew assembleRelease
     - name: Upload a Build Artifact
