@@ -126,7 +126,8 @@ class N123du : DslJsoupNovelContext() {init {
             var next: String? = chapterUrl
             val ret = mutableListOf<String>()
             while (next != null) {
-                call = connect(next)
+                // 直接connect可能出现正文不全，可能是某个header导致的，
+                call = client.get(next)
                 checkAndParse {
                     // 正文的id是可变的，同时文字的顺序是可能反的，同时p可能是不存在的，
                     val div = root.requireElement("div#DivContentBG > div[id]", TAG_CONTENT)
