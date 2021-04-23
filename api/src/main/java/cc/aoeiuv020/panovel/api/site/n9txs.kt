@@ -9,13 +9,13 @@ class N9txs : DslJsoupNovelContext() {init {
 //    enabled = false
     site {
         name = "九桃小说"
-        baseUrl = "https://www.9txs.com"
+        baseUrl = "https://www.9txs.org"
         logo = "https://tiebapic.baidu.com/forum/pic/item/810a19d8bc3eb135716cd7dfb11ea8d3fd1f442e.jpg"
     }
     search {
         post {
             // https://www.9txs.com/search.html?searchkey=%E9%83%BD%E5%B8%82
-            url = "/search.html"
+            url = "https://so.9txs.org/www/"
             data {
                 "searchkey" to it
             }
