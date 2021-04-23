@@ -9,7 +9,7 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 class Kuxiaoshuo : DslJsoupNovelContext() {init {
     site {
         name = "酷小说"
-        baseUrl = "https://www.kuxiaoshuo.com"
+        baseUrl = "https://www.xxbiqudu.com"
         logo = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/static/logo/kuxiaoshuo.png"
     }
     search {
