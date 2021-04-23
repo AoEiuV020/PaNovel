@@ -42,9 +42,9 @@ class GxwztvTest : BaseNovelContextText(Gxwztv::class) {
 
     @Test
     fun chapters() {
-        chapters("9814", "帝霸", "9/9814/2206102", null,
-                "第3186章将离去", "9/9814/166515215", null,
-                3318)
+        chapters("187837", "楔子", "187/187837/190021515", null,
+                "第四百零六章 我即是宿命！", "187/187837/190021933", null,
+                412)
     }
 
     @Test
