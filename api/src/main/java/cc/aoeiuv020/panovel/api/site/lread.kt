@@ -7,6 +7,7 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
  * Created by AoEiuV020 on 2018.06.03-19:35:33.
  */
 class Lread : DslJsoupNovelContext() {init {
+    hide = true
     site {
         name = "乐阅读"
         baseUrl = "https://www.6ks.net"
