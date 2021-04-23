@@ -14,7 +14,7 @@ import java.util.*
 class Aileleba : DslJsoupNovelContext() {init {
     site {
         name = "乐安宣书网"
-        baseUrl = "https://www.ailelela.com/"
+        baseUrl = "http://www.ailelexs.com"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=ed8bde7afb03918fd7d13dc2613c264b/86de0c0a304e251f1b666d62ab86c9177d3e5386.jpg"
     }
     search {
