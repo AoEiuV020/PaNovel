@@ -9,10 +9,12 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
  * Created by AoEiuV020 on 2018.06.03-18:12:36.
  */
 class Guanshuwang : DslJsoupNovelContext() {init {
+    // 搜索403了，
+    enabled = false
     site {
         name = "官术网"
-        baseUrl = "https://www.biyuwu.cc"
-        logo = "http://www.biyuwu.cc/images/logo.gif"
+        baseUrl = "https://www.guanshu.cc"
+        logo = "https://www.guanshu.cc/images/logo.gif"
     }
     search {
         get {
