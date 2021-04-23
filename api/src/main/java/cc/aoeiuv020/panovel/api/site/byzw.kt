@@ -9,7 +9,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 class Byzw : DslJsoupNovelContext() {init {
     site {
         name = "八一中文网"
-        baseUrl = "https://www.zwdu.com"
+        baseUrl = "https://www.81book.com"
         logo = "https://www.zwdu.com/images/book_logo.png"
     }
     search {

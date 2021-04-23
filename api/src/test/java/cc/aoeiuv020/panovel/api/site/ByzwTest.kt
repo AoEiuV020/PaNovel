@@ -16,7 +16,7 @@ class ByzwTest : BaseNovelContextText(Byzw::class) {
     @Test
     fun detail() {
         detail("7900", "7900", "蛊真人", "蛊真人",
-                "https://www.zwdu.com/files/article/image/7/7900/7900s.jpg",
+                "https://www.81book.com/files/article/image/7/7900/7900s.jpg",
                 "人是万物之灵，蛊是天地真精。\n" +
                         "三观不正，魔头重生。\n" +
                         "昔日旧梦，同名新作。\n" +
