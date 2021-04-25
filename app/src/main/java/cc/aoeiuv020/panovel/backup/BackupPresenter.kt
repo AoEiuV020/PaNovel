@@ -133,7 +133,7 @@ class BackupPresenter : Presenter<BackupActivity>(), AnkoLogger {
             }
             val result = backupManager.import(options, restore)
             uiThread {
-                it.showExportSuccess(result)
+                it.showImportSuccess(result)
             }
         }
     }
