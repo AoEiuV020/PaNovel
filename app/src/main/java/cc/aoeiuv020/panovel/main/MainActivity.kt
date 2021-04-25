@@ -201,7 +201,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
                                 BackupActivity.start(ctx)
                             }
                             .setNeutralButton(R.string.search) { _, _ ->
-                                FuzzySearchActivity.start(ctx)
+                                FuzzySearchActivity.start(ctx, "异世界")
                             }
                             .show()
                 }
