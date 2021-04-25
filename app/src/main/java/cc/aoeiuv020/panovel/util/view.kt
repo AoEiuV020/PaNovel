@@ -188,7 +188,7 @@ fun AlertBuilder<*>.safelyShow(): DialogInterface? = try {
 }
 
 /**
- * 异步线程弹单选框并等待用户选择，
+ * 简单提示一些信息，
  */
 @WorkerThread
 fun Context.tip(
