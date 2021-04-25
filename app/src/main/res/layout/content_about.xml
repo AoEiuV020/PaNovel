@@ -70,7 +70,7 @@
         app:layout_constraintStart_toEndOf="@+id/ivIcon"
         app:layout_constraintTop_toTopOf="@+id/ivIcon" />
 
-    <TextView
+    <cc.aoeiuv020.panovel.settings.SelectableTextView
         android:id="@+id/tvEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_qq_group" />
 
-        <TextView
+        <cc.aoeiuv020.panovel.settings.SelectableTextView
             android:id="@+id/tvGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_telegram_group" />
 
-        <TextView
+        <cc.aoeiuv020.panovel.settings.SelectableTextView
             android:id="@+id/tvTelegram"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
