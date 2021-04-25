@@ -33,15 +33,15 @@ class BackupWebDavHelper : BackupHelper, AnkoLogger {
 
     override fun configPreview(): String {
         if (!ready()) {
-            error("没配置好，")
+            throw IllegalStateException("没配置好，")
         }
         return getUrl()
     }
 
-    private fun getUrl(): String {
+    private fun getUrl(showPassword: Boolean = false): String {
         return HttpUrl.parse(server).notNullOrReport().newBuilder()
                 .username(username)
-                .password(password)
+                .password(if (showPassword) password else if (password.isEmpty()) "" else "***")
                 .addPathSegment(fileName)
                 .build()
                 .toString()
@@ -57,7 +57,7 @@ class BackupWebDavHelper : BackupHelper, AnkoLogger {
         }
         val sardine: Sardine = initWebDav()
         try {
-            sardine.get(configPreview()).use { input ->
+            sardine.get(getUrl(true)).use { input ->
                 tempFile.outputStream().use { output ->
                     input.copyTo(output)
                     output.flush()
@@ -77,7 +77,7 @@ class BackupWebDavHelper : BackupHelper, AnkoLogger {
             "export ${configPreview()}, file: $tempFile"
         }
         val sardine: Sardine = initWebDav()
-        sardine.put(configPreview(), tempFile, "application/zip")
+        sardine.put(getUrl(true), tempFile, "application/zip")
     }
 
     private fun initWebDav(): Sardine {

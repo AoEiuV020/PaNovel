@@ -28,13 +28,17 @@ class BackupWebDavConfigActivity : AppCompatActivity() {
             backupHelper.server = getInput(llServer)
             backupHelper.fileName = getInput(llFileName)
             backupHelper.username = getInput(llUsername)
-            backupHelper.password = getInput(llPassword)
+            getInput(llPassword).takeIf { it.isNotEmpty() }?.let {
+                backupHelper.password = it
+            }
             finish()
         }
         setInput(llServer, backupHelper.server)
         setInput(llFileName, backupHelper.fileName)
         setInput(llUsername, backupHelper.username)
-        setInput(llPassword, backupHelper.password)
+        if (backupHelper.password.isNotEmpty()) {
+            setInputHint(llPassword, "密码不变")
+        }
 
         tvJianguoyun.setOnClickListener { v ->
             browse("https://blog.jianguoyun.com/?p=2748")
@@ -60,15 +64,16 @@ class BackupWebDavConfigActivity : AppCompatActivity() {
         } ?: return false.also {
             toast("服务器地址不合法")
         }
-        getInput(llFileName).takeIf { it.isNotBlank() } ?: return false.also {
+        getInput(llFileName).takeIf { it.isNotEmpty() } ?: return false.also {
             toast("文件名不能为空")
         }
-        getInput(llUsername).takeIf { it.isNotBlank() } ?: return false.also {
+        getInput(llUsername).takeIf { it.isNotEmpty() } ?: return false.also {
             toast("用户名不能为空")
         }
-        getInput(llPassword).takeIf { it.isNotBlank() } ?: return false.also {
-            toast("密码不能为空")
-        }
+        getInput(llPassword).takeIf { it.isNotEmpty() || backupHelper.password.isNotEmpty() }
+                ?: return false.also {
+                    toast("密码不能为空")
+                }
         return true
     }
 
@@ -78,5 +83,9 @@ class BackupWebDavConfigActivity : AppCompatActivity() {
 
     private fun setInput(layout: LinearLayout, text: String) {
         return (layout.getChildAt(1) as EditText).setText(text)
+    }
+
+    private fun setInputHint(layout: LinearLayout, text: String) {
+        return (layout.getChildAt(1) as EditText).setHint(text)
     }
 }
