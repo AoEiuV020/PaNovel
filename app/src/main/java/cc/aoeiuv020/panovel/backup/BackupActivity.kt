@@ -11,17 +11,18 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.settings.BackupSettings
 import cc.aoeiuv020.panovel.util.loading
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import cc.aoeiuv020.panovel.util.safelyShow
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_export.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.*
 
 class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
     companion object {
@@ -62,6 +63,8 @@ class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
         Uri.parse(it)
     }
 
+    fun getSelectedId(): Int = rgPath.checkedRadioButtonId
+
     private fun initWidget() {
         progressDialog = ProgressDialog(this)
         btnImport.setOnClickListener {
@@ -75,12 +78,43 @@ class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
         btnChoose.setOnClickListener {
             requestFile()
         }
+        val checkedIndex = if (BackupSettings.checkedButtonIndex == -1) {
+            rgPath.childCount - 1
+        } else {
+            BackupSettings.checkedButtonIndex
+        }
+        rgPath.check(rgPath.getChildAt(checkedIndex).id)
+        repeat(rgPath.childCount) { index ->
+            rgPath.getChildAt(index).setOnClickListener { v ->
+                BackupSettings.checkedButtonIndex = if (index == rgPath.childCount - 1) {
+                    -1
+                } else {
+                    index
+                }
+                val backupHelper = presenter.getHelper(v.id) ?: return@setOnClickListener
+                debug {
+                    "backup click ${backupHelper.type}"
+                }
+                startConfig(backupHelper, index)
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            1 -> data?.data?.let { uri ->
+        when {
+            requestCode == 1 -> data?.data?.let { uri ->
                 showOtherPath(uri.toString())
+            }
+            1000 <= requestCode && requestCode < 1000 + rgPath.childCount -> {
+                val index = requestCode - 1000
+                val radioButton = rgPath.getChildAt(index) as RadioButton
+                val backupHelper = presenter.getHelper(radioButton.id).notNullOrReport()
+                if (backupHelper.ready()) {
+                    radioButton.text = backupHelper.notNullOrReport().configPreview()
+                } else {
+                    radioButton.text = getString(R.string.backup_click_for_reconfig, backupHelper.type)
+                }
+                showMessage("配置完成后请重新点击导入或者导出")
             }
             else -> super.onActivityResult(requestCode, resultCode, data)
         }
@@ -89,7 +123,7 @@ class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             1 -> {
-                showMessage("赋予权限后请重试，")
+                showMessage("赋予权限后请重新点击导入或者导出")
             }
         }
     }
@@ -162,6 +196,26 @@ class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
             else -> return super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    fun showBackupHint(radioButtonId: Int, test: String) {
+        rgPath.find<RadioButton>(radioButtonId).text = test
+    }
+
+    fun startConfig(backupHelper: BackupHelper) {
+        repeat(rgPath.childCount) { index ->
+            val childAt = rgPath.getChildAt(index)
+            if (childAt.id == rgPath.checkedRadioButtonId) {
+                startConfig(backupHelper, index)
+            }
+        }
+    }
+
+    private fun startConfig(backupHelper: BackupHelper, index: Int) {
+        debug {
+            "startConfig ${backupHelper.type}"
+        }
+        startActivityForResult(Intent(ctx, backupHelper.configActivity()), 1000 + index)
     }
 
 }

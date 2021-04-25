@@ -8,8 +8,7 @@ import cc.aoeiuv020.panovel.backup.impl.BackupV3
 import net.lingala.zip4j.core.ZipFile
 import net.lingala.zip4j.exception.ZipException
 import net.lingala.zip4j.model.ZipParameters
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.File
 
 
 /**
@@ -49,26 +48,25 @@ class BackupManager {
 
     /**
      * 临时文件是固定的一个，单线程确保这个临时文件访问没问题，
-     *
-     * @param input 在外面close,
      */
     @Synchronized
-    fun import(input: InputStream, options: Set<BackupOption>): String {
+    fun import(options: Set<BackupOption>, restore: (File) -> Unit): String {
         val folder = getTempFolder()
+        val tempFile = getTempFile()
+        // 先把备份文件复制到临时文件再解压zip,
         try {
-            val tempFile = getTempFile()
-            // 先把input复制到临时文件再解压zip,
-            tempFile.outputStream().use { output ->
-                input.copyTo(output)
-                output.flush()
-            }
+            restore(tempFile)
+        } catch (e: Exception) {
+            throw IllegalStateException("恢复失败，" + e.message, e)
+        }
+        try {
             val zipFile = ZipFile(tempFile)
             // 直接全部解压，
             zipFile.extractAll(folder.canonicalPath)
             // 用完删除临时文件，
             tempFile.delete()
         } catch (e: ZipException) {
-            throw IllegalStateException("zip文件解压失败，", e)
+            throw IllegalStateException("zip文件解压失败，" + e.message, e)
         }
         val version = folder.resolve(NAME_VERSION).readText().toInt()
         // 根据不同版本选择不同的Exporter,
@@ -82,11 +80,9 @@ class BackupManager {
 
     /**
      * 临时文件是固定的一个，单线程确保这个临时文件访问没问题，
-     *
-     * @param output 在外面close,
      */
     @Synchronized
-    fun export(output: OutputStream, options: Set<BackupOption>): String {
+    fun export(options: Set<BackupOption>, backup: (File) -> Unit): String {
         val folder = getTempFolder()
         folder.resolve(NAME_VERSION).writeText(CURRENT_VERSION.toString())
         val exporter = getExporter(CURRENT_VERSION)
@@ -101,10 +97,11 @@ class BackupManager {
 
         folder.deleteRecursively()
 
-        // 先导出到临时文件再复制到output,
-        tempFile.inputStream().use { input ->
-            input.copyTo(output)
-            output.flush()
+        // 先导出到临时文件再备份,
+        try {
+            backup(tempFile)
+        } catch (e: Exception) {
+            throw IllegalStateException("备份失败，" + e.message, e)
         }
         // 用完删除临时文件，
         tempFile.delete()

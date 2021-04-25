@@ -26,8 +26,12 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning"
         tools:targetApi="q">
+        <activity
+            android:name=".backup.webdav.BackupWebDavConfigActivity"
+            android:label="@string/backup_web_dav"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden|adjustResize" />
         <activity android:name=".search.SiteSettingsActivity" />
-        <!-- suppress DeprecatedClassUsageInspection -->
+        <!--suppress DeprecatedClassUsageInspection -->
         <meta-data
             android:name="cc.aoeiuv020.panovel.util.JarGlideModule"
             android:value="GlideModule" />
@@ -72,18 +76,18 @@
                 <action android:name="cn.jpush.android.intent.CONNECTION" /> <!-- 接收网络变化 连接/断开 since 1.6.3 -->
                 <category android:name="cc.aoeiuv020.panovel" />
             </intent-filter>
-        </receiver>
-        <!-- Since JCore2.0.0 Required SDK核心功能-->
+        </receiver> <!-- Since JCore2.0.0 Required SDK核心功能 -->
         <!-- 可配置android:process参数将Service放在其他进程中；android:enabled属性不能是false -->
         <!-- 这个是自定义Service，要继承极光JCommonService，可以在更多手机平台上使得推送通道保持的更稳定 -->
         <service
-            android:name="cc.aoeiuv020.panovel.server.jpush.JPushService"
+            android:name=".server.jpush.JPushService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="cn.jiguang.user.service.action" />
             </intent-filter>
         </service>
+
         <receiver
             android:name=".server.jpush.MyJPushMessageReceiver"
             android:enabled="true"

@@ -61,4 +61,8 @@ dependencies {
     implementation 'com.github.santalu:aspect-ratio-imageview:1.0.4'
     implementation project(':local')
     implementation project(':filepicker')
+    // webDav备份使用，
+    implementation('com.github.thegrizzlylabs:sardine-android:0.8'){
+        exclude group: 'com.squareup.okhttp3'
+    }
 }
