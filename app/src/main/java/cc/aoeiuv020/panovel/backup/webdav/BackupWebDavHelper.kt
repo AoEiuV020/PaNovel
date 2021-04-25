@@ -51,36 +51,30 @@ class BackupWebDavHelper : BackupHelper, AnkoLogger {
         return BackupWebDavConfigActivity::class.java
     }
 
-    override fun restore(tempFile: File) {
+    override fun restore(tempFile: File) = tryRun {
         info {
             "import ${configPreview()}, file: $tempFile"
         }
         val sardine: Sardine = initWebDav()
-        try {
-            sardine.get(getUrl(true)).use { input ->
-                tempFile.outputStream().use { output ->
-                    input.copyTo(output)
-                    output.flush()
-                }
-            }
-        } catch (e: SardineException) {
-            if (e.statusCode == 404) {
-                throw IllegalStateException("404 文件不存在")
-            } else {
-                throw e
+        sardine.get(getUrl(true)).use { input ->
+            tempFile.outputStream().use { output ->
+                input.copyTo(output)
+                output.flush()
             }
         }
     }
 
-    override fun backup(tempFile: File) {
+    override fun backup(tempFile: File) = tryRun {
         info {
             "export ${configPreview()}, file: $tempFile"
         }
-        val sardine: Sardine = initWebDav()
-        sardine.put(getUrl(true), tempFile, "application/zip")
+        tryRun {
+            val sardine: Sardine = initWebDav()
+            sardine.put(getUrl(true), tempFile, "application/zip")
+        }
     }
 
-    private fun initWebDav(): Sardine {
+    private fun initWebDav(): Sardine = tryRun {
         val sardine: Sardine = OkHttpSardine()
         sardine.setCredentials(username, password)
         if (!sardine.exists(server)) {
@@ -88,15 +82,27 @@ class BackupWebDavHelper : BackupHelper, AnkoLogger {
             sardine.createDirectory(server);
         }
 
-        return sardine
+        sardine
     }
 
-    fun test(server: String, username: String, password: String) {
+    fun test(server: String, username: String, password: String) = tryRun {
         val sardine: Sardine = OkHttpSardine()
         sardine.setCredentials(username, password)
         info {
             val exists = sardine.exists(server)
             "$server ${if (exists) "exists" else "not exists"}"
+        }
+    }
+
+    private inline fun <T, R> T.tryRun(block: T.() -> R): R {
+        try {
+            return block()
+        } catch (e: SardineException) {
+            when (e.statusCode) {
+                404 -> throw IllegalStateException("404 文件不存在", e)
+                401 -> throw IllegalStateException("401 认证错误，用户名密码错误或者没有权限，也可能是服务器不支持Basic方式认证", e)
+                else -> throw e
+            }
         }
     }
 }
