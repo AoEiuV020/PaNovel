@@ -29,9 +29,9 @@ class AilelebaTest : BaseNovelContextText(Aileleba::class) {
 
     @Test
     fun chapters() {
-        chapters("163455", "第一章 我没忍，我动手了（求收藏求推荐）", "163455/zhangjie38921903", null,
-                "第144章 大伯你看这个人！", "163455/zhangjie38969947", "1970-01-01 08:00:00",
-                109)
+        chapters("189228", "第1章 忘却难免留个疤", "189228/zhangjie54733247", null,
+                "42章 破围", "189228/zhangjie54765038", "2021-04-25 00:00:00",
+                42)
     }
 
     @Test

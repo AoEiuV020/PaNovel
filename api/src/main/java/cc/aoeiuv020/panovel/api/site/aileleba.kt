@@ -66,10 +66,13 @@ class Aileleba : DslJsoupNovelContext() {init {
             }
         }
     }
+    // 这网站电脑版的章节不全，
+    // http://m.ailelexs.com/189228.shtml
+    chaptersPageTemplate = "//m.ailelexs.com/%s.shtml"
     chapters {
         document {
-            items("body > div.wrapper > div.center > ul:nth-child(5) > ul > li > a")
-            lastUpdate("body > div.wrapper > div.excerpt", format = "yyyy-MM-dd HH:mm", block = pickString("最后更新：(\\S+ \\S+)"))
+            items("#chapterList > li > a")
+            lastUpdate("div.block_txt2 > p:nth-child(7)", format = "yyyy-MM-dd", block = pickString("更新：(\\S+)"))
         }
     }
     // http://www.aileleba.com/163455/zhangjie38921903.shtml
