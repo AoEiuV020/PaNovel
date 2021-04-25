@@ -165,14 +165,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         initNotificationChannel()
 
         progressDialog = ProgressDialog(this)
-        if (!isTaskRoot) {
-            // 避免多开，
-            // TODO: 考虑弄个专门用来跳转的splash页面之类，
-            finish()
-            // 不初始化，否则可能触发异步调用，比如异步检查更新，回来想通知更新时activity已经不在了，会崩溃，
-            // 要特别留意destroy有没有涉及到什么必须初始化的，
-            return
-        }
 
         migrationPresenter = MigrationPresenter(this).apply {
             attach(this@MainActivity)

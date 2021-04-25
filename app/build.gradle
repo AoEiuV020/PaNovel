@@ -29,6 +29,11 @@ android {
         }
     }
 }
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
 
 dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:' + constraint_layout_version
@@ -65,4 +70,6 @@ dependencies {
     implementation('com.github.thegrizzlylabs:sardine-android:0.8'){
         exclude group: 'com.squareup.okhttp3'
     }
+    // 腾讯优量汇,
+    implementation (name:'GDTSDK.unionNormal.4.351.1221', ext:'aar')
 }

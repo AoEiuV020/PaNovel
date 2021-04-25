@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.jsonpath.JsonPathUtils
+import cc.aoeiuv020.panovel.ad.AdHelper
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.ssl.TLSSocketFactory
 import cc.aoeiuv020.ssl.TrustManagerUtils
 import cn.jpush.android.api.JPushInterface
@@ -51,6 +53,8 @@ class App : MultiDexApplication(), AnkoLogger {
         initVector()
 
         initReporter()
+
+        initAd()
 
         initJpush()
 
@@ -117,5 +121,11 @@ class App : MultiDexApplication(), AnkoLogger {
      */
     private fun initReporter() {
         Reporter.init(ctx)
+    }
+
+    private fun initAd() {
+        if (GeneralSettings.adEnabled) {
+            AdHelper.init(this)
+        }
     }
 }
