@@ -15,4 +15,9 @@ object BackupSettings : Pref {
      */
     var checkedButtonIndex: Int by Delegates.int(0)
 
+    // 几个开关，
+    var cbBookshelf: Boolean by Delegates.boolean(true)
+    var cbBookList: Boolean by Delegates.boolean(true)
+    var cbProgress: Boolean by Delegates.boolean(true)
+    var cbSettings: Boolean by Delegates.boolean(true)
 }

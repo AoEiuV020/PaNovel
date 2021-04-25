@@ -69,28 +69,20 @@ class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
         progressDialog = ProgressDialog(this)
         btnImport.setOnClickListener {
             loading(progressDialog, getString(R.string.sImport))
+            saveSelected()
             presenter.import()
         }
         btnExport.setOnClickListener {
             loading(progressDialog, getString(R.string.export))
+            saveSelected()
             presenter.export()
         }
         btnChoose.setOnClickListener {
             requestFile()
         }
-        val checkedIndex = if (BackupSettings.checkedButtonIndex == -1) {
-            rgPath.childCount - 1
-        } else {
-            BackupSettings.checkedButtonIndex
-        }
-        rgPath.check(rgPath.getChildAt(checkedIndex).id)
+        loadSelected()
         repeat(rgPath.childCount) { index ->
             rgPath.getChildAt(index).setOnClickListener { v ->
-                BackupSettings.checkedButtonIndex = if (index == rgPath.childCount - 1) {
-                    -1
-                } else {
-                    index
-                }
                 val backupHelper = presenter.getHelper(v.id) ?: return@setOnClickListener
                 debug {
                     "backup click ${backupHelper.type}"
@@ -98,6 +90,36 @@ class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
                 startConfig(backupHelper, index)
             }
         }
+    }
+
+    private fun loadSelected() {
+        val checkedIndex = if (BackupSettings.checkedButtonIndex == -1) {
+            rgPath.childCount - 1
+        } else {
+            BackupSettings.checkedButtonIndex
+        }
+        rgPath.check(rgPath.getChildAt(checkedIndex).id)
+        cbBookshelf.isChecked = BackupSettings.cbBookshelf
+        cbBookList.isChecked = BackupSettings.cbBookList
+        cbProgress.isChecked = BackupSettings.cbProgress
+        cbSettings.isChecked = BackupSettings.cbSettings
+    }
+
+    private fun saveSelected() {
+        repeat(rgPath.childCount) { index ->
+            val childAt = rgPath.getChildAt(index)
+            if (childAt.id == rgPath.checkedRadioButtonId) {
+                BackupSettings.checkedButtonIndex = if (index == rgPath.childCount - 1) {
+                    -1
+                } else {
+                    index
+                }
+            }
+        }
+        BackupSettings.cbBookshelf = cbBookshelf.isChecked
+        BackupSettings.cbBookList = cbBookList.isChecked
+        BackupSettings.cbProgress = cbProgress.isChecked
+        BackupSettings.cbSettings = cbSettings.isChecked
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
