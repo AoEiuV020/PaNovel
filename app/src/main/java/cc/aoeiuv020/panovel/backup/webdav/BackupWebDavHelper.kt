@@ -6,6 +6,7 @@ import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import com.thegrizzlylabs.sardineandroid.Sardine
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
+import com.thegrizzlylabs.sardineandroid.impl.SardineException
 import okhttp3.HttpUrl
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -55,10 +56,18 @@ class BackupWebDavHelper : BackupHelper, AnkoLogger {
             "import ${configPreview()}, file: $tempFile"
         }
         val sardine: Sardine = initWebDav()
-        sardine.get(configPreview()).use { input ->
-            tempFile.outputStream().use { output ->
-                input.copyTo(output)
-                output.flush()
+        try {
+            sardine.get(configPreview()).use { input ->
+                tempFile.outputStream().use { output ->
+                    input.copyTo(output)
+                    output.flush()
+                }
+            }
+        } catch (e: SardineException) {
+            if (e.statusCode == 404) {
+                throw IllegalStateException("404 文件不存在")
+            } else {
+                throw e
             }
         }
     }
