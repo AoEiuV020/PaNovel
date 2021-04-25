@@ -298,5 +298,6 @@
     <string name="backup_btn_save">保存</string>
     <string name="backup_click_for_reconfig">点击配置 %s</string>
     <string name="backup_label_reference">参考</string>
+    <string name="backup_btn_test">测试</string>
 
 </resources>

@@ -90,4 +90,13 @@ class BackupWebDavHelper : BackupHelper, AnkoLogger {
 
         return sardine
     }
+
+    fun test(server: String, username: String, password: String) {
+        val sardine: Sardine = OkHttpSardine()
+        sardine.setCredentials(username, password)
+        info {
+            val exists = sardine.exists(server)
+            "$server ${if (exists) "exists" else "not exists"}"
+        }
+    }
 }

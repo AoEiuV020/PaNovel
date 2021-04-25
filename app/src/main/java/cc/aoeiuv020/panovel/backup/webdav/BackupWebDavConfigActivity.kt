@@ -4,23 +4,38 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.EditText
 import android.widget.LinearLayout
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.util.notNullOrReport
+import cc.aoeiuv020.panovel.util.tip
 import kotlinx.android.synthetic.main.activity_backup_web_dav_config.*
 import okhttp3.HttpUrl
-import org.jetbrains.anko.browse
-import org.jetbrains.anko.ctx
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
-class BackupWebDavConfigActivity : AppCompatActivity() {
+class BackupWebDavConfigActivity : AppCompatActivity(), AnkoLogger {
     private val backupHelper = BackupWebDavHelper()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_backup_web_dav_config)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        btnTest.setOnClickListener {
+            if (!checkInput()) {
+                return@setOnClickListener
+            }
+            doAsync({ t ->
+                error("测试失败：", t)
+                runOnUiThread {
+                    tip("测试失败：" + t.message)
+                }
+            }) {
+                backupHelper.test(getInput(llServer), getInput(llUsername), getInput(llPassword).takeIf { it.isNotEmpty() }
+                        ?: backupHelper.password)
+                uiThread {
+                    toast("测试成功")
+                }
+            }
+        }
         btnSave.setOnClickListener {
             if (!checkInput()) {
                 return@setOnClickListener
@@ -56,9 +71,7 @@ class BackupWebDavConfigActivity : AppCompatActivity() {
     private fun checkInput(): Boolean {
         getInput(llServer).takeIf { it.isNotBlank() }?.let { HttpUrl.parse(it) }?.also {
             if (it.host() == "dav.jianguoyun.com" && (it.encodedPath() == "/dav" || it.encodedPath() == "/dav/")) {
-                AlertDialog.Builder(ctx)
-                        .setMessage("坚果云根目录不允许存放文件，请指定子目录，如：\nhttps://dav.jianguoyun.com/dav/panovel")
-                        .show()
+                tip("坚果云根目录不允许存放文件，请指定子目录，如：\nhttps://dav.jianguoyun.com/dav/panovel")
                 return false
             }
         } ?: return false.also {
