@@ -100,10 +100,7 @@ object ServerManager : AnkoLogger {
     }
 
     fun touch(novel: Novel) {
-        debug { "touch ：<${novel.run { "$site.$author.$name" }}>" }
-        val service = getService() ?: return
-        val result = service.touch(novel)
-        debug { "上传<${novel.run { "$site.$author.$name" }}>更新返回: $result" }
+        // 意义不大，禁用了，
     }
 
     fun message(): Message? {
