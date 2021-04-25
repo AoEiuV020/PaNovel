@@ -38,9 +38,12 @@ class AboutFragment : Fragment() {
         }
         // 可能没有连接上服务器，就用固定的群号，
         val number = ServerManager.config?.qqGroup ?: tvGroup.text.toString()
-        tvGroup.setOnClickListener {
-            val urlQQ = "mqqwpa://im/chat?chat_type=group&uin=$number&version=1"
+        llGroup.setOnClickListener {
+            val urlQQ = "mqqwpa://im/chat?chat_type=group&uin=${number}&version=1"
             browse(urlQQ)
+        }
+        llTelegram.setOnClickListener {
+            browse("https://t.me/${tvTelegram.text}")
         }
         tvChangeLog.text = activity.assets.open("ChangeLog.txt").reader().readText()
 

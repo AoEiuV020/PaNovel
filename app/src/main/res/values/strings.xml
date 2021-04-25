@@ -300,5 +300,6 @@
     <string name="backup_label_reference">参考</string>
     <string name="backup_btn_test">测试</string>
     <string name="tip_data_empty">啥也没有，是否需要导入备份或者搜索</string>
+    <string name="label_telegram_group">TG群：</string>
 
 </resources>

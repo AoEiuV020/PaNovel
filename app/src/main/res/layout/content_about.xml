@@ -76,33 +76,64 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:text="aoeiuv020@gmail.com"
+        android:padding="4dp"
         android:textIsSelectable="true"
         app:layout_constraintStart_toStartOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
         tools:ignore="HardcodedText" />
 
-    <TextView
-        android:id="@+id/textView6"
+    <LinearLayout
+        android:id="@+id/llGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/label_qq_group"
+        android:orientation="horizontal"
+        android:padding="4dp"
         app:layout_constraintStart_toStartOf="@+id/tvEmail"
-        app:layout_constraintTop_toBottomOf="@+id/tvEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/tvEmail">
 
-    <TextView
-        android:id="@+id/tvGroup"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_qq_group" />
+
+        <TextView
+            android:id="@+id/tvGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="206522738"
+            android:textIsSelectable="true"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llTelegram"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:text="206522738"
-        android:textIsSelectable="true"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView6"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        tools:ignore="HardcodedText" />
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintStart_toStartOf="@+id/llGroup"
+        app:layout_constraintTop_toBottomOf="@+id/llGroup">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_telegram_group" />
+
+        <TextView
+            android:id="@+id/tvTelegram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="PaNovelGroup"
+            android:textIsSelectable="true"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
