@@ -89,6 +89,9 @@ abstract class NovelDao {
     @Query("select * from Novel where bookshelf = 1 and receiveUpdateTime > readTime order by receiveUpdateTime desc")
     abstract fun hasUpdateNovelList(): List<Novel>
 
+    @Query("select count(*) from Novel limit 1")
+    abstract fun isNotEmpty(): Boolean
+
     @Delete
     abstract fun delete(novel: Novel)
 

@@ -2,6 +2,7 @@
 
 package cc.aoeiuv020.panovel.main
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -17,6 +18,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.backup.BackupActivity
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.data.DataManager
@@ -176,6 +178,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             attach(this@MainActivity)
             start()
         }
+        checkEmpty()
 
         // 异步检查签名，
         Check.asyncCheckSignature(this)
@@ -184,6 +187,26 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         Check.asyncCheckVersion(this)
         // 异步获取可能存在的, 我放在网上想推给用户的消息，
         DevMessage.asyncShowMessage(this)
+    }
+
+    private fun checkEmpty() {
+        doAsync({ t ->
+            Reporter.unreachable(t)
+        }) {
+            if (DataManager.isEmpty()) {
+                uiThread { ctx ->
+                    AlertDialog.Builder(ctx)
+                            .setMessage(getString(R.string.tip_data_empty))
+                            .setPositiveButton(R.string.sImport) { _, _ ->
+                                BackupActivity.start(ctx)
+                            }
+                            .setNeutralButton(R.string.search) { _, _ ->
+                                FuzzySearchActivity.start(ctx)
+                            }
+                            .show()
+                }
+            }
+        }
     }
 
     private fun initWidget() {
