@@ -170,7 +170,8 @@ class BackupPresenter : Presenter<BackupActivity>(), AnkoLogger {
                     try {
                         ctx.contentResolver.openOutputStream(uri)
                     } catch (e: FileNotFoundException) {
-                        if (e.message?.contains("Permission denied") == true) {
+                        if (e.message?.contains("Permission denied") == true
+                                || ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()))) {
                             uiThread {
                                 it.requestPermissions()
                             }
