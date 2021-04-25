@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.backup
 
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.Presenter
@@ -114,7 +115,8 @@ class BackupPresenter : Presenter<BackupActivity>(), AnkoLogger {
                     try {
                         ctx.contentResolver.openInputStream(uri)
                     } catch (e: FileNotFoundException) {
-                        if (e.message?.contains("Permission denied") == true) {
+                        if (e.message?.contains("Permission denied") == true
+                                || ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()))) {
                             uiThread {
                                 it.requestPermissions()
                             }
