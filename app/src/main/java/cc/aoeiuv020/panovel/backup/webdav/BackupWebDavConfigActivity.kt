@@ -1,6 +1,7 @@
 package cc.aoeiuv020.panovel.backup.webdav
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
@@ -38,6 +39,14 @@ class BackupWebDavConfigActivity : AppCompatActivity() {
         tvJianguoyun.setOnClickListener { v ->
             browse("https://blog.jianguoyun.com/?p=2748")
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 
     private fun checkInput(): Boolean {
