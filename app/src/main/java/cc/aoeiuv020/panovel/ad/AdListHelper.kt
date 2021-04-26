@@ -11,7 +11,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.list.NovelListAdapter
 import cc.aoeiuv020.panovel.settings.GeneralSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
@@ -29,7 +28,7 @@ abstract class AdListHelper<AD, IT : AdListHelper.AdItem<AD>, VH : AdListHelper.
         const val AD_COUNT = 5
     }
 
-    open val nativeAdEnabled = BuildConfig.DEBUG && GeneralSettings.adEnabled
+    open val nativeAdEnabled = GeneralSettings.adEnabled
     protected val ctx: Context by lazy { recyclerView.context }
     protected var isDestroy: Boolean = false
     private var isNoAd: Boolean = false
