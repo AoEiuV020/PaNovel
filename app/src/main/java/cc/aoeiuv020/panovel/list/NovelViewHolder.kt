@@ -32,7 +32,7 @@ class NovelViewHolder(itemView: View,
                       initItem: (NovelViewHolder) -> Unit = {},
                       actionDoneListener: (ItemAction, NovelViewHolder) -> Unit = { _, _ -> },
                       onError: (String, Throwable) -> Unit
-) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), AnkoLogger {
+) : NovelListAdapter.BaseViewHolder(itemView), AnkoLogger {
     private val itemListener = DefaultNovelItemActionListener(actionDoneListener, onError)
 
     // 所有View可空，准备支持不同布局，小的布局可能大部分View都没有，

@@ -2,6 +2,7 @@
 
 package cc.aoeiuv020.panovel.main
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -17,6 +18,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.backup.BackupActivity
 import cc.aoeiuv020.panovel.booklist.BookListFragment
 import cc.aoeiuv020.panovel.bookshelf.BookshelfFragment
 import cc.aoeiuv020.panovel.data.DataManager
@@ -163,19 +165,12 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         initNotificationChannel()
 
         progressDialog = ProgressDialog(this)
-        if (!isTaskRoot) {
-            // 避免多开，
-            // TODO: 考虑弄个专门用来跳转的splash页面之类，
-            finish()
-            // 不初始化，否则可能触发异步调用，比如异步检查更新，回来想通知更新时activity已经不在了，会崩溃，
-            // 要特别留意destroy有没有涉及到什么必须初始化的，
-            return
-        }
 
         migrationPresenter = MigrationPresenter(this).apply {
             attach(this@MainActivity)
             start()
         }
+        checkEmpty()
 
         // 异步检查签名，
         Check.asyncCheckSignature(this)
@@ -184,6 +179,26 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         Check.asyncCheckVersion(this)
         // 异步获取可能存在的, 我放在网上想推给用户的消息，
         DevMessage.asyncShowMessage(this)
+    }
+
+    private fun checkEmpty() {
+        doAsync({ t ->
+            Reporter.unreachable(t)
+        }) {
+            if (DataManager.isEmpty()) {
+                uiThread { ctx ->
+                    AlertDialog.Builder(ctx)
+                            .setMessage(getString(R.string.tip_data_empty))
+                            .setPositiveButton(R.string.sImport) { _, _ ->
+                                BackupActivity.start(ctx)
+                            }
+                            .setNeutralButton(R.string.search) { _, _ ->
+                                FuzzySearchActivity.start(ctx, "异世界")
+                            }
+                            .show()
+                }
+            }
+        }
     }
 
     private fun initWidget() {

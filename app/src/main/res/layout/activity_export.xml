@@ -79,6 +79,13 @@
             android:text="@string/backup_default_new_path" />
 
         <RadioButton
+            android:id="@+id/rbDefaultWebDav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/backup_web_dav" />
+
+        <RadioButton
             android:id="@+id/rbOtherPath"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

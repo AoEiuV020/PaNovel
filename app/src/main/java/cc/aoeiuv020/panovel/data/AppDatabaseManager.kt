@@ -123,6 +123,8 @@ class AppDatabaseManager(context: Context) {
         }
     }
 
+    fun isEmpty(): Boolean = !db.novelDao().isNotEmpty()
+
     fun addToBookList(bookListId: Long, novel: Novel) =
             db.bookListDao().insert(BookListItem(bookListId = bookListId, novelId = novel.nId))
 

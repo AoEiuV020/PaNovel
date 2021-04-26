@@ -22,10 +22,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -172,7 +176,7 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
                 String paths[] = MarkedItemList.getSelectedPaths();
                 if ((paths == null || paths.length == 0)
                         && isSingleFolderMode()
-                        ) {
+                ) {
                     paths = new String[]{dir_path.getText().toString()};
                 }
                 //NullPointerException fixed in v1.0.2
@@ -469,7 +473,11 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
     @Override
     public void show() {
         if (!Utility.checkStorageAccessPermissions(context)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager())) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getContext().getPackageName()));
+                ((Activity) context).startActivityForResult(intent, 1);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ((Activity) context).requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, EXTERNAL_READ_PERMISSION_GRANT);
             }
         } else {

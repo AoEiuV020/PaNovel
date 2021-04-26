@@ -16,12 +16,12 @@ class KuxiaoshuoTest : BaseNovelContextText(Kuxiaoshuo::class) {
     @Test
     fun detail() {
         detail("2_2715", "2_2715", "圣墟", "辰东",
-                "http://r.m.kuxiaoshuo.com/files/article/image/2/2715/2715s.jpg",
+                "https://r.m.xxbiqudu.com/cover/aHR0cHM6Ly9yLm0ueHhiaXF1ZHUuY29tL2ZpbGVzL2FydGljbGUvaW1hZ2UvMi8yNzE1LzI3MTVzLmpwZw==",
                 "在破败中崛起，在寂灭中复苏。\n" +
                         "沧海成尘，雷电枯竭，那一缕幽雾又一次临近大地，世间的枷锁被打开了，一个全新的世界就此揭开神秘的一角……",
                 "2018-06-09 00:00:00")
         detail("1_1947", "1_1947", "天神诀", "太一生水",
-                "http://r.m.kuxiaoshuo.com/files/article/image/1/1947/1947s.jpg",
+                "https://r.m.xxbiqudu.com/cover/aHR0cHM6Ly9yLm0ueHhiaXF1ZHUuY29tL2ZpbGVzL2FydGljbGUvaW1hZ2UvMS8xOTQ3LzE5NDdzLmpwZw==",
                 "苍穹星域，武魂万千。\n" +
                         "有飞龙在天，可一日千里。有霸气无双，可斗转星移。\n" +
                         "杨青玄身怀十大至强武魂之一“天下有敌”，从此十荡十决，千军辟易！\n" +
@@ -33,7 +33,7 @@ class KuxiaoshuoTest : BaseNovelContextText(Kuxiaoshuo::class) {
     fun chapters() {
         chapters("2_2715", "第一章 沙漠中的彼岸花", "2_2715/17380548", null,
                 "第1088章 阳间命运的十字路口", "2_2715/151851897", "2018-06-09 00:00:00",
-                1103)
+                1105)
         chapters("1_1947", "楔子：身世之谜，时空灰烬", "1_1947/16176821", null,
                 "第1770章 求情", "1_1947/160124928", "2018-06-09 00:00:00",
                 1776)

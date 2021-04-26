@@ -37,7 +37,7 @@ public class SignatureUtil {
     //computed the sha1 hash of the signature
     public static String getSHA1(byte[] sig) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA1", "BC");
+            MessageDigest digest = MessageDigest.getInstance("SHA1");
             digest.update(sig);
             byte[] hashtext = digest.digest();
             return bytesToHex(hashtext);

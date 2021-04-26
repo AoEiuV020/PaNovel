@@ -17,7 +17,6 @@ import okhttp3.HttpUrl
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.debug
 import java.util.*
-import cc.aoeiuv020.panovel.api.NovelDetail as NovelDetailApi
 import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel as ServerNovel
 
 /**
@@ -236,11 +235,13 @@ object DataManager : AnkoLogger {
 
     fun getBookList(bookListId: Long): BookList = app.getBookList(bookListId)
 
+    fun isEmpty(): Boolean = app.isEmpty()
+
     /**
      * 列表中的小说在该书单里的包含情况，
      */
     fun inBookList(bookListId: Long, list: List<NovelManager>) =
-    // 多费一个map,
+            // 多费一个map,
             app.inBookList(bookListId, list.map { it.novel })
 
     fun getNovelFromBookList(bookListId: Long): List<Novel> = app.getNovelFromBookList(bookListId)

@@ -188,6 +188,20 @@ fun AlertBuilder<*>.safelyShow(): DialogInterface? = try {
 }
 
 /**
+ * 简单提示一些信息，
+ */
+@WorkerThread
+fun Context.tip(
+        s: String
+) {
+    AlertDialog.Builder(ctx)
+            .setMessage(s)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+
+}
+
+/**
  * 异步线程弹单选框并等待用户选择，
  *
  * @return 返回用户选择的元素序号，取消就返回null,

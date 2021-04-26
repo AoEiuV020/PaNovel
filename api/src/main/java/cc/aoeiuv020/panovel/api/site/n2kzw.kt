@@ -13,7 +13,7 @@ import org.jsoup.nodes.Element
 class N2kzw : DslJsoupNovelContext() {init {
     site {
         name = "2k中文网"
-        baseUrl = "https://www.2kzw.com"
+        baseUrl = "https://www.2kzw.cc"
         logo = "https://www.2kzw.com/17mb/images/logo.png"
     }
     // 这网站所有名字都是/遮天(精校版)/官道无疆(校对版)/

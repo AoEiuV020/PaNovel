@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.os.Bundle
+import android.os.Environment
 import android.os.Parcel
 import android.os.Parcelable
 import android.preference.Preference
@@ -16,7 +17,6 @@ import cc.aoeiuv020.filepicker.model.DialogConfigs
 import cc.aoeiuv020.filepicker.model.DialogProperties
 import java.io.File
 
-@Suppress("RedundantOverride", "MemberVisibilityCanBePrivate", "unused", "SpellCheckingInspection", "LocalVariableName", "RemoveEmptySecondaryConstructorBody")
 class FilePickerPreference : Preference, DialogSelectionListener, Preference.OnPreferenceClickListener {
     private var mDialog: FilePickerDialog? = null
     private var properties: DialogProperties = DialogProperties()
@@ -46,7 +46,7 @@ class FilePickerPreference : Preference, DialogSelectionListener, Preference.OnP
     }
 
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-        // 当前值为空时给个全局的默认值，是app在sd卡的私有目录，
+        // 当前值为空时给个全局的默认值，是sd卡根目录，
         val defaultString: String = (defaultValue as? String) ?: defaultPath
         val value = if (restorePersistedValue) this.getPersistedString(defaultString) else defaultString
         properties.offset = File(value.split(':').first())
@@ -54,9 +54,8 @@ class FilePickerPreference : Preference, DialogSelectionListener, Preference.OnP
     }
 
     private val defaultPath: String
-        // 默认根目录是/mnt，这库有判断路径要是根目录开头才能用，所以不能通过getExternalFilesDir获取，
         @SuppressLint("SdCardPath")
-        get() = (File("/mnt/sdcard/Android/data/${context.packageName}/files")
+        get() = (Environment.getStorageDirectory().resolve("PaNovel")
                 .apply { exists() || mkdirs() }
                 .takeIf { it.canWrite() }
                 ?: context.filesDir

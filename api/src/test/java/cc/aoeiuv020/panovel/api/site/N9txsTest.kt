@@ -16,7 +16,7 @@ class N9txsTest : BaseNovelContextText(N9txs::class) {
     @Test
     fun detail() {
         detail("43776", "43776", "最强神医混都市", "九歌",
-                "https://img.9txs.com/43776/526786.jpg",
+                "https://img.9txs.org/43776/526786.jpg",
                 "★精华简介★\n" +
                         "当过兵王，又是神医，兼职修真，一路混迹都市，一路美女狂收。我的桃花运，运不断，做个帅哥太累了！",
                 "2020-03-28 15:08:01")
@@ -35,7 +35,7 @@ class N9txsTest : BaseNovelContextText(N9txs::class) {
     @Test
     fun content() {
         content("171852/684157",
-                "您可以在百度里搜索“诡校危道 九桃小说(9txs.com)”查找最新章节！",
+                "您可以在百度里搜索“诡校危道 九桃小说(9txs.org)”查找最新章节！",
                 "洛凌汐气得直咬牙根，不过等顾云出去之后，脸上又重新浮现出笑意，趁她姐姐没有看见的时候，将一叠红色的票子，放到一荣不起眼的地方。",
                 75)
     }

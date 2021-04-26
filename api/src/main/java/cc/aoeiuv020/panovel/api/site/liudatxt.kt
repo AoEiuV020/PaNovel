@@ -10,7 +10,7 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 class Liudatxt : DslJsoupNovelContext() { init {
     site {
         name = "溜达小说"
-        baseUrl = "http://www.liudatxt.com"
+        baseUrl = "http://www.txtshuku.org"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=1b4c19b5f0edab6474724dc8c737af81/4afa9ae93901213f074d29a25fe736d12e2e95b9.jpg"
     }
     search {

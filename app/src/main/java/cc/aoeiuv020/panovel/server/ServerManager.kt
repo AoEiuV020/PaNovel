@@ -18,11 +18,10 @@ import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
 import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
 import cc.aoeiuv020.panovel.settings.ServerSettings
-import cc.aoeiuv020.panovel.util.NotificationChannelId
-import cc.aoeiuv020.panovel.util.VersionName
-import cc.aoeiuv020.panovel.util.VersionUtil
-import cc.aoeiuv020.panovel.util.notify
+import cc.aoeiuv020.panovel.util.*
+import okhttp3.HttpUrl
 import org.jetbrains.anko.*
+import java.net.InetAddress
 
 /**
  *
@@ -31,6 +30,7 @@ import org.jetbrains.anko.*
 object ServerManager : AnkoLogger {
     private var novelService: NovelService? = null
     private var outOfVersion: Boolean = false
+    private var disabled: Boolean = false
     var config: Config? = null
 
     fun downloadUpdate(ctx: Context, extra: String) {
@@ -100,10 +100,7 @@ object ServerManager : AnkoLogger {
     }
 
     fun touch(novel: Novel) {
-        debug { "touch ：<${novel.run { "$site.$author.$name" }}>" }
-        val service = getService() ?: return
-        val result = service.touch(novel)
-        debug { "上传<${novel.run { "$site.$author.$name" }}>更新返回: $result" }
+        // 意义不大，禁用了，
     }
 
     fun message(): Message? {
@@ -122,15 +119,23 @@ object ServerManager : AnkoLogger {
         novelService?.let { return it }
         // 如果版本过低，直接返回空，不继续，
         if (outOfVersion) return null
+        // 暂时禁用了，
+        if (disabled) return null
 
         var defaultServer = true
-        var service = if (ServerSettings.serverAddress.isNotBlank()) {
+        val serverAddress = if (ServerSettings.serverAddress.isNotBlank()) {
             info { "server: " + ServerSettings.serverAddress }
             defaultServer = false
-            NovelServiceImpl(ServerAddress.new(ServerSettings.serverAddress))
+            ServerAddress.new(ServerSettings.serverAddress)
         } else {
-            NovelServiceImpl(ServerAddress.getDefault())
+            ServerAddress.getDefault()
         }
+        val address: InetAddress = InetAddress.getByName(HttpUrl.parse(serverAddress.host).notNullOrReport().host())
+        if (address.isLoopbackAddress) {
+            disabled = true
+            return null
+        }
+        var service = NovelServiceImpl(serverAddress)
         val currentVersion = VersionName(VersionUtil.getAppVersionName(App.ctx))
         var config: Config
         try {

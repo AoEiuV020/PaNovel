@@ -16,7 +16,7 @@ class LiudatxtTest : BaseNovelContextText(Liudatxt::class) {
     @Test
     fun detail() {
         detail("22921", "22921", "诸天万界反派聊天群", "不要尬舞",
-                "http://www.liudatxt.com/headimgs/22/22921/s22921.jpg",
+                "http://www.txtshuku.org/headimgs/22/22921/s22921.jpg",
                 "这个穿越画风有些不对？开局就是地狱难度是个什么鬼？还好自带一个金手指。\n" +
                         "从此以后踏上了诸天万界各大反派人生导师的不归路！露出一脸和善微笑的雄霸正指挥着风云怒肛帝释天、" +
                         "海贼世界已经成为一个出色海军的路飞正带着自己的海军攻打四皇、" +

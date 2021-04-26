@@ -54,7 +54,7 @@ class FuzzySearchPresenter : Presenter<FuzzySearchActivity>() {
                         val message = " 搜索线程异常，"
                         // 正常不会到这，
                         Reporter.post(message, e)
-                    }) {
+                    }, ioExecutorService) {
                         while (view != null && ite.hasNext()) {
                             val site = synchronized(ite) { ite.next() }
                             debug {

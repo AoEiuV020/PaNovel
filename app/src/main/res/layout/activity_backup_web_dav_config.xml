@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".backup.webdav.BackupWebDavConfigActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/llServer"
+                style="@style/text_value_ll">
+
+                <TextView
+                    style="@style/text_value_tv"
+                    android:text="@string/backup_server_name" />
+
+                <EditText
+                    style="@style/text_value_et"
+                    android:hint="http://webdav.example.com/path/panovel"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llFileName"
+                style="@style/text_value_ll">
+
+                <TextView
+                    style="@style/text_value_tv"
+                    android:text="@string/backup_file_name" />
+
+                <EditText
+                    style="@style/text_value_et"
+                    android:hint="PaNovel-Backup.zip"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llUsername"
+                style="@style/text_value_ll">
+
+                <TextView
+                    style="@style/text_value_tv"
+                    android:text="@string/backup_username" />
+
+                <EditText
+                    style="@style/text_value_et"
+                    android:hint="username"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llPassword"
+                style="@style/text_value_ll">
+
+                <TextView
+                    style="@style/text_value_tv"
+                    android:text="@string/backup_password" />
+
+                <EditText
+                    style="@style/text_value_et"
+                    android:hint="password"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/text_value_ll">
+
+                <TextView
+                    style="@style/text_value_tv"
+                    android:text="@string/backup_label_reference" />
+
+                <TextView
+                    android:id="@+id/tvJianguoyun"
+                    style="@style/text_value_et"
+                    android:padding="16dp"
+                    android:text="坚果云"
+                    android:textColor="#0645AD"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:text="@string/backup_btn_test"
+            android:textColor="#333" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:text="@string/backup_btn_save"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

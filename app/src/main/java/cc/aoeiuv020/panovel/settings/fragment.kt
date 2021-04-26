@@ -3,16 +3,23 @@
 package cc.aoeiuv020.panovel.settings
 
 import android.Manifest
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.preference.PreferenceFragment
 import android.preference.TwoStatePreference
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.util.Pref
 import cc.aoeiuv020.panovel.util.attach
+import org.jetbrains.anko.act
+import org.jetbrains.anko.ctx
 
 
 /**
@@ -60,10 +67,16 @@ class LocationPreferenceFragment : BasePreferenceFragment(LocationSettings, R.xm
     }
 
     private fun requestPermissions() {
-        ActivityCompat.requestPermissions(activity, arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ), 1)
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager())) {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            intent.data = Uri.parse("package:${ctx.packageName}")
+            startActivityForResult(intent, 1)
+        } else {
+            ActivityCompat.requestPermissions(act, arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ), 1)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

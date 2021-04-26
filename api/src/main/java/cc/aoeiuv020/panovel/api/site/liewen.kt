@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
  * Created by AoEiuV020 on 2018.06.06-16:47:20.
  */
 class Liewen : DslJsoupNovelContext() {init {
+    enabled = false
     site {
         name = "猎文网"
         baseUrl = "https://www.liewen.la"

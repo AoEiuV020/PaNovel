@@ -2,20 +2,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <cc.aoeiuv020.filepicker.FilePickerPreference
+        android:defaultValue="${sdcard}/${applicationName}/Cache"
         android:key="cacheLocation"
         android:summary="@string/settings_cache_location_summary"
         android:title="@string/settings_cache_location"
         app:selection_type="dir_select" />
 
     <cc.aoeiuv020.filepicker.FilePickerPreference
-        android:defaultValue="/mnt/sdcard/Android/data/${applicationId}/files/Backup"
+        android:defaultValue="${sdcard}/${applicationName}/Backup"
         android:key="backupLocation"
         android:summary="@string/settings_backup_location_summary"
         android:title="@string/settings_backup_location"
         app:selection_type="dir_select" />
 
     <cc.aoeiuv020.filepicker.FilePickerPreference
-        android:defaultValue="/mnt/sdcard/Android/data/${applicationId}/files/Export"
+        android:defaultValue="${sdcard}/${applicationName}/Export"
         android:key="exportLocation"
         android:summary="@string/settings_export_location_summary"
         android:title="@string/settings_export_location"

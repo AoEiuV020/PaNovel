@@ -1,0 +1,72 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".ad.SplashActivity">
+
+    <RelativeLayout
+        android:id="@+id/splash_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+        <!-- 广点通开屏广告支持“半屏/全屏”展示，开发者可以把Logo区域放在屏幕底部，然后在Logo上方提供一个容器来放置半开屏广告，请注意此容器高度不得小于400dp -->
+
+        <!-- 2.预设开屏图片区域： -->
+        <!-- 开发者可以把自家App设计开屏图片摆放在这里，本示例中放置了一张静态图片。!-->
+        <!-- 注意1：直接将此图放在广告容器的下面即可，始终不要将广告容器splash_container的设为invisible，否则将不会展示广告无法计费，返回错误码600。-->
+        <!-- 注意2：建议开发者使用自己的开屏图片资源，而不是联盟的@drawable/splash_holder，资源规格可参照@drawable/splash_holder -->
+        <ImageView
+            android:id="@+id/splash_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/splash_bg" />
+
+        <!-- 3.开屏广告容器区域：-->
+        <!-- 注意：该区域高度不得小于400dp。在本示例中没有写死splash_container的高度值，是因为第1部分的app_logo区域是一个高度很小的图片。 -->
+        <FrameLayout
+            android:id="@+id/splash_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- 4.自定义跳过按钮区域：开发者可以根据需要自己实现不同样式的跳过按钮 -->
+        <!-- 注意1：根据广告法规定，跳过按钮必须在屏幕当中出现。因此广告展示的时候，必须让将SkipView显示出来，即visible，否则将SDK将不展示广告，返回错误码608。。 -->
+        <!-- 注意2：SDK除了会检查跳过按钮的可见性，还将检测它的尺寸，其尺寸不得小于3dp*3dp，否则将SDK将不展示广告，返回错误码608。 -->
+        <TextView
+            android:id="@+id/skip_view"
+            android:layout_width="96dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="16dp"
+            android:background="@drawable/background_circle"
+            android:gravity="center"
+            android:text="点击跳过"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:ignore="HardcodedText"
+            tools:visibility="visible" />
+        <!-- 本示例省略了自定义的倒计时，和跳过按钮放在一起实现了。开发者也可以实现自己的倒计时View，方法是在onADTick回调中获得广告剩余的展示时间，并自由决定倒计时View的样式，SDK对倒计时的View没有要求。 -->
+
+        <!-- 自定义wifi预加载按钮，需设置状态为不显示，当素材为视频且视频开始播放时，SDK内部会处理为显示状态-->
+        <TextView
+            android:id="@+id/preload_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="16dp"
+            android:background="@drawable/background_circle"
+            android:gravity="center"
+            android:text="已Wi-Fi预加载"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
+
+</FrameLayout>
