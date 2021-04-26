@@ -1,6 +1,8 @@
 package cc.aoeiuv020.panovel.ad
 
 import android.app.Application
+import android.os.Build
+import cc.aoeiuv020.panovel.BuildConfig
 import com.qq.e.comm.managers.GDTADManager
 import com.qq.e.comm.managers.setting.GlobalSetting
 
@@ -16,5 +18,9 @@ object AdHelper {
         GlobalSetting.setEnableMediationTool(true)
     }
 
-    fun createListHelper() = GdtAdListHelper()
+    fun createListHelper() = if (BuildConfig.DEBUG && Build.FINGERPRINT.contains("generic")) {
+        TestAdListHelper()
+    } else {
+        GdtAdListHelper()
+    }
 }
