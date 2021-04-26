@@ -21,8 +21,8 @@
             android:id="@+id/splash_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="center"
-            android:src="@mipmap/ic_launcher" />
+            android:scaleType="fitXY"
+            android:src="@drawable/splash_bg" />
 
         <!-- 3.开屏广告容器区域：-->
         <!-- 注意：该区域高度不得小于400dp。在本示例中没有写死splash_container的高度值，是因为第1部分的app_logo区域是一个高度很小的图片。 -->

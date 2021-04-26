@@ -31,6 +31,10 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
+    <style name="SplashTheme" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@drawable/splash_bg</item>
+    </style>
+
     <style name="text_value_ll">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
