@@ -21,12 +21,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.max
 import kotlin.math.min
 
 /**
  * Created by AoEiuV020 on 2021.04.26-02:23:16.
  */
 class AdListHelper : AnkoLogger {
+    companion object {
+        const val AD_COUNT = 5
+    }
+
     private val nativeAdEnabled = BuildConfig.DEBUG && GeneralSettings.adEnabled
     private var isDestroy: Boolean = false
     private lateinit var recyclerView: RecyclerView
@@ -40,6 +45,7 @@ class AdListHelper : AnkoLogger {
     }
     private val adList: MutableList<AdItem> = mutableListOf()
     private var loadedAdCount = 0
+    private var showedAdIndex = -1
 
     fun getItemPosition(position: Int): Int {
         return position - position / (itemsPerAd + 1)
@@ -69,7 +75,13 @@ class AdListHelper : AnkoLogger {
         if (holder !is GdtAdViewHolder) {
             throw IllegalStateException("未知Holder: ${holder.javaClass}")
         }
-        val item = getAdItem(getAdPosition(position))
+        val adPosition = getAdPosition(position)
+        showedAdIndex = max(showedAdIndex, adPosition)
+        if (showedAdIndex >= loadedAdCount - AD_COUNT) {
+            // 剩下不到一组广告没有播放就开始继续加载广告了，
+            requestAd()
+        }
+        val item = getAdItem(adPosition)
         holder.apply(item)
     }
 
@@ -95,9 +107,13 @@ class AdListHelper : AnkoLogger {
         if (!nativeAdEnabled || requesting || isDestroy) {
             return
         }
+        if (showedAdIndex < loadedAdCount - AD_COUNT) {
+            // 剩下超过一组广告没有播放就先不加载广告了，
+            return
+        }
         requesting = true
         // 一次请求只有5条，以免太久，
-        val requestAdCount = min(getNeedAdCount() - loadedAdCount, 5)
+        val requestAdCount = min(getNeedAdCount() - loadedAdCount, AD_COUNT)
         if (requestAdCount <= 0) {
             debug { "requestAd: count=$requestAdCount" }
             requesting = false
