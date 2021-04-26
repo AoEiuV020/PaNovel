@@ -14,6 +14,7 @@ object AdHelper {
         GDTADManager.getInstance().initWith(context, "1111762810")
         GlobalSetting.setChannel(999)
         GlobalSetting.setEnableMediationTool(true)
-
     }
+
+    fun createListHelper() = AdListHelper()
 }
