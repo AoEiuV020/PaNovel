@@ -172,6 +172,17 @@ abstract class AdListHelper<AD, IT : AdListHelper.AdItem<AD>, VH : AdListHelper.
     open fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         debug { "onAttachedToRecyclerView" }
         this.recyclerView = recyclerView
+        (recyclerView.layoutManager as? GridLayoutManager)?.run {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if (isAd(position)) {
+                        spanCount
+                    } else {
+                        1
+                    }
+                }
+            }
+        }
         recyclerView.adapter.notNullOrReport().registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onChanged() {
                 debug { "onChanged" }
