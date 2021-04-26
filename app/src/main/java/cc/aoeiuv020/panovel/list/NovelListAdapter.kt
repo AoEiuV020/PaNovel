@@ -7,6 +7,7 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.ad.AdHelper
+import cc.aoeiuv020.panovel.ad.AdListHelper
 import cc.aoeiuv020.panovel.data.NovelManager
 import cc.aoeiuv020.panovel.settings.ItemAction
 import cc.aoeiuv020.panovel.settings.ListSettings
@@ -47,7 +48,7 @@ open class NovelListAdapter(
     // 设置一天，以防万一时区问题，
     // 如果小说刷新时间checkUpdateTime小于这个时间就联网刷新章节列表，
     private var refreshTime = Date(TimeUnit.DAYS.toMillis(1))
-    private val adListHelper = AdHelper.createListHelper()
+    private val adListHelper: AdListHelper<*, *, *> = AdHelper.createListHelper()
 
     fun refresh() {
         refreshTime = Date()
@@ -111,17 +112,13 @@ open class NovelListAdapter(
     override fun getItemCount(): Int = adListHelper.getRealSize(data.size)
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        when (holder) {
-            is AdViewHolder -> {
-                adListHelper.adHolderApply(holder, position)
-            }
-            is NovelViewHolder -> {
-                val novel = _data[adListHelper.getItemPosition(position)]
-                holder.apply(novel, refreshTime)
-            }
-            else -> {
-                throw IllegalStateException("未知holder: ${holder.javaClass}")
-            }
+        if (holder is AdListHelper.AdViewHolder<*>) {
+            adListHelper.adHolderBind(holder, position)
+        } else if (holder is NovelViewHolder) {
+            val novel = _data[adListHelper.getItemPosition(position)]
+            holder.apply(novel, refreshTime)
+        } else {
+            throw IllegalStateException("未知holder: ${holder.javaClass}")
         }
     }
 
@@ -163,5 +160,4 @@ open class NovelListAdapter(
     }
 
     abstract class BaseViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView)
-    abstract class AdViewHolder(itemView: View) : BaseViewHolder(itemView)
 }

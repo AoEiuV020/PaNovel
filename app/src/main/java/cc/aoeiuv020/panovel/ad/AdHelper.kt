@@ -16,5 +16,5 @@ object AdHelper {
         GlobalSetting.setEnableMediationTool(true)
     }
 
-    fun createListHelper() = AdListHelper()
+    fun createListHelper() = GdtAdListHelper()
 }
