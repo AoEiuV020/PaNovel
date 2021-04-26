@@ -1,12 +1,13 @@
 package cc.aoeiuv020.panovel.ad
 
-import android.app.Activity
-import android.app.Application
 import android.content.Context
-import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -199,28 +200,11 @@ abstract class AdListHelper<AD, IT : AdListHelper.AdItem<AD>, VH : AdListHelper.
                 requestAd()
             }
         })
-        // 暂时没其他方法简单处理destroy，只能统一处理activity，
-        (recyclerView.context as Activity).registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-            override fun onActivityPaused(activity: Activity) {
-            }
-
-            override fun onActivityStarted(activity: Activity) {
-            }
-
-            override fun onActivityDestroyed(activity: Activity) {
+        // 暂时没其他方法简单处理destroy，只能统一处理activity，要额外确保这个context不能是别的，
+        (recyclerView.context as AppCompatActivity).lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            fun onActivityDestroy() {
                 onDestroy()
-            }
-
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-            }
-
-            override fun onActivityStopped(activity: Activity) {
-            }
-
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            }
-
-            override fun onActivityResumed(activity: Activity) {
             }
         })
     }
