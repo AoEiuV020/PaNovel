@@ -1,6 +1,9 @@
 package cc.aoeiuv020.panovel.ad
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
@@ -27,7 +30,7 @@ abstract class AdListHelper<AD, IT : AdListHelper.AdItem<AD>, VH : AdListHelper.
 
     open val nativeAdEnabled = BuildConfig.DEBUG && GeneralSettings.adEnabled
     protected val ctx: Context by lazy { recyclerView.context }
-    private var isDestroy: Boolean = false
+    protected var isDestroy: Boolean = false
     private var isNoAd: Boolean = false
     private lateinit var recyclerView: RecyclerView
     private var requesting: Boolean = false
@@ -196,11 +199,38 @@ abstract class AdListHelper<AD, IT : AdListHelper.AdItem<AD>, VH : AdListHelper.
                 requestAd()
             }
         })
+        // 暂时没其他方法简单处理destroy，只能统一处理activity，
+        (recyclerView.context as Activity).registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityPaused(activity: Activity) {
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+                onDestroy()
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+            }
+
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+            }
+        })
     }
 
     fun onDestroy() {
         debug { "onDestroy" }
-        this.isDestroy = true
+        if (isDestroy) {
+            return
+        }
+        isDestroy = true
         onAdDestroy()
     }
 

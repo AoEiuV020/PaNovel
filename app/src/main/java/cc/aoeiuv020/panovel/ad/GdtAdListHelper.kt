@@ -85,6 +85,12 @@ class GdtAdListHelper : AdListHelper<NativeExpressADView, GdtAdListHelper.GdtAdI
     }
 
     override fun onADLoaded(p0: MutableList<NativeExpressADView>) {
+        if (isDestroy) {
+            p0.forEach {
+                it.destroy()
+            }
+            return
+        }
         onRequestAdResult(p0)
     }
 
