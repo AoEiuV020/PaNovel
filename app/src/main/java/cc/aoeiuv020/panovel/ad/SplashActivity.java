@@ -71,7 +71,7 @@ public class SplashActivity extends Activity implements SplashADListener {
         skipView.setVisibility(View.VISIBLE);
         splashHolder = (ImageView) findViewById(R.id.splash_holder);
 
-        if (!AdSettings.INSTANCE.getAdEnabled() || !GDTADManager.getInstance().isInitialized()) {
+        if (!AdSettings.INSTANCE.getAdEnabled() || !GDTADManager.getInstance().isInitialized() || !AdSettings.INSTANCE.getMiddle13lmEnabled()) {
             realNext();
             finish();
             return;

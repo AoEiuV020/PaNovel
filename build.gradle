@@ -110,6 +110,10 @@ applicationModules.forEach { name ->
                     proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
                 }
             }
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_1_8
+                targetCompatibility JavaVersion.VERSION_1_8
+            }
 
             // 签名信息从signing.properties中获取，
             // debug和release使用相同签名，以便用debug包覆盖release包从而调试，
