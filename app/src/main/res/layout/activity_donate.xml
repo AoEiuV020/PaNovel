@@ -85,14 +85,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <cc.aoeiuv020.reader.simple.ResizableImageView
-                android:id="@+id/ivRedPacket"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="fitStart"
-                app:srcCompat="@mipmap/donate_alipay_red_packet"
-                tools:ignore="ContentDescription" />
-
             <TextView
                 android:id="@+id/tvDonateExplain"
                 android:layout_width="match_parent"
