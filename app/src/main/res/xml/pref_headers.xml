@@ -39,6 +39,10 @@
         android:title="@string/pref_others" />
 
     <header
+        android:fragment="cc.aoeiuv020.panovel.settings.AdPreferenceFragment"
+        android:title="@string/pref_ad" />
+
+    <header
         android:fragment="cc.aoeiuv020.panovel.settings.CacheClearPreferenceFragment"
         android:title="@string/pref_clear" />
 

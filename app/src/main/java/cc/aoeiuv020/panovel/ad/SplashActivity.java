@@ -29,7 +29,7 @@ import java.util.List;
 
 import cc.aoeiuv020.panovel.R;
 import cc.aoeiuv020.panovel.main.MainActivity;
-import cc.aoeiuv020.panovel.settings.GeneralSettings;
+import cc.aoeiuv020.panovel.settings.AdSettings;
 
 /**
  * 这是demo工程的入口Activity，在这里会首次调用广点通的SDK。
@@ -71,7 +71,7 @@ public class SplashActivity extends Activity implements SplashADListener {
         skipView.setVisibility(View.VISIBLE);
         splashHolder = (ImageView) findViewById(R.id.splash_holder);
 
-        if (!GeneralSettings.INSTANCE.getAdEnabled() || !GDTADManager.getInstance().isInitialized()) {
+        if (!AdSettings.INSTANCE.getAdEnabled() || !GDTADManager.getInstance().isInitialized()) {
             realNext();
             finish();
             return;
@@ -86,7 +86,7 @@ public class SplashActivity extends Activity implements SplashADListener {
     }
 
     private String getPosId() {
-        return "2091388033327424";
+        return AdConstants.GDT_AD_ID_SPLASH;
     }
 
     /**

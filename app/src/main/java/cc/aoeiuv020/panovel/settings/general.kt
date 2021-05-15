@@ -13,7 +13,5 @@ object GeneralSettings : Pref {
      * 搜索线程数，
      */
     var searchThreadsLimit: Int by Delegates.int(4)
-    // 提供彩蛋，满足条件就关闭广告，要在代码中改这个值，所以可变，var,
-    var adEnabled: Boolean by Delegates.boolean(true)
     var historyCount: Int by Delegates.int(30)
 }

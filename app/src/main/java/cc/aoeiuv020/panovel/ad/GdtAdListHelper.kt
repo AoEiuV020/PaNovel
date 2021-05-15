@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.AdSettings
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
 import com.qq.e.ads.nativ.ADSize
@@ -20,9 +21,14 @@ import org.jetbrains.anko.find
  */
 class GdtAdListHelper : AdListHelper<NativeExpressADView, GdtAdListHelper.GdtAdItem, GdtAdListHelper.GdtAdViewHolder>(), NativeExpressAD.NativeExpressADListener {
     override val nativeAdEnabled: Boolean
-        get() = super.nativeAdEnabled && GDTADManager.getInstance().isInitialized
+        get() = super.nativeAdEnabled && GDTADManager.getInstance().isInitialized && AdSettings.middle13lmEnabled
     private val mADManager: NativeExpressAD by lazy {
-        NativeExpressAD(ctx, ADSize(ADSize.FULL_WIDTH, ADSize.AUTO_HEIGHT), "9061885053908861", this)
+        NativeExpressAD(
+            ctx,
+            ADSize(ADSize.FULL_WIDTH, ADSize.AUTO_HEIGHT),
+            AdConstants.GDT_AD_ID_LIST,
+            this
+        )
     }
 
     override fun realRequestAd(requestAdCount: Int) {

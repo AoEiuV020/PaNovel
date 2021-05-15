@@ -301,5 +301,6 @@
     <string name="backup_btn_test">测试</string>
     <string name="tip_data_empty">啥也没有，是否需要导入备份或者搜索</string>
     <string name="label_telegram_group">TG群：</string>
+    <string name="pref_ad">广告</string>
 
 </resources>

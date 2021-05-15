@@ -6,7 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.server.ServerManager
-import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.AdSettings
 import cc.aoeiuv020.panovel.util.hide
 import kotlinx.android.synthetic.main.activity_donate.*
 import org.jetbrains.anko.ctx
@@ -56,7 +56,7 @@ class DonateActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         if (stopTime > 0 && System.currentTimeMillis() - stopTime > TimeUnit.SECONDS.toMillis(5)) {
-            GeneralSettings.adEnabled = false
+            AdSettings.adEnabled = false
         }
     }
 

@@ -56,38 +56,68 @@ class BackupV1 : DefaultBackup(), AnkoLogger {
             }
             BackupOption.Settings -> {
                 val map = mapOf<String, (JsonElement) -> Unit>(
-                        "backPressOutOfFullScreen" to { value -> ReaderSettings.backPressOutOfFullScreen = value.asBoolean },
-                        "adEnabled" to { value -> GeneralSettings.adEnabled = value.asBoolean },
-                        "BookSmallLayout" to { value -> ListSettings.largeView = !value.asBoolean },
-                        "fullScreenClickNextPage" to { value -> ReaderSettings.fullScreenClickNextPage = value.asBoolean },
-                        "volumeKeyScroll" to { value -> ReaderSettings.volumeKeyScroll = value.asBoolean },
-                        "reportCrash" to { value -> OtherSettings.reportCrash = value.asBoolean },
-                        "subscribeNovelUpdate" to { value -> ServerSettings.notifyNovelUpdate = value.asBoolean },
-                        "bookshelfRedDotNotifyNotReadOrNewChapter" to { value -> ListSettings.dotNotifyUpdate = value.asBoolean },
-                        "bookshelfRedDotColor" to { value -> ListSettings.dotColor = value.asInt },
-                        "bookshelfRedDotSize" to { value -> ListSettings.dotSize = value.asFloat },
-                        "fullScreenDelay" to { value -> ReaderSettings.fullScreenDelay = value.asInt },
-                        "textSize" to { value -> ReaderSettings.textSize = value.asInt },
-                        "lineSpacing" to { value -> ReaderSettings.lineSpacing = value.asInt },
-                        "paragraphSpacing" to { value -> ReaderSettings.paragraphSpacing = value.asInt },
-                        "messageSize" to { value -> ReaderSettings.messageSize = value.asInt },
-                        "autoRefreshInterval" to { value -> ReaderSettings.autoRefreshInterval = value.asInt },
-                        "textColor" to { value -> ReaderSettings.textColor = value.asInt },
-                        "backgroundColor" to { value -> ReaderSettings.backgroundColor = value.asInt },
-                        "historyCount" to { value -> GeneralSettings.historyCount = value.asInt },
-                        "downloadThreadCount" to { value -> DownloadSettings.downloadThreadsLimit = value.asInt },
-                        "chapterColorDefault" to { value -> OtherSettings.chapterColorDefault = value.asInt },
-                        "chapterColorCached" to { value -> OtherSettings.chapterColorCached = value.asInt },
-                        "chapterColorReadAt" to { value -> OtherSettings.chapterColorReadAt = value.asInt },
-                        "animationSpeed" to { value -> ReaderSettings.animationSpeed = value.asFloat },
-                        "centerPercent" to { value -> ReaderSettings.centerPercent = value.asFloat },
-                        "dateFormat" to { value -> ReaderSettings.dateFormat = value.asString },
-                        "animationMode" to { value -> ReaderSettings.animationMode = value.asString.toBean() },
-                        "shareExpiration" to { value -> OtherSettings.shareExpiration = value.asString.toBean() },
-                        "contentMargins" to { value -> ReaderSettings.contentMargins.import(value.asString) },
-                        "paginationMargins" to { value -> ReaderSettings.paginationMargins.import(value.asString) },
-                        "bookNameMargins" to { value -> ReaderSettings.bookNameMargins.import(value.asString) },
-                        "chapterNameMargins" to { value -> ReaderSettings.chapterNameMargins.import(value.asString) },
+                    "backPressOutOfFullScreen" to { value ->
+                        ReaderSettings.backPressOutOfFullScreen = value.asBoolean
+                    },
+                    "adEnabled" to { value -> AdSettings.adEnabled = value.asBoolean },
+                    "BookSmallLayout" to { value -> ListSettings.largeView = !value.asBoolean },
+                    "fullScreenClickNextPage" to { value ->
+                        ReaderSettings.fullScreenClickNextPage = value.asBoolean
+                    },
+                    "volumeKeyScroll" to { value ->
+                        ReaderSettings.volumeKeyScroll = value.asBoolean
+                    },
+                    "reportCrash" to { value -> OtherSettings.reportCrash = value.asBoolean },
+                    "subscribeNovelUpdate" to { value ->
+                        ServerSettings.notifyNovelUpdate = value.asBoolean
+                    },
+                    "bookshelfRedDotNotifyNotReadOrNewChapter" to { value ->
+                        ListSettings.dotNotifyUpdate = value.asBoolean
+                    },
+                    "bookshelfRedDotColor" to { value -> ListSettings.dotColor = value.asInt },
+                    "bookshelfRedDotSize" to { value -> ListSettings.dotSize = value.asFloat },
+                    "fullScreenDelay" to { value -> ReaderSettings.fullScreenDelay = value.asInt },
+                    "textSize" to { value -> ReaderSettings.textSize = value.asInt },
+                    "lineSpacing" to { value -> ReaderSettings.lineSpacing = value.asInt },
+                    "paragraphSpacing" to { value ->
+                        ReaderSettings.paragraphSpacing = value.asInt
+                    },
+                    "messageSize" to { value -> ReaderSettings.messageSize = value.asInt },
+                    "autoRefreshInterval" to { value ->
+                        ReaderSettings.autoRefreshInterval = value.asInt
+                    },
+                    "textColor" to { value -> ReaderSettings.textColor = value.asInt },
+                    "backgroundColor" to { value -> ReaderSettings.backgroundColor = value.asInt },
+                    "historyCount" to { value -> GeneralSettings.historyCount = value.asInt },
+                    "downloadThreadCount" to { value ->
+                        DownloadSettings.downloadThreadsLimit = value.asInt
+                    },
+                    "chapterColorDefault" to { value ->
+                        OtherSettings.chapterColorDefault = value.asInt
+                    },
+                    "chapterColorCached" to { value ->
+                        OtherSettings.chapterColorCached = value.asInt
+                    },
+                    "chapterColorReadAt" to { value ->
+                        OtherSettings.chapterColorReadAt = value.asInt
+                    },
+                    "animationSpeed" to { value -> ReaderSettings.animationSpeed = value.asFloat },
+                    "centerPercent" to { value -> ReaderSettings.centerPercent = value.asFloat },
+                    "dateFormat" to { value -> ReaderSettings.dateFormat = value.asString },
+                    "animationMode" to { value ->
+                        ReaderSettings.animationMode = value.asString.toBean()
+                    },
+                    "shareExpiration" to { value ->
+                        OtherSettings.shareExpiration = value.asString.toBean()
+                    },
+                    "contentMargins" to { value -> ReaderSettings.contentMargins.import(value.asString) },
+                    "paginationMargins" to { value -> ReaderSettings.paginationMargins.import(value.asString) },
+                    "bookNameMargins" to { value -> ReaderSettings.bookNameMargins.import(value.asString) },
+                    "chapterNameMargins" to { value ->
+                        ReaderSettings.chapterNameMargins.import(
+                            value.asString
+                        )
+                    },
                         "timeMargins" to { value -> ReaderSettings.timeMargins.import(value.asString) },
                         "batteryMargins" to { value -> ReaderSettings.batteryMargins.import(value.asString) }
                 )

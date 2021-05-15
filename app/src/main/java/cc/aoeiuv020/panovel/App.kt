@@ -10,7 +10,7 @@ import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.ad.AdHelper
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.AdSettings
 import cc.aoeiuv020.ssl.TLSSocketFactory
 import cc.aoeiuv020.ssl.TrustManagerUtils
 import cn.jpush.android.api.JPushInterface
@@ -124,7 +124,7 @@ class App : MultiDexApplication(), AnkoLogger {
     }
 
     private fun initAd() {
-        if (GeneralSettings.adEnabled) {
+        if (AdSettings.adEnabled) {
             AdHelper.init(this)
         }
     }
