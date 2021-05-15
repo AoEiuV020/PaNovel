@@ -19,9 +19,7 @@ import cc.aoeiuv020.panovel.server.service.NovelService
 import cc.aoeiuv020.panovel.server.service.impl.NovelServiceImpl
 import cc.aoeiuv020.panovel.settings.ServerSettings
 import cc.aoeiuv020.panovel.util.*
-import okhttp3.HttpUrl
 import org.jetbrains.anko.*
-import java.net.InetAddress
 
 /**
  *
@@ -122,54 +120,31 @@ object ServerManager : AnkoLogger {
         // 暂时禁用了，
         if (disabled) return null
 
-        var defaultServer = true
-        val serverAddress = if (ServerSettings.serverAddress.isNotBlank()) {
-            info { "server: " + ServerSettings.serverAddress }
-            defaultServer = false
-            ServerAddress.new(ServerSettings.serverAddress)
-        } else {
-            ServerAddress.getDefault()
-        }
-        val address: InetAddress = InetAddress.getByName(HttpUrl.parse(serverAddress.host).notNullOrReport().host())
-        if (address.isLoopbackAddress) {
+        val config: Config
+        try {
+            config = DnsUtils.txtToBean(ServerAddress.CONFIG_HOST)
+        } catch (e: Exception) {
+            warn("get config failed: " + ServerAddress.CONFIG_HOST, e)
             disabled = true
             return null
         }
-        var service = NovelServiceImpl(serverAddress)
-        val currentVersion = VersionName(VersionUtil.getAppVersionName(App.ctx))
-        var config: Config
-        try {
-            config = service.config()
-        } catch (e: Exception) {
-            warn("get config failed: " + service.host, e)
-            if (defaultServer) {
-                // 默认服务器获取config失败就不继续了，
-                throw e
-            } else {
-                service = NovelServiceImpl(ServerAddress.getDefault())
-                config = service.config()
-            }
-        }
-        config.apiUrl?.let { apiUrl ->
-            try {
-                service = NovelServiceImpl(ServerAddress.new(apiUrl))
-                config = service.config()
-            } catch (e: Exception) {
-                warn("get config failed: " + service.host, e)
-                service = NovelServiceImpl(ServerAddress.getDefault())
-                config = service.config()
-            }
+        this.config = config
+
+        val apiUrl: String = config.apiUrl.takeIf { !it.isNullOrEmpty() } ?: run {
+            disabled = true
+            return null
         }
         val minVersion = VersionName(config.minVersion)
+        val currentVersion = VersionName(VersionUtil.getAppVersionName(App.ctx))
         info { "getService minVersion $minVersion/$currentVersion" }
-        return if (currentVersion < minVersion) {
+        if (currentVersion < minVersion) {
             // 如果版本过低，直接返回空，不继续，
             outOfVersion = true
-            null
-        } else {
-            novelService = service
-            this.config = config
-            service
+            return null
         }
+        val serverAddress =
+            ServerAddress.new(ServerSettings.serverAddress.takeIf { !it.isNullOrEmpty() } ?: apiUrl)
+        info { "server: " + serverAddress.baseUrl }
+        return NovelServiceImpl(serverAddress)
     }
 }

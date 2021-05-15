@@ -10,7 +10,7 @@ import cc.aoeiuv020.panovel.server.dal.model.autogen.Novel
  * Created by AoEiuV020 on 2018.04.05-09:13:02.
  */
 interface NovelService {
-    val host: String
+    val baseurl: String
     fun uploadUpdate(novel: Novel): Boolean
     fun needRefreshNovelList(count: Int): List<Novel>
     fun queryList(novelMap: Map<Long, Novel>): Map<Long, QueryResponse>

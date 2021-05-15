@@ -1,9 +1,12 @@
 package cc.aoeiuv020.panovel.util
 
 import android.content.Context
+import cc.aoeiuv020.gson.toJson
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.server.common.toBean
 import org.xbill.DNS.*
 import org.xbill.DNS.config.AndroidResolverConfigProvider
+import java.net.URLDecoder
 
 
 /**
@@ -38,9 +41,20 @@ object DnsUtils {
             .flatMap { query ->
                 query.split('&').map { entry ->
                     entry.split('=').let {
-                        it[0] to it[1]
+                        URLDecoder.decode(it[0], Charsets.UTF_8.name()) to URLDecoder.decode(
+                            it[1],
+                            Charsets.UTF_8.name()
+                        )
                     }
                 }
             }.toMap()
     }
+
+    /**
+     * txt记录解析成对象，
+     */
+    inline fun <reified T : Any> txtToBean(host: String): T {
+        return parseTxt(host).toJson().toBean()
+    }
+
 }
