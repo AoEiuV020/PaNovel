@@ -66,7 +66,7 @@ class FuzzySearchPresenter : Presenter<FuzzySearchActivity>() {
                                     // 过滤，author为空表示模糊搜索，只要小说名包含，
                                     // author不为空表示精确搜索，要小说名和作者名都匹配，
                                     if (author == null) {
-                                        novel.name.contains(name)
+                                        novel.name.toLowerCase().contains(name.toLowerCase())
                                     } else {
                                         novel.name == name && novel.author == author
                                     }
