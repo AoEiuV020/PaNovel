@@ -8,9 +8,11 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
  * Created by AoEiuV020 on 2018.06.03-13:56:04.
  */
 class Ymoxuan : DslJsoupNovelContext() {init {
+    // 换了域名http://www.yanmoxuan.net/， 然后502,
+    hide = true
     site {
         name = "衍墨轩"
-        baseUrl = "https://www.ymxxs.com"
+        baseUrl = "https://www.yanmoxuan.org"
         logo = "https://www.ymxxs.com/image/logo.gif"
     }
     search {
