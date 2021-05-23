@@ -9,7 +9,7 @@ import java.util.*
  */
 @Dao
 abstract class SiteDao {
-    @Query("select * from Site where hide = 0 order by pinnedTime desc, name asc")
+    @Query("select * from Site where hide = 0 order by pinnedTime desc, createTime desc, name asc")
     abstract fun list(): List<Site>
 
     @Query("select * from Site")

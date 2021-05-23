@@ -53,7 +53,7 @@ class AppDatabaseManager(context: Context) {
 
     fun newSite(name: String, baseUrl: String, logo: String, enabled: Boolean, hide: Boolean): Site = db.runInTransaction<Site> {
         Site(
-                name, baseUrl, logo, enabled, hide = hide
+            name, baseUrl, logo, enabled, hide = hide, createTime = Date()
         ).also {
             db.siteDao().insert(it)
         }

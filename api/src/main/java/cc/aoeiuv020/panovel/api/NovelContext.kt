@@ -39,7 +39,7 @@ abstract class NovelContext {
 
             Manhuagui(), SiFang(), Qinxiaoshuo(), N9txs(), N168kanshu(),
             Yunduwu(), N123du(), Biqugese(), Biqugezhh(), Shoudashu()
-        )
+        ).asReversed()
 
         const val sitesVersion = 5
 

@@ -1,0 +1,322 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 6,
+    "identityHash": "70b23297dec8a892e9de6ba39cca55cf",
+    "entities": [
+      {
+        "tableName": "Novel",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `site` TEXT NOT NULL, `author` TEXT NOT NULL, `name` TEXT NOT NULL, `detail` TEXT NOT NULL, `readAtChapterIndex` INTEGER NOT NULL, `readAtTextIndex` INTEGER NOT NULL, `bookshelf` INTEGER NOT NULL, `chaptersCount` INTEGER NOT NULL, `image` TEXT NOT NULL, `introduction` TEXT NOT NULL, `chapters` TEXT, `lastChapterName` TEXT NOT NULL, `readAtChapterName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL, `checkUpdateTime` INTEGER NOT NULL, `receiveUpdateTime` INTEGER NOT NULL, `pinnedTime` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "site",
+            "columnName": "site",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "author",
+            "columnName": "author",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "detail",
+            "columnName": "detail",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readAtChapterIndex",
+            "columnName": "readAtChapterIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readAtTextIndex",
+            "columnName": "readAtTextIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookshelf",
+            "columnName": "bookshelf",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chaptersCount",
+            "columnName": "chaptersCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "introduction",
+            "columnName": "introduction",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapters",
+            "columnName": "chapters",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastChapterName",
+            "columnName": "lastChapterName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readAtChapterName",
+            "columnName": "readAtChapterName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readTime",
+            "columnName": "readTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updateTime",
+            "columnName": "updateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "checkUpdateTime",
+            "columnName": "checkUpdateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "receiveUpdateTime",
+            "columnName": "receiveUpdateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pinnedTime",
+            "columnName": "pinnedTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Novel_site_author_name",
+            "unique": true,
+            "columnNames": [
+              "site",
+              "author",
+              "name"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_Novel_site_author_name` ON `${TABLE_NAME}` (`site`, `author`, `name`)"
+          },
+          {
+            "name": "index_Novel_bookshelf",
+            "unique": false,
+            "columnNames": [
+              "bookshelf"
+            ],
+            "createSql": "CREATE  INDEX `index_Novel_bookshelf` ON `${TABLE_NAME}` (`bookshelf`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Site",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `baseUrl` TEXT NOT NULL, `logo` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `pinnedTime` INTEGER NOT NULL, `hide` INTEGER NOT NULL, `createTime` INTEGER NOT NULL, PRIMARY KEY(`name`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "baseUrl",
+            "columnName": "baseUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "logo",
+            "columnName": "logo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pinnedTime",
+            "columnName": "pinnedTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hide",
+            "columnName": "hide",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createTime",
+            "columnName": "createTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "name"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "BookListItem",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookListId` INTEGER NOT NULL, `novelId` INTEGER NOT NULL, PRIMARY KEY(`bookListId`, `novelId`), FOREIGN KEY(`bookListId`) REFERENCES `BookList`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`novelId`) REFERENCES `Novel`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "bookListId",
+            "columnName": "bookListId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "novelId",
+            "columnName": "novelId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "bookListId",
+            "novelId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_BookListItem_novelId",
+            "unique": false,
+            "columnNames": [
+              "novelId"
+            ],
+            "createSql": "CREATE  INDEX `index_BookListItem_novelId` ON `${TABLE_NAME}` (`novelId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "BookList",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "bookListId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "Novel",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "novelId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "BookList",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `createTime` INTEGER NOT NULL, `uuid` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createTime",
+            "columnName": "createTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_BookList_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_BookList_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"70b23297dec8a892e9de6ba39cca55cf\")"
+    ]
+  }
+}
