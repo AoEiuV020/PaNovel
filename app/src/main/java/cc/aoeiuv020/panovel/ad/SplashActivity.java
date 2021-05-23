@@ -81,6 +81,7 @@ public class SplashActivity extends Activity implements SplashADListener {
             // 10分钟冷却中重复打开主页不加载广告，
             realNext(false);
             finish();
+            return;
         }
 
         if (Build.VERSION.SDK_INT >= 23) {
