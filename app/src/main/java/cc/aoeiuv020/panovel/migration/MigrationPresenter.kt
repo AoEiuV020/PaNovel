@@ -2,10 +2,7 @@ package cc.aoeiuv020.panovel.migration
 
 import android.content.Context
 import cc.aoeiuv020.panovel.Presenter
-import cc.aoeiuv020.panovel.migration.impl.DataMigration
-import cc.aoeiuv020.panovel.migration.impl.DownloadMigration
-import cc.aoeiuv020.panovel.migration.impl.LoginMigration
-import cc.aoeiuv020.panovel.migration.impl.SitesMigration
+import cc.aoeiuv020.panovel.migration.impl.*
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
@@ -44,9 +41,10 @@ class MigrationPresenter(
      * 要保持按版本名排序，
      */
     val list: List<Pair<String, List<KClass<out Migration>>>> = listOf(
-            // listOf嵌套时智能识别类型有点问题，这里不用，
-            "2.2.2" to list(DataMigration::class, LoginMigration::class),
-            "3.2.4" to list(DownloadMigration::class)
+        // listOf嵌套时智能识别类型有点问题，这里不用，
+        "2.2.2" to list(DataMigration::class, LoginMigration::class),
+        "3.2.4" to list(DownloadMigration::class),
+        "3.4.1" to list(AdSettingsMigration::class)
     )
 
     fun start() {
