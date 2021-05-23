@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import cc.aoeiuv020.anull.notNull
+import cc.aoeiuv020.base.jar.ownLinesString
 import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.okhttp.OkHttpUtils
@@ -46,7 +47,8 @@ object Check : Pref, AnkoLogger {
     }
 
     private fun getCoolapkNewestVersionName(): String {
-        return Jsoup.connect(COOLAPK_PAGE_URL).get().select("span.list_app_info").notNull().text()
+        return Jsoup.connect(COOLAPK_PAGE_URL).get().selectFirst("span.list_app_info").notNull()
+            .text()
             .trim().also { versionName ->
                 if (!versionName.matches("\\d*(\\.\\d*)*")) {
                     throw IllegalStateException("coolapk版本号异常, $versionName")
@@ -56,8 +58,8 @@ object Check : Pref, AnkoLogger {
 
     private fun getCoolapkChangeLog(): String {
         return Jsoup.connect(COOLAPK_PAGE_URL).get()
-            .select("body > div > div:nth-child(2) > div.app_left > div.apk_left_two > div > div:nth-child(2) > p.apk_left_title_info")
-            .notNull().text()
+            .selectFirst("body > div > div:nth-child(2) > div.app_left > div.apk_left_two > div > div:nth-child(2) > p.apk_left_title_info")
+            .notNull().ownLinesString()
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
