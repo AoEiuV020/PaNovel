@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.okhttp.OkHttpUtils
@@ -14,8 +15,10 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.regex.compilePattern
+import cc.aoeiuv020.regex.matches
 import cc.aoeiuv020.regex.pick
 import org.jetbrains.anko.*
+import org.jsoup.Jsoup
 import java.io.BufferedReader
 import java.net.URL
 import java.util.concurrent.TimeUnit
@@ -30,10 +33,31 @@ object Check : Pref, AnkoLogger {
     private var cachedVersionName: String by Delegates.string("0")
     private const val CHANGE_LOG_URL =
         "https://raw.githubusercontent.com/AoEiuV020/PaNovel/master/app/src/main/assets/ChangeLog.txt"
+    private const val COOLAPK_PAGE_URL = "https://www.coolapk.com/apk/cc.aoeiuv020.panovel"
     private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
     private var knownVersionName: String by Delegates.string("0")
     private fun getNewestVersionName(): String {
-        return OkHttpUtils.get(LATEST_RELEASE_GITHUB).string().jsonPath.get("tag_name")
+        return try {
+            getCoolapkNewestVersionName()
+        } catch (e: Exception) {
+            Reporter.post("coolapk检查新版本失败", e)
+            OkHttpUtils.get(LATEST_RELEASE_GITHUB).string().jsonPath.get("tag_name")
+        }
+    }
+
+    private fun getCoolapkNewestVersionName(): String {
+        return Jsoup.connect(COOLAPK_PAGE_URL).get().select("span.list_app_info").notNull().text()
+            .trim().also { versionName ->
+                if (!versionName.matches("\\d*(\\.\\d*)*")) {
+                    throw IllegalStateException("coolapk版本号异常, $versionName")
+                }
+            }
+    }
+
+    private fun getCoolapkChangeLog(): String {
+        return Jsoup.connect(COOLAPK_PAGE_URL).get()
+            .select("body > div > div:nth-child(2) > div.app_left > div.apk_left_two > div > div:nth-child(2) > p.apk_left_title_info")
+            .notNull().text()
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -46,8 +70,10 @@ object Check : Pref, AnkoLogger {
         }
     }
 
-    private fun getChangeLog(currentVersionName: String): String {
-        return try {
+    private fun getChangeLog(currentVersionName: String): String = try {
+        getCoolapkChangeLog()
+    } catch (e: Exception) {
+        try {
             URL(CHANGE_LOG_URL).openStream().bufferedReader().cutChangeLog(currentVersionName)
         } catch (e: Exception) {
             val message = "获取更新日志失败，\n"
