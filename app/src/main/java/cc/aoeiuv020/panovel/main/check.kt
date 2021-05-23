@@ -18,6 +18,7 @@ import cc.aoeiuv020.regex.pick
 import org.jetbrains.anko.*
 import java.io.BufferedReader
 import java.net.URL
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -27,7 +28,8 @@ object Check : Pref, AnkoLogger {
     override val name: String
         get() = "Check"
     private var cachedVersionName: String by Delegates.string("0")
-    private const val CHANGE_LOG_URL = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/master/app/src/main/assets/ChangeLog.txt"
+    private const val CHANGE_LOG_URL =
+        "https://raw.githubusercontent.com/AoEiuV020/PaNovel/master/app/src/main/assets/ChangeLog.txt"
     private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
     private var knownVersionName: String by Delegates.string("0")
     private fun getNewestVersionName(): String {
@@ -152,7 +154,8 @@ object Check : Pref, AnkoLogger {
 
     private const val RELEASE_COOLAPK = "https://www.coolapk.com/apk/167994"
     private const val RELEASE_GITHUB = "https://github.com/AoEiuV020/PaNovel/releases"
-    private const val LATEST_RELEASE_GITHUB = "https://api.github.com/repos/AoEiuV020/PaNovel/releases/latest"
+    private const val LATEST_RELEASE_GITHUB =
+        "https://api.github.com/repos/AoEiuV020/PaNovel/releases/latest"
     private var ignoreSignatureCheck: Boolean by Delegates.boolean(false)
     private var signature: String by Delegates.string("")
 
@@ -161,6 +164,16 @@ object Check : Pref, AnkoLogger {
      */
     private fun checkSignature(ctx: Context): Boolean {
         info { "checkSignature " + BuildConfig.SIGNATURE }
+        if (TimeUnit.MILLISECONDS.toDays(
+                System.currentTimeMillis() - ctx.packageManager.getPackageInfo(
+                    ctx.packageName,
+                    0
+                ).firstInstallTime
+            ) < 7
+        ) {
+            // 7天内不检查签名，
+            return true
+        }
         @Suppress("SENSELESS_COMPARISON")
         if (BuildConfig.SIGNATURE == null) {
             return true
@@ -169,7 +182,7 @@ object Check : Pref, AnkoLogger {
             return true
         }
         val apkSign = signature.takeIf(String::isNotEmpty)
-                ?: SignatureUtil.getAppSignature(ctx).also { signature = it }
+            ?: SignatureUtil.getAppSignature(ctx).also { signature = it }
         info { "apkSign = $apkSign" }
         return BuildConfig.SIGNATURE.equals(apkSign, ignoreCase = true)
     }
