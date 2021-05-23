@@ -2,8 +2,10 @@ package cc.aoeiuv020.panovel.migration
 
 import android.content.Context
 import cc.aoeiuv020.panovel.Presenter
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.migration.impl.*
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.settings.SiteSettings
 import cc.aoeiuv020.panovel.util.Delegates
 import cc.aoeiuv020.panovel.util.Pref
 import cc.aoeiuv020.panovel.util.VersionName
@@ -19,22 +21,25 @@ import kotlin.reflect.KClass
  * Created by AoEiuV020 on 2018.05.16-22:54:50.
  */
 class MigrationPresenter(
-        override val ctx: Context
+    override val ctx: Context
 ) : Presenter<MigrationView>(), Pref, AnkoLogger {
     // sp file is App.ctx.packageName + "_$name"
     override val name: String = "Migration"
+
     /**
      * 缓存以前的版本，
      * key is "cachedVersion",
      * Delegate不受混淆影响，
      */
     private var cachedVersion: String by Delegates.string("0")
+
     /**
      * 获取当前版本，
      */
     private val currentVersion: String = VersionUtil.getAppVersionName(ctx)
 
-    private fun list(vararg list: KClass<out Migration>): List<KClass<out Migration>> = list.toList()
+    private fun list(vararg list: KClass<out Migration>): List<KClass<out Migration>> =
+        list.toList()
 
     /**
      * 所有数据迁移封装的Migration,
@@ -51,42 +56,47 @@ class MigrationPresenter(
         debug { "start," }
         var cachedVersionName = VersionName(cachedVersion)
         val currentVersionName = VersionName(currentVersion)
-        when {
-            cachedVersionName == currentVersionName -> // 版本没变就直接返回，
-                view?.showMigrateComplete(from = currentVersionName, to = currentVersionName)
-            cachedVersionName > currentVersionName -> {
-                // 降级就记录一下现在的版本，防止反复显示降级，同时下次升级时能正常迁移降级后生成的数据，
-                cachedVersion = currentVersion
-                view?.showDowngrade(from = cachedVersionName, to = currentVersionName)
-                view?.showMigrateComplete(from = cachedVersionName, to = currentVersionName)
+        view?.doAsync({ e ->
+            val message = if (e is MigrateException) {
+                "迁移旧版数据失败，从<${cachedVersionName.name}>到<${e.migration.to.name}>"
+            } else {
+                "未知错误，"
             }
-            cachedVersionName < currentVersionName -> {
-                debug {
-                    "migrate start <${cachedVersionName.name} to ${currentVersionName.name}>"
+            Reporter.post(message, e)
+            error(message, e)
+            ctx.runOnUiThread {
+                if (e is MigrateException) {
+                    view?.showMigrateError(from = cachedVersionName, migration = e.migration)
+                } else {
+                    view?.showError(message, e)
                 }
-                view?.doAsync({ e ->
-                    val message = if (e is MigrateException) {
-                        "迁移旧版数据失败，从<${cachedVersionName.name}>到<${e.migration.to.name}>"
-                    } else {
-                        "未知错误，"
+            }
+        }) {
+            // 网站列表的迁移单独处理不影响版本号，直接同步最新支持的所有网站到数据库，
+            // 由于操作了数据库，同时会触发room版本迁移，
+            val sitesMigration = SitesMigration()
+            if (DataManager.sitesVersion > SiteSettings.cachedVersion) {
+                uiThread {
+                    view?.showUpgrading(from = cachedVersionName, migration = sitesMigration)
+                }
+                sitesMigration.migrate(ctx, cachedVersionName)
+                SiteSettings.cachedVersion = DataManager.sitesVersion
+            }
+            when {
+                cachedVersionName == currentVersionName -> uiThread {
+                    // 版本没变就直接返回，
+                    view?.showMigrateComplete(from = currentVersionName, to = currentVersionName)
+                }
+                cachedVersionName > currentVersionName -> uiThread {
+                    // 降级就记录一下现在的版本，防止反复显示降级，同时下次升级时能正常迁移降级后生成的数据，
+                    cachedVersion = currentVersion
+                    view?.showDowngrade(from = cachedVersionName, to = currentVersionName)
+                    view?.showMigrateComplete(from = cachedVersionName, to = currentVersionName)
+                }
+                cachedVersionName < currentVersionName -> {
+                    debug {
+                        "migrate start <${cachedVersionName.name} to ${currentVersionName.name}>"
                     }
-                    Reporter.post(message, e)
-                    error(message, e)
-                    ctx.runOnUiThread {
-                        if (e is MigrateException) {
-                            view?.showMigrateError(from = cachedVersionName, migration = e.migration)
-                        } else {
-                            view?.showError(message, e)
-                        }
-                    }
-                }) {
-                    // 网站列表的迁移单独处理不影响版本号，直接同步最新支持的所有网站到数据库，
-                    // 由于操作了数据库，同时会触发room版本迁移，
-                    val sitesMigration = SitesMigration()
-                    uiThread {
-                        view?.showUpgrading(from = cachedVersionName, migration = sitesMigration)
-                    }
-                    sitesMigration.migrate(ctx, cachedVersionName)
                     // 缓存一开始的版本，迁移完成后展示，
                     val beginVersionName = cachedVersionName
                     list.dropWhile { (versionName, _) ->

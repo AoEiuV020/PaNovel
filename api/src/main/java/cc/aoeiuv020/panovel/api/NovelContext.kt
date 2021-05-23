@@ -22,11 +22,11 @@ import java.net.URL
 abstract class NovelContext {
     companion object {
         fun getAllSite(): List<NovelContext> = listOf(
-                Piaotian(), Biquge(), Liudatxt(), Qidian(), Sfacg(),
-                Snwx(), Syxs(), Yssm(), Qlwx(), Byzw(),
+            Piaotian(), Biquge(), Liudatxt(), Qidian(), Sfacg(),
+            Snwx(), Syxs(), Yssm(), Qlwx(), Byzw(),
 
-                Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
-                Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
+            Fenghuaju(), Yllxs(), Mianhuatang(), Gxwztv(), Ymoxuan(),
+            Qingkan(), Ggdown(), Biqugebook(), Guanshuwang(), Jdxs520(),
 
             Lread(), Wenxuemi(), Yipinxia(), N360dxs(), N7dsw(),
             Aileleba(), Gulizw(), N73xs(), Siluke(), Wukong(),
@@ -41,11 +41,14 @@ abstract class NovelContext {
             Yunduwu(), N123du(), Biqugese(), Biqugezhh()
         )
 
+        const val sitesVersion = 4
+
         // 用于存取cookie,
         private val gson: Gson = GsonUtils.gsonBuilder
-                .disableHtmlEscaping()
-                .setPrettyPrinting()
-                .create()
+            .disableHtmlEscaping()
+            .setPrettyPrinting()
+            .create()
+
         /**
          * 缓存文件夹，可以随时被删除的，
          */
@@ -77,12 +80,14 @@ abstract class NovelContext {
      * 用网站名当数据保存目录名，网站名不能重复，
      */
     private val fileName get() = site.name
+
     /**
      * 缓存文件夹，可以随时被删除的，
      */
     @Suppress("MemberVisibilityCanBePrivate")
     protected val mCacheDir: File?
         get() = sCacheDir?.resolve(fileName)?.apply { exists() || mkdirs() }
+
     /**
      * 非缓存，不会随时被删除，不要放太大的东西，
      */
@@ -93,6 +98,7 @@ abstract class NovelContext {
     private val cookiesFile: File?
         get() = mFilesDir?.resolve("cookies")
     private var _cookies: Map<String, Cookie>? = null
+
     // name to Cookie,
     // 虽然浏览器支持相同name的不同cookie，按domain和path区分，但是这里一个context只有一个网站，不会有多个name,
     var cookies: Map<String, Cookie>
@@ -123,6 +129,7 @@ abstract class NovelContext {
     private val headersFile: File?
         get() = mFilesDir?.resolve("headers")
     private var _headers: Map<String, String>? = null
+
     // name to Cookie,
     // 虽然浏览器支持相同name的不同cookie，按domain和path区分，但是这里一个context只有一个网站，不会有多个name,
     var headers: Map<String, String>
@@ -157,10 +164,12 @@ abstract class NovelContext {
     val defaultCharset: String = "UTF-8"
     private val charsetFile: File?
         get() = mFilesDir?.resolve("charset")
+
     /**
      * 强制指定编码的缓存，
      */
     private var _charset: String? = null
+
     /**
      * 强制指定编码，
      */
@@ -332,7 +341,10 @@ abstract class NovelContext {
      *
      * @param extra [NovelChapter.extra]
      */
-    abstract fun getNovelContent(extra: String, listener: ((Long, Long) -> Unit)? = null): List<String>
+    abstract fun getNovelContent(
+        extra: String,
+        listener: ((Long, Long) -> Unit)? = null
+    ): List<String>
 
     /**
      * 判断这个地址是不是属于这个网站，

@@ -97,6 +97,7 @@ object DataManager : AnkoLogger {
     }
 
     fun allNovelContexts() = api.contexts
+    val sitesVersion get() = NovelContext.sitesVersion
 
     /**
      * 列出所有网站，
