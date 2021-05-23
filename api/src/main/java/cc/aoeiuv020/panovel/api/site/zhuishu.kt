@@ -7,6 +7,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
  * Created by AoEiuV020 on 2018.06.08-18:30:24.
  */
 class Zhuishu : DslJsoupNovelContext() {init {
+    // timeout,
+    hide = true
     site {
         name = "追书网"
         baseUrl = "https://www.mangg.net"
