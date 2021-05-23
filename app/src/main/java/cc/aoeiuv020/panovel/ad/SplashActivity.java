@@ -77,6 +77,12 @@ public class SplashActivity extends Activity implements SplashADListener {
             return;
         }
 
+        if (SplashAdWrapper.INSTANCE.checkCd(AdConstants.CD_SPLASH_CREATE)) {
+            // 10分钟冷却中重复打开主页不加载广告，
+            realNext(false);
+            finish();
+        }
+
         if (Build.VERSION.SDK_INT >= 23) {
             checkAndRequestPermission();
         } else {
@@ -254,7 +260,17 @@ public class SplashActivity extends Activity implements SplashADListener {
     }
 
     private void realNext() {
-        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        realNext(true);
+    }
+
+    private void realNext(boolean save) {
+        if (save) {
+            SplashAdWrapper.INSTANCE.setLastAdShowTime(System.currentTimeMillis());
+        }
+        if (isTaskRoot()) {
+            // 非root说明是在其他页面时后台恢复前台时打开的启动页广告，这时不能强制打开主页，
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        }
     }
 
     /**
