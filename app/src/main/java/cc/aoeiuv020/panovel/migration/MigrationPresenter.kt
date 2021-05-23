@@ -2,7 +2,7 @@ package cc.aoeiuv020.panovel.migration
 
 import android.content.Context
 import cc.aoeiuv020.panovel.Presenter
-import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.api.NovelContext
 import cc.aoeiuv020.panovel.migration.impl.*
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.SiteSettings
@@ -75,12 +75,12 @@ class MigrationPresenter(
             // 网站列表的迁移单独处理不影响版本号，直接同步最新支持的所有网站到数据库，
             // 由于操作了数据库，同时会触发room版本迁移，
             val sitesMigration = SitesMigration()
-            if (DataManager.sitesVersion > SiteSettings.cachedVersion) {
+            if (NovelContext.sitesVersion > SiteSettings.cachedVersion) {
                 uiThread {
                     view?.showUpgrading(from = cachedVersionName, migration = sitesMigration)
                 }
                 sitesMigration.migrate(ctx, cachedVersionName)
-                SiteSettings.cachedVersion = DataManager.sitesVersion
+                SiteSettings.cachedVersion = NovelContext.sitesVersion
             }
             when {
                 cachedVersionName == currentVersionName -> uiThread {
