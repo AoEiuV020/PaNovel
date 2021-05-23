@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cc.aoeiuv020.panovel.list.NovelListAdapter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.AdSettings
 import cc.aoeiuv020.panovel.settings.ListSettings
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import org.jetbrains.anko.AnkoLogger
@@ -28,7 +28,7 @@ abstract class AdListHelper<AD, IT : AdListHelper.AdItem<AD>, VH : AdListHelper.
         const val AD_COUNT = 5
     }
 
-    open val nativeAdEnabled = GeneralSettings.adEnabled
+    open val nativeAdEnabled = AdSettings.adEnabled
     protected val ctx: Context by lazy { recyclerView.context }
     protected var isDestroy: Boolean = false
     private var isNoAd: Boolean = false

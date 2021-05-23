@@ -21,9 +21,9 @@ class Aileleba : DslJsoupNovelContext() {init {
         post {
             // http://www.aileleba.com/modules/article/search.php
             // 电脑版搜索页面没有作者名，会出点问题，用手机版代替，
-            // http://m.aileleba.com/s.php
+            // http://m.ailelexs.com/s.php
             charset = "GBK"
-            url = "//m.ailelela.com/s.php"
+            url = "//m.ailelexs.com/s.php"
             data {
                 "type" to "articlename"
                 "s" to it

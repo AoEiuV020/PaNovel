@@ -21,10 +21,4 @@
         android:singleLine="true"
         android:title="@string/search_thread_count" />
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:enabled="false"
-        android:key="adEnabled"
-        android:title="@string/ad_enabled" />
-
 </PreferenceScreen>

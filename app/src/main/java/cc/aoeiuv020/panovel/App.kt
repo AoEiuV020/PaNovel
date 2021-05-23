@@ -1,16 +1,20 @@
 package cc.aoeiuv020.panovel
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.content.Context
+import android.os.Process
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.ad.AdHelper
+import cc.aoeiuv020.panovel.ad.SplashAdWrapper
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
-import cc.aoeiuv020.panovel.settings.GeneralSettings
+import cc.aoeiuv020.panovel.settings.AdSettings
+import cc.aoeiuv020.panovel.util.DnsUtils
 import cc.aoeiuv020.ssl.TLSSocketFactory
 import cc.aoeiuv020.ssl.TrustManagerUtils
 import cn.jpush.android.api.JPushInterface
@@ -20,6 +24,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
+import kotlin.properties.Delegates
 
 
 /**
@@ -31,18 +36,27 @@ class App : MultiDexApplication(), AnkoLogger {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var ctx: Context
+
+        /**
+         * 当前进程是否主进程，部分操作需要判断只在主进程执行一次，
+         */
+        var isMainProcess: Boolean by Delegates.notNull()
+
         /**
          * 用于app不同页面传递数据时的序列化，
          */
         val gson: Gson = GsonUtils.gsonBuilder
-                .disableHtmlEscaping()
-                .setPrettyPrinting()
-                .create()
+            .disableHtmlEscaping()
+            .setPrettyPrinting()
+            .create()
     }
 
     override fun onCreate() {
         super.onCreate()
         ctx = applicationContext
+        isMainProcess = isMainProcess()
+
+        initDnsUtils()
 
         initJson()
 
@@ -62,6 +76,10 @@ class App : MultiDexApplication(), AnkoLogger {
 
         initJar()
 
+    }
+
+    private fun initDnsUtils() {
+        DnsUtils.init(ctx)
     }
 
     /**
@@ -88,7 +106,13 @@ class App : MultiDexApplication(), AnkoLogger {
      * 只这样不能完全修复，但是app里主要是用okhttp3, 那边配置好了，
      */
     private fun initSsl() {
-        HttpsURLConnection.setDefaultSSLSocketFactory(TLSSocketFactory(TrustManagerUtils.include(emptySet())))
+        HttpsURLConnection.setDefaultSSLSocketFactory(
+            TLSSocketFactory(
+                TrustManagerUtils.include(
+                    emptySet()
+                )
+            )
+        )
     }
 
     private fun initJar() {
@@ -124,8 +148,26 @@ class App : MultiDexApplication(), AnkoLogger {
     }
 
     private fun initAd() {
-        if (GeneralSettings.adEnabled) {
+        if (AdSettings.adEnabled) {
+            SplashAdWrapper.init(this)
             AdHelper.init(this)
         }
     }
+
+    private fun getCurrentProcessName(): String {
+        val pid = Process.myPid()
+        var processName = ""
+        val manager = applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        for (process in manager.runningAppProcesses) {
+            if (process.pid == pid) {
+                processName = process.processName
+            }
+        }
+        return processName
+    }
+
+    private fun isMainProcess(): Boolean {
+        return applicationContext.packageName == getCurrentProcessName()
+    }
+
 }

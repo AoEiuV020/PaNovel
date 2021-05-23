@@ -1,0 +1,9 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:enabled="false"
+        android:key="adEnabled"
+        android:title="@string/ad_enabled" />
+
+</PreferenceScreen>

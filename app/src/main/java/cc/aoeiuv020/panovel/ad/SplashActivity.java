@@ -29,7 +29,7 @@ import java.util.List;
 
 import cc.aoeiuv020.panovel.R;
 import cc.aoeiuv020.panovel.main.MainActivity;
-import cc.aoeiuv020.panovel.settings.GeneralSettings;
+import cc.aoeiuv020.panovel.settings.AdSettings;
 
 /**
  * 这是demo工程的入口Activity，在这里会首次调用广点通的SDK。
@@ -71,10 +71,16 @@ public class SplashActivity extends Activity implements SplashADListener {
         skipView.setVisibility(View.VISIBLE);
         splashHolder = (ImageView) findViewById(R.id.splash_holder);
 
-        if (!GeneralSettings.INSTANCE.getAdEnabled() || !GDTADManager.getInstance().isInitialized()) {
+        if (!AdSettings.INSTANCE.getAdEnabled() || !GDTADManager.getInstance().isInitialized() || !AdSettings.INSTANCE.getMiddle13lmEnabled()) {
             realNext();
             finish();
             return;
+        }
+
+        if (SplashAdWrapper.INSTANCE.checkCd(AdConstants.CD_SPLASH_CREATE)) {
+            // 10分钟冷却中重复打开主页不加载广告，
+            realNext(false);
+            finish();
         }
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -86,7 +92,7 @@ public class SplashActivity extends Activity implements SplashADListener {
     }
 
     private String getPosId() {
-        return "2091388033327424";
+        return AdConstants.GDT_AD_ID_SPLASH;
     }
 
     /**
@@ -254,7 +260,17 @@ public class SplashActivity extends Activity implements SplashADListener {
     }
 
     private void realNext() {
-        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        realNext(true);
+    }
+
+    private void realNext(boolean save) {
+        if (save) {
+            SplashAdWrapper.INSTANCE.setLastAdShowTime(System.currentTimeMillis());
+        }
+        if (isTaskRoot()) {
+            // 非root说明是在其他页面时后台恢复前台时打开的启动页广告，这时不能强制打开主页，
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        }
     }
 
     /**

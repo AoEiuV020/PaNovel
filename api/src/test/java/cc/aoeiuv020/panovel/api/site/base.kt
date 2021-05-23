@@ -44,7 +44,12 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         list.take(count).forEach {
             println(it)
         }
-        return list.first { it.name == name && it.author == author && it.extra == extra }
+        return list.first {
+            it.name.equals(
+                name,
+                ignoreCase = true
+            ) && it.author == author && it.extra == extra
+        }
     }
 
     protected fun search(name: String, count: Int = 3): List<NovelItem>? {
@@ -54,7 +59,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         list.take(count).forEach {
             println(it)
         }
-        assertTrue(list.any { it.name.contains(name) })
+        assertTrue(list.any { it.name.toLowerCase().contains(name.toLowerCase()) })
         return list
     }
 

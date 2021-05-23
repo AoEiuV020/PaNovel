@@ -72,4 +72,6 @@ dependencies {
     }
     // 腾讯优量汇,
     implementation (name:'GDTSDK.unionNormal.4.351.1221', ext:'aar')
+    // 解析dns txt记录，
+    implementation 'dnsjava:dnsjava:3.3.1'
 }

@@ -40,17 +40,19 @@ abstract class BasePreferenceFragment(
     }
 }
 
-class GeneralPreferenceFragment : BasePreferenceFragment(GeneralSettings, R.xml.pref_general) {
+class AdPreferenceFragment : BasePreferenceFragment(AdSettings, R.xml.pref_ad) {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         // 实现广告启用时不能直接禁用，
         val adEnabledPreference = findPreference("adEnabled") as TwoStatePreference
         adEnabledPreference.apply {
-            isEnabled = !GeneralSettings.adEnabled
+            isEnabled = !AdSettings.adEnabled
         }
     }
 }
+
+class GeneralPreferenceFragment : BasePreferenceFragment(GeneralSettings, R.xml.pref_general)
 
 class ListPreferenceFragment : BasePreferenceFragment(ListSettings, R.xml.pref_list)
 
@@ -58,7 +60,8 @@ class ReaderPreferenceFragment : BasePreferenceFragment(ReaderSettings, R.xml.pr
 
 class DownloadPreferenceFragment : BasePreferenceFragment(DownloadSettings, R.xml.pref_download)
 
-class LocationPreferenceFragment : BasePreferenceFragment(LocationSettings, R.xml.pref_location), SharedPreferences.OnSharedPreferenceChangeListener {
+class LocationPreferenceFragment : BasePreferenceFragment(LocationSettings, R.xml.pref_location),
+    SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
             // 缓存目录修改立即生效，

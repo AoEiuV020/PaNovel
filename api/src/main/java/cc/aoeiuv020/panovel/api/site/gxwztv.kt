@@ -7,6 +7,8 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  * Created by AoEiuV020 on 2018.06.03-13:18:07.
  */
 class Gxwztv : DslJsoupNovelContext() {init {
+    // 完全就换了个站了，变成www.biquge5200.com
+    hide = true
     site {
         name = "梧州中文台"
         baseUrl = "https://www.ztv.la"

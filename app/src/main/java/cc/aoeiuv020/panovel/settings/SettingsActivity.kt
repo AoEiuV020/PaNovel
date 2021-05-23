@@ -39,6 +39,7 @@ class SettingsActivity : AppCompatPreferenceActivity(), AnkoLogger {
 
     override fun isValidFragment(fragmentName: String): Boolean {
         return PreferenceFragment::class.java.name == fragmentName
+                || AdPreferenceFragment::class.java.name == fragmentName
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || ListPreferenceFragment::class.java.name == fragmentName
                 || ReaderPreferenceFragment::class.java.name == fragmentName

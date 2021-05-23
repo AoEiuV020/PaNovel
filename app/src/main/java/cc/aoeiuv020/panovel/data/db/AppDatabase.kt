@@ -22,7 +22,7 @@ import java.util.*
  */
 @Database(
         entities = [Novel::class, Site::class, BookListItem::class, BookList::class],
-        version = 5
+        version = 6
 )
 @TypeConverters(value = [DateTypeConverter::class])
 abstract class AppDatabase : RoomDatabase() {
@@ -32,12 +32,13 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): AppDatabase {
             val dbFile = context.getDatabasePath("PaNovel-app.db")
             return sInstance ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    dbFile.path)
-                    // 版本1的数据库只有网站启用设置，不迁移，略麻烦，
-                    .fallbackToDestructiveMigrationFrom(1)
-                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                context.applicationContext,
+                AppDatabase::class.java,
+                dbFile.path
+            )
+                // 版本1的数据库只有网站启用设置，不迁移，略麻烦，
+                .fallbackToDestructiveMigrationFrom(1)
+                .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                     .build().also {
                         sInstance = it
                     }
@@ -57,7 +58,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         @VisibleForTesting
         val MIGRATION_3_4 = migration(3, 4) {
-            // Site表添加了置顶时间的字段，
+            // Site表添加了隐藏书源的字段，
             it.execSQL("ALTER TABLE Site ADD hide INTEGER default 0 NOT NULL;")
         }
 
@@ -69,15 +70,24 @@ abstract class AppDatabase : RoomDatabase() {
             it.execSQL("CREATE UNIQUE INDEX `index_BookList_uuid` ON `BookListTmp` (`uuid`)")
             val cursor = it.query("select * from BookList")
             while (cursor.moveToNext()) {
-                it.execSQL("INSERT OR ABORT INTO `BookListTmp`(`id`,`name`,`createTime`,`uuid`) VALUES (?,?,?,?)", arrayOf(
+                it.execSQL(
+                    "INSERT OR ABORT INTO `BookListTmp`(`id`,`name`,`createTime`,`uuid`) VALUES (?,?,?,?)",
+                    arrayOf(
                         cursor.getLong(cursor.getColumnIndexOrThrow("id")),
                         cursor.getString(cursor.getColumnIndexOrThrow("name")),
                         cursor.getLong(cursor.getColumnIndexOrThrow("createTime")),
                         UUID.randomUUID().toString()
-                ))
+                    )
+                )
             }
             it.execSQL("drop table BookList")
             it.execSQL("alter table BookListTmp rename to BookList")
+        }
+
+        @VisibleForTesting
+        val MIGRATION_5_6 = migration(5, 6) {
+            // Site表添加了创建时间的字段，
+            it.execSQL("ALTER TABLE Site ADD createTime integer default 0 NOT NULL;")
         }
     }
 

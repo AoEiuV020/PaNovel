@@ -5,6 +5,7 @@ import cc.aoeiuv020.panovel.App
 import cc.aoeiuv020.panovel.backup.impl.BackupV1
 import cc.aoeiuv020.panovel.backup.impl.BackupV2
 import cc.aoeiuv020.panovel.backup.impl.BackupV3
+import cc.aoeiuv020.panovel.backup.impl.BackupV4
 import net.lingala.zip4j.core.ZipFile
 import net.lingala.zip4j.exception.ZipException
 import net.lingala.zip4j.model.ZipParameters
@@ -19,7 +20,7 @@ class BackupManager {
         const val NAME_TEMP = "PaNovel-Backup-00.zip"
         const val FOLDER_TEMP = "PaNovel-Backup-00"
         const val NAME_VERSION = "version"
-        const val CURRENT_VERSION = 3
+        const val CURRENT_VERSION = 4
     }
 
     private val ctx: Context = App.ctx
@@ -40,6 +41,7 @@ class BackupManager {
                     }
 
     private fun getExporter(version: Int): IBackup = when (version) {
+        4 -> BackupV4()
         3 -> BackupV3()
         2 -> BackupV2()
         1 -> BackupV1()

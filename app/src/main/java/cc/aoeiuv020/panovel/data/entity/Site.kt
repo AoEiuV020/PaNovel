@@ -24,5 +24,9 @@ data class Site(
          */
         var pinnedTime: Date = Date(0),
         // 隐藏，true列表在网站列表里看不到，
-        var hide: Boolean = false
+        var hide: Boolean = false,
+        /**
+         * 创建时间，以便把新书源和老书源分开，
+         */
+        var createTime: Date = Date(0)
 )

@@ -22,7 +22,8 @@ import java.util.concurrent.Executors
 /**
  * Created by AoEiuV020 on 2021.04.26-02:23:16.
  */
-class TestAdListHelper : AdListHelper<String, TestAdListHelper.GdtAdItem, TestAdListHelper.GdtAdViewHolder>() {
+class TestAdListHelper :
+    AdListHelper<String, TestAdListHelper.TestAdItem, TestAdListHelper.TestAdViewHolder>() {
     override val nativeAdEnabled: Boolean
         get() = super.nativeAdEnabled && GDTADManager.getInstance().isInitialized
 
@@ -51,12 +52,12 @@ class TestAdListHelper : AdListHelper<String, TestAdListHelper.GdtAdItem, TestAd
         return LayoutInflater.from(parent.context).inflate(R.layout.item_test_ad, parent, false)
     }
 
-    override fun createAdViewHolder(parent: ViewGroup): GdtAdViewHolder {
-        return GdtAdViewHolder(createAdView(parent))
+    override fun createAdViewHolder(parent: ViewGroup): TestAdViewHolder {
+        return TestAdViewHolder(createAdView(parent))
     }
 
-    override fun createItem(): GdtAdItem {
-        return GdtAdItem()
+    override fun createItem(): TestAdItem {
+        return TestAdItem()
     }
 
     override fun onAdDestroy() {
@@ -66,7 +67,7 @@ class TestAdListHelper : AdListHelper<String, TestAdListHelper.GdtAdItem, TestAd
         }
     }
 
-    class GdtAdItem : AdItem<String>() {
+    class TestAdItem : AdItem<String>() {
         var text: String? = null
         override fun isAdInit(): Boolean {
             return text != null
@@ -77,11 +78,11 @@ class TestAdListHelper : AdListHelper<String, TestAdListHelper.GdtAdItem, TestAd
         }
     }
 
-    class GdtAdViewHolder(itemView: View) : AdViewHolder<GdtAdItem>(itemView) {
+    class TestAdViewHolder(itemView: View) : AdViewHolder<TestAdItem>(itemView) {
         private val rlContainer: FrameLayout = itemView.find(R.id.rlContainer)
         private val tvText: TextView = itemView.find(R.id.tvText)
 
-        override fun bind(item: GdtAdItem) {
+        override fun bind(item: TestAdItem) {
             if (item.isClosed || !item.isAdInit()) {
                 rlContainer.hide()
             } else {

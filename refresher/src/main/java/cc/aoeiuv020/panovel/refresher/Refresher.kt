@@ -42,7 +42,7 @@ class Refresher(
             service = NovelServiceImpl(ServerAddress.new(apiUrl))
         }
         logger.info {
-            "server: ${service.host}"
+            "server: ${service.baseurl}"
         }
         var lastTime = 0L
         var lastCount = 0

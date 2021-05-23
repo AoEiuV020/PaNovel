@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
+import cc.aoeiuv020.anull.notNull
+import cc.aoeiuv020.base.jar.ownLinesString
 import cc.aoeiuv020.jsonpath.get
 import cc.aoeiuv020.jsonpath.jsonPath
 import cc.aoeiuv020.okhttp.OkHttpUtils
@@ -14,10 +16,13 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.util.*
 import cc.aoeiuv020.regex.compilePattern
+import cc.aoeiuv020.regex.matches
 import cc.aoeiuv020.regex.pick
 import org.jetbrains.anko.*
+import org.jsoup.Jsoup
 import java.io.BufferedReader
 import java.net.URL
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -27,11 +32,34 @@ object Check : Pref, AnkoLogger {
     override val name: String
         get() = "Check"
     private var cachedVersionName: String by Delegates.string("0")
-    private const val CHANGE_LOG_URL = "https://raw.githubusercontent.com/AoEiuV020/PaNovel/master/app/src/main/assets/ChangeLog.txt"
+    private const val CHANGE_LOG_URL =
+        "https://raw.githubusercontent.com/AoEiuV020/PaNovel/master/app/src/main/assets/ChangeLog.txt"
+    private const val COOLAPK_PAGE_URL = "https://www.coolapk.com/apk/cc.aoeiuv020.panovel"
     private const val COOLAPK_MARKET_PACKAGE_NAME = "com.coolapk.market"
     private var knownVersionName: String by Delegates.string("0")
     private fun getNewestVersionName(): String {
-        return OkHttpUtils.get(LATEST_RELEASE_GITHUB).string().jsonPath.get("tag_name")
+        return try {
+            getCoolapkNewestVersionName()
+        } catch (e: Exception) {
+            Reporter.post("coolapk检查新版本失败", e)
+            OkHttpUtils.get(LATEST_RELEASE_GITHUB).string().jsonPath.get("tag_name")
+        }
+    }
+
+    private fun getCoolapkNewestVersionName(): String {
+        return Jsoup.connect(COOLAPK_PAGE_URL).get().selectFirst("span.list_app_info").notNull()
+            .text()
+            .trim().also { versionName ->
+                if (!versionName.matches("\\d*(\\.\\d*)*")) {
+                    throw IllegalStateException("coolapk版本号异常, $versionName")
+                }
+            }
+    }
+
+    private fun getCoolapkChangeLog(): String {
+        return Jsoup.connect(COOLAPK_PAGE_URL).get()
+            .selectFirst("body > div > div:nth-child(2) > div.app_left > div.apk_left_two > div > div:nth-child(2) > p.apk_left_title_info")
+            .notNull().ownLinesString()
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -44,8 +72,10 @@ object Check : Pref, AnkoLogger {
         }
     }
 
-    private fun getChangeLog(currentVersionName: String): String {
-        return try {
+    private fun getChangeLog(currentVersionName: String): String = try {
+        getCoolapkChangeLog()
+    } catch (e: Exception) {
+        try {
             URL(CHANGE_LOG_URL).openStream().bufferedReader().cutChangeLog(currentVersionName)
         } catch (e: Exception) {
             val message = "获取更新日志失败，\n"
@@ -152,7 +182,8 @@ object Check : Pref, AnkoLogger {
 
     private const val RELEASE_COOLAPK = "https://www.coolapk.com/apk/167994"
     private const val RELEASE_GITHUB = "https://github.com/AoEiuV020/PaNovel/releases"
-    private const val LATEST_RELEASE_GITHUB = "https://api.github.com/repos/AoEiuV020/PaNovel/releases/latest"
+    private const val LATEST_RELEASE_GITHUB =
+        "https://api.github.com/repos/AoEiuV020/PaNovel/releases/latest"
     private var ignoreSignatureCheck: Boolean by Delegates.boolean(false)
     private var signature: String by Delegates.string("")
 
@@ -161,6 +192,16 @@ object Check : Pref, AnkoLogger {
      */
     private fun checkSignature(ctx: Context): Boolean {
         info { "checkSignature " + BuildConfig.SIGNATURE }
+        if (TimeUnit.MILLISECONDS.toDays(
+                System.currentTimeMillis() - ctx.packageManager.getPackageInfo(
+                    ctx.packageName,
+                    0
+                ).firstInstallTime
+            ) < 7
+        ) {
+            // 7天内不检查签名，
+            return true
+        }
         @Suppress("SENSELESS_COMPARISON")
         if (BuildConfig.SIGNATURE == null) {
             return true
@@ -169,7 +210,7 @@ object Check : Pref, AnkoLogger {
             return true
         }
         val apkSign = signature.takeIf(String::isNotEmpty)
-                ?: SignatureUtil.getAppSignature(ctx).also { signature = it }
+            ?: SignatureUtil.getAppSignature(ctx).also { signature = it }
         info { "apkSign = $apkSign" }
         return BuildConfig.SIGNATURE.equals(apkSign, ignoreCase = true)
     }
