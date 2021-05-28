@@ -1,15 +1,20 @@
 package cc.aoeiuv020.panovel.shuju
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
+import cc.aoeiuv020.panovel.settings.OtherSettings
 import cc.aoeiuv020.panovel.util.safelyShow
 import cc.aoeiuv020.regex.pick
 import kotlinx.android.synthetic.main.activity_single_search.*
@@ -25,6 +30,7 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
         }
     }
 
+    private var itemJumpQidian: MenuItem? = null
     private lateinit var presenter: QidianshujuPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,13 +94,35 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
                 // http://www.qidianshuju.cn/book/1027440366.html
                 // http://www.qidianshuju.com/book/1021708634.html
                 val bookId = url.pick("http.*/book/(\\d*).html").first()
-                // https://book.qidian.com/info/1027440366
-                presenter.open("https://book.qidian.com/info/$bookId")
+                openBook(bookId)
                 return true
             } catch (ignored: Exception) {
             }
             return false
         }
+    }
+
+    private fun openBook(bookId: String) {
+        // https://book.qidian.com/info/1027440366
+        // https://m.qidian.com/book/1027440366
+        if (OtherSettings.jumpQidian) {
+            try {
+                // I/ActivityTaskManager: START u0 {act=android.intent.action.VIEW cat=[android.intent.category.BROWSABLE] dat=QDReader://app/showBook?query={"bookId":1027440366} flg=0x14400000 cmp=com.qidian.QDReader/.ui.activity.MainGroupActivity (has extras)} from uid 10241
+                // intent://app/showBook?query=%7B%22bookId%22%3A1027440366%7D#Intent;scheme=QDReader;S.browser_fallback_url=http%3A%2F%2Fdownload.qidian.com%2Fapknew%2Fsource%2FQDReaderAndroid.apk;end
+                val intent = Intent.parseUri(
+                    "intent://app/showBook?query=%7B%22bookId%22%3A$bookId%7D#Intent;scheme=QDReader;S.browser_fallback_url=http%3A%2F%2Fdownload.qidian.com%2Fapknew%2Fsource%2FQDReaderAndroid.apk;end",
+                    Intent.URI_INTENT_SCHEME
+                )
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                return
+            } catch (e: ActivityNotFoundException) {
+                toast(R.string.qidian_not_found)
+                OtherSettings.jumpQidian = false
+                updateItem()
+            }
+        }
+        presenter.open("https://book.qidian.com/info/$bookId")
     }
 
     fun openPage(url: String) {
@@ -130,5 +158,36 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
         } else {
             finish()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_qidianshuju, menu)
+        itemJumpQidian = menu.findItem(R.id.qidian)
+        updateItem()
+        return true
+    }
+
+    private fun updateItem() {
+        itemJumpQidian?.setIcon(
+            if (OtherSettings.jumpQidian) {
+                R.drawable.ic_jump_qidian
+            } else {
+                R.drawable.ic_jump_qidian_blocked
+            }
+        )
+    }
+
+    private fun toggleQidian() {
+        OtherSettings.jumpQidian = !OtherSettings.jumpQidian
+        updateItem()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.close -> finish()
+            R.id.qidian -> toggleQidian()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 }

@@ -303,5 +303,7 @@
     <string name="label_telegram_group">TG群：</string>
     <string name="pref_ad">广告</string>
     <string name="qidianshuju">起点数据</string>
+    <string name="qidian">起点</string>
+    <string name="qidian_not_found">未安装起点app无法直接跳转</string>
 
 </resources>
