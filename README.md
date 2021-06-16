@@ -1,7 +1,7 @@
 # 爬小说
 我们不生产小说，我们只做网站的搬运工，  
 [![img](https://img.shields.io/github/release/AoEiuV020/PaNovel.svg)](https://github.com/AoEiuV020/PaNovel/releases)
-[![CI](https://github.com/AoEiuV020/PaNovel/workflows/Android%20CI/badge.svg)](https://github.com/AoEiuV020/PaNovel/actions)
+[![CI](https://github.com/AoEiuV020/PaNovel/workflows/CI/badge.svg)](https://github.com/AoEiuV020/PaNovel/actions)
 [![Chat](https://img.shields.io/badge/Telegram-Chat-blue.svg?logo=telegram)](https://t.me/PaNovelGroup)
 
 ## 应用简介
