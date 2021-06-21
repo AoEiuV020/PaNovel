@@ -38,10 +38,12 @@ abstract class NovelContext {
             Zzdxsw(), Zhuaji(), Uctxt(), Lnovel(), Yidm(),
 
             Manhuagui(), SiFang(), Qinxiaoshuo(), N9txs(), N168kanshu(),
-            Yunduwu(), N123du(), Biqugese(), Biqugezhh(), Shoudashu()
+            Yunduwu(), N123du(), Biqugese(), Biqugezhh(), Shoudashu(),
+
+            Kssw()
         ).asReversed()
 
-        const val sitesVersion = 6
+        const val sitesVersion = 7
 
         // 用于存取cookie,
         private val gson: Gson = GsonUtils.gsonBuilder
