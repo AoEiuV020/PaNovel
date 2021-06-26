@@ -42,7 +42,10 @@ class N123du : DslJsoupNovelContext() {init {
                 } else {
                     items("div.DivMargin > a.Title") {
                         name(":root")
-                        author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+                        author(
+                            "div.DivMargin > font:nth-child(${index * 8 + 4})",
+                            parent = root.ownerDocument()
+                        )
                     }
                 }
             }
@@ -51,7 +54,10 @@ class N123du : DslJsoupNovelContext() {init {
                 ret = document {
                     items("div.DivMargin > a.Title") {
                         name(":root")
-                        author("div.DivMargin > font:nth-child(${index * 8 + 4})", parent = root.ownerDocument())
+                        author(
+                            "div.DivMargin > font:nth-child(${index * 8 + 4})",
+                            parent = root.ownerDocument()
+                        )
                     }
                 }
             }
@@ -65,7 +71,10 @@ class N123du : DslJsoupNovelContext() {init {
         document {
             novel {
                 name("div.DivMainLeft > div > h1")
-                author("div.DivBoder > div:nth-child(3) > span:nth-child(2)", block = pickString("作\\s*者：(\\S*)"))
+                author(
+                    "div.DivBoder > div:nth-child(3) > span:nth-child(2)",
+                    block = pickString("作\\s*者：(\\S*)")
+                )
             }
             image("div.DivImage > center > img")
             introduction = root.getElements("div > div.DivBigIntro") { elements ->
@@ -73,24 +82,34 @@ class N123du : DslJsoupNovelContext() {init {
                     it.textListSplitWhitespace().joinToString("\n")
                 }
             }
-            update("div.DivBoder > div:nth-child(3) > span[style]", format = "yyyy-MM-dd HH:mm:ss", block = pickString("更新：(.*)"))
+            update(
+                "div.DivBoder > div:nth-child(3) > span[style]",
+                format = "yyyy-MM-dd HH:mm:ss",
+                block = pickString("更新：(.*)")
+            )
         }
     }
     // https://www.123ds.org/dudu-40/705684/list/
     chaptersPageTemplate = "/dudu-%s/list/"
     chapters { _ ->
         document {
-            items(root.requireElements("#DivTitleList > div", name = TAG_CHAPTER_LINK).flatMap { element ->
-                element.requireElements("> span > a", name = TAG_CHAPTER_LINK).reversed()
-            })
-            lastUpdate("div.DivMain > div:nth-child(2) > span[style]", format = "yyyy-MM-dd HH:mm:ss", block = pickString("更新：(.*)"))
+            items(
+                root.requireElements("#DivTitleList > div", name = TAG_CHAPTER_LINK)
+                    .flatMap { element ->
+                        element.requireElements("> span > a", name = TAG_CHAPTER_LINK).reversed()
+                    })
+            lastUpdate(
+                "div.DivMain > div:nth-child(2) > span[style]",
+                format = "yyyy-MM-dd HH:mm:ss",
+                block = pickString("更新：(.*)")
+            )
         }.let { list ->
-            list.mapIndexed { index, novelChapter ->
-                val nextIndex = if (index > 0) {
-                    val last = list[index - 1]
-                    if (last.extra.startsWith(novelChapter.extra)) {
+            var cacheExtra: String? = null
+            list.map { novelChapter ->
+                val nextIndex = cacheExtra?.let { previousExtra ->
+                    if (previousExtra.startsWith(novelChapter.extra)) {
                         val lastIndex = try {
-                            last.extra.lastDivide(':').second.toInt()
+                            previousExtra.lastDivide(':').second.toInt()
                         } catch (e: Exception) {
                             0
                         }
@@ -98,10 +117,13 @@ class N123du : DslJsoupNovelContext() {init {
                     } else {
                         0
                     }
-                } else {
-                    0
-                }
-                NovelChapter(novelChapter.name, "${novelChapter.extra}:${nextIndex}", novelChapter.update)
+                } ?: 0
+
+                NovelChapter(
+                    novelChapter.name,
+                    "${novelChapter.extra}:${nextIndex}".also { cacheExtra = it },
+                    novelChapter.update
+                )
             }
         }
     }
@@ -119,7 +141,7 @@ class N123du : DslJsoupNovelContext() {init {
                 call = connect(chapterUrl)
                 chapterUrl = checkAndParse {
                     root.getElements("li > a").notNull().first { it.html().startsWith("下一章：") }
-                            .absHref()
+                        .absHref()
                 }.notNull("pageUrl")
                 index--
             }
@@ -131,7 +153,12 @@ class N123du : DslJsoupNovelContext() {init {
                 checkAndParse {
                     // 正文的id是可变的，同时文字的顺序是可能反的，同时p可能是不存在的，
                     val div = root.requireElement("div#DivContentBG > div[id]", TAG_CONTENT)
-                    val js = root.getElements("div#DivContentBG script:not([language])")?.map { it.html() }?.firstOrNull { it.contains("eval") && it.contains("String.fromCharCode") && it.contains(div.id()) }
+                    val js = root.getElements("div#DivContentBG script:not([language])")
+                        ?.map { it.html() }?.firstOrNull {
+                            it.contains("eval") && it.contains("String.fromCharCode") && it.contains(
+                                div.id()
+                            )
+                        }
                     next = root.getElement("#PageSet > a:nth-last-child(1)")?.absHref()
                     if (js != null) {
                         // 这时候文字是反的，
@@ -181,7 +208,11 @@ class N123du : DslJsoupNovelContext() {init {
             ret2 = ret2.replaceFirst(compileRegex("Ajax.open.*"), "")
             js.run(ret2)
             val path = js.run("ajax(c2);")
-            val ret3 = responseBody(client.get(baseHttpUrl.newBuilder().encodedPath(path).build().toString())).string()
+            val ret3 = responseBody(
+                client.get(
+                    baseHttpUrl.newBuilder().encodedPath(path).build().toString()
+                )
+            ).string()
             if (ret3 == "ok") {
                 return true
             }
