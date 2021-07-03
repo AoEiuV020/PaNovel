@@ -305,5 +305,6 @@
     <string name="qidianshuju">起点数据</string>
     <string name="qidian">起点</string>
     <string name="qidian_not_found">未安装起点app无法直接跳转</string>
+    <string name="qidianshuju_summary">主页菜单出现起点数据网站入口，重启生效，</string>
 
 </resources>

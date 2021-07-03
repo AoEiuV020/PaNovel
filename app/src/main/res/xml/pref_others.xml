@@ -48,4 +48,10 @@
         app:alphaSlider="true"
         app:lightnessSlider="true"
         app:wheelType="CIRCLE" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="qidianshuju"
+        android:summary="@string/qidianshuju_summary"
+        android:title="@string/qidianshuju" />
 </PreferenceScreen>

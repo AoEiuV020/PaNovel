@@ -39,15 +39,18 @@ object OtherSettings : Pref {
             arrayOf(
                 // isChecked代表阅读到的章节，
                 intArrayOf(android.R.attr.state_checked),
-                        // isSelected代表已经缓存的章节，
-                        intArrayOf(-android.R.attr.state_checked, android.R.attr.state_selected),
-                        intArrayOf()
-                ),
-                intArrayOf(
-                        chapterColorReadAt,
-                        chapterColorCached,
-                        chapterColorDefault
-                )
+                // isSelected代表已经缓存的章节，
+                intArrayOf(-android.R.attr.state_checked, android.R.attr.state_selected),
+                intArrayOf()
+            ),
+            intArrayOf(
+                chapterColorReadAt,
+                chapterColorCached,
+                chapterColorDefault
+            )
         )
+
+    // 起点数据开关，
+    var qidianshuju: Boolean by Delegates.boolean(false)
 
 }
