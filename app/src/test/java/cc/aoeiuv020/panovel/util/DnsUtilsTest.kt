@@ -4,9 +4,11 @@ import cc.aoeiuv020.panovel.BuildConfig
 import cc.aoeiuv020.panovel.ad.AdConstants
 import cc.aoeiuv020.panovel.server.ServerAddress
 import cc.aoeiuv020.panovel.server.dal.model.Config
+import cc.aoeiuv020.panovel.server.dal.model.Message
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.net.URLEncoder
 
 /**
  * Created by AoEiuV020 on 2021.05.15-18:30:12.
@@ -33,4 +35,16 @@ class DnsUtilsTest {
         println(config)
         assertTrue(VersionName(config.minVersion) <= VersionName(BuildConfig.VERSION_NAME))
     }
+
+    @Test
+    fun makeMessage() {
+        val msg = Message(
+            "测试通知",
+            "test"
+        )
+        println("title=${urle(msg.title)}&content=${urle(msg.content)}")
+    }
+
+    private fun urle(s: String?) =
+        URLEncoder.encode(s, "utf8")
 }

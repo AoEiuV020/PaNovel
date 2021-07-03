@@ -5,13 +5,11 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.base.jar.href
 import cc.aoeiuv020.base.jar.ownTextListSplitWhitespace
 import cc.aoeiuv020.base.jar.path
-import cc.aoeiuv020.base.jar.title
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 import cc.aoeiuv020.regex.pick
 import java.net.URL
-import java.util.*
 
 /**
  *
@@ -102,13 +100,11 @@ class Piaotian : DslJsoupNovelContext() {init {
             val td = element("tr:nth-child(4) > td > table > tbody > tr > td:nth-child(2)", parent = tbody1)
             image("a > img", parent = td)
             introduction("div", parent = td, block = ownLinesString())
-            update("tr:nth-child(8) > td > table > tbody > tr:nth-child(1) > td:nth-child(1) > li > a", parent = tbody1) {
-                val updateString = list[5]
-                val (year) = updateString.pick("(\\d*)-(\\d*)-(\\d*)")
-                val (month, day, hour, minute) = it.title().pick(".*更新时间:(\\d*)-(\\d*) (\\d*):(\\d*)")
-                @Suppress("DEPRECATION")
-                Date(year.toInt() - 1900, month.toInt() - 1, day.toInt(), hour.toInt(), minute.toInt())
-            }
+            update(
+                "> tr:nth-child(1) > td > table > tbody > tr:nth-child(3) > td:nth-child(1)",
+                parent = tbody1,
+                format = "最后更新：yyyy-MM-dd"
+            )
         }
     }
     chaptersPageTemplate = "/html/%s/index.html"

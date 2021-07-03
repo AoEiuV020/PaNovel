@@ -34,7 +34,9 @@ import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.search.FuzzySearchActivity
 import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.settings.InterfaceSettings
+import cc.aoeiuv020.panovel.settings.OtherSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
+import cc.aoeiuv020.panovel.shuju.QidianshujuActivity
 import cc.aoeiuv020.panovel.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -375,6 +377,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        menu.findItem(R.id.qidianshuju).isVisible = OtherSettings.qidianshuju
         return true
     }
 
@@ -387,6 +390,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             R.id.subscript -> subscript()
             R.id.cacheAll -> downloadAll()
             R.id.source -> SiteChooseActivity.start(this)
+            R.id.qidianshuju -> QidianshujuActivity.start(this)
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)

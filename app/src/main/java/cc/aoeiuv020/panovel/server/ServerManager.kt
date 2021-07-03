@@ -103,10 +103,12 @@ object ServerManager : AnkoLogger {
 
     fun message(): Message? {
         debug { "message ：" }
-        val service = getService() ?: return null
-        val result = service.message()
-        debug { "获取开发者消息返回: $result" }
-        return result
+        return try {
+            DnsUtils.txtToBean(ServerAddress.MESSAGE_HOST)
+        } catch (e: Exception) {
+            warn("get message failed: " + ServerAddress.MESSAGE_HOST, e)
+            null
+        }
     }
 
     @Synchronized

@@ -12,6 +12,8 @@ import java.util.*
  * Created by AoEiuV020 on 2018.06.03-18:49:36.
  */
 class Jdxs520 : DslJsoupNovelContext() {init {
+    // 网站整个变了，模板变了数据变了，已经不是原来的网站了，虽然还能打开，但有需要的话要另开一个网站，
+    hide = true
     site {
         name = "经典小说520"
         baseUrl = "http://www.jdxs5200.net"

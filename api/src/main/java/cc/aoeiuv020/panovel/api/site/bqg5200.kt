@@ -7,13 +7,12 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  * Created by AoEiuV020 on 2018.06.06-18:51:02.
  */
 class Bqg5200 : DslJsoupNovelContext() {init {
-    // 网页测试大面积报红，
-    // http://tool.chinaz.com/speedtest/https://www.bqg5200.com
-    enabled = false
+    // 已经废了，域名都丢了，
+    hide = true
     site {
         name = "笔趣阁5200"
-        baseUrl = "https://www.bqg5200.com"
-        logo = "https://www.bqg5200.com/skin/images/logo.png"
+        baseUrl = "https://www.biquge5200.com"
+        logo = "https://www.biquge5200.com/skin/images/logo.png"
     }
     search {
         get {

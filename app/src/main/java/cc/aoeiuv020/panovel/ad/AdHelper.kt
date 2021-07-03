@@ -27,6 +27,18 @@ object AdHelper : AnkoLogger {
         check13lm()
     }
 
+    fun checkSplashAdAvailable() = AdSettings.adEnabled
+            && GDTADManager.getInstance().isInitialized
+            && AdSettings.middle13lmEnabled
+            && isArm()
+
+    private fun isArm(): Boolean {
+        // GDT只支持arm系列，
+        // 不能判断SUPPORTED_ABIS，因为模拟器支持arm情况也是优先使用x86导致无法加载广告，
+        @Suppress("DEPRECATION")
+        return Build.CPU_ABI.contains("arm")
+    }
+
     private fun check13lm() {
         debug { "check13lm() called" }
         doAsync({ t ->

@@ -1,10 +1,14 @@
 package cc.aoeiuv020.panovel.api.site
 
+import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.atry.tryOrNul
+import cc.aoeiuv020.base.jar.absHref
+import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.firstThreeIntPattern
 import cc.aoeiuv020.panovel.api.firstTwoIntPattern
 import cc.aoeiuv020.regex.compilePattern
+import cc.aoeiuv020.string.lastDivide
 import org.jsoup.nodes.Element
 
 /**
@@ -44,7 +48,11 @@ class N2kzw : DslJsoupNovelContext() {init {
                 name("div.w100 > h1", block = pickName)
                 author("div.w100 > div.w100 > span", block = pickString("作\\s*者：(\\S*)"))
             }
-            update("div[class=dispc] > span", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
+            update(
+                "div[class=dispc] > span",
+                format = "yyyy-MM-dd HH:mm:ss",
+                block = pickString("最后更新：(.*)")
+            )
             // https://www.2kzw.com/images/14/14196.jpg
             tryOrNul {
                 image = site.baseUrl + "/images/$it.jpg"
@@ -55,14 +63,68 @@ class N2kzw : DslJsoupNovelContext() {init {
     chapters {
         document {
             items("div.container.border3-2.mt8.mb20 > div > a")
-            lastUpdate("div[class=dispc] > span", format = "yyyy-MM-dd HH:mm:ss", block = pickString("最后更新：(.*)"))
+            lastUpdate(
+                "div[class=dispc] > span",
+                format = "yyyy-MM-dd HH:mm:ss",
+                block = pickString("最后更新：(.*)")
+            )
+        }.let { list ->
+            var cacheExtra: String? = null
+            list.map { novelChapter ->
+                var extra = novelChapter.extra
+                val nextIndex = cacheExtra?.let { previousExtra ->
+                    if (novelChapter.extra.isEmpty() || previousExtra.startsWith(novelChapter.extra)) {
+                        val pair = previousExtra.lastDivide(':')
+                        extra = pair.first
+                        val lastIndex = try {
+                            pair.second.toInt()
+                        } catch (e: Exception) {
+                            0
+                        }
+                        lastIndex + 1
+                    } else {
+                        0
+                    }
+                } ?: 0
+
+                NovelChapter(
+                    novelChapter.name,
+                    "${extra}:${nextIndex}".also { cacheExtra = it },
+                    novelChapter.update
+                )
+            }
         }
     }
     // https://www.2kzw.com/38/38424/30595033.html
     bookIdWithChapterIdRegex = firstThreeIntPattern
     contentPageTemplate = "/%s.html"
+    getNovelContentUrl { extra ->
+        // 判断兼容老数据，
+        if (!extra.contains(':')) {
+            return@getNovelContentUrl contentPageTemplate.notNull().format(extra)
+        }
+        contentPageTemplate.notNull().format(extra.lastDivide(':').first)
+    }
     content {
-        // 有些小说第一行是章节名，但不是所有，所以不能删除第一行，
+        // 判断兼容老数据，
+        if (!extra.contains(':')) {
+            // 有些小说第一行是章节名，但不是所有，所以不能删除第一行，
+            return@content document {
+                items("#article")
+            }
+        }
+        var index = extra.lastDivide(':').second.toInt()
+        var chapterUrl: String = getNovelContentUrl(extra)
+        while (index > 0) {
+            call = connect(chapterUrl)
+            chapterUrl = parse(connect(chapterUrl)).let { root ->
+                root.requireElement("#next_url").absHref()
+            }
+            index--
+        }
+        get {
+            url = chapterUrl
+        }
         document {
             items("#article")
         }
