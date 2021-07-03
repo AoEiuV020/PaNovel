@@ -17,10 +17,12 @@ class PiaotianTest : BaseNovelContextText(Piaotian::class) {
 
     @Test
     fun detail() {
-        detail("8/8605", "8/8605", "剑灵同居日记", "国王陛下",
-                "https://www.piaotian.com/files/article/image/8/8605/8605s.jpg",
-                "“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”\n一个无敌的随身剑灵与天才美少女（们）的同居故事。",
-                "2018-05-21 17:30:00")
+        detail(
+            "8/8605", "8/8605", "剑灵同居日记", "国王陛下",
+            "https://www.ptwxz.com/files/article/image/8/8605/8605s.jpg",
+            "“天外神剑剑灵，应呼唤而苏醒，我问你，你就是我的坐骑么？”\n一个无敌的随身剑灵与天才美少女（们）的同居故事。",
+            "2018-05-21 17:30:00"
+        )
     }
 
     @Test
