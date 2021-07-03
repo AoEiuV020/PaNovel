@@ -7,10 +7,11 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.03-20:06:02.
  */
 class Yipinxia : DslJsoupNovelContext() {init {
+    enabled = false
     site {
         name = "一品侠小说"
-        baseUrl = "http://www.yipinxia.net"
-        logo = "http://www.yipinxia.net.img.800cdn.com/images/logo.png"
+        baseUrl = "https://www.yipinxia.net"
+        logo = "https://www.yipinxia.net/images/logo.png"
     }
     search {
         get {
