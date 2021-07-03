@@ -76,15 +76,6 @@
    public static final ** CREATOR;
 }
 
-# jpush, https://docs.jiguang.cn/jpush/client/Android/android_guide/
--dontoptimize
--dontpreverify
--dontwarn cn.jpush.**
--keep class cn.jpush.** { *; }
--keep class * extends cn.jpush.android.helpers.JPushMessageReceiver { *; }
--dontwarn cn.jiguang.**
--keep class cn.jiguang.** { *; }
-
 # epublib, https://stackoverflow.com/a/33286911/5615186
 -dontwarn org.kobjects.**
 -dontwarn org.ksoap2.**

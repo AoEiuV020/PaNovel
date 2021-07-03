@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Process
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import cc.aoeiuv020.gson.GsonUtils
@@ -17,11 +16,9 @@ import cc.aoeiuv020.panovel.settings.AdSettings
 import cc.aoeiuv020.panovel.util.DnsUtils
 import cc.aoeiuv020.ssl.TLSSocketFactory
 import cc.aoeiuv020.ssl.TrustManagerUtils
-import cn.jpush.android.api.JPushInterface
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 import kotlin.properties.Delegates
@@ -69,8 +66,6 @@ class App : MultiDexApplication(), AnkoLogger {
         initReporter()
 
         initAd()
-
-        initJpush()
 
         initGlide()
 
@@ -128,16 +123,6 @@ class App : MultiDexApplication(), AnkoLogger {
 
     private fun initDataSources() {
         DataManager.init(ctx)
-    }
-
-    private fun initJpush() {
-        if (BuildConfig.DEBUG) {
-            JPushInterface.setDebugMode(Log.isLoggable("JPush", Log.DEBUG))
-            JPushInterface.setAlias(ctx, 0, "debug")
-            val id = JPushInterface.getRegistrationID(ctx)
-            info { "JPush registration id: <$id>" }
-        }
-        JPushInterface.init(ctx)
     }
 
     /**

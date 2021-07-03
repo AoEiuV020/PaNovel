@@ -20,7 +20,6 @@ kotlin + mvp + room
 [MagicIndicator](https://github.com/hackware1993/MagicIndicator)
 [NovelReader](https://github.com/newbiechen1024/NovelReader)
 [Bugly](https://github.com/BuglyDevTeam/Bugly-Android)
-[JPush](https://github.com/jpush)
 [Zip4j](https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j)
 [AspectRatioImageView](https://github.com/santalu/aspect-ratio-imageview)
 [jchardet](http://jchardet.sourceforge.net/index.html)
