@@ -8,6 +8,7 @@ class ServerAddress(
     val baseUrl: String
 ) {
     companion object {
+        const val MESSAGE_HOST = "msg.panovel.aoeiuv020.com"
         const val CONFIG_HOST = "panovel.aoeiuv020.com"
         private const val PANOVEL_API_HOST = "http://panovel.aoeiuv020.com"
 
