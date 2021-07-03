@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.ads.splash.SplashADListener;
-import com.qq.e.comm.managers.GDTADManager;
 import com.qq.e.comm.util.AdError;
 
 import java.util.ArrayList;
@@ -71,7 +70,7 @@ public class SplashActivity extends Activity implements SplashADListener {
         skipView.setVisibility(View.VISIBLE);
         splashHolder = (ImageView) findViewById(R.id.splash_holder);
 
-        if (!AdSettings.INSTANCE.getAdEnabled() || !GDTADManager.getInstance().isInitialized() || !AdSettings.INSTANCE.getMiddle13lmEnabled()) {
+        if (!AdHelper.INSTANCE.checkSplashAdAvailable() || !AdSettings.INSTANCE.getMiddle13lmEnabled()) {
             realNext();
             finish();
             return;
