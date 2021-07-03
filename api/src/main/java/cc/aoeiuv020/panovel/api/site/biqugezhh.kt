@@ -8,8 +8,8 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 class Biqugezhh : DslJsoupNovelContext() {init {
     site {
         name = "笔趣阁zhh"
-        baseUrl = "https://www.biquzhh.com"
-        logo = "https://www.biquzhh.com/images/logo.png"
+        baseUrl = "https://www.zhhbiqu.com"
+        logo = "https://www.zhhbiqu.com/images/logo.png"
     }
     // https://so.biqusoso.com/s.php?ie=utf-8&siteid=zanghaihuatxt.com&q=%E5%85%B5%E7%8E%8B
     hostList += "so.biqusoso.com"
@@ -58,6 +58,7 @@ class Biqugezhh : DslJsoupNovelContext() {init {
         document {
             items("#content", block = ownLines())
         }.dropLastWhile { it.contains("biquzhh") }
+            .dropLastWhile { it.contains("zhhbiqu") }
     }
 }
 }
