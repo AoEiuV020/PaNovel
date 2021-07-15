@@ -1,43 +1,24 @@
 package cc.aoeiuv020.panovel.api
 
-import cc.aoeiuv020.jsonpath.JsonPathUtils
+import cc.aoeiuv020.panovel.api.site.BaseNovelContextText
 import cc.aoeiuv020.panovel.api.site.N69shu
-import org.junit.Before
 import org.junit.Test
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.reflect.KClass
 
 /**
  * 自动生成测试样例，
  * Created by AoEiuV020 on 2021.07.15-22:03:55.
  */
-class MakeJunitTest {
-    private lateinit var site: NovelContext
-    private val clazz: KClass<out NovelContext> =
-        N69shu::class
-
+class MakeJunitTest : BaseNovelContextText(
+    N69shu::class
+) {
     @Suppress("RemoveExplicitTypeArguments")
     private val specialBookList = listOf<String>(
         "柯南里的捡尸人"
     )
     private val testBookList = mutableListOf<NovelItem>()
     private val testChapterList = mutableListOf<NovelChapter>()
-    private val folder: File = File(System.getProperty("java.io.tmpdir", "."))
-        .resolve("PaNovel")
-        .resolve("api")
-        .resolve("test")
-        .also { it.mkdirs() }
-    private val cacheDir = folder.resolve("cache")
-    private val filesDir = folder.resolve("files")
-
-    init {
-        System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
-        JsonPathUtils.initGson()
-        NovelContext.cache(cacheDir)
-        NovelContext.files(filesDir)
-    }
 
     private fun makeSearch(): String {
         val key = "都市"
@@ -94,7 +75,6 @@ class MakeJunitTest {
         return sb.toString().trimEnd()
     }
 
-    private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     private fun dateString(update: Date?): String? {
         if (update == null) {
             return null
@@ -170,11 +150,6 @@ class MakeJunitTest {
             )
         }
         return sb.toString().trimEnd()
-    }
-
-    @Before
-    fun setup() {
-        site = clazz.java.getConstructor().newInstance()
     }
 
     @Test
