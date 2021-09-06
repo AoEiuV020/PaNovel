@@ -88,7 +88,7 @@ class QidianshujuListActivity : AppCompatActivity(), IView, AnkoLogger {
         }
     }
 
-    private fun innerBrowse(url: String) {
+    fun innerBrowse(url: String) {
         QidianshujuActivity.start(this, url)
     }
 

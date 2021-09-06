@@ -202,14 +202,7 @@ class QidianshujuListPresenter : Presenter<QidianshujuListActivity>(), AnkoLogge
     }
 
     fun browse() {
-        try {
-            view?.browse(baseUrl)
-        } catch (e: Exception) {
-            val message = "打开网页失败"
-            Reporter.post(message, e)
-            error(message, e)
-            view?.showError(message, e)
-        }
+        view?.innerBrowse(baseUrl)
     }
 
     fun open(currentUrl: String) {
