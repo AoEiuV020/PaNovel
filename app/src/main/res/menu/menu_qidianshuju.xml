@@ -16,5 +16,12 @@
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/browse"
+        android:icon="@drawable/ic_open_in_browser"
+        android:title="@string/open_in_browser"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
+
 
 </menu>

@@ -188,6 +188,7 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.close -> finish()
+            R.id.browse -> presenter.browse()
             R.id.qidian -> toggleQidian()
             else -> return super.onOptionsItemSelected(item)
         }
