@@ -12,5 +12,6 @@ data class Item(
     val words: String,
     val collection: String,
     val firstOrder: String,
-    val ratio: String
+    val ratio: String,
+    var image: String? = null
 )

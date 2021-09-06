@@ -7,7 +7,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import cc.aoeiuv020.base.jar.ioExecutorService
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.data.DataManager
+import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.util.noCover
+import cc.aoeiuv020.regex.pick
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 /**
  * Created by AoEiuV020 on 2021.09.06-23:09:42.
@@ -55,7 +64,7 @@ class QidianshujuListAdapter : RecyclerView.Adapter<QidianshujuListAdapter.ViewH
         private val tvWords: TextView = itemView.findViewById(R.id.tvWords)
         private val tvRatio: TextView = itemView.findViewById(R.id.tvRatio)
         fun bind(item: Item) {
-            ivImage.setImageResource(R.mipmap.no_cover)
+            showImage(item)
             tvName.text = item.name
             tvAuthor.text = item.author
             tvLevel.text = item.level
@@ -67,6 +76,57 @@ class QidianshujuListAdapter : RecyclerView.Adapter<QidianshujuListAdapter.ViewH
                 "${item.collection}/${item.firstOrder}= ${item.ratio}"
             }
             tvRatio.text = ratio
+        }
+
+        private fun showImage(item: Item) {
+            ivImage.setTag(R.id.tag_image_item, item)
+            val ctx = ivImage.context
+            if (!item.image.isNullOrBlank()) {
+                Glide.with(ctx.applicationContext)
+                    .load(item.image)
+                    .apply(RequestOptions().apply {
+                        placeholder(R.mipmap.no_cover)
+                        error(R.mipmap.no_cover)
+                    })
+                    .into(ivImage)
+                return
+            }
+            val url = item.url
+            val name = item.name
+            ivImage.setImageResource(R.mipmap.no_cover)
+            ivImage.context.doAsync({ e ->
+                val message = "刷新小说《${name}》失败，"
+                Reporter.post(message, e)
+            }, ioExecutorService) {
+                val bookId = url.pick("http.*/book/(\\d*).html").first()
+                val fullUrl = "https://book.qidian.com/info/$bookId"
+                val site = "起点中文"
+                val novelManager = DataManager.query(site, item.author, item.name)
+                    ?: DataManager.getNovelFromUrl(site, fullUrl)
+                novelManager.requestDetail(false)
+                val imageUrl = novelManager.novel.image
+                item.image = imageUrl
+                uiThread { ctx ->
+                    val tag = ivImage.getTag(R.id.tag_image_item)
+                    if (tag != item) {
+                        return@uiThread
+                    }
+                    if (imageUrl == noCover) {
+                        ivImage.setImageResource(R.mipmap.no_cover)
+                    } else {
+                        Glide.with(ctx.applicationContext)
+                            .load(novelManager.getImage(imageUrl))
+                            .apply(RequestOptions().apply {
+                                placeholder(R.mipmap.no_cover)
+                                error(R.mipmap.no_cover)
+                            })
+                            .into(ivImage)
+                    }
+                }
+            }
+
+            ivImage.setImageResource(R.mipmap.no_cover)
+
         }
     }
 
