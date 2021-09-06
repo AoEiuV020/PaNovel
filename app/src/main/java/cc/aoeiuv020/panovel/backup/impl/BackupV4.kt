@@ -108,6 +108,7 @@ class BackupV4 : DefaultBackup() {
                 "pinnedBackgroundColor" -> editor.putInt(key, value.asInt)
                 "refreshOnSearch" -> editor.putBoolean(key, value.asBoolean)
                 "reportCrash" -> editor.putBoolean(key, value.asBoolean)
+                "qidianshuju" -> editor.putBoolean(key, value.asBoolean)
                 "volumeKeyScroll" -> editor.putBoolean(key, value.asBoolean)
                 "tabGravityCenter" -> editor.putBoolean(key, value.asBoolean)
                 "animationSpeed" -> editor.putFloat(key, value.asFloat)
