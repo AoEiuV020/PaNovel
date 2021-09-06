@@ -11,9 +11,10 @@ import org.jetbrains.anko.*
 class QidianshujuPresenter(
     private val site: String
 ) : Presenter<QidianshujuActivity>(), AnkoLogger {
-    fun start() {
+    private val baseUrl: String = "http://pujie.qidianshuju.com/nlist/0/0/1.html"
+    fun start(url: String?) {
         debug { "start," }
-        view?.openPage("http://pujie.qidianshuju.com/nlist/0/0/1.html")
+        view?.openPage(url ?: baseUrl)
     }
 
     fun open(currentUrl: String) {

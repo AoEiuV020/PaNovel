@@ -112,6 +112,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".shuju.QidianshujuActivity" />
+        <activity android:name=".shuju.post.QidianshujuPostActivity" />
+        <activity android:name=".shuju.list.QidianshujuListActivity" />
     </application>
 
 </manifest>

@@ -1,6 +1,5 @@
-package cc.aoeiuv020.panovel.shuju
+package cc.aoeiuv020.panovel.shuju.list
 
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -8,101 +7,89 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.settings.OtherSettings
+import cc.aoeiuv020.panovel.shuju.QidianshujuActivity
+import cc.aoeiuv020.panovel.util.notNullOrReport
 import cc.aoeiuv020.panovel.util.safelyShow
 import cc.aoeiuv020.regex.pick
-import kotlinx.android.synthetic.main.activity_single_search.*
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_qidianshuju_list.*
+import kotlinx.android.synthetic.main.activity_single_search.srlRefresh
 import org.jetbrains.anko.*
 
 /**
- * 浏览起点数据，
+ * 起点数据首订统计帖子列表页，
  */
-class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
+class QidianshujuListActivity : AppCompatActivity(), IView, AnkoLogger {
     companion object {
-        fun start(ctx: Context) {
-            ctx.startActivity<QidianshujuActivity>()
-        }
-        fun start(ctx: Context, url: String) {
-            ctx.startActivity<QidianshujuActivity>("url" to url)
+        fun start(ctx: Context, postUrl: String) {
+            ctx.startActivity<QidianshujuListActivity>(
+                "postUrl" to postUrl
+            )
         }
     }
 
+    private lateinit var presenter: QidianshujuListPresenter
+    private lateinit var adapter: QidianshujuListAdapter
+    private lateinit var postUrl: String
     private var itemJumpQidian: MenuItem? = null
-    private lateinit var presenter: QidianshujuPresenter
+
+    private val snack: Snackbar by lazy {
+        Snackbar.make(rvContent, "", Snackbar.LENGTH_SHORT)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_qidianshuju)
+        setContentView(R.layout.activity_qidianshuju_list)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        setTitle(R.string.qidianshuju)
+        setTitle(R.string.title_qidianshuju_first_order_ranking)
+
+        postUrl = intent.getStringExtra("postUrl").notNullOrReport()
 
         srlRefresh.isRefreshing = true
         srlRefresh.setOnRefreshListener {
-            wvSite.reload()
-            srlRefresh.isRefreshing = false
+            presenter.refresh()
         }
 
-        initWebView()
+        initRecycler()
 
-        presenter = QidianshujuPresenter("起点中文")
+        presenter = QidianshujuListPresenter()
         presenter.attach(this)
 
-        presenter.start(intent.getStringExtra("url"))
+        presenter.start(this, postUrl)
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun initWebView() {
-        wvSite.apply {
-            webViewClient = MyWebViewClient()
-            webChromeClient = MyWebChromeClient()
-            settings.apply {
-                javaScriptEnabled = true
-            }
-        }
-        CookieManager.getInstance().apply {
-            setAcceptCookie(true)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                setAcceptThirdPartyCookies(wvSite, true)
-            }
-        }
+
+    override fun onDestroy() {
+        presenter.stop()
+        super.onDestroy()
     }
 
-    class MyWebChromeClient : WebChromeClient() {
-        override fun onJsAlert(
-            view: WebView?,
-            url: String?,
-            message: String?,
-            result: JsResult?
-        ): Boolean {
-            result?.cancel()
-            return true
+    private fun initRecycler() {
+        rvContent.adapter = QidianshujuListAdapter().also {
+            adapter = it
+            it.setOnItemClickListener(object : QidianshujuListAdapter.OnItemClickListener {
+                override fun onItemClick(url: String) {
+                    try {
+                        // http://www.qidianshuju.cn/book/1027440366.html
+                        // http://www.qidianshuju.com/book/1021708634.html
+                        val bookId = url.pick("http.*/book/(\\d*).html").first()
+                        openBook(bookId)
+                    } catch (ignore: Exception) {
+                        innerBrowse(url)
+                    }
+                }
+            })
         }
     }
 
-    private inner class MyWebViewClient : WebViewClient(), AnkoLogger {
-        // 过时代替方法使用要api>=21,
-        @Suppress("OverridingDeprecatedMember")
-        override fun shouldOverrideUrlLoading(view: WebView, url: String?): Boolean {
-            debug { "shouldOverrideUrlLoading $url" }
-            if (url == null) {
-                return false
-            }
-            try {
-                // http://www.qidianshuju.cn/book/1027440366.html
-                // http://www.qidianshuju.com/book/1021708634.html
-                val bookId = url.pick("http.*/book/(\\d*).html").first()
-                openBook(bookId)
-                return true
-            } catch (ignored: Exception) {
-            }
-            return false
-        }
+    private fun innerBrowse(url: String) {
+        QidianshujuActivity.start(this, url)
     }
 
     private fun openBook(bookId: String) {
@@ -128,20 +115,34 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter.open("https://book.qidian.com/info/$bookId")
     }
 
-    fun openPage(url: String) {
-        srlRefresh.isRefreshing = false
-        wvSite.loadUrl(url)
-    }
-
     fun openNovelDetail(novel: Novel) {
         NovelDetailActivity.start(ctx, novel)
     }
 
-    fun showError(message: String, e: Throwable) {
+    fun showResult(data: List<Item>) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
-            // 太丑了，
             return
         }
+        srlRefresh.isRefreshing = false
+        adapter.setData(data)
+        snack.dismiss()
+    }
+
+    fun showProgress(retry: Int, maxRetry: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
+            return
+        }
+        srlRefresh.isRefreshing = false
+        snack.setText(getString(R.string.qidianshuju_post_progress_place_holder, retry, maxRetry))
+        snack.show()
+    }
+
+    fun showError(message: String, e: Throwable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
+            return
+        }
+        srlRefresh.isRefreshing = false
+        snack.dismiss()
         alert(
             title = ctx.getString(R.string.error),
             message = message + e.message
@@ -155,19 +156,16 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
         return true
     }
 
-    override fun onBackPressed() {
-        if (wvSite.canGoBack()) {
-            wvSite.goBack()
-        } else {
-            finish()
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_qidianshuju, menu)
+        menuInflater.inflate(R.menu.menu_qidianshuju_list, menu)
         itemJumpQidian = menu.findItem(R.id.qidian)
         updateItem()
         return true
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        updateItem()
     }
 
     private fun updateItem() {
@@ -187,7 +185,7 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.close -> finish()
+            R.id.browse -> presenter.browse()
             R.id.qidian -> toggleQidian()
             else -> return super.onOptionsItemSelected(item)
         }
