@@ -38,7 +38,7 @@ class CacheManager(ctx: Context) {
         ctx.toast(ctx.getString(R.string.tip_init_cache_failed_place_holder, LocationSettings.cacheLocation))
         // 失败一次就改成默认的，以免反复失败，
         LocationSettings.cacheLocation = ctx.cacheDir.resolve(NAME_FOLDER).absolutePath
-        Iron.db(ctx.cacheDir)
+        Iron.db(File(LocationSettings.cacheLocation))
     }
 
     private fun getContentDB(novel: Novel) = contentDBMap.getOrPut(novel.nId) {
