@@ -44,21 +44,14 @@ class QidianshujuPostPresenter : Presenter<QidianshujuPostActivity>(), AnkoLogge
     fun start(ctx: Context) {
         debug { "start," }
         root = initCacheLocation(ctx)
-        reset()
         loadCache()
-    }
-
-    private fun reset() {
-        requesting = true
     }
 
     fun refresh() {
         debug { "refresh," }
         if (requesting) {
             stop()
-            return
         }
-        reset()
         request()
     }
 
@@ -70,6 +63,7 @@ class QidianshujuPostPresenter : Presenter<QidianshujuPostActivity>(), AnkoLogge
 
     @MainThread
     private fun request() {
+        requesting = true
         currentWorker = view?.doAsync({ t ->
             if (t is InterruptedException) {
                 info { "stopped" }
