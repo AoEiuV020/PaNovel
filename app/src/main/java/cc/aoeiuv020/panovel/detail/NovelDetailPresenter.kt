@@ -37,7 +37,14 @@ class NovelDetailPresenter(
                 view?.showError(message, e)
             }
         }) {
-            // 这里初始化novelManager，
+            // 这里初始化novelManager，有数据库查询所以必须异步，
+            val novelManager = novelManager
+            if (!refresh) {
+                // 打开首次加载时先展示本地数据，
+                uiThread {
+                    view?.showNovelDetail(novelManager.novel)
+                }
+            }
             novelManager.requestDetail(refresh)
             uiThread {
                 view?.showNovelDetail(novelManager.novel)
