@@ -207,8 +207,8 @@ object DataManager : AnkoLogger {
         }
     }
 
-    fun query(site: String, author: String, name: String): NovelManager? {
-        return app.query(site, author, name)?.toManager()
+    fun query(site: String, author: String, name: String, detail: String): NovelManager {
+        return app.queryOrNewNovel(NovelMinimal(site, author, name, detail)).toManager()
     }
 
     fun removeWebViewCookies() = cookie.removeCookies()

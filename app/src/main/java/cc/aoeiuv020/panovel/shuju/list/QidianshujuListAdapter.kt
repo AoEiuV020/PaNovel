@@ -99,10 +99,8 @@ class QidianshujuListAdapter : RecyclerView.Adapter<QidianshujuListAdapter.ViewH
                 Reporter.post(message, e)
             }, ioExecutorService) {
                 val bookId = url.pick("http.*/book/(\\d*).html").first()
-                val fullUrl = "https://book.qidian.com/info/$bookId"
                 val site = "起点中文"
-                val novelManager = DataManager.query(site, item.author, item.name)
-                    ?: DataManager.getNovelFromUrl(site, fullUrl)
+                val novelManager = DataManager.query(site, item.author, item.name, bookId)
                 novelManager.requestDetail(false)
                 val imageUrl = novelManager.novel.image
                 item.image = imageUrl
