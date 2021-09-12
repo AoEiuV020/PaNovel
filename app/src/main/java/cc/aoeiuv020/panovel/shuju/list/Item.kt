@@ -5,7 +5,8 @@ package cc.aoeiuv020.panovel.shuju.list
  */
 data class Item(
     val url: String,
-    val name: String,
+    // 名字可能有省略号需要更新，
+    var name: String,
     val author: String,
     val level: String,
     val type: String,

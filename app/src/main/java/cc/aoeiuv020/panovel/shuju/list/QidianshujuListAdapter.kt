@@ -104,11 +104,13 @@ class QidianshujuListAdapter : RecyclerView.Adapter<QidianshujuListAdapter.ViewH
                 novelManager.requestDetail(false)
                 val imageUrl = novelManager.novel.image
                 item.image = imageUrl
+                item.name = novelManager.novel.name
                 uiThread { ctx ->
                     val tag = ivImage.getTag(R.id.tag_image_item)
                     if (tag != item) {
                         return@uiThread
                     }
+                    tvName.text = item.name
                     if (imageUrl == noCover) {
                         ivImage.setImageResource(R.mipmap.no_cover)
                     } else {
