@@ -199,22 +199,18 @@ class QidianshujuListPresenter : Presenter<QidianshujuListActivity>(), AnkoLogge
         view?.innerBrowse(baseUrl)
     }
 
-    fun open(currentUrl: String) {
-        debug { "open <$currentUrl>," }
+    fun open(item: Item, bookId: String) {
+        debug { "open <$item>," }
         view?.doAsync({ e ->
-            val message = "打开地址<$currentUrl>失败，"
+            val message = "打开地址<$item>失败，"
             Reporter.post(message, e)
             error(message, e)
             view?.runOnUiThread {
                 view?.showError(message, e)
             }
         }) {
-            val novel = try {
-                DataManager.getNovelFromUrl("起点中文", currentUrl)
-                    .novel
-            } catch (e: Exception) {
-                throw IllegalArgumentException("不支持的地址，", e)
-            }
+            val novelManager = DataManager.query("起点中文", item.author, item.name, bookId)
+            val novel = novelManager.novel
             uiThread {
                 view?.openNovelDetail(novel)
             }

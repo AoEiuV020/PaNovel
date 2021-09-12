@@ -50,7 +50,7 @@ class QidianshujuListAdapter : RecyclerView.Adapter<QidianshujuListAdapter.ViewH
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
         holder.itemView.setOnClickListener {
-            onItemClickListener?.onItemClick(item.url)
+            onItemClickListener?.onItemClick(item)
         }
         holder.bind(item)
     }
@@ -131,6 +131,6 @@ class QidianshujuListAdapter : RecyclerView.Adapter<QidianshujuListAdapter.ViewH
     }
 
     interface OnItemClickListener {
-        fun onItemClick(url: String)
+        fun onItemClick(item: Item)
     }
 }

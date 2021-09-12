@@ -74,14 +74,11 @@ class QidianshujuListActivity : AppCompatActivity(), IView, AnkoLogger {
         rvContent.adapter = QidianshujuListAdapter().also {
             adapter = it
             it.setOnItemClickListener(object : QidianshujuListAdapter.OnItemClickListener {
-                override fun onItemClick(url: String) {
+                override fun onItemClick(item: Item) {
                     try {
-                        // http://www.qidianshuju.cn/book/1027440366.html
-                        // http://www.qidianshuju.com/book/1021708634.html
-                        val bookId = url.pick("http.*/book/(\\d*).html").first()
-                        openBook(bookId)
+                        openBook(item)
                     } catch (ignore: Exception) {
-                        innerBrowse(url)
+                        innerBrowse(item.url)
                     }
                 }
             })
@@ -92,7 +89,10 @@ class QidianshujuListActivity : AppCompatActivity(), IView, AnkoLogger {
         QidianshujuActivity.start(this, url)
     }
 
-    private fun openBook(bookId: String) {
+    private fun openBook(item: Item) {
+        // http://www.qidianshuju.cn/book/1027440366.html
+        // http://www.qidianshuju.com/book/1021708634.html
+        val bookId = item.url.pick("http.*/book/(\\d*).html").first()
         // https://book.qidian.com/info/1027440366
         // https://m.qidian.com/book/1027440366
         if (OtherSettings.jumpQidian) {
@@ -112,7 +112,7 @@ class QidianshujuListActivity : AppCompatActivity(), IView, AnkoLogger {
                 updateItem()
             }
         }
-        presenter.open("https://book.qidian.com/info/$bookId")
+        presenter.open(item, bookId)
     }
 
     fun openNovelDetail(novel: Novel) {
