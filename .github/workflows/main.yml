@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
       - name: init custom env
         run: |
           BUILD_NAME="${GITHUB_REPOSITORY#*/}"
@@ -26,7 +27,7 @@ jobs:
               echo CREATE_RELEASE="true" >> .custom_env
               BUILD_VERSION=${GITHUB_REF#refs/tags/}
               echo 'RELEASE_BODY<<EOF' >> .custom_env
-              echo '${{ github.event.head_commit.message }}' >> .custom_env
+              ./latest-changelog.sh >> .custom_env
               echo 'EOF' >> .custom_env
           elif [[ ${GITHUB_REF} == refs/pull* ]]
           then
@@ -47,7 +48,6 @@ jobs:
           echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
           cat .custom_env
           cat .custom_env >> $GITHUB_ENV
-      - uses: actions/checkout@v2
       - name: set up JDK 1.8
         uses: actions/setup-java@v1
         with:
