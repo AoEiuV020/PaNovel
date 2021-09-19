@@ -21,31 +21,45 @@ jobs:
       - uses: actions/checkout@v2
       - name: init custom env
         run: |
+          set -a
           BUILD_NAME="${GITHUB_REPOSITORY#*/}"
           if [[ ${GITHUB_REF} == refs/tags* ]]
           then
-              echo CREATE_RELEASE="true" >> .custom_env
+              CREATE_RELEASE="true"
               BUILD_VERSION=${GITHUB_REF#refs/tags/}
-              echo 'RELEASE_BODY<<EOF' >> .custom_env
-              ./latest-changelog.sh >> .custom_env
-              echo 'EOF' >> .custom_env
+              RELEASE_BODY='### ${{ github.event.head_commit.message }}'
           elif [[ ${GITHUB_REF} == refs/pull* ]]
           then
+              CREATE_RELEASE="false"
               num=${GITHUB_REF#refs/pull/}
               num=${num%/merge}
               BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
           else
-              echo CREATE_RELEASE="true" >> .custom_env
+              CREATE_RELEASE="true"
               echo PRE_RELEASE="true" >> .custom_env
               BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-              echo 'RELEASE_BODY<<EOF' >> .custom_env
-              echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")' >> .custom_env
-              echo 'EOF' >> .custom_env
+              RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
+              VERSION_PREFIX='内测版-'
           fi
           BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
           echo BUILD_NAME="$BUILD_NAME" >> .custom_env
           echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
           echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
+          echo CREATE_RELEASE="$CREATE_RELEASE" >> .custom_env
+          if test -n "$RELEASE_BODY"
+          then
+              echo 'RELEASE_BODY<<EOF' >> .custom_env
+              echo "$RELEASE_BODY" >> .custom_env
+              echo 'EOF' >> .custom_env
+              echo 'UPDATE_BODY<<EOF' >> .custom_env
+              envsubst < template-update.md >> .custom_env
+              echo >> .custom_env
+              echo 'EOF' >> .custom_env
+          fi
+          if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
+          then
+              echo SEND_TELEGRAM="true" >> .custom_env
+          fi
           cat .custom_env
           cat .custom_env >> $GITHUB_ENV
       - name: set up JDK 1.8
@@ -112,4 +126,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ steps.create_release.outputs.id }}
+      - name: Send commit to telegram
+        if: ${{ env.SEND_TELEGRAM == 'true' }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          disable_web_page_preview: true
+          message: ${{ env.UPDATE_BODY }}
+          document: ${{ env.BUILD_NAME_WITH_VERSION }}-android.apk
 
