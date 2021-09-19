@@ -312,5 +312,7 @@
     <string name="qidianshuju_type">类型</string>
     <string name="qidianshuju_words">字数</string>
     <string name="qidianshuju_order_ratio">收订比</string>
+    <string name="confirm_backup_import">确认导入覆盖本地配置？</string>
+    <string name="confirm_backup_export">确认导出覆盖可能已有的备份？</string>
 
 </resources>

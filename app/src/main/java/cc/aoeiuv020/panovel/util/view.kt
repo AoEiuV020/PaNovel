@@ -17,6 +17,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -38,7 +39,8 @@ import java.util.concurrent.TimeUnit
 /**
  * 这个自带"加载中.."
  */
-fun Context.loading(dialog: ProgressDialog, id: Int) = loading(dialog, getString(R.string.loading, getString(id)))
+fun Context.loading(dialog: ProgressDialog, id: Int) =
+    loading(dialog, getString(R.string.loading, getString(id)))
 
 fun Context.loading(dialog: ProgressDialog, str: String) = dialog.apply {
     setTitle(null)
@@ -46,9 +48,13 @@ fun Context.loading(dialog: ProgressDialog, str: String) = dialog.apply {
     show()
 }
 
-fun Context.alertError(dialog: AlertDialog, str: String, e: Throwable) = alert(dialog, str + "\n" + e.message)
+fun Context.alertError(dialog: AlertDialog, str: String, e: Throwable) =
+    alert(dialog, str + "\n" + e.message)
+
 fun Context.alert(dialog: AlertDialog, messageId: Int) = alert(dialog, getString(messageId))
-fun Context.alert(dialog: AlertDialog, messageId: Int, titleId: Int) = alert(dialog, getString(messageId), getString(titleId))
+fun Context.alert(dialog: AlertDialog, messageId: Int, titleId: Int) =
+    alert(dialog, getString(messageId), getString(titleId))
+
 fun Context.alert(dialog: AlertDialog, message: String, title: String? = null) = dialog.apply {
     setMessage(message)
     title?.let {
@@ -97,7 +103,8 @@ fun Context.changeColor(initial: Int, callback: (color: Int) -> Unit) = alert {
 }.safelyShow()
 
 
-fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) = ColorPickerDialogBuilder.with(this)
+fun Context.alertColorPicker(initial: Int, callback: (color: Int) -> Unit) =
+    ColorPickerDialogBuilder.with(this)
         .initialColor(initial)
         .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
         .setOnColorChangedListener(callback)
@@ -118,8 +125,10 @@ fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap {
         drawable = DrawableCompat.wrap(drawable).mutate()
     }
 
-    val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth,
-            drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val bitmap = Bitmap.createBitmap(
+        drawable.intrinsicWidth,
+        drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
+    )
     val canvas = Canvas(bitmap)
     drawable.setBounds(0, 0, canvas.width, canvas.height)
     drawable.draw(canvas)
@@ -137,11 +146,13 @@ fun EditText.showKeyboard() {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun Bundle.toMap(): Map<String, Any?> = BaseBundle::class.java.getDeclaredField("mMap").apply { isAccessible = true }
+fun Bundle.toMap(): Map<String, Any?> =
+    BaseBundle::class.java.getDeclaredField("mMap").apply { isAccessible = true }
         .get(this) as Map<String, *>
 
 // 从保存的状态或者传入的intent中拿String,
-fun Activity.getStringExtra(key: String, savedInstanceState: Bundle? = null): String? = savedInstanceState?.run { getString(key) }
+fun Activity.getStringExtra(key: String, savedInstanceState: Bundle? = null): String? =
+    savedInstanceState?.run { getString(key) }
         ?: intent.getStringExtra(key)
 
 fun Activity.setBrightness(brightness: Int) {
@@ -190,14 +201,30 @@ fun AlertBuilder<*>.safelyShow(): DialogInterface? = try {
 /**
  * 简单提示一些信息，
  */
-@WorkerThread
+@UiThread
 fun Context.tip(
-        s: String
+    s: String
 ) {
     AlertDialog.Builder(ctx)
-            .setMessage(s)
-            .setPositiveButton(android.R.string.ok, null)
-            .show()
+        .setMessage(s)
+        .setPositiveButton(android.R.string.ok, null)
+        .show()
+
+}
+
+/**
+ * 简单二次确认一些信息，
+ */
+@UiThread
+fun Context.confirm(
+    s: String,
+    onConfirm: Runnable
+) {
+    AlertDialog.Builder(ctx)
+        .setMessage(s)
+        .setPositiveButton(android.R.string.ok) { _, _ -> onConfirm.run() }
+        .setNegativeButton(android.R.string.cancel, null)
+        .show()
 
 }
 
@@ -208,12 +235,12 @@ fun Context.tip(
  */
 @WorkerThread
 fun Context.uiSelect(
-        // 要选择的是什么，展示在对话框标题，
-        name: String,
-        items: Array<String>,
-        default: Int,
-        // 默认就等一分钟，
-        timeout: Long = TimeUnit.MINUTES.toMillis(1)
+    // 要选择的是什么，展示在对话框标题，
+    name: String,
+    items: Array<String>,
+    default: Int,
+    // 默认就等一分钟，
+    timeout: Long = TimeUnit.MINUTES.toMillis(1)
 ): Int? {
     val thread = Thread.currentThread()
     var result: Int? = null
@@ -255,12 +282,12 @@ fun Context.uiSelect(
  */
 @WorkerThread
 fun Context.uiInput(
-        // 要输入的是什么，展示在对话框标题，
-        name: String,
-        default: String,
-        // 默认就等一分钟，
-        timeout: Long = TimeUnit.MINUTES.toMillis(1),
-        multiLine: Boolean = false
+    // 要输入的是什么，展示在对话框标题，
+    name: String,
+    default: String,
+    // 默认就等一分钟，
+    timeout: Long = TimeUnit.MINUTES.toMillis(1),
+    multiLine: Boolean = false
 ): String? {
     // TODO: 考虑试试kotlin的协程，
     val thread = Thread.currentThread()
@@ -275,7 +302,8 @@ fun Context.uiInput(
                 customView = layout
                 val etName = layout.editText
                 if (multiLine) {
-                    etName.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                    etName.inputType =
+                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
                 }
                 etName.setText(default)
                 yesButton {

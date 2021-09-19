@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.settings.BackupSettings
+import cc.aoeiuv020.panovel.util.confirm
 import cc.aoeiuv020.panovel.util.loading
 import cc.aoeiuv020.panovel.util.notNullOrReport
 import cc.aoeiuv020.panovel.util.safelyShow
@@ -70,14 +71,18 @@ class BackupActivity : AppCompatActivity(), AnkoLogger, IView {
     private fun initWidget() {
         progressDialog = ProgressDialog(this)
         btnImport.setOnClickListener {
-            loading(progressDialog, getString(R.string.sImport))
-            saveSelected()
-            presenter.import()
+            confirm(getString(R.string.confirm_backup_import), Runnable {
+                loading(progressDialog, getString(R.string.sImport))
+                saveSelected()
+                presenter.import()
+            })
         }
         btnExport.setOnClickListener {
-            loading(progressDialog, getString(R.string.export))
-            saveSelected()
-            presenter.export()
+            confirm(getString(R.string.confirm_backup_export), Runnable {
+                loading(progressDialog, getString(R.string.export))
+                saveSelected()
+                presenter.export()
+            })
         }
         btnChoose.setOnClickListener {
             requestFile()
