@@ -82,13 +82,13 @@ jobs:
         run: |
           ./gradlew assembleRelease
           find ./app/build/outputs/
-          find ./app/build/outputs -name '*.apk' -exec mv {} $BUILD_NAME_WITH_VERSION-android.apk \;
-          find ./app/build/outputs -name 'mapping.txt' -exec mv {} $BUILD_NAME_WITH_VERSION-android-mapping.txt \;
+          find ./app/build/outputs -name '*.apk' -exec mv {} $BUILD_NAME_WITH_VERSION.apk \;
+          find ./app/build/outputs -name 'mapping.txt' -exec mv {} $BUILD_NAME_WITH_VERSION-mapping.txt \;
       - name: Upload APK
         uses: actions/upload-artifact@master
         with:
           name: android-build
-          path: ${{ env.BUILD_NAME_WITH_VERSION }}-android.apk
+          path: ${{ env.BUILD_NAME_WITH_VERSION }}.apk
       - name: create release
         if: ${{ env.CREATE_RELEASE == 'true' }}
         id: create_release
@@ -108,8 +108,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.BUILD_NAME_WITH_VERSION }}-android.apk
-          asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}-android.apk
+          asset_path: ${{ env.BUILD_NAME_WITH_VERSION }}.apk
+          asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}.apk
           asset_content_type: application/zip
       - name: Upload android mapping
         if: ${{ env.CREATE_RELEASE == 'true' }}
@@ -118,8 +118,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.BUILD_NAME_WITH_VERSION }}-android-mapping.txt
-          asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}-android-mapping.txt
+          asset_path: ${{ env.BUILD_NAME_WITH_VERSION }}-mapping.txt
+          asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}-mapping.txt
           asset_content_type: text/plain
       - name: public release
         if: ${{ env.CREATE_RELEASE == 'true' }}
@@ -137,5 +137,5 @@ jobs:
           format: markdown
           disable_web_page_preview: true
           message: ${{ env.UPDATE_BODY }}
-          document: ${{ env.BUILD_NAME_WITH_VERSION }}-android.apk
+          document: ${{ env.BUILD_NAME_WITH_VERSION }}.apk
 
