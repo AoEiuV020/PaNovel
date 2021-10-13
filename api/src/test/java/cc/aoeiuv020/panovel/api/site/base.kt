@@ -2,10 +2,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.jsonpath.JsonPathUtils
-import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelDetail
-import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.api.*
 import org.junit.Assert.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -17,7 +14,7 @@ import kotlin.reflect.KClass
  */
 // 传入class为了在初始化logger前配置log级别，
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class BaseNovelContextText(val clazz: KClass<out NovelContext>) {
+abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     protected val folder: File = File(System.getProperty("java.io.tmpdir", "."))
         .resolve("PaNovel")
         .resolve("api")
@@ -28,6 +25,7 @@ abstract class BaseNovelContextText(val clazz: KClass<out NovelContext>) {
     protected val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
     init {
+        ProxyUtils.proxy()
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
         JsonPathUtils.initGson()
         NovelContext.cache(cacheDir)
@@ -35,7 +33,7 @@ abstract class BaseNovelContextText(val clazz: KClass<out NovelContext>) {
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    protected val site: NovelContext = clazz.java.newInstance()
+    protected val site: NovelContext = clazz.java.getDeclaredConstructor().newInstance()
     protected open var enabled = site.enabled
 
     protected fun search(name: String, author: String, extra: String, count: Int = 3): NovelItem? {
