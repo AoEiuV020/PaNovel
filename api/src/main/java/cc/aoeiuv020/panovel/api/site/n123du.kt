@@ -1,16 +1,16 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.anull.notNull
-import cc.aoeiuv020.base.jar.absHref
-import cc.aoeiuv020.base.jar.absSrc
-import cc.aoeiuv020.base.jar.textList
-import cc.aoeiuv020.base.jar.textListSplitWhitespace
+import cc.aoeiuv020.base.jar.*
 import cc.aoeiuv020.js.JsUtil
 import cc.aoeiuv020.okhttp.get
 import cc.aoeiuv020.panovel.api.NovelChapter
+import cc.aoeiuv020.panovel.api.NovelItem
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.regex.compileRegex
 import cc.aoeiuv020.string.lastDivide
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
 
 /**
  *
@@ -26,8 +26,8 @@ class N123du : DslJsoupNovelContext() {init {
     search {
         synchronized(lock) {
             post {
-                // https://www.123ds.org/Search/
-                url = "/Search/"
+                // https://www.123ds.org/sscc/
+                url = "/sscc/"
                 charset = "GBK"
                 data {
                     "q" to it
@@ -40,12 +40,35 @@ class N123du : DslJsoupNovelContext() {init {
                     retry = checkCookie()
                     novelItemList = emptyList()
                 } else {
-                    items("div.DivMargin > a.Title") {
-                        name(":root")
-                        author(
-                            "div.DivMargin > font:nth-child(${index * 8 + 4})",
-                            parent = root.ownerDocument()
-                        )
+                    val div = root.requireElement("div.DivMainLeft > div.DivBoder > div.DivMargin")
+                    var status = -1
+                    var name = ""
+                    var extra = ""
+                    novelItemList = div.childNodes().mapNotNull { childNode ->
+                        when (status) {
+                            -1 -> {
+                                if (childNode is TextNode) {
+                                    if (childNode.text().contains("小说")) {
+                                        status = 1
+                                    } else if (childNode.text().contains("作者")) {
+                                        status = 2
+                                    }
+                                }
+                            }
+                            1 -> {
+                                val ele = childNode as Element
+                                name = ele.text()
+                                extra = findBookId(ele.href())
+                                status = -1
+                            }
+                            2 -> {
+                                val ele = childNode as Element
+                                val author = ele.text()
+                                status = -1
+                                return@mapNotNull NovelItem(site.name, name, author, extra)
+                            }
+                        }
+                        return@mapNotNull null
                     }
                 }
             }
@@ -139,7 +162,7 @@ class N123du : DslJsoupNovelContext() {init {
             var chapterUrl: String = getNovelContentUrl(extra)
             while (index > 0) {
                 call = connect(chapterUrl)
-                chapterUrl = checkAndParse {
+                chapterUrl = this.checkAndParse {
                     root.getElements("li > a").notNull().first { it.html().startsWith("下一章：") }
                         .absHref()
                 }.notNull("pageUrl")
@@ -150,7 +173,7 @@ class N123du : DslJsoupNovelContext() {init {
             while (next != null) {
                 // 直接connect可能出现正文不全，可能是某个header导致的，
                 call = client.get(next)
-                checkAndParse {
+                this.checkAndParse {
                     // 正文的id是可变的，同时文字的顺序是可能反的，同时p可能是不存在的，
                     val div = root.requireElement("div#DivContentBG > div[id]", TAG_CONTENT)
                     val js = root.getElements("div#DivContentBG script:not([language])")

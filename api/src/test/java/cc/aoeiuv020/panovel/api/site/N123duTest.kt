@@ -93,9 +93,6 @@ class N123duTest : BaseNovelContextText(N123du::class) {
     @Test
     fun contentReversedP() {
         // 文字倒序，有p,
-        content("34/238403/17427794:0",
-                "?ABO，非常小众的一个题材。",
-                "??。",
-                39)
+        // 章节被删除了，暂时没有样例，
     }
 }
