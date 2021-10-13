@@ -12,7 +12,7 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 class Biqugese : DslJsoupNovelContext() {init {
     site {
         name = "书笔趣阁"
-        baseUrl = "http://www.biquge.se"
+        baseUrl = "http://www.biquxs520.com"
         logo = "https://s3.ax1x.com/2021/01/05/sAadA0.png"
     }
     // http://www.biquge.se/case.php?m=search
