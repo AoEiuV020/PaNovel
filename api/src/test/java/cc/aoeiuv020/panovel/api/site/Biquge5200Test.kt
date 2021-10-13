@@ -16,7 +16,7 @@ class Biquge5200Test : BaseNovelContextText(Biquge5200::class) {
     fun detail() {
         detail(
             "143123", "143123", "柯学捡尸人", "仙舟",
-            "http://r.m.biquge5200.com/cover/aHR0cDovL2Jvb2tjb3Zlci55dWV3ZW4uY29tL3FkYmltZy8zNDk1NzMvMTAyNTA4OTMwNy8xODA=",
+            "http://r.m.biquge5200.net/cover/aHR0cDovL2Jvb2tjb3Zlci55dWV3ZW4uY29tL3FkYmltZy8zNDk1NzMvMTAyNTA4OTMwNy8xODA=",
             "大佬A苦口婆心：\n" +
                     "“你才18，人生还很长。”\n" +
                     "大佬B语重心长：\n" +
@@ -36,7 +36,7 @@ class Biquge5200Test : BaseNovelContextText(Biquge5200::class) {
         chapters(
             "143123", "本书相关", "143_143123/176075793", null,
             "第389章 高傲的名侦探（合章）", "143_143123/178948142", "2021-07-01 00:00:00",
-            388
+            387
         )
     }
 
