@@ -7,6 +7,8 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.05-18:50:39.
  */
 class Wukong : DslJsoupNovelContext() {init {
+    // 网站大改，小说id都变了，模板也变了，搜索没了，
+    enabled = false
     site {
         name = "悟空看书"
         baseUrl = "https://www.wkxs.net"
