@@ -38,6 +38,7 @@ import cc.aoeiuv020.panovel.settings.OtherSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
 import cc.aoeiuv020.panovel.find.shuju.post.QidianshujuPostActivity
 import cc.aoeiuv020.panovel.find.sp7.Sp7Activity
+import cc.aoeiuv020.panovel.find.sp7.list.Sp7ListActivity
 import cc.aoeiuv020.panovel.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -393,7 +394,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             R.id.cacheAll -> downloadAll()
             R.id.source -> SiteChooseActivity.start(this)
             R.id.qidianshuju -> QidianshujuPostActivity.start(this)
-            R.id.sp7 -> Sp7Activity.start(this)
+            R.id.sp7 -> Sp7ListActivity.start(this)
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)

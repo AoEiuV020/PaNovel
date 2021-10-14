@@ -115,6 +115,7 @@
         <activity android:name="cc.aoeiuv020.panovel.find.shuju.post.QidianshujuPostActivity" />
         <activity android:name="cc.aoeiuv020.panovel.find.shuju.list.QidianshujuListActivity" />
         <activity android:name=".find.sp7.Sp7Activity" />
+        <activity android:name=".find.sp7.list.Sp7ListActivity" />
     </application>
 
 </manifest>
