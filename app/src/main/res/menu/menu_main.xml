@@ -32,6 +32,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/sp7"
+        android:title="@string/sp7"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/subscript"
         android:title="@string/subscript"
         android:visible="false"

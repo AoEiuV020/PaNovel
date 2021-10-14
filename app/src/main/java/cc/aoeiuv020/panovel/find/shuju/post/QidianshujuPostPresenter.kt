@@ -1,7 +1,7 @@
 @file:Suppress("DEPRECATION")
 
 
-package cc.aoeiuv020.panovel.shuju.post
+package cc.aoeiuv020.panovel.find.shuju.post
 
 import android.annotation.SuppressLint
 import android.content.Context

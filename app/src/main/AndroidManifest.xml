@@ -111,9 +111,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".shuju.QidianshujuActivity" />
-        <activity android:name=".shuju.post.QidianshujuPostActivity" />
-        <activity android:name=".shuju.list.QidianshujuListActivity" />
+        <activity android:name="cc.aoeiuv020.panovel.find.shuju.QidianshujuActivity" />
+        <activity android:name="cc.aoeiuv020.panovel.find.shuju.post.QidianshujuPostActivity" />
+        <activity android:name="cc.aoeiuv020.panovel.find.shuju.list.QidianshujuListActivity" />
+        <activity android:name=".find.sp7.Sp7Activity" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.shuju.list
+package cc.aoeiuv020.panovel.find.shuju.list
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

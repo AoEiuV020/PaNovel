@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.shuju.post
+package cc.aoeiuv020.panovel.find.shuju.post
 
 import android.annotation.SuppressLint
 import android.text.format.DateUtils
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.shuju.list.QidianshujuListActivity
+import cc.aoeiuv020.panovel.find.shuju.list.QidianshujuListActivity
 import java.util.concurrent.TimeUnit
 
 /**

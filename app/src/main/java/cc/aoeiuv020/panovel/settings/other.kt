@@ -52,5 +52,7 @@ object OtherSettings : Pref {
 
     // 起点数据开关，
     var qidianshuju: Boolean by Delegates.boolean(false)
+    // 书品网开关，
+    var sp7: Boolean by Delegates.boolean(false)
 
 }

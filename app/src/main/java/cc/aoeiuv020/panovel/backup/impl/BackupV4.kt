@@ -109,6 +109,7 @@ class BackupV4 : DefaultBackup() {
                 "refreshOnSearch" -> editor.putBoolean(key, value.asBoolean)
                 "reportCrash" -> editor.putBoolean(key, value.asBoolean)
                 "qidianshuju" -> editor.putBoolean(key, value.asBoolean)
+                "sp7" -> editor.putBoolean(key, value.asBoolean)
                 "volumeKeyScroll" -> editor.putBoolean(key, value.asBoolean)
                 "tabGravityCenter" -> editor.putBoolean(key, value.asBoolean)
                 "animationSpeed" -> editor.putFloat(key, value.asFloat)

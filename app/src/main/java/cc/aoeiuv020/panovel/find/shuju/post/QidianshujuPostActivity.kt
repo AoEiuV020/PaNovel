@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.shuju.post
+package cc.aoeiuv020.panovel.find.shuju.post
 
 import android.content.Context
 import android.os.Build
@@ -8,7 +8,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
-import cc.aoeiuv020.panovel.shuju.QidianshujuActivity
+import cc.aoeiuv020.panovel.find.shuju.QidianshujuActivity
 import cc.aoeiuv020.panovel.util.safelyShow
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_qidianshuju_post.rvContent

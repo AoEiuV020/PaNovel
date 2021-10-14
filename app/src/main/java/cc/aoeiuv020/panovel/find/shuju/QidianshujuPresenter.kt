@@ -1,7 +1,7 @@
 @file:Suppress("DEPRECATION")
 
 
-package cc.aoeiuv020.panovel.shuju
+package cc.aoeiuv020.panovel.find.shuju
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager

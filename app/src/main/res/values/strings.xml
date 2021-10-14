@@ -314,5 +314,7 @@
     <string name="qidianshuju_order_ratio">收订比</string>
     <string name="confirm_backup_import">确认导入覆盖本地配置？</string>
     <string name="confirm_backup_export">确认导出覆盖可能已有的备份？</string>
+    <string name="sp7">书品网</string>
+    <string name="sp7_summary">主页菜单出现书品网站小说首订列表入口，重启生效，</string>
 
 </resources>

@@ -18,8 +18,8 @@
 -keepclassmembers class cc.aoeiuv020.reader.AnimationMode { <fields>; }
 -keepclassmembers class cc.aoeiuv020.panovel.share.Expiration { <fields>; }
 
--keepclassmembers class cc.aoeiuv020.panovel.shuju.post.Post { *; }
--keepclassmembers class cc.aoeiuv020.panovel.shuju.list.Item { *; }
+-keepclassmembers class cc.aoeiuv020.panovel.find.shuju.post.Post { *; }
+-keepclassmembers class cc.aoeiuv020.panovel.find.shuju.list.Item { *; }
 
 
 #jsoup https://stackoverflow.com/a/32169975/5615186
