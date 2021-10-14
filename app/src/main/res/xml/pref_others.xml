@@ -51,12 +51,6 @@
 
     <SwitchPreference
         android:defaultValue="false"
-        android:key="qidianshuju"
-        android:summary="@string/qidianshuju_summary"
-        android:title="@string/qidianshuju" />
-
-    <SwitchPreference
-        android:defaultValue="false"
         android:key="sp7"
         android:summary="@string/sp7_summary"
         android:title="@string/sp7" />
