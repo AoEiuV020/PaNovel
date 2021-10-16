@@ -10,9 +10,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev'
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: dev
       - name: Test with Gradle
         run: |
           ./gradlew api:compileTestJava
