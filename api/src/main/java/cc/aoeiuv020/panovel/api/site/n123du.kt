@@ -151,8 +151,9 @@ class N123du : DslJsoupNovelContext() {init {
         }
     }
     // https://www.123ds.org/dudu-40/705684/36287633.html
+    // https://m.123ds.org/dudu-36/960684/47803707-5.html
     bookIdWithChapterIdRegex = "/dudu-(\\d+/\\d+/\\d+)"
-    contentPageTemplate = "/dudu-%s.html"
+    contentPageTemplate = "//m.123ds.org/dudu-%s.html"
     getNovelContentUrl { extra ->
         contentPageTemplate.notNull().format(extra.lastDivide(':').first)
     }
@@ -162,8 +163,9 @@ class N123du : DslJsoupNovelContext() {init {
             var chapterUrl: String = getNovelContentUrl(extra)
             while (index > 0) {
                 call = connect(chapterUrl)
+                header { userAgent = defaultUserAgentMobile }
                 chapterUrl = this.checkAndParse {
-                    root.getElements("li > a").notNull().first { it.html().startsWith("下一章：") }
+                    root.getElements("div.NextVolume > div > a").notNull().first { it.html().startsWith("下一章") }
                         .absHref()
                 }.notNull("pageUrl")
                 index--
@@ -173,22 +175,12 @@ class N123du : DslJsoupNovelContext() {init {
             while (next != null) {
                 // 直接connect可能出现正文不全，可能是某个header导致的，
                 call = client.get(next)
+                header { userAgent = defaultUserAgentMobile }
                 this.checkAndParse {
-                    // 正文的id是可变的，同时文字的顺序是可能反的，同时p可能是不存在的，
-                    val div = root.requireElement("div#DivContentBG > div[id]", TAG_CONTENT)
-                    val js = root.getElements("div#DivContentBG script:not([language])")
-                        ?.map { it.html() }?.firstOrNull {
-                            it.contains("eval") && it.contains("String.fromCharCode") && it.contains(
-                                div.id()
-                            )
-                        }
+                    // 改用手机版页面，没有倒序问题，
+                    val div = root.requireElement("div#txtuup", TAG_CONTENT)
                     next = root.getElement("#PageSet > a:nth-last-child(1)")?.absHref()
-                    if (js != null) {
-                        // 这时候文字是反的，
-                        div.textList().reversed().map { it.reversed() }
-                    } else {
-                        div.textList()
-                    }.also { novelContent = it }
+                    div.textList().dropLastWhile { it.contains("提醒您：看完记得收藏") }.also { novelContent = it }
                 }.notNull("content").also { ret.addAll(it) }
             }
             ret
@@ -204,7 +196,7 @@ class N123du : DslJsoupNovelContext() {init {
         var ret: T? = null
         document {
             novelContent = emptyList()
-            if (root.getElements("div#DivContentBG").isNullOrEmpty()) {
+            if (root.getElements("div#txtuup").isNullOrEmpty()) {
                 retry = checkCookie()
             } else {
                 ret = parser()
@@ -221,7 +213,7 @@ class N123du : DslJsoupNovelContext() {init {
     }
 
     private fun _Parser<Any>.checkCookie(): Boolean {
-        val c2e = root.getElement("script[language=javascript]")
+        val c2e = root.getElements("script[language=javascript]")?.last()
         val js2 = root.getElement("script[type=text/javascript]")?.absSrc()
         if (c2e != null && !js2.isNullOrEmpty()) {
             val js = JsUtil.create()
@@ -233,7 +225,7 @@ class N123du : DslJsoupNovelContext() {init {
             val path = js.run("ajax(c2);")
             val ret3 = responseBody(
                 client.get(
-                    baseHttpUrl.newBuilder().encodedPath(path).build().toString()
+                    baseHttpUrl.newBuilder().host("m.123ds.org").encodedPath(path).build().toString()
                 )
             ).string()
             if (ret3 == "ok") {
