@@ -27,16 +27,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/qidianshuju"
-        android:title="@string/qidianshuju"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/sp7"
-        android:title="@string/sp7"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/qidiantu"
         android:title="@string/qidiantu"
         app:showAsAction="never" />

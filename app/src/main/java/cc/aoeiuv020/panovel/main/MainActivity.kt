@@ -381,8 +381,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.qidianshuju).isVisible = OtherSettings.qidianshuju
-        menu.findItem(R.id.sp7).isVisible = OtherSettings.sp7
         menu.findItem(R.id.qidiantu).isVisible = OtherSettings.qidiantu
         return true
     }
@@ -396,8 +394,6 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             R.id.subscript -> subscript()
             R.id.cacheAll -> downloadAll()
             R.id.source -> SiteChooseActivity.start(this)
-            R.id.qidianshuju -> QidianshujuPostActivity.start(this)
-            R.id.sp7 -> Sp7ListActivity.start(this)
             R.id.qidiantu -> QidiantuListActivity.start(this)
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
