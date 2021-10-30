@@ -131,13 +131,16 @@ class QidiantuListActivity : AppCompatActivity(), IView, AnkoLogger {
         NovelDetailActivity.start(ctx, novel)
     }
 
-    fun showResult(data: List<Item>, head: List<Post>) {
+    fun showResult(data: List<Item>, head: List<Post>, title: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
             return
         }
         srlRefresh.isRefreshing = false
         adapter.setData(data)
         headAdapter.setData(head)
+        if (title.isNotBlank()) {
+            setTitle(title)
+        }
         snack.dismiss()
     }
 

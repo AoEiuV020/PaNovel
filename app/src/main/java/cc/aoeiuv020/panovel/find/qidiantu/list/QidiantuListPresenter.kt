@@ -78,6 +78,7 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
         }, executorService) {
             val ret = mutableListOf<Item>()
             val head = mutableListOf<Post>()
+            var title = ""
             var code = -1
             var retry = 0
             while (requesting && code != 200 && ret.isEmpty() && retry < maxRetry) {
@@ -94,6 +95,11 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                 OkHttpUtils.get(baseUrl).string()
                 val html = response.body().notNull().string()
                 val root = Jsoup.parse(html, baseUrl)
+                try {
+                    title = root.selectFirst("div.panel-heading > h1").text().removePrefix("起点新书上架首订")
+                } catch (e: Exception) {
+                    error({ "解析标题失败" }, e)
+                }
                 try {
                     root.select("div.panel-heading > a").forEach {
                         head.add(Post(it.text(), it.absHref()))
@@ -139,9 +145,9 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                     )
                 }
             }
-            saveCache(ret, head)
+            saveCache(ret, head, title)
             uiThread {
-                showResult(ret, head)
+                showResult(ret, head, title)
             }
         }
     }
@@ -164,16 +170,18 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                 return@doAsync
             }
             val head = root.read<List<Post>>(keyCache + "head") ?: listOf()
+            val title = root.read<String>(keyCache + "title") ?: ""
             uiThread {
-                showResult(data, head)
+                showResult(data, head, title)
             }
         }
     }
 
     @WorkerThread
-    private fun saveCache(data: List<Item>, head: List<Post>) {
+    private fun saveCache(data: List<Item>, head: List<Post>, title: String) {
         root.write(keyCache, data)
         root.write(keyCache + "head", head)
+        root.write(keyCache + "title", title)
     }
 
     private fun initCacheLocation(ctx: Context): Database = try {
@@ -191,8 +199,8 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
         Iron.db(File(LocationSettings.cacheLocation))
     }.sub("Qidiantu")
 
-    private fun showResult(data: List<Item>, head: List<Post>) {
-        view?.showResult(data, head)
+    private fun showResult(data: List<Item>, head: List<Post>, title: String) {
+        view?.showResult(data, head, title)
     }
 
     private fun showProgress(retry: Int) {
