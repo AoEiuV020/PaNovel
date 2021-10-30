@@ -25,6 +25,8 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
+import cc.aoeiuv020.panovel.find.qidiantu.QidiantuActivity
+import cc.aoeiuv020.panovel.find.qidiantu.list.QidiantuListActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.migration.MigrationPresenter
@@ -381,6 +383,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
         menuInflater.inflate(R.menu.menu_main, menu)
         menu.findItem(R.id.qidianshuju).isVisible = OtherSettings.qidianshuju
         menu.findItem(R.id.sp7).isVisible = OtherSettings.sp7
+        menu.findItem(R.id.qidiantu).isVisible = OtherSettings.qidiantu
         return true
     }
 
@@ -395,6 +398,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             R.id.source -> SiteChooseActivity.start(this)
             R.id.qidianshuju -> QidianshujuPostActivity.start(this)
             R.id.sp7 -> Sp7ListActivity.start(this)
+            R.id.qidiantu -> QidiantuListActivity.start(this)
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)

@@ -54,4 +54,10 @@
         android:key="sp7"
         android:summary="@string/sp7_summary"
         android:title="@string/sp7" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="qidiantu"
+        android:summary="@string/qidiantu_summary"
+        android:title="@string/qidiantu" />
 </PreferenceScreen>
