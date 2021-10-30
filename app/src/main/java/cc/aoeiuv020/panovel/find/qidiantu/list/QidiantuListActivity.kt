@@ -39,6 +39,7 @@ class QidiantuListActivity : AppCompatActivity(), IView, AnkoLogger {
 
     private lateinit var presenter: QidiantuListPresenter
     private lateinit var adapter: QidiantuListAdapter
+    private lateinit var headAdapter: QidiantuPostAdapter
     private lateinit var postUrl: String
     private var itemJumpQidian: MenuItem? = null
 
@@ -74,6 +75,15 @@ class QidiantuListActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     private fun initRecycler() {
+        rvHead.adapter = QidiantuPostAdapter().also {
+            headAdapter = it
+            it.setOnItemClickListener(object : QidiantuPostAdapter.OnItemClickListener {
+                override fun onItemClick(item: Post) {
+                    start(ctx, item.url)
+                    finish()
+                }
+            })
+        }
         rvContent.adapter = QidiantuListAdapter().also {
             adapter = it
             it.setOnItemClickListener(object : QidiantuListAdapter.OnItemClickListener {
@@ -121,12 +131,13 @@ class QidiantuListActivity : AppCompatActivity(), IView, AnkoLogger {
         NovelDetailActivity.start(ctx, novel)
     }
 
-    fun showResult(data: List<Item>) {
+    fun showResult(data: List<Item>, head: List<Post>) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
             return
         }
         srlRefresh.isRefreshing = false
         adapter.setData(data)
+        headAdapter.setData(head)
         snack.dismiss()
     }
 

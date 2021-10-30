@@ -77,6 +77,7 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
             }
         }, executorService) {
             val ret = mutableListOf<Item>()
+            val head = mutableListOf<Post>()
             var code = -1
             var retry = 0
             while (requesting && code != 200 && ret.isEmpty() && retry < maxRetry) {
@@ -93,6 +94,13 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                 OkHttpUtils.get(baseUrl).string()
                 val html = response.body().notNull().string()
                 val root = Jsoup.parse(html, baseUrl)
+                try {
+                    root.select("div.panel-heading > a").forEach {
+                        head.add(Post(it.text(), it.absHref()))
+                    }
+                } catch (e: Exception) {
+                    error({ "解析头部链接失败" }, e)
+                }
                 try {
                     root.select("#shouding_table > tbody > tr")
                         ?.takeIf { it.isNotEmpty() }.notNull()
@@ -112,7 +120,7 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                     } catch (e: Exception) {
                         throw IllegalStateException("解析作者名失败", e)
                     }
-                    val infoIndexList = listOf(2,3,4,6,7,8,9)
+                    val infoIndexList = listOf(2, 3, 4, 6, 7, 8, 9)
                     val info = infoIndexList.map { index ->
                         try {
                             children[index].text()
@@ -131,9 +139,9 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                     )
                 }
             }
-            saveCache(ret)
+            saveCache(ret, head)
             uiThread {
-                showResult(ret)
+                showResult(ret, head)
             }
         }
     }
@@ -155,15 +163,17 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                 }
                 return@doAsync
             }
+            val head = root.read<List<Post>>(keyCache + "head") ?: listOf()
             uiThread {
-                showResult(data)
+                showResult(data, head)
             }
         }
     }
 
     @WorkerThread
-    private fun saveCache(data: MutableList<Item>) {
+    private fun saveCache(data: List<Item>, head: List<Post>) {
         root.write(keyCache, data)
+        root.write(keyCache + "head", head)
     }
 
     private fun initCacheLocation(ctx: Context): Database = try {
@@ -181,8 +191,8 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
         Iron.db(File(LocationSettings.cacheLocation))
     }.sub("Qidiantu")
 
-    private fun showResult(data: List<Item>) {
-        view?.showResult(data)
+    private fun showResult(data: List<Item>, head: List<Post>) {
+        view?.showResult(data, head)
     }
 
     private fun showProgress(retry: Int) {
