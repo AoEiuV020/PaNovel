@@ -14,8 +14,10 @@ import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.webkit.WebView
 import android.widget.EditText
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
@@ -330,4 +332,15 @@ fun Context.uiInput(
         }
     }
     return result
+}
+
+@UiThread
+fun WebView.onActivityDestroy() {
+    (parent as? ViewGroup)?.removeView(this)
+    clearHistory()
+    clearCache(true)
+    loadUrl("about:blank")
+    freeMemory()
+    pauseTimers()
+    destroy()
 }
