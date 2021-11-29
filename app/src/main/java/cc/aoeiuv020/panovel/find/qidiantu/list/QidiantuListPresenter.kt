@@ -113,23 +113,39 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                 } catch (e: Exception) {
                     throw IllegalStateException("解析小说列表失败", e)
                 }.map { tr ->
+                    val realOrder: Map<String, Int> = listOf(
+                        "order",
+                        "name", "type", "author",
+                        "level", "fans", "collection",
+                        "firstOrder", "ratio", "words",
+                        "dateAdded"
+                    ).mapIndexed { index, s -> s to index }.toMap()
                     val children = tr.children()
-                    val (title, url) = try {
-                        children[1].child(0).run {
+                    val (name, url) = try {
+                        children[realOrder["name"].notNull("name")].child(0).run {
                             Pair(text(), absHref())
                         }
                     } catch (e: Exception) {
                         throw IllegalStateException("解析书名失败", e)
                     }
                     val author = try {
-                        children[5].text()
+                        children[realOrder["author"].notNull("author")].text()
                     } catch (e: Exception) {
                         throw IllegalStateException("解析作者名失败", e)
                     }
-                    val infoIndexList = listOf(2, 3, 4, 6, 7, 8, 9)
-                    val info = infoIndexList.map { index ->
+                    val itemOrder = listOf(
+                        "level",
+                        "type",
+                        "words",
+                        "collection",
+                        "firstOrder",
+                        "ratio",
+                        "dateAdded"
+                    )
+                    val info = itemOrder.map {
+                        val index = realOrder[it]
                         try {
-                            children[index].text()
+                            children[index.notNull(it)].text() ?: ""
                         } catch (e: Exception) {
                             error({ "解析信息失败: $index" }, e)
                             ""
@@ -137,9 +153,9 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                     }
                     ret.add(
                         Item(
-                            url, title, author,
-                            info[5], info[3], info[4],
-                            info[2], info[0], info[1],
+                            url, name, author,
+                            info[0], info[1], info[2],
+                            info[3], info[4], info[5],
                             info[6]
                         )
                     )

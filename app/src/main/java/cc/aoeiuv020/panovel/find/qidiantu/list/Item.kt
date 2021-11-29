@@ -5,7 +5,7 @@ data class Item(
     // 名字可能有省略号需要更新，
     var name: String,
     val author: String,
-    val count: String,
+    val level: String,
     val type: String,
     val words: String,
     val collection: String,

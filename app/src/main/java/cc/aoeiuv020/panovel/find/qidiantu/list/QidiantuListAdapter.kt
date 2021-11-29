@@ -65,7 +65,7 @@ class QidiantuListAdapter : RecyclerView.Adapter<QidiantuListAdapter.ViewHolder>
         fun bind(item: Item) {
             showImage(item)
             tvName.text = item.name
-            tvAuthor.text = item.author + " • " + item.count
+            tvAuthor.text = item.author + " • " + item.level
             tvDate.text = item.dateAdded
             tvType.text = item.type
             tvWords.text = item.words
