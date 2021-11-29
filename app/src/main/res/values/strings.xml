@@ -318,5 +318,6 @@
     <string name="sp7_summary">主页菜单出现书品网站小说首订列表入口，重启生效，</string>
     <string name="qidiantu">起点图</string>
     <string name="qidiantu_summary">主页菜单出现起点图网站小说首订列表入口，重启生效，</string>
+    <string name="qidiantu_empty_new">无新书上架</string>
 
 </resources>

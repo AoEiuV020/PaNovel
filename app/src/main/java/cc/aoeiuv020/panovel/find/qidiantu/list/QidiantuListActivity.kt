@@ -141,7 +141,12 @@ class QidiantuListActivity : AppCompatActivity(), IView, AnkoLogger {
         if (title.isNotBlank()) {
             setTitle(title)
         }
-        snack.dismiss()
+        if (data.isEmpty()) {
+            snack.setText(R.string.qidiantu_empty_new)
+            snack.show()
+        } else {
+            snack.dismiss()
+        }
     }
 
     fun showProgress(retry: Int, maxRetry: Int) {

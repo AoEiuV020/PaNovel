@@ -112,7 +112,7 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                         ?.takeIf { it.isNotEmpty() }.notNull()
                 } catch (e: Exception) {
                     throw IllegalStateException("解析小说列表失败", e)
-                }.map { tr ->
+                }.mapNotNull { tr ->
                     val realOrder: Map<String, Int> = listOf(
                         "order",
                         "name", "type", "author",
@@ -121,6 +121,9 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                         "dateAdded"
                     ).mapIndexed { index, s -> s to index }.toMap()
                     val children = tr.children()
+                    if (children.size == 1 && children.first().text().contains("无新书上架")) {
+                        return@mapNotNull null
+                    }
                     val (name, url) = try {
                         children[realOrder["name"].notNull("name")].child(0).run {
                             Pair(text(), absHref())
