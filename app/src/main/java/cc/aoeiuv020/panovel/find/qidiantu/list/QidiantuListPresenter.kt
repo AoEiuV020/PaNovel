@@ -22,6 +22,7 @@ import cc.aoeiuv020.panovel.data.CacheManager
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.LocationSettings
+import cc.aoeiuv020.regex.pick
 import org.jetbrains.anko.*
 import org.jsoup.Jsoup
 import java.io.File
@@ -107,19 +108,32 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                 } catch (e: Exception) {
                     error({ "解析头部链接失败" }, e)
                 }
+                val nameList = try {
+                    root.select("#shouding_table > thead > tr > th").map { it.text() }
+                } catch (e: Exception) {
+                    throw IllegalStateException("解析小说列表标头", e)
+                }
                 try {
                     root.select("#shouding_table > tbody > tr")
                         ?.takeIf { it.isNotEmpty() }.notNull()
                 } catch (e: Exception) {
                     throw IllegalStateException("解析小说列表失败", e)
                 }.mapNotNull { tr ->
-                    val realOrder: Map<String, Int> = listOf(
-                        "order",
-                        "name", "type", "author",
-                        "level", "fans", "collection",
-                        "firstOrder", "ratio", "words",
-                        "dateAdded"
-                    ).mapIndexed { index, s -> s to index }.toMap()
+                    val realOrder = mapOf(
+                        "order" to "#",
+                        "name" to "书名",
+                        "type" to "分类",
+                        "author" to "作者",
+                        "level" to "等级",
+                        "fans" to "粉丝",
+                        "collection" to "收藏",
+                        "firstOrder" to "首订",
+                        "ratio" to "收订比",
+                        "words" to "字数",
+                        "dateAdded" to "首V时刻"
+                    ).mapValues { (_, value) ->
+                        nameList.indexOfFirst { it.contains(value) }
+                    }
                     val children = tr.children()
                     if (children.size == 1 && children.first().text().contains("无新书上架")) {
                         return@mapNotNull null
@@ -148,7 +162,13 @@ class QidiantuListPresenter : Presenter<QidiantuListActivity>(), AnkoLogger {
                     val info = itemOrder.map {
                         val index = realOrder[it]
                         try {
-                            children[index.notNull(it)].text() ?: ""
+                            val value: String =
+                                children[(index?.takeIf { i -> i != -1 }).notNull(it)].text() ?: ""
+                            if (it == "type") {
+                                value.pick("\\[([^\\]]*)\\]").first().toString()
+                            } else {
+                                value
+                            }
                         } catch (e: Exception) {
                             error({ "解析信息失败: $index" }, e)
                             ""
