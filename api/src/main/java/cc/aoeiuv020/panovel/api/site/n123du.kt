@@ -37,7 +37,7 @@ class N123du : DslJsoupNovelContext() {init {
             var retry = false
             var ret = document {
                 if (root.getElements("div.DivMargin").isNullOrEmpty()) {
-                    retry = checkCookie()
+                    retry = checkCookie("www.123ds.org")
                     novelItemList = emptyList()
                 } else {
                     val div = root.requireElement("div.DivMainLeft > div.DivBoder > div.DivMargin")
@@ -95,7 +95,7 @@ class N123du : DslJsoupNovelContext() {init {
             novel {
                 name("div.DivMainLeft > div > h1")
                 author(
-                    "div.DivBoder > div:nth-child(3) > span:nth-child(2)",
+                    "div.DivBoder > div:nth-child(3) > span:nth-child(1)",
                     block = pickString("作\\s*者：(\\S*)")
                 )
             }
@@ -108,7 +108,7 @@ class N123du : DslJsoupNovelContext() {init {
             update(
                 "div.DivBoder > div:nth-child(3) > span[style]",
                 format = "yyyy-MM-dd HH:mm:ss",
-                block = pickString("更新：(.*)")
+                block = pickString("更新时间：(.*)")
             )
         }
     }
@@ -122,9 +122,9 @@ class N123du : DslJsoupNovelContext() {init {
                         element.requireElements("> span > a", name = TAG_CHAPTER_LINK).reversed()
                     })
             lastUpdate(
-                "div.DivMain > div:nth-child(2) > span[style]",
+                "body > div.DivMain > div:nth-child(2) > span[style]",
                 format = "yyyy-MM-dd HH:mm:ss",
-                block = pickString("更新：(.*)")
+                block = pickString("更新时间：(.*)")
             )
         }.let { list ->
             var cacheExtra: String? = null
@@ -212,7 +212,7 @@ class N123du : DslJsoupNovelContext() {init {
         return ret
     }
 
-    private fun _Parser<Any>.checkCookie(): Boolean {
+    private fun _Parser<Any>.checkCookie(host: String = "m.123ds.org"): Boolean {
         val c2e = root.getElements("script[language=javascript]")?.last()
         val js2 = root.getElement("script[type=text/javascript]")?.absSrc()
         if (c2e != null && !js2.isNullOrEmpty()) {
@@ -225,7 +225,7 @@ class N123du : DslJsoupNovelContext() {init {
             val path = js.run("ajax(c2);")
             val ret3 = responseBody(
                 client.get(
-                    baseHttpUrl.newBuilder().host("m.123ds.org").encodedPath(path).build().toString()
+                    baseHttpUrl.newBuilder().host(host).encodedPath(path).build().toString()
                 )
             ).string()
             if (ret3 == "ok") {
