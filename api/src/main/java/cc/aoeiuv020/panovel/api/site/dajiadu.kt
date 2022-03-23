@@ -16,11 +16,10 @@ class Dajiadu : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            // http://www.dajiadu.net/modules/article/searchab.php?searchtype=articlename&searchkey=%B6%BC%CA%D0&page=1
+            // https://www.dajiadu8.com/modules/article/searchsou1.php
             charset = "GBK"
-            url = "/modules/article/searchab.php"
+            url = "/modules/article/searchsou1.php"
             data {
-                "searchtype" to "articlename"
                 "searchkey" to it
                 // 加上&page=1可以避开搜索时间间隔的限制，
                 // 也可以通过不加载cookies避开搜索时间间隔的限制，
