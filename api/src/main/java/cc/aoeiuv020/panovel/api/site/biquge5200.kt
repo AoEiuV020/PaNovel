@@ -9,7 +9,7 @@ class Biquge5200 : DslJsoupNovelContext() {init {
     site {
         // 和以前的"笔趣阁5200"不一样了，id不通用所以换了个书源名字当成新的处理，
         name = "笔趣阁5200ge"
-        baseUrl = "http://www.biquge5200.net"
+        baseUrl = "http://www.biqu5200.net"
         logo =
             "http://tiebapic.baidu.com/forum/w%3D580/sign=5c4ce951d6d4b31cf03c94b3b7d7276f/27140225bc315c60220999fdd0b1cb134854776b.jpg"
     }
