@@ -9,8 +9,9 @@ class N9txs : DslJsoupNovelContext() {init {
 //    enabled = false
     site {
         name = "九桃小说"
-        baseUrl = "https://www.9txs.org"
-        logo = "https://tiebapic.baidu.com/forum/pic/item/810a19d8bc3eb135716cd7dfb11ea8d3fd1f442e.jpg"
+        baseUrl = "https://www.9taoxs.com"
+        logo =
+            "https://tiebapic.baidu.com/forum/pic/item/810a19d8bc3eb135716cd7dfb11ea8d3fd1f442e.jpg"
     }
     search {
         post {
@@ -53,6 +54,10 @@ class N9txs : DslJsoupNovelContext() {init {
     content {
         document {
             items("#content")
+        }.dropWhile {
+            it.startsWith("九桃小说")
+        }.dropLastWhile {
+            it.startsWith("您可以在百度里搜索")
         }
     }
 }
