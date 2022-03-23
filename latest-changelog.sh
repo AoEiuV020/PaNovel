@@ -7,4 +7,4 @@ cd $(dirname $0)
 versionName=$1
 versionName=${versionName:=$(./latest-version.sh)}
 changeLogFile=app/src/main/assets/ChangeLog.txt
-cat $changeLogFile |sed -n "/$versionName:/,\$p" |sed '/^$/,$d;1d' |sed '1s/[，,]$//;1s/^\(.*\)$/### \1\n/'
+cat $changeLogFile |sed -n "/$versionName:/,\$p" |sed '/^$/,$d;1d'

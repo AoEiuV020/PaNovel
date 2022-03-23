@@ -29,8 +29,14 @@ jobs:
           then
               CREATE_RELEASE="true"
               BUILD_VERSION=${GITHUB_REF#refs/tags/}
-              RELEASE_BODY=$(./latest-changelog.sh)
-              TG_CHANGELOG="$RELEASE_BODY"
+              RELEASE_BODY=$(./latest-changelog.sh $BUILD_VERSION |sed '1s/[，,]$//;1s/^\(.*\)$/### \1\n/')
+              if [[ -z "$RELEASE_BODY" ]]
+              then
+                  RELEASE_BODY='### ${{ github.event.head_commit.message }}'
+                  TG_CHANGELOG="$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")"
+              else
+                  TG_CHANGELOG=$(./latest-changelog.sh $BUILD_VERSION |sed -n '{;=;p}' | sed "N;s/\n/. /g")
+              fi
           elif [[ ${GITHUB_REF} == refs/pull* ]]
           then
               CREATE_RELEASE="false"
@@ -42,7 +48,7 @@ jobs:
               echo PRE_RELEASE="true" >> .custom_env
               BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
               RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
-              TG_CHANGELOG=$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")
+              TG_CHANGELOG="$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")"
               VERSION_PREFIX='内测版-'
           fi
           BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
