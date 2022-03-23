@@ -25,17 +25,17 @@ class N2kzw : DslJsoupNovelContext() {init {
         e.text().replace(compilePattern("\\(\\S+版\\)$").toRegex(), "")
     }
     search {
-        get {
-            // https://www.2kzw.com/search/
-            url = "/search/"
+        post {
+            url = "//m.2kzw.cc/search/"
             data {
                 "searchkey" to it
+                "searchtype" to "all"
             }
         }
         document {
-            items("div.category-div") {
-                name("> div > div.flex.flex-between.commend-title > a", block = pickName)
-                author("> div > div.flex.flex-between.commend-title > span")
+            items("body > table > tbody > tr") {
+                name("> td:nth-child(2) > div > a:nth-child(1)", block = pickName)
+                author("> td:nth-child(2) > div > p > span.mr15", block = pickString("作者:(\\S+)"))
             }
         }
     }
