@@ -1,19 +1,21 @@
 @file:Suppress("DEPRECATION")
 
 
-package cc.aoeiuv020.panovel.shuju
+package cc.aoeiuv020.panovel.find.qidiantu
 
 import cc.aoeiuv020.panovel.Presenter
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import org.jetbrains.anko.*
 
-class QidianshujuPresenter(
+class QidiantuPresenter(
     private val site: String
-) : Presenter<QidianshujuActivity>(), AnkoLogger {
-    fun start() {
+) : Presenter<QidiantuActivity>(), AnkoLogger {
+    private lateinit var baseUrl: String
+    fun start(url: String?) {
         debug { "start," }
-        view?.openPage("http://pujie.qidianshuju.com/nlist/0/0/1.html")
+        baseUrl = url ?: "https://www.qidiantu.com/shouding/"
+        view?.openPage(baseUrl)
     }
 
     fun open(currentUrl: String) {
@@ -36,6 +38,10 @@ class QidianshujuPresenter(
                 view?.openNovelDetail(novel)
             }
         }
+    }
+
+    fun browse() {
+        view?.browse(baseUrl)
     }
 
 }

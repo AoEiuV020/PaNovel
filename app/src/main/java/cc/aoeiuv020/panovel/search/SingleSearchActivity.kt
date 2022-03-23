@@ -14,6 +14,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.util.onActivityDestroy
 import cc.aoeiuv020.panovel.util.safelyShow
 import kotlinx.android.synthetic.main.activity_single_search.*
 import org.jetbrains.anko.*
@@ -83,6 +84,11 @@ class SingleSearchActivity : AppCompatActivity(), IView, AnkoLogger {
                 setAcceptThirdPartyCookies(wvSite, true)
             }
         }
+    }
+
+    override fun onDestroy() {
+        wvSite.onActivityDestroy()
+        super.onDestroy()
     }
 
     override fun onNewIntent(intent: Intent) {

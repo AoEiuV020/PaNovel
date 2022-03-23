@@ -40,7 +40,18 @@ class OkHttpTest {
         assertEquals("https://baidu.com/", request.url().toString())
         assertEquals("http://www.baidu.com/", response.request().url().toString())
         assertEquals(false, response.isRedirect)
+    }
 
+    @Test
+    fun google() {
+        ProxyUtils.proxy()
+        val url = "https://www.google.com/generate_204"
+        val request = Request.Builder().url(url)
+                .build()
+        val call = OkHttpClient().newCall(request)
+        val response = call.execute()
+
+        assertEquals(204, response.code())
     }
 
     @Test

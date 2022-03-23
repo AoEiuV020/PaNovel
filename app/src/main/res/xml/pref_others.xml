@@ -51,7 +51,7 @@
 
     <SwitchPreference
         android:defaultValue="false"
-        android:key="qidianshuju"
-        android:summary="@string/qidianshuju_summary"
-        android:title="@string/qidianshuju" />
+        android:key="qidiantu"
+        android:summary="@string/qidiantu_summary"
+        android:title="@string/qidiantu" />
 </PreferenceScreen>

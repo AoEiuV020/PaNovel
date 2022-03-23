@@ -207,6 +207,10 @@ object DataManager : AnkoLogger {
         }
     }
 
+    fun query(site: String, author: String, name: String, detail: String): NovelManager {
+        return app.queryOrNewNovel(NovelMinimal(site, author, name, detail)).toManager()
+    }
+
     fun removeWebViewCookies() = cookie.removeCookies()
 
     fun removeNovelContextCookies(site: String) = api.removeCookies(getNovelContextByName(site))

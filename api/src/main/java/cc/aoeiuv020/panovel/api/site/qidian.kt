@@ -36,7 +36,7 @@ class Qidian : DslJsoupNovelContext() {init {
          */
         document {
             items("#result-list > div > ul > li") {
-                name("> div.book-mid-info > h4 > a")
+                name("> div.book-mid-info > h2 > a")
                 author("> div.book-mid-info > p.author") {
                     // 有的小作者的名字不可点击，没有a标签，只能这样child获取，
                     it.child(1).text()

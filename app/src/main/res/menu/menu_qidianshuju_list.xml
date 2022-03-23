@@ -3,18 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/close"
-        android:icon="@drawable/ic_close"
-        android:title="@string/close"
-        app:iconTint="@android:color/white"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/qidian"
         android:icon="@drawable/ic_jump_qidian"
         android:title="@string/qidian"
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/browse"
+        android:icon="@drawable/ic_open_in_browser"
+        android:title="@string/open_in_browser"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
 
 </menu>

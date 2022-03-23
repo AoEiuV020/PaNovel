@@ -12,6 +12,8 @@ import java.util.*
  * Created by AoEiuV020 on 2018.06.03-21:44:39.
  */
 class Aileleba : DslJsoupNovelContext() {init {
+    // 网站倒闭了，域名被重定向到另一个网站了，小说id不通用所以不是同一个站，
+    hide = true
     site {
         name = "乐安宣书网"
         baseUrl = "http://www.ailelexs.com"

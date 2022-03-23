@@ -306,5 +306,18 @@
     <string name="qidian">起点</string>
     <string name="qidian_not_found">未安装起点app无法直接跳转</string>
     <string name="qidianshuju_summary">主页菜单出现起点数据网站入口，重启生效，</string>
+    <string name="title_qidianshuju_first_order">首订统计</string>
+    <string name="title_qidianshuju_first_order_ranking">首订排行</string>
+    <string name="qidianshuju_post_progress_place_holder">正在重试%d/%d</string>
+    <string name="qidianshuju_type">类型</string>
+    <string name="qidianshuju_words">字数</string>
+    <string name="qidianshuju_order_ratio">收订比</string>
+    <string name="confirm_backup_import">确认导入覆盖本地配置？</string>
+    <string name="confirm_backup_export">确认导出覆盖可能已有的备份？</string>
+    <string name="sp7">书品网</string>
+    <string name="sp7_summary">主页菜单出现书品网站小说首订列表入口，重启生效，</string>
+    <string name="qidiantu">起点图</string>
+    <string name="qidiantu_summary">主页菜单出现起点图网站小说首订列表入口，重启生效，</string>
+    <string name="qidiantu_empty_new">无新书上架</string>
 
 </resources>

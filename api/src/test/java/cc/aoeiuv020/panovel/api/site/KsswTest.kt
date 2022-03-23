@@ -13,7 +13,7 @@ class KsswTest : BaseNovelContextText(Kssw::class) {
     fun detail() {
         detail(
             "2588", "2588", "我真不是邪神走狗", "万劫火",
-            "https://www.kssw.net/files/article/image/2/2588/2588s.jpg",
+            "https://pc.kssw.net/files/article/image/2/2588/2588s.jpg",
             "",
             "2020-10-07 01:19:00"
         )

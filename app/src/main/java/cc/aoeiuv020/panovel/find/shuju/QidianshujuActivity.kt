@@ -1,4 +1,4 @@
-package cc.aoeiuv020.panovel.shuju
+package cc.aoeiuv020.panovel.find.shuju
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
@@ -15,6 +15,7 @@ import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.settings.OtherSettings
+import cc.aoeiuv020.panovel.util.onActivityDestroy
 import cc.aoeiuv020.panovel.util.safelyShow
 import cc.aoeiuv020.regex.pick
 import kotlinx.android.synthetic.main.activity_single_search.*
@@ -27,6 +28,9 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
     companion object {
         fun start(ctx: Context) {
             ctx.startActivity<QidianshujuActivity>()
+        }
+        fun start(ctx: Context, url: String) {
+            ctx.startActivity<QidianshujuActivity>("url" to url)
         }
     }
 
@@ -50,7 +54,7 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
         presenter = QidianshujuPresenter("起点中文")
         presenter.attach(this)
 
-        presenter.start()
+        presenter.start(intent.getStringExtra("url"))
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -68,6 +72,11 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
                 setAcceptThirdPartyCookies(wvSite, true)
             }
         }
+    }
+
+    override fun onDestroy() {
+        wvSite.onActivityDestroy()
+        super.onDestroy()
     }
 
     class MyWebChromeClient : WebChromeClient() {
@@ -161,7 +170,7 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_qidianshuju, menu)
+        menuInflater.inflate(R.menu.menu_find, menu)
         itemJumpQidian = menu.findItem(R.id.qidian)
         updateItem()
         return true
@@ -185,6 +194,7 @@ class QidianshujuActivity : AppCompatActivity(), IView, AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.close -> finish()
+            R.id.browse -> presenter.browse()
             R.id.qidian -> toggleQidian()
             else -> return super.onOptionsItemSelected(item)
         }

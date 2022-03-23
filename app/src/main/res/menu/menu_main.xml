@@ -27,8 +27,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/qidianshuju"
-        android:title="@string/qidianshuju"
+        android:id="@+id/qidiantu"
+        android:title="@string/qidiantu"
         app:showAsAction="never" />
 
     <item

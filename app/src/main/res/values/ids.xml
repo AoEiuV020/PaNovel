@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="ad_view_position" type="id" />
+    <item name="tag_image_item" type="id" />
 </resources>

@@ -2,10 +2,7 @@ package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.anull.notNull
 import cc.aoeiuv020.jsonpath.JsonPathUtils
-import cc.aoeiuv020.panovel.api.NovelChapter
-import cc.aoeiuv020.panovel.api.NovelContext
-import cc.aoeiuv020.panovel.api.NovelDetail
-import cc.aoeiuv020.panovel.api.NovelItem
+import cc.aoeiuv020.panovel.api.*
 import org.junit.Assert.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -19,14 +16,16 @@ import kotlin.reflect.KClass
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     protected val folder: File = File(System.getProperty("java.io.tmpdir", "."))
-            .resolve("PaNovel")
-            .resolve("api")
-            .resolve("test")
-            .also { it.mkdirs() }
+        .resolve("PaNovel")
+        .resolve("api")
+        .resolve("test")
+        .also { it.mkdirs() }
     protected val cacheDir = folder.resolve("cache")
     protected val filesDir = folder.resolve("files")
+    protected val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
     init {
+        ProxyUtils.proxy()
         System.setProperty("org.slf4j.simpleLogger.log.${clazz.java.simpleName}", "trace")
         JsonPathUtils.initGson()
         NovelContext.cache(cacheDir)
@@ -34,12 +33,12 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    protected val context: NovelContext = clazz.java.newInstance()
-    protected open var enabled = context.enabled
+    protected val site: NovelContext = clazz.java.getDeclaredConstructor().newInstance()
+    protected open var enabled = site.enabled
 
     protected fun search(name: String, author: String, extra: String, count: Int = 3): NovelItem? {
-        if (context.hide || !enabled) return null
-        val list = context.searchNovelName(name)
+        if (site.hide || !enabled) return null
+        val list = site.searchNovelName(name)
         println(list.size)
         list.take(count).forEach {
             println(it)
@@ -53,8 +52,8 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     }
 
     protected fun search(name: String, count: Int = 3): List<NovelItem>? {
-        if (context.hide || !enabled) return null
-        val list = context.searchNovelName(name)
+        if (site.hide || !enabled) return null
+        val list = site.searchNovelName(name)
         println(list.size)
         list.take(count).forEach {
             println(it)
@@ -65,8 +64,8 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
 
     protected fun detail(detailExtra: String, extra: String, name: String, author: String,
                          image: String?, intro: String? = null, update: String? = null): NovelDetail? {
-        if (context.hide || !enabled) return null
-        val detail = context.getNovelDetail(detailExtra)
+        if (site.hide || !enabled) return null
+        val detail = site.getNovelDetail(detailExtra)
         println(detail)
         assertEquals(name, detail.novel.name)
         assertEquals(author, detail.novel.author)
@@ -78,7 +77,6 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
         return detail
     }
 
-    private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     /**
      * @return 返回true表示对比通过，actual比once时间更晚，
      */
@@ -100,8 +98,8 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
                            lastName: String, lastExtra: String, lastUpdate: String?,
                            size: Int,
                            count: Int = 3): List<NovelChapter>? {
-        if (context.hide || !enabled) return null
-        val list = context.getNovelChaptersAsc(extra)
+        if (site.hide || !enabled) return null
+        val list = site.getNovelChaptersAsc(extra)
         println(list.size)
         list.take(count).forEach {
             println(it)
@@ -131,7 +129,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
                           firstLine: String,
                           lastLine: String,
                           size: Int, count: Int = 3): List<String>? {
-        if (context.hide || !enabled) return null
+        if (site.hide || !enabled) return null
         val list = content(extra).notNull()
         println(list.size)
         list.take(count).forEach {
@@ -147,8 +145,8 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
     }
 
     protected fun content(extra: String): List<String>? {
-        if (context.hide || !enabled) return null
-        return context.getNovelContent(extra) { c, t ->
+        if (site.hide || !enabled) return null
+        return site.getNovelContent(extra) { c, t ->
             println("$c/$t")
         }
     }

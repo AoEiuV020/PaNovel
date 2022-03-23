@@ -25,6 +25,8 @@ import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Novel
 import cc.aoeiuv020.panovel.detail.NovelDetailActivity
 import cc.aoeiuv020.panovel.donate.DonateActivity
+import cc.aoeiuv020.panovel.find.qidiantu.QidiantuActivity
+import cc.aoeiuv020.panovel.find.qidiantu.list.QidiantuListActivity
 import cc.aoeiuv020.panovel.history.HistoryFragment
 import cc.aoeiuv020.panovel.migration.Migration
 import cc.aoeiuv020.panovel.migration.MigrationPresenter
@@ -36,7 +38,9 @@ import cc.aoeiuv020.panovel.search.SiteChooseActivity
 import cc.aoeiuv020.panovel.settings.InterfaceSettings
 import cc.aoeiuv020.panovel.settings.OtherSettings
 import cc.aoeiuv020.panovel.settings.SettingsActivity
-import cc.aoeiuv020.panovel.shuju.QidianshujuActivity
+import cc.aoeiuv020.panovel.find.shuju.post.QidianshujuPostActivity
+import cc.aoeiuv020.panovel.find.sp7.Sp7Activity
+import cc.aoeiuv020.panovel.find.sp7.list.Sp7ListActivity
 import cc.aoeiuv020.panovel.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -377,7 +381,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.qidianshuju).isVisible = OtherSettings.qidianshuju
+        menu.findItem(R.id.qidiantu).isVisible = OtherSettings.qidiantu
         return true
     }
 
@@ -390,7 +394,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
             R.id.subscript -> subscript()
             R.id.cacheAll -> downloadAll()
             R.id.source -> SiteChooseActivity.start(this)
-            R.id.qidianshuju -> QidianshujuActivity.start(this)
+            R.id.qidiantu -> QidiantuListActivity.start(this)
             R.id.donate -> DonateActivity.start(this)
             R.id.explain -> showExplain()
             else -> return super.onOptionsItemSelected(item)

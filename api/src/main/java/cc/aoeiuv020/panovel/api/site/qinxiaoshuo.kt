@@ -30,7 +30,7 @@ class Qinxiaoshuo : DslJsoupNovelContext() {init {
         document {
             items("div.book > div.book_info > div.items") {
                 name("> h3 > a")
-                author("> div:nth-child(2)", block = pickString("作者: (.*)"))
+                author("> div:nth-child(2)", block = pickString("作者: ?(.*)"))
             }
         }
     }
