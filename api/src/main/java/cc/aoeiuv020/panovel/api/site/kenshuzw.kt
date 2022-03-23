@@ -13,16 +13,16 @@ class Kenshuzw : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            url = "/modules/article/search.php"
+            url = "//m.kenshuzw.com/modules/article/search.php"
             data {
-                "area" to 2
                 "searchkey" to it
             }
         }
         document {
-            items("div.layout > ul > li") {
-                name("> div > h3 > a")
-                author("> div > p.author", block = ownText())
+            items("section.box_1 > ul:nth-child(2) > li") {
+                extra("> a")
+                name("> a > div > h4")
+                author("div.book-meta-l > span", block = ownText())
             }
         }
     }
