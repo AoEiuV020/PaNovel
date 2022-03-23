@@ -3,22 +3,19 @@ package cc.aoeiuv020.panovel.api.site
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import java.net.URL
 
-/**
- * Created by AoEiuV020 on 2018.06.05-18:50:39.
- */
-class Wukong : DslJsoupNovelContext() {init {
-    // 网站大改，小说id都变了，模板也变了，当成新站处理，
+class Wukong0 : DslJsoupNovelContext() {init {
     hide = true
     site {
-        name = "悟空看书"
+        name = "悟空看书0"
         baseUrl = "https://www.wkxs.net"
         logo = "https://imgsa.baidu.com/forum/w%3D580/sign=95ca1b6f75310a55c424defc87474387/930dadd12f2eb938f9acfb6ed9628535e7dd6f50.jpg"
     }
     search {
         get {
-            // http://www.biqugebook.com/modules/article/search.php?searchtype=articlename&searchkey=%B6%BC%CA%D0&page=1
+            // 电脑版搜索要验证码，
+            // https://m.wkxs.net/modules/article/search.php?searchtype=articlename&searchkey=%B6%BC%CA%D0&t_btnsearch=
             charset = "GBK"
-            url = "/modules/article/search.php"
+            url = "//m.wkxs.net/modules/article/search.php"
             data {
                 "searchtype" to "articlename"
                 "searchkey" to it
@@ -30,15 +27,15 @@ class Wukong : DslJsoupNovelContext() {init {
         document {
             if (URL(root.ownerDocument().location()).path.startsWith("/book_")) {
                 single {
-                    name("#info > h1") {
+                    name("tbody > tr > td.info > h1") {
                         it.ownText()
                     }
-                    author("#info > h1 > small > a")
+                    author("tbody > tr > td.info > p:nth-child(2) > a")
                 }
             } else {
-                items("#main > table > tbody > tr:not([align='center'])") {
-                    name("> td > a")
-                    author("> td:nth-child(3)")
+                items("body > div.waps_r > table > tbody > tr") {
+                    name("> td:nth-child(2) > div > a:nth-child(1)")
+                    author("> td:nth-child(2) > div > p > span.mr15", block = pickString("作者:(\\S*)"))
                 }
             }
         }

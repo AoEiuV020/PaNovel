@@ -3,6 +3,7 @@ package cc.aoeiuv020.panovel.api
 import cc.aoeiuv020.panovel.api.site.BaseNovelContextText
 import cc.aoeiuv020.panovel.api.site.Kenshuzw
 import cc.aoeiuv020.panovel.api.site.N69shu
+import cc.aoeiuv020.panovel.api.site.Wukong0
 import org.junit.Test
 import java.io.File
 import java.util.*
@@ -12,11 +13,11 @@ import java.util.*
  * Created by AoEiuV020 on 2021.07.15-22:03:55.
  */
 class MakeJunitTest : BaseNovelContextText(
-    Kenshuzw::class
+    Wukong0::class
 ) {
     @Suppress("RemoveExplicitTypeArguments")
     private val specialBookList = listOf<String>(
-        "柯学捡尸人"
+        "术师手册"
     )
     private val testBookList = mutableListOf<NovelItem>()
     private val testChapterList = mutableListOf<NovelChapter>()
