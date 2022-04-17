@@ -6,6 +6,9 @@
     <color name="black_overlay">#66000000</color>
     <color name="colorFavorite">@color/md_red_700</color>
 
+    <color name="textDefault">#8a000000</color>
+    <color name="textBlack">#de000000</color>
+
     <color name="defaultBackgroundColor1">#D6D2D6</color>
     <color name="defaultBackgroundColor2">#191B19</color>
     <color name="defaultBackgroundColor3">#C6E0B1</color>

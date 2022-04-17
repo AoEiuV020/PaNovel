@@ -27,7 +27,7 @@
                 android:id="@+id/tvDisclaimer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                style="@style/TextBody1"
                 tools:text="免责声明" />
         </LinearLayout>
     </ScrollView>
