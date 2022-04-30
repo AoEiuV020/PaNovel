@@ -1,29 +1,26 @@
-package cc.aoeiuv020.panovel.util;
+package cc.aoeiuv020.panovel.util
 
-import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Context
+import android.content.pm.PackageManager
+import cc.aoeiuv020.regex.pick
 
-/**
- */
-public final class VersionUtil {
-    /**
-     * https://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
-     * TODO: 突然发现，直接BuildConfig就可以，
-     */
-    public static String getAppVersionName(Context context) {
+object VersionUtil {
+    fun getAppVersionName(context: Context): String {
         try {
-            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            return context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
         }
-        return "0";
+        return "0"
     }
 
     /**
      * https://stackoverflow.com/questions/6701948/efficient-way-to-compare-version-strings-in-java
-     * <p>
+     *
+     *
      * Compares two version strings.
-     * <p>
+     *
+     *
      * Use this instead of String.compareTo() for a non-lexicographical
      * comparison that works for version strings. e.g. "1.10".compareTo("1.6").
      *
@@ -34,22 +31,37 @@ public final class VersionUtil {
      * The result is zero if the strings are _numerically_ equal.
      * @note It does not work if "1.10" is supposed to be equal to "1.10.0".
      */
-    @SuppressWarnings("All")
-    public static int compare(String str1, String str2) {
-        String[] vals1 = str1.split("\\.");
-        String[] vals2 = str2.split("\\.");
-        int i = 0;
-        // set index to first non-equal ordinal or length of shortest version string
-        while (i < vals1.length && i < vals2.length && vals1[i].equals(vals2[i])) {
-            i++;
+    fun compare(str1: String, str2: String): Int {
+        val (versionName1, date1) = str1.split('-').let {
+            it[0] to it.elementAtOrNull(1)
         }
-        // compare first non-equal ordinal number
-        if (i < vals1.length && i < vals2.length) {
-            int diff = Integer.valueOf(vals1[i]).compareTo(Integer.valueOf(vals2[i]));
-            return Integer.signum(diff);
+        val (versionName2, date2) = str2.split('-').let {
+            it[0] to it.elementAtOrNull(1)
         }
-        // the strings are equal or one string is a substring of the other
-        // e.g. "1.2.3" = "1.2.3" or "1.2.3" < "1.2.3.4"
-        return Integer.signum(vals1.length - vals2.length);
+        val list1 = versionName1.split('.')
+        val list2 = versionName2.split('.')
+        var index = 0
+        while (index < list1.size && index < list2.size) {
+            if (list1[index] == list2[index]) {
+                index++
+                continue
+            }
+            return list1[index].toInt().compareTo(list2[index].toInt())
+        }
+        if (list1.size != list2.size) {
+            return list1.size.compareTo(list2.size)
+        }
+        if (date1 == date2) {
+            return 0
+        }
+        if (date1 != null && date2 != null) {
+            return date1.toInt().compareTo(date2.toInt())
+        }
+        return if (date1 == null) {
+            1
+        } else {
+            // date2 == null
+            -1
+        }
     }
 }
