@@ -7,7 +7,12 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import cc.aoeiuv020.panovel.R
+import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.data.entity.Site
+import cc.aoeiuv020.panovel.util.alert
+import cc.aoeiuv020.panovel.util.hide
+import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.panovel.util.tip
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.site_list_item.view.*
 
@@ -44,6 +49,7 @@ class SiteListAdapter(
     }
 
     inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+        private val tvStopUpkeep: TextView = itemView.tvStopUpkeep
         private val tvName: TextView = itemView.tvName
         private val ivLogo: ImageView = itemView.ivLogo
         private val ivSettings: ImageView = itemView.ivSettings
@@ -74,6 +80,16 @@ class SiteListAdapter(
             tvName.text = data.name
             Glide.with(ivLogo).load(data.logo).into(ivLogo)
             cbEnabled.isChecked = data.enabled
+            val novelContext = DataManager.api.getNovelContextByName(data.name)
+            if (novelContext.upkeep) {
+                tvStopUpkeep.hide()
+            } else {
+                tvStopUpkeep.show()
+                tvStopUpkeep.setOnClickListener { v ->
+                    v.context.tip(novelContext.reason.takeIf { it.isNotEmpty() }
+                        ?: v.context.getString(R.string.tip_stop_upkeep_reason_default))
+                }
+            }
         }
     }
 
