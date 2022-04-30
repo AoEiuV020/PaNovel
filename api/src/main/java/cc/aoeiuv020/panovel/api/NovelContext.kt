@@ -282,9 +282,14 @@ abstract class NovelContext {
 
 
     /**
-     * 这个网站是否启用，
+     * 这个网站是否还有维护，
      */
-    open val enabled: Boolean = true
+    open val upkeep: Boolean = true
+
+    /**
+     * 这个网站停止维护的原因，
+     */
+    open val reason: String = ""
 
     /**
      * 这个网站是否隐藏，

@@ -10,10 +10,6 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.10.05-00:38:40.
  */
 class YidmTest : BaseNovelContextText(Yidm::class) {
-    init {
-        // 下载不到版权受限的小说了，这个源就没什么意义了，
-        enabled = false
-    }
     @Test
     fun search() {
         search("都市")

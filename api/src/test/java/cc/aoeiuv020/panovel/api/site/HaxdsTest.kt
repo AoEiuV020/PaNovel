@@ -6,9 +6,6 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.06.07-14:56:42.
  */
 class HaxdsTest : BaseNovelContextText(Haxds::class) {
-    init {
-        enabled = false
-    }
     @Test
     fun search() {
         search("都市")

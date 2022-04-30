@@ -9,10 +9,8 @@ import cc.aoeiuv020.regex.pick
  * Created by AoEiuV020 on 2018.06.02-20:00:14.
  */
 class Fenghuaju : DslJsoupNovelContext() {init {
-    /*
-    这网站时不时502,
-     */
-    enabled = false
+    reason = "这网站时不时502,"
+    upkeep = false
     site {
         name = "风华居"
         baseUrl = "http://www.fenghuaju.cc"

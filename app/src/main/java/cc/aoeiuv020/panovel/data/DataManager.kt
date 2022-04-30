@@ -137,7 +137,7 @@ object DataManager : AnkoLogger {
         val existsSiteNameSet = existsSites.map { it.name }.toSet()
         allNovelContexts().filter { it.site.name !in existsSiteNameSet }.forEach { context ->
             context.site.run {
-                app.newSite(name, baseUrl, logo, context.enabled, context.hide)
+                app.newSite(name, baseUrl, logo, context.upkeep, context.hide)
             }
         }
     }

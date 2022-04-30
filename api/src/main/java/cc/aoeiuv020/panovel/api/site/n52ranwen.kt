@@ -8,9 +8,8 @@ import cc.aoeiuv020.string.divide
  * Created by AoEiuV020 on 2018.06.08-19:34:21.
  */
 class N52ranwen : DslJsoupNovelContext() {init {
-    // 这网站连接超时了，
-    // 是被墙了，
-    enabled = false
+    reason = "这网站连接超时了，是被墙了，"
+    upkeep = false
     site {
         name = "燃文小说"
         baseUrl = "https://www.52ranwen.cc"

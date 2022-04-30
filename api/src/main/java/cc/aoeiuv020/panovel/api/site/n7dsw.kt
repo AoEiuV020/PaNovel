@@ -10,8 +10,8 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.03-21:27:05.
  */
 class N7dsw : DslJsoupNovelContext() {init {
-    // 不咋地，随机握手失败，搜索可能502,
-    enabled = false
+    reason = "不咋地，随机握手失败，搜索可能502,"
+    upkeep = false
     site {
         name = "7度书屋"
         baseUrl = "https://www.7dsw.com"

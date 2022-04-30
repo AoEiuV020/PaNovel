@@ -189,7 +189,7 @@ class Refresher(
         }
         try {
             val context = getNovelContextByName(novel.site)
-            if (context.hide || !context.enabled) {
+            if (context.hide || !context.upkeep) {
                 logger.info { "skip <${novel.run { "$site.$author.$name.$detail" }}>" }
                 return
             }

@@ -8,8 +8,8 @@ import cc.aoeiuv020.panovel.api.firstTwoIntPattern
  * Created by AoEiuV020 on 2018.06.03-19:56:19.
  */
 class Wenxuemi : DslJsoupNovelContext() {init {
-    // 搜索403
-    enabled = false
+    reason = "搜索403"
+    upkeep = false
     site {
         name = "文学迷"
         baseUrl = "https://www.wenxuemi.cc"

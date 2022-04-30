@@ -13,8 +13,8 @@ import com.google.gson.annotations.SerializedName
  * Created by AoEiuV020 on 2019.02.11-17:20:32.
  */
 class Manhuagui : JsNovelContext() {init {
-    // 连接超时，网站可能被墙了，
-    enabled = false
+    reason = "连接超时，网站可能被墙了，"
+    upkeep = false
     site {
         name = "漫画柜"
         baseUrl = "https://www.manhuagui.com"

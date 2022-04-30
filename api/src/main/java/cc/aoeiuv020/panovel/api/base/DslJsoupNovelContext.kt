@@ -73,7 +73,8 @@ abstract class DslJsoupNovelContext : JsoupNovelContext() {
     var bookIdWithChapterIdIndex: Int = 0
 
     override var charset: String? = null
-    override var enabled: Boolean = true
+    override var upkeep: Boolean = true
+    override var reason: String = ""
     override var hide: Boolean = false
     override var login: Boolean = false
 
