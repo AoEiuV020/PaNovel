@@ -382,6 +382,7 @@ class MainActivity : AppCompatActivity(), MigrationView, AnkoLogger {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         menu.findItem(R.id.qidiantu).isVisible = OtherSettings.qidiantu
+        menu.findItem(R.id.scan).isVisible = OtherSettings.scan
         return true
     }
 

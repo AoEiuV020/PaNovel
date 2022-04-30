@@ -321,5 +321,6 @@
     <string name="qidiantu_empty_new">无新书上架</string>
     <string name="tip_stop_upkeep">停止维护</string>
     <string name="tip_stop_upkeep_reason_default">忘了，可能是原网站有部分功能失效了，</string>
+    <string name="scan_summary">仅支持通过zxing扫码app扫码打开支持的页面或者导入书单或者打开搜索，</string>
 
 </resources>

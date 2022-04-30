@@ -51,6 +51,12 @@
 
     <SwitchPreference
         android:defaultValue="false"
+        android:key="scan"
+        android:summary="@string/scan_summary"
+        android:title="@string/scan" />
+
+    <SwitchPreference
+        android:defaultValue="false"
         android:key="qidiantu"
         android:summary="@string/qidiantu_summary"
         android:title="@string/qidiantu" />
