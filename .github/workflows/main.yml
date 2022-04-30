@@ -44,7 +44,12 @@ jobs:
               num=${num%/merge}
               BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
           else
-              CREATE_RELEASE="true"
+              if [ "${GITHUB_REF}" == "refs/heads/dev" ]
+              then
+                  CREATE_RELEASE="true"
+              else
+                  CREATE_RELEASE="false"
+              fi
               echo PRE_RELEASE="true" >> .custom_env
               BUILD_VERSION="$(./latest-version.sh)-$(date +'%Y%m%d%H%M%S')"
               RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
