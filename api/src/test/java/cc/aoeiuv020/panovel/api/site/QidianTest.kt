@@ -54,7 +54,7 @@ class QidianTest : BaseNovelContextText(Qidian::class) {
                 98)
         content("3602691/89970621",
                 "要不要回拨个电话给客服，问问是究竟是怎么回事？毕竟是一千万的金额！",
-                "...",
+                "宋书航点开‘九...",
                 4)
     }
 }
