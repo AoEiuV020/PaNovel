@@ -7,6 +7,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import java.net.URL
 
 class Kssw : DslJsoupNovelContext() {init {
+    reason = "网站关了,"
+    hide = true
     site {
         name = "看书小说"
         baseUrl = "https://pc.kssw.net"

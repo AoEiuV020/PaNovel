@@ -6,9 +6,6 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.06.07-14:03:25.
  */
 class ShangshuTest : BaseNovelContextText(Shangshu::class) {
-    init {
-        enabled = false
-    }
     @Test
     fun search() {
         search("都市")

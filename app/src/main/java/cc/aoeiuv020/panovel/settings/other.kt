@@ -49,6 +49,8 @@ object OtherSettings : Pref {
                 chapterColorDefault
             )
         )
+    // 主页菜单扫一扫开关，
+    var scan: Boolean by Delegates.boolean(false)
 
     // 起点数据开关，
     var qidianshuju: Boolean by Delegates.boolean(false)

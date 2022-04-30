@@ -7,8 +7,8 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  * Created by AoEiuV020 on 2018.06.06-19:24:03.
  */
 class Lewen123 : DslJsoupNovelContext() {init {
-    // 这网站章节有大量重复，
-    enabled = false
+    reason = "这网站章节有大量重复，"
+    upkeep = false
     site {
         name = "乐文小说"
         baseUrl = "http://www.lewen123.com"

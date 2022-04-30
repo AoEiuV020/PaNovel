@@ -53,7 +53,7 @@ buildscript {
 allprojects {
     // 上传仓库的组名优先从publish.properties中拿，
     group = 'cc.aoeiuv020'
-    version = version_name
+    version = System.env.BUILD_VERSION ?: version_name
     repositories {
         google()
         //noinspection JcenterRepositoryObsolete

@@ -40,10 +40,11 @@ abstract class NovelContext {
             Manhuagui(), SiFang(), Qinxiaoshuo(), N9txs(), N168kanshu(),
             Yunduwu(), N123du(), Biqugese(), Biqugezhh(), Shoudashu(),
 
-            Kssw(), Biquge5200(), N69shu(), Kenshuzw(), Wukong0()
+            Kssw(), Biquge5200(), N69shu(), Kenshuzw(), Wukong0(),
+            Ttkan()
         ).asReversed()
 
-        const val sitesVersion = 11
+        const val sitesVersion = 12
 
         // 用于存取cookie,
         private val gson: Gson = GsonUtils.gsonBuilder
@@ -282,9 +283,14 @@ abstract class NovelContext {
 
 
     /**
-     * 这个网站是否启用，
+     * 这个网站是否还有维护，
      */
-    open val enabled: Boolean = true
+    open val upkeep: Boolean = true
+
+    /**
+     * 这个网站停止维护的原因，
+     */
+    open val reason: String = ""
 
     /**
      * 这个网站是否隐藏，

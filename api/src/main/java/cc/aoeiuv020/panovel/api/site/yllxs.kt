@@ -8,6 +8,7 @@ import cc.aoeiuv020.panovel.api.firstThreeIntPattern
  * Created by AoEiuV020 on 2018.06.02-20:54:12.
  */
 class Yllxs : DslJsoupNovelContext() {init {
+    reason = "官方搜索不可用，"
     hide = true
     site {
         name = "166小说"

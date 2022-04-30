@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                style="@style/TextLarge"
                 tools:text="9月1日起点新书首订统计,榜首《假如被巫女缠住》12400,《异常收藏家》4900次之，其他作品首订如下" />
 
             <LinearLayout

@@ -9,7 +9,6 @@ import android.widget.TextView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.util.hide
 import cc.aoeiuv020.panovel.util.show
-import com.qq.e.comm.managers.GDTADManager
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.error
 import org.jetbrains.anko.find
@@ -25,7 +24,7 @@ import java.util.concurrent.Executors
 class TestAdListHelper :
     AdListHelper<String, TestAdListHelper.TestAdItem, TestAdListHelper.TestAdViewHolder>() {
     override val nativeAdEnabled: Boolean
-        get() = super.nativeAdEnabled && GDTADManager.getInstance().isInitialized
+        get() = false
 
     private val adService: ExecutorService by lazy {
         Executors.newCachedThreadPool()

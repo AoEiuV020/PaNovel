@@ -7,10 +7,6 @@ import org.junit.Test
  * Created by AoEiuV020 on 2018.06.06-17:10:41.
  */
 class Qingkan5Test : BaseNovelContextText(Qingkan5::class) {
-    init {
-        enabled = false
-    }
-
     @Test
     fun search() {
         search("都市")

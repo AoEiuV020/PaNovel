@@ -22,7 +22,7 @@
             android:layout_weight="1"
             android:gravity="start"
             android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            style="@style/TextBody1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="书单名" />
@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:gravity="end"
             android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            style="@style/TextBody1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="书本数" />

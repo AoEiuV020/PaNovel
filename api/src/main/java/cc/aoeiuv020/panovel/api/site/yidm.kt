@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Semaphore
 
 class Yidm : DslJsoupNovelContext() {init {
-    // 轻小说网站默认不开启，
-    enabled = false
+    reason = "下载不到版权受限的小说了，这个源就没什么意义了，"
+    upkeep = false
     hide = true
     site {
         name = "迷糊轻小说"

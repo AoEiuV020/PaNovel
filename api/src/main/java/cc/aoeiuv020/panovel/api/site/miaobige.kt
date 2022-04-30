@@ -8,8 +8,8 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.06.05-19:09:22.
  */
 class Miaobige : DslJsoupNovelContext() {init {
-    // 这网站章节列表页的章节不全，但是点下一章又能看的，这就没法爬了，
-    enabled = false
+    reason = "这网站章节列表页的章节不全，但是点下一章又能看的，这就没法爬了，"
+    upkeep = false
     site {
         name = "妙笔阁"
         baseUrl = "https://www.miaobige.com"

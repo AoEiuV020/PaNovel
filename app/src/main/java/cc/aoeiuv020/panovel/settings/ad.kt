@@ -11,5 +11,5 @@ object AdSettings : Pref {
     var adEnabled: Boolean by Delegates.boolean(true)
 
     // 口袋工厂, https://www.13lm.com/
-    var middle13lmEnabled: Boolean by Delegates.boolean(true)
+    var middle13lmEnabled: Boolean by Delegates.boolean(false)
 }

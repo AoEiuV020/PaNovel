@@ -9,8 +9,8 @@ import java.net.URL
  * Created by AoEiuV020 on 2018.05.10-18:11:57.
  */
 class Qlwx : DslJsoupNovelContext() { init {
-    // 时不时开云锁，不稳定，
-    enabled = false
+    reason = "时不时开云锁，不稳定，"
+    upkeep = false
     site {
         name = "齐鲁文学"
         baseUrl = "http://www.76wx.com"

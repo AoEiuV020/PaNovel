@@ -34,7 +34,7 @@ abstract class BaseNovelContextText(clazz: KClass<out NovelContext>) {
 
     @Suppress("MemberVisibilityCanBePrivate")
     protected val site: NovelContext = clazz.java.getDeclaredConstructor().newInstance()
-    protected open var enabled = site.enabled
+    protected open var enabled = site.upkeep
 
     protected fun search(name: String, author: String, extra: String, count: Int = 3): NovelItem? {
         if (site.hide || !enabled) return null

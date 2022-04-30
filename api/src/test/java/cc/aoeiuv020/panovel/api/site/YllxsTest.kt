@@ -9,10 +9,6 @@ import java.text.SimpleDateFormat
  * Created by AoEiuV020 on 2018.06.02-21:08:03.
  */
 class YllxsTest : BaseNovelContextText(Yllxs::class) {
-    init {
-        // 官方搜索不可用，
-        enabled = false
-    }
     @Test
     fun regex() {
         val regex = "(/xiaoshuo/\\d*)?/(\\d+)"

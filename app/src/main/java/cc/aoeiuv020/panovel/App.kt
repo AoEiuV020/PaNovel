@@ -9,7 +9,6 @@ import androidx.multidex.MultiDexApplication
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.jsonpath.JsonPathUtils
 import cc.aoeiuv020.panovel.ad.AdHelper
-import cc.aoeiuv020.panovel.ad.SplashAdWrapper
 import cc.aoeiuv020.panovel.data.DataManager
 import cc.aoeiuv020.panovel.report.Reporter
 import cc.aoeiuv020.panovel.settings.AdSettings
@@ -134,7 +133,6 @@ class App : MultiDexApplication(), AnkoLogger {
 
     private fun initAd() {
         if (AdSettings.adEnabled) {
-            SplashAdWrapper.init(this)
             AdHelper.init(this)
         }
     }

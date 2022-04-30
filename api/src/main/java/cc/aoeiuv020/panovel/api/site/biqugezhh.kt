@@ -6,6 +6,8 @@ import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
 
 class Biqugezhh : DslJsoupNovelContext() {init {
+    reason = "搜索失效了，搜出来的会是另一个网站的结果，www.qu-la.com"
+    upkeep = false
     site {
         name = "笔趣阁zhh"
         baseUrl = "https://www.zhhbiqu.com"

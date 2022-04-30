@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import cc.aoeiuv020.panovel.IView
 import cc.aoeiuv020.panovel.R
 import cc.aoeiuv020.panovel.report.Reporter
+import cc.aoeiuv020.panovel.util.show
+import cc.aoeiuv020.panovel.util.tip
 import cc.aoeiuv020.panovel.util.uiInput
 import kotlinx.android.synthetic.main.activity_site_settings.*
 import org.jetbrains.anko.AnkoLogger
@@ -45,6 +47,12 @@ class SiteSettingsActivity : AppCompatActivity(), IView, AnkoLogger {
     }
 
     fun init() {
+        if (!presenter.isUpkeep()) {
+            llStopUpkeep.show()
+            llStopUpkeep.setOnClickListener {
+                tip(presenter.getReason())
+            }
+        }
         llCookie.setOnClickListener {
             presenter.setCookie({ cookies ->
                 uiInput(getString(R.string.cookie), cookies)

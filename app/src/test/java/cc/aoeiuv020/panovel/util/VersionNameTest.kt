@@ -16,6 +16,11 @@ class VersionNameTest {
         assertTrue("1.1.2".v < "1.2".v)
         assertTrue("2.2.2".v > "1.3.1".v)
         assertTrue("2.2.2".v > "2.2".v)
+        assertTrue("3.4.5.1".v > "3.4.5-2022".v)
+        assertTrue("3.4.5".v > "3.4.5-2022".v)
+        assertTrue("3.4.5-2022".v > "3.4.5-2021".v)
+        assertTrue("3.4.5-2022".v > "3.4.4".v)
+        assertTrue("3.4.5-2022".v > "3.4.4.4".v)
     }
 
     private val String.v get() = VersionName(this)

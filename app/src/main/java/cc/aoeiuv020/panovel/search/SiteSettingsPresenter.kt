@@ -110,4 +110,12 @@ class SiteSettingsPresenter(
             }
         }
     }
+
+    fun getReason(): String {
+        return context.reason
+    }
+
+    fun isUpkeep(): Boolean {
+        return context.upkeep
+    }
 }
