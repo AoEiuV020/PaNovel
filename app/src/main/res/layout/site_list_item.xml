@@ -8,16 +8,37 @@
     android:paddingBottom="8dp"
     android:background="?android:attr/selectableItemBackground">
 
-    <ImageView
-        android:id="@+id/ivLogo"
+    <RelativeLayout
+        android:id="@+id/rlLogo"
         android:layout_width="200dp"
-        android:layout_height="51dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:scaleType="fitStart"
         app:layout_constraintStart_toEndOf="@+id/cbEnabled"
         app:layout_constraintTop_toTopOf="@+id/cbEnabled"
-        tools:ignore="ContentDescription" />
+        android:layout_height="51dp">
+
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="200dp"
+            android:layout_height="51dp"
+            android:scaleType="fitStart"
+            android:visibility="gone"
+            tools:ignore="ContentDescription"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvLogo"
+            android:layout_width="200dp"
+            android:layout_height="51dp"
+            android:padding="8dp"
+            android:textColor="#ffffff"
+            android:visibility="gone"
+            app:autoSizeTextType="uniform"
+            tools:background="#1b2631"
+            tools:text="天天看小说"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tvName"
@@ -31,8 +52,8 @@
         android:ellipsize="end"
         app:layout_constraintEnd_toStartOf="@+id/ivSettings"
         app:layout_constraintHorizontal_bias="0.15"
-        app:layout_constraintStart_toEndOf="@+id/ivLogo"
-        app:layout_constraintTop_toTopOf="@+id/ivLogo"
+        app:layout_constraintStart_toEndOf="@+id/rlLogo"
+        app:layout_constraintTop_toTopOf="@+id/rlLogo"
         tools:text="@string/app_name" />
 
     <TextView
@@ -49,7 +70,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/ivSettings"
         app:layout_constraintHorizontal_bias="0.15"
-        app:layout_constraintStart_toEndOf="@+id/ivLogo"
+        app:layout_constraintStart_toEndOf="@+id/rlLogo"
         android:textColor="@color/textWarning"
         app:layout_constraintTop_toBottomOf="@+id/tvName"
         android:text="@string/tip_stop_upkeep"
@@ -73,7 +94,7 @@
         android:layout_marginRight="8dp"
         android:tint="@color/gray_color"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ivLogo"
+        app:layout_constraintTop_toTopOf="@+id/rlLogo"
         app:srcCompat="@drawable/ic_settings"
         tools:ignore="ContentDescription" />
 </androidx.constraintlayout.widget.ConstraintLayout>
