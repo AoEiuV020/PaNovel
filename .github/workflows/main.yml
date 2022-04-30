@@ -46,7 +46,7 @@ jobs:
           else
               CREATE_RELEASE="true"
               echo PRE_RELEASE="true" >> .custom_env
-              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+              BUILD_VERSION="$(./latest-version.sh)-$(date +'%Y%m%d%H%M%S')"
               RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
               TG_CHANGELOG="$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")"
               VERSION_PREFIX='内测版-'
