@@ -180,7 +180,10 @@ class N123du : DslJsoupNovelContext() {init {
                     // 改用手机版页面，没有倒序问题，
                     val div = root.requireElement("div#txtuup", TAG_CONTENT)
                     next = root.getElement("#PageSet > a:nth-last-child(1)")?.absHref()
-                    div.textList().dropLastWhile { it.contains("提醒您：看完记得收藏") }.also { novelContent = it }
+                    div.textList().dropLastWhile {
+                        it.contains("提醒您：看完记得收藏")
+                                || it == "本章未完，请点击下一页继续阅读！"
+                    }.also { novelContent = it }
                 }.notNull("content").also { ret.addAll(it) }
             }
             ret
