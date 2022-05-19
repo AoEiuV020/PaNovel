@@ -10,11 +10,11 @@ import java.util.*
  * Created by AoEiuV020 on 2021.07.15-22:03:55.
  */
 class MakeJunitTest : BaseNovelContextText(
-    Ttkan::class
+    N99csw::class
 ) {
     @Suppress("RemoveExplicitTypeArguments")
     private val specialBookList = listOf<String>(
-        "视死如归魏君子"
+        "我们从此是路人"
     )
     private val testBookList = mutableListOf<NovelItem>()
     private val testChapterList = mutableListOf<NovelChapter>()
