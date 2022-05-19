@@ -46,7 +46,7 @@ object VersionUtil {
                 index++
                 continue
             }
-            return list1[index].toInt().compareTo(list2[index].toInt())
+            return list1[index].toLong().compareTo(list2[index].toLong())
         }
         if (list1.size != list2.size) {
             return list1.size.compareTo(list2.size)
@@ -55,7 +55,7 @@ object VersionUtil {
             return 0
         }
         if (date1 != null && date2 != null) {
-            return date1.toInt().compareTo(date2.toInt())
+            return date1.toLong().compareTo(date2.toLong())
         }
         return if (date1 == null) {
             1
