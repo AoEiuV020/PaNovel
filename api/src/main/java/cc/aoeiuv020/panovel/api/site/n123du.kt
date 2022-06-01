@@ -182,7 +182,8 @@ class N123du : DslJsoupNovelContext() {init {
                     next = root.getElement("#PageSet > a:nth-last-child(1)")?.absHref()
                     div.textList().dropLastWhile {
                         it.contains("提醒您：看完记得收藏")
-                                || it == "本章未完，请点击下一页继续阅读！"
+                                || it.startsWith("本章没完，")
+                                || it.startsWith("本章未完，")
                     }.also { novelContent = it }
                 }.notNull("content").also { ret.addAll(it) }
             }
