@@ -1,12 +1,16 @@
 package cc.aoeiuv020.panovel.api.site
 
 import cc.aoeiuv020.anull.notNull
+import cc.aoeiuv020.base.jar.absHref
+import cc.aoeiuv020.base.jar.splitNewLine
+import cc.aoeiuv020.base.jar.textListSplitWhitespace
 import cc.aoeiuv020.base.jar.title
 import cc.aoeiuv020.gson.GsonUtils
 import cc.aoeiuv020.panovel.api.NovelChapter
 import cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext
 import cc.aoeiuv020.regex.pick
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -45,96 +49,45 @@ class Qidian : DslJsoupNovelContext() {init {
         }
     }
     // 详情页域名和首页不一样，
-    detailPageTemplate = "//book.qidian.com/info/%s"
+    detailPageTemplate = "//m.qidian.com/book/%s.html"
     detail {
         document {
-            val detail = root.requireElement("body > div.wrap > div.book-detail-wrap.center990")
-            val information = element("> div.book-information.cf > div.book-info", parent = detail)
+            val detail = root.requireElement("body > div.page.page-book-detail")
+            val information = element("#bookDetailWrapper > div > div > div", parent = detail)
             novel {
-                name("> h1 > em", parent = information)
-                author("h1 > span", parent = information) {
-                    it.text().removeSuffix(" 著")
+                name("> h2", parent = information)
+                author("> div.book-rand-a > a", parent = information) {
+                    it.ownText()
                 }
             }
-            image("#bookImg > img", parent = detail)
-            introduction("div.book-intro > p", parent = detail)
-            // 从章节列表中解析更新时间，可能整个章节列表都不存在
-            // 虽然小说详情版块也有更新时间，但格式模糊，可能是几小时前这样，
-            update("#j-catalogWrap > div.volume-wrap > div:nth-last-child(1) > ul > li:nth-last-child(1) > a", format = "yyyy-MM-dd HH:mm:ss") {
-                it.title().pick("首发时间：(.*) 章节字数：.*").first()
+            image("#bookDetailWrapper > div > div > img", parent = detail)
+            introduction("#bookSummary > textarea", parent = detail) {
+                it.textListSplitWhitespace().joinToString("\n") { it.removeSuffix("<br>") }
             }
         }
     }
-    chaptersPageTemplate = "$detailPageTemplate#Catalog"
+    chaptersPageTemplate = "https://m.qidian.com/book/%s/catalog/"
     chapters {
-        val bookId = findBookId(it)
-        // 用到的接口需要cookies中的_csrfToken参数，
-        // 如果没有，就额外拿一遍详情页，取其中返回的_csrfToken，
-        // _csrfToken这个cookie能坚持一年，不用考虑过期的事，而且okhttp会自动处理过期的cookie, 应该只有刚刚过期时的请求会出意外，
-        val token = cookies["_csrfToken"]?.value() ?: run {
-            response(connect(getNovelDetailUrl(bookId)))
-                    // 不用的body也要close,
-                    .apply { body()?.close() }
-                    .headers().responseCookies()["_csrfToken"].notNull()
-        }
-        get {
-            url = "https://book.qidian.com/ajax/book/category?_csrfToken=$token&bookId=$bookId"
-        }
-        /*
-{
-  "data": {
-    "isPublication": 0,
-    "salesMode": 1,
-    "vs": [
-      {
-        "vId": 70947019,
-        "cCnt": 26,
-        "vS": 0,
-        "isD": 0,
-        "vN": "斧头帮的崛起",
-        "cs": [
-          {
-            "uuid": 1,
-            "cN": "第一章 白手起家斧头帮",
-            "uT": "2018-04-21 09:40:53",
-            "cnt": 2109,
-            "cU": "M_bVs41zjLaRTIpqx7GUJA2/uU0Ubg1w3eLM5j8_3RRvhw2",
-            "id": 404501446,
-            "sS": 1
-          }
-        ],
-        "wC": 54704,
-        "hS": false
-      }
-    ],
-    "chapterTotalCnt": 73,
-    "firstChapterJumpurl": "//read.qidian.com/chapter/M_bVs41zjLaRTIpqx7GUJA2/uU0Ubg1w3eLM5j8_3RRvhw2",
-    "loginStatus": 0,
-    "hasRead": 0
-  },
-  "code": 0,
-  "msg": "suc"
-}
-         */
-        response {
-            gson.fromJson(it, JsonObject::class.java)
-                    .getAsJsonObject("data")
-                    .getAsJsonArray("vs").flatMap {
-                        it.asJsonObject.getAsJsonArray("cs").map {
-                            it.asJsonObject.let {
-                                val chapterName = it.getAsJsonPrimitive("cN").asString
-                                val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
-                                val updateTime = try {
-                                    val uT = it.getAsJsonPrimitive("uT").asString
-                                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
-                                    sdf.parse(uT)
-                                } catch (e: Exception) {
-                                    null
-                                }
-                                NovelChapter(chapterName, "$bookId/$chapterId", updateTime)
-                            }
+        document {
+            val bookId = findBookId(it)
+            val line = root.html().splitNewLine().filter { it.startsWith("g_data.volumes = ") }.single()
+            val json = line.removePrefix("g_data.volumes = ").removeSuffix(";")
+            novelChapterList = gson.fromJson(json, JsonArray::class.java).flatMap {
+                it.asJsonObject.getAsJsonArray("cs").map {
+                    it.asJsonObject.let {
+                        val chapterName = it.getAsJsonPrimitive("cN").asString
+                        val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
+                        val updateTime = try {
+                            val uT = it.getAsJsonPrimitive("uT").asString
+                            val sdf = SimpleDateFormat("yyyy-MM-dd  HH:mm", Locale.CHINA)
+                            sdf.parse(uT)
+                        } catch (e: Exception) {
+                            null
                         }
+                        NovelChapter(chapterName, "$bookId/$chapterId", updateTime)
                     }
+                }
+            }
         }
     }
     // https://m.qidian.com/book/1010136878/381295976
