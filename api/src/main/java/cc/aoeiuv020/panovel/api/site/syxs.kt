@@ -11,6 +11,8 @@ import cc.aoeiuv020.panovel.api.reverseRemoveDuplication
  * Created by AoEiuV020 on 2018.03.14-01:35:36.
  */
 class Syxs : DslJsoupNovelContext() {init {
+    // 有js跳转，爬不了了，
+    hide = true
     site {
         name = "31小说"
         baseUrl = "https://www.31xiaoshuo.com"
