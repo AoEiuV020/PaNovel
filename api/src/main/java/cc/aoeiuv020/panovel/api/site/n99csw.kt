@@ -37,6 +37,7 @@ class N99csw : DslJsoupNovelContext() {init {
         }
     }
     // https://99csw.com/book/8430/index.htm
+    bookIdRegex = "/book/(\\d+)/"
     detailPageTemplate = "/book/%s/index.htm"
     detail {
         document {
