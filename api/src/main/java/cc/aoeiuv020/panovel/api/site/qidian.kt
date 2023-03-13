@@ -53,14 +53,14 @@ class Qidian : DslJsoupNovelContext() {init {
     detail {
         document {
             val detail = root.requireElement("body > div.page.page-book-detail")
-            val information = element("#bookDetailWrapper > div > div > div", parent = detail)
+            val information = element("#bookDetailWrapper > div.detail__header > div", parent = detail)
             novel {
                 name("> h2", parent = information)
-                author("> div.book-rand-a > a", parent = information) {
+                author("> div > a", parent = information) {
                     it.ownText()
                 }
             }
-            image("#bookDetailWrapper > div > div > img", parent = detail)
+            image("#bookDetailWrapper > div.detail__header > img", parent = detail)
             introduction("#bookSummary > textarea", parent = detail) {
                 it.textListSplitWhitespace().joinToString("\n") { it.removeSuffix("<br>") }
             }
@@ -79,7 +79,7 @@ class Qidian : DslJsoupNovelContext() {init {
                         val chapterId = it.getAsJsonPrimitive("id").asInt.toString()
                         val updateTime = try {
                             val uT = it.getAsJsonPrimitive("uT").asString
-                            val sdf = SimpleDateFormat("yyyy-MM-dd  HH:mm", Locale.CHINA)
+                            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
                             sdf.parse(uT)
                         } catch (e: Exception) {
                             null
