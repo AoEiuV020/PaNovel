@@ -155,11 +155,11 @@ class MakeJunitTest : BaseNovelContextText(
     fun generator() {
         val testFile = File(
             "src/test/java/" +
-                    this.javaClass.packageName.replace('.', '/') +
+                    this.javaClass.`package`.name.replace('.', '/') +
                     "/site/${site.javaClass.simpleName}Test.kt"
         ).absoluteFile
         template.format(
-            this.javaClass.packageName,
+            this.javaClass.`package`.name,
             site.javaClass.simpleName,
             site.javaClass.simpleName,
             makeSearch(),
