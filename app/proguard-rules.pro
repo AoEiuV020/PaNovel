@@ -11,6 +11,9 @@
 -keepclassmembers class cc.aoeiuv020.panovel.server.dal.model.** { <fields>; }
 -keepclassmembers class cc.aoeiuv020.panovel.server.ServerAddress { <fields>; }
 
+# qidiantu,
+-keep class cc.aoeiuv020.panovel.find.qidiantu.list.** { *; }
+
 
 # 需要用gson序列化的枚举不混淆，
 ## NovelChapter有在缓存库中保存章节列表，是直接gson序列化的，混淆的话，改了混淆结果会读出空，
