@@ -2,5 +2,6 @@ dependencies {
     api 'cc.aoeiuv020:gson:' + a_gson_version
     api 'cc.aoeiuv020:jsonpath:' + a_jsonpath_version
     api 'cc.aoeiuv020:okhttp:' + a_okhttp_version
+    api 'cc.aoeiuv020:ssl:' + a_ssl_version
     api 'org.jsoup:jsoup:' + jsoup_version
 }
