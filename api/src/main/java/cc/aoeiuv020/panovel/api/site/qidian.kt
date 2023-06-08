@@ -30,18 +30,15 @@ class Qidian : DslJsoupNovelContext() {init {
     }
     search {
         get {
-            url = "/search"
-            data {
-                "kw" to it
-            }
+            url = "/so/${utf8(it)}.html"
         }
         /*
         <a href="//book.qidian.com/info/3548786" target="_blank" data-eid="qd_S05" data-bid="3548786" data-algrid="0.0.0">重生之<cite class="red-kw">都市</cite>修仙</a>
          */
         document {
             items("#result-list > div > ul > li") {
-                name("> div.book-mid-info > h2 > a")
-                author("> div.book-mid-info > p.author") {
+                name("> div.book-mid-info > h3 > a")
+                author("p.author") {
                     // 有的小作者的名字不可点击，没有a标签，只能这样child获取，
                     it.child(1).text()
                 }

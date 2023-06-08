@@ -10,11 +10,10 @@ class QidianTest : BaseNovelContextText(Qidian::class) {
     @Test
     fun search() {
         search("都市")
-/* // 起点删书严重，
         search("从前有座灵剑山", "国王陛下", "3347574")
         search("斗破苍穹", "天蚕土豆", "1209977")
-*/
         search("修真聊天群（聊天群的日常生活）", "圣骑士的传说", "3602691")
+        search("蓝白社", "魔性沧月", "1011924365")
     }
 
     @Test
