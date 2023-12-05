@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class cc.aoeiuv020.panovel.api.site.N99cswTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class cc.aoeiuv020.panovel.api.site.N99cswTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/cc.aoeiuv020.panovel.api.site.html">cc.aoeiuv020.panovel.api.site</a> &gt; N99cswTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">2</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">1.450s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox failures" id="successRate">
+<div class="percent">50%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Failed tests</a>
+</li>
+<li>
+<a href="#tab1">Tests</a>
+</li>
+<li>
+<a href="#tab2">Standard output</a>
+</li>
+<li>
+<a href="#tab3">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Failed tests</h2>
+<div class="test">
+<a name="content"></a>
+<h3 class="failures">content</h3>
+<span class="code">
+<pre>java.lang.AssertionError: expected:&lt;86&gt; but was:&lt;85&gt;
+	at org.junit.Assert.fail(Assert.java:88)
+	at org.junit.Assert.failNotEquals(Assert.java:834)
+	at org.junit.Assert.assertEquals(Assert.java:118)
+	at org.junit.Assert.assertEquals(Assert.java:144)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.content(base.kt:143)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.content$default(base.kt:131)
+	at cc.aoeiuv020.panovel.api.site.N99cswTest.content(N99cswTest.kt:45)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:110)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:38)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:62)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)
+	at jdk.internal.reflect.GeneratedMethodAccessor6.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:118)
+	at jdk.internal.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:182)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:164)
+	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:412)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="detail"></a>
+<h3 class="failures">detail</h3>
+<span class="code">
+<pre>org.junit.ComparisonFailure: expected:&lt;...言起，陆染整整暗恋了韩默言五年。从一个打[架，逃学，无恶不作的叛逆少女到成熟稳重的职场精英，陪他创业，陪他打拼，努力做好他要求的一切事情，她只是想去追逐他的脚步，可是，还是不够啊……韩默言还是不喜欢她。即使再深的感情，也有干枯的时候，陆染累了，她放手。
+但是五年的朝夕相处，却让他早已习惯了她的存在，所以当她毅然的离开他的时候，他慌张了，害怕了。当他意识到习惯就是爱情，当他摆出前所未有的深情攻势时，可是，韩默言，你还以为我是那个
+只
+]围着你转的陆染吗？卑微爱过你的我，狭路相...&gt; but was:&lt;...言起，陆染整整暗恋了韩默言五年。从一个打[
+架
+，逃学，无恶不作的叛逆少女到成熟稳重的职场精英，陪他创业，陪他打拼，努力做好他要求的一切事情，她只是想去追逐他的脚步，可是，还是不够啊……韩默言还是不喜欢她。即使再深的感情，也有干枯的时候，陆染累了，她放手。
+但是五年的朝夕相处，却让他早已习惯了她的存在，所以当她毅然的离开他的时候，他慌张了，害怕了。当他意识到习惯就是爱情，当他摆出前所未有的深情攻势时，可是，韩默言，你还以为我是那个只]围着你转的陆染吗？卑微爱过你的我，狭路相...&gt;
+	at org.junit.Assert.assertEquals(Assert.java:115)
+	at org.junit.Assert.assertEquals(Assert.java:144)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.detail(base.kt:74)
+	at cc.aoeiuv020.panovel.api.site.N99cswTest.detail(N99cswTest.kt:21)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:110)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:38)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:62)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)
+	at jdk.internal.reflect.GeneratedMethodAccessor6.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:118)
+	at jdk.internal.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:182)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:164)
+	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:412)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+</pre>
+</span>
+</div>
+</div>
+<div id="tab1" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">chapters</td>
+<td class="success">0.225s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="failures">content</td>
+<td class="failures">0.185s</td>
+<td class="failures">failed</td>
+</tr>
+<tr>
+<td class="failures">detail</td>
+<td class="failures">0.275s</td>
+<td class="failures">failed</td>
+</tr>
+<tr>
+<td class="success">search</td>
+<td class="success">0.765s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>NovelDetail(novel=NovelItem(site=99藏书网, name=一路繁花相送, author=青衫落拓, extra=8430), image=https://www.99csw.com/book/cover.pic/cover_8430.jpg, update=null, introduction=15岁，辛辰看着路非，眼睛亮如星辰，爱娇地对他说：“反正你的第
+一个吻归我了。”
+17岁，辛辰望向路非，没有血色的面孔衬得眼睛愈显幽深，“我不稀罕当任何人的责任。”
+25岁，辛辰迎向路非，眼神平静，语态平和不带任何色彩，“我没权利在说了不用再见后，又去任性地当别人生活中的不速之客。”
+从她第
+一次吻上他的唇，流年偷换，物是人非，一切都已不复当初。
+他完全不曾想到，这一别就是七年。那个有些不羁的任性少女如今已经学会了与这个世界所有的不如意和平相处，只有他知道这个过程有多艰难。
+繁花消逝，少年会老，爱却不会。
+没有一个回忆应该永远盘桓不去，只是除了她……
+你爱得肆意勇敢，我学着哭笑随行。
+相恋直到白头，一路繁花相送。, extra=8430)
+NovelDetail(novel=NovelItem(site=99藏书网, name=我们从此是路人, author=维和粽子, extra=4229), image=https://www.99csw.com/book/cover.pic/cover_4229.jpg, update=null, introduction=从第一次见到韩默言起，陆染整整暗恋了韩默言五年。从一个打
+架
+，逃学，无恶不作的叛逆少女到成熟稳重的职场精英，陪他创业，陪他打拼，努力做好他要求的一切事情，她只是想去追逐他的脚步，可是，还是不够啊……韩默言还是不喜欢她。即使再深的感情，也有干枯的时候，陆染累了，她放手。
+但是五年的朝夕相处，却让他早已习惯了她的存在，所以当她毅然的离开他的时候，他慌张了，害怕了。当他意识到习惯就是爱情，当他摆出前所未有的深情攻势时，可是，韩默言，你还以为我是那个只围着你转的陆染吗？卑微爱过你的我，狭路相逢，我们也只能从此是路人。, extra=4229)
+15
+NovelItem(site=99藏书网, name=一路繁花相送, author=青衫落拓, extra=8430)
+NovelItem(site=99藏书网, name=七都市物语, author=田中芳树, extra=5598)
+NovelItem(site=99藏书网, name=丹尼海格, author=缪娟, extra=8409)
+1
+NovelItem(site=99藏书网, name=一路繁花相送, author=青衫落拓, extra=8430)
+1
+NovelItem(site=99藏书网, name=我们从此是路人, author=维和粽子, extra=4229)
+0/-1
+8192/-1
+16218/-1
+24410/-1
+25685/-1
+85
+“对了路非，你还保留着那个信封吗？”辛辰现在正与林乐清在捷克旅行，每天例行会在差不多的时间打电话给路非，临到快说再见时，她突然这样问。
+路非当然知道辛辰说的是什么，那个写有辛辰母亲地址的信封已经被他收藏了十二年之久。
+“当然留着，怎么突然想起这个？”
+另一首巴赫的名曲《G弦上的咏叹调》从手机中传来，路非穿过广场，越走越近，音乐在耳边放大。
+古老的市政厅一侧，一个留着络腮胡须的中年男人正专注地拉着小提琴，游客丛中，他一眼看到辛辰背着背包，弯腰往琴盒中放入一张欧元钞票，然后站起身，手中仍然握着手机。路非站到她身后，正要将手放到她肩上，只见她微微侧头，对着藏书网手机轻轻说：“我爱你，路非。”
+伴着小提琴乐曲，这个声音同时从她的唇畔和手机听筒传来，直到钻入路非的心底，他放下手机，将她搂入怀中，紧紧地抱住。
+28
+NovelChapter(name=楔子 无准备的开始, extra=8430/297800, update=null)
+NovelChapter(name=第一章 旧日痕迹, extra=8430/297801, update=null)
+NovelChapter(name=第二章 另一种妥协, extra=8430/297802, update=null)
+NovelChapter(name=尾声 爱之喜悦, extra=8430/297827, update=null)
+40
+NovelChapter(name=第一章, extra=4229/148628, update=null)
+NovelChapter(name=第二章, extra=4229/148629, update=null)
+NovelChapter(name=第三章, extra=4229/148630, update=null)
+NovelChapter(name=第四十章, extra=4229/148667, update=null)
+</pre>
+</span>
+</div>
+<div id="tab3" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>[Test worker] INFO N99csw - connect https://99csw.com/book/8430/index.htm
+[Test worker] DEBUG N99csw - body 
+[Test worker] DEBUG N99csw - load cookies []
+[Test worker] DEBUG N99csw - after filter cookies []
+[Test worker] DEBUG N99csw - save cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - setCookies {PHPSESSID=PHPSESSID=d0505a979423o6l0a36n2likg0; path=/}
+[Test worker] DEBUG N99csw - response https://99csw.com/book/8430/index.htm
+[Test worker] DEBUG N99csw - request.headers Referer: https://99csw.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: 99csw.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG N99csw - response.headers date: Tue, 05 Dec 2023 02:24:07 GMT
+content-type: text/html; charset=UTF-8
+vary: Accept-Encoding
+set-cookie: PHPSESSID=d0505a979423o6l0a36n2likg0; path=/
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+pragma: no-cache
+x-frame-options: SAMEORIGIN
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=5DFR8offJ8OAcfYNpSJkl3KJsVfqkVmgTD7ljHEIj5qeeBv%2Bgr4%2F3Xr2WG7Tg9rXi2R7kAgJM%2BW9OJTyffYbaW8cUzI4pUu9sf5hf7kwCdSwfNg1hYPOrmpG8VA%3D&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d4c17ce75208-LAX
+alt-svc: h3=&quot;:443&quot;; ma=86400
+
+[Test worker] INFO N99csw - connect https://99csw.com/book/4229/index.htm
+[Test worker] DEBUG N99csw - body 
+[Test worker] DEBUG N99csw - load cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - after filter cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - response https://99csw.com/book/4229/index.htm
+[Test worker] DEBUG N99csw - request.headers Referer: https://99csw.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: 99csw.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: PHPSESSID=d0505a979423o6l0a36n2likg0
+
+[Test worker] DEBUG N99csw - response.headers date: Tue, 05 Dec 2023 02:24:07 GMT
+content-type: text/html; charset=UTF-8
+vary: Accept-Encoding
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+pragma: no-cache
+x-frame-options: SAMEORIGIN
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=8ro5xTffEKhMfgTNBkJV9w8RLo6gIUfhNGMakIdIu9I4pTbNR7VvYbWFy6MTjilwKYNYmhXwzfPLqYTN3CzIIO%2BqBR5LXO3WQjiUSezlUmFQOjEhIWuFHf1JTiA%3D&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d4c1cd295208-LAX
+alt-svc: h3=&quot;:443&quot;; ma=86400
+
+[Test worker] INFO N99csw - connect https://m.99csw.com/book/search.list.php?keyword=%25E9%2583%25BD%25E5%25B8%2582&amp;stat=true&amp;page=1
+[Test worker] DEBUG N99csw - body 
+[Test worker] DEBUG N99csw - load cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - after filter cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - response https://m.99csw.com/book/search.list.php?keyword=%25E9%2583%25BD%25E5%25B8%2582&amp;stat=true&amp;page=1
+[Test worker] DEBUG N99csw - request.headers Referer: https://99csw.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: m.99csw.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: PHPSESSID=d0505a979423o6l0a36n2likg0
+
+[Test worker] DEBUG N99csw - response.headers date: Tue, 05 Dec 2023 02:24:08 GMT
+content-type: text/xml;charset=utf-8
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+pragma: no-cache
+x-frame-options: SAMEORIGIN
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=qvpMW545bqg32WXH1YwH2rFjyFVSuF%2Ff1G6XXbHh3gh%2B8em1pOuAspZ8CVMvuz9R2kV4E42KTbVX08NIR8Xv68o4eFdmjonDsS42msS2A5EjW4W6xIbIsKNZYuL7Dw%3D%3D&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d4c31b602b5b-LAX
+alt-svc: h3=&quot;:443&quot;; ma=86400
+
+[Test worker] INFO N99csw - connect https://m.99csw.com/book/search.list.php?keyword=%25E4%25B8%2580%25E8%25B7%25AF%25E7%25B9%2581%25E8%258A%25B1%25E7%259B%25B8%25E9%2580%2581&amp;stat=true&amp;page=1
+[Test worker] DEBUG N99csw - body 
+[Test worker] DEBUG N99csw - load cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - after filter cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - response https://m.99csw.com/book/search.list.php?keyword=%25E4%25B8%2580%25E8%25B7%25AF%25E7%25B9%2581%25E8%258A%25B1%25E7%259B%25B8%25E9%2580%2581&amp;stat=true&amp;page=1
+[Test worker] DEBUG N99csw - request.headers Referer: https://99csw.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: m.99csw.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: PHPSESSID=d0505a979423o6l0a36n2likg0
+
+[Test worker] DEBUG N99csw - response.headers date: Tue, 05 Dec 2023 02:24:08 GMT
+content-type: text/xml;charset=utf-8
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+pragma: no-cache
+x-frame-options: SAMEORIGIN
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=hJGyJR4%2F2wBbLMUE3gM2jZUATgTY3lUKk4PvW761zbjigIVVUXPT4E3cn7Fk9O8UviUUk4lEjC9S8FqCoqJn%2F%2FLVdJN049Lr9DKng7gTWi0v0aRd5uCUvPsXSYMuzg%3D%3D&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d4c44d332b5b-LAX
+alt-svc: h3=&quot;:443&quot;; ma=86400
+
+[Test worker] INFO N99csw - connect https://m.99csw.com/book/search.list.php?keyword=%25E6%2588%2591%25E4%25BB%25AC%25E4%25BB%258E%25E6%25AD%25A4%25E6%2598%25AF%25E8%25B7%25AF%25E4%25BA%25BA&amp;stat=true&amp;page=1
+[Test worker] DEBUG N99csw - body 
+[Test worker] DEBUG N99csw - load cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - after filter cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - response https://m.99csw.com/book/search.list.php?keyword=%25E6%2588%2591%25E4%25BB%25AC%25E4%25BB%258E%25E6%25AD%25A4%25E6%2598%25AF%25E8%25B7%25AF%25E4%25BA%25BA&amp;stat=true&amp;page=1
+[Test worker] DEBUG N99csw - request.headers Referer: https://99csw.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: m.99csw.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: PHPSESSID=d0505a979423o6l0a36n2likg0
+
+[Test worker] DEBUG N99csw - response.headers date: Tue, 05 Dec 2023 02:24:08 GMT
+content-type: text/xml;charset=utf-8
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+pragma: no-cache
+x-frame-options: SAMEORIGIN
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=%2B%2BrUdzBKvpufobOgUDz0EgLAL3%2FCvYN0LY9%2FV3sA0sZM9VzATKx%2FjG03TuDnNGjnUgIyWGzcZ6%2FxIHgs5itqisa%2B%2F34h%2BS%2FRmK%2FDSPWchIfpTtLp2gI7ztFYAYOVKw%3D%3D&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d4c59f032b5b-LAX
+alt-svc: h3=&quot;:443&quot;; ma=86400
+
+[Test worker] INFO N99csw - connect https://99csw.com/book/8430/297827.htm
+[Test worker] DEBUG N99csw - body 
+[Test worker] DEBUG N99csw - load cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - after filter cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - response https://99csw.com/book/8430/297827.htm
+[Test worker] DEBUG N99csw - request.headers Referer: https://99csw.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: 99csw.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: PHPSESSID=d0505a979423o6l0a36n2likg0
+
+[Test worker] DEBUG N99csw - response.headers date: Tue, 05 Dec 2023 02:24:08 GMT
+content-type: text/html; charset=UTF-8
+vary: Accept-Encoding
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+pragma: no-cache
+x-frame-options: SAMEORIGIN
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=ORiwLkUHY1fn0iOfv27EqZmIP0wziZrFdRpgCRhh72GYXj70uIGHp6Ns4KxBYaPim7PwqM3PaR0NCBosr5hxwhLO6kr%2FxsdJ5hVFe9c1aX1sA%2B31347M41QcNa8%3D&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d4c7ae282f58-LAX
+alt-svc: h3=&quot;:443&quot;; ma=86400
+
+[Test worker] INFO N99csw - connect https://99csw.com/book/8430/index.htm
+[Test worker] DEBUG N99csw - body 
+[Test worker] DEBUG N99csw - load cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - after filter cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - response https://99csw.com/book/8430/index.htm
+[Test worker] DEBUG N99csw - request.headers Referer: https://99csw.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: 99csw.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: PHPSESSID=d0505a979423o6l0a36n2likg0
+
+[Test worker] DEBUG N99csw - response.headers date: Tue, 05 Dec 2023 02:24:09 GMT
+content-type: text/html; charset=UTF-8
+vary: Accept-Encoding
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+pragma: no-cache
+x-frame-options: SAMEORIGIN
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=ScZPdSGlgwfWTCCBBbf89JmbO7rYGFeeNTjtiMRQeNl7dxlk7vfNuCRWfmFVG7lZFJKX8IdYt%2F1wX%2FFkZsn1AUypvxjegsNN0D0QlGFfHOWMY9jsEaTr3B9y2No%3D&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d4c8cae4db76-LAX
+alt-svc: h3=&quot;:443&quot;; ma=86400
+
+[Test worker] INFO N99csw - connect https://99csw.com/book/4229/index.htm
+[Test worker] DEBUG N99csw - body 
+[Test worker] DEBUG N99csw - load cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - after filter cookies [PHPSESSID=d0505a979423o6l0a36n2likg0; path=/]
+[Test worker] DEBUG N99csw - response https://99csw.com/book/4229/index.htm
+[Test worker] DEBUG N99csw - request.headers Referer: https://99csw.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: 99csw.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: PHPSESSID=d0505a979423o6l0a36n2likg0
+
+[Test worker] DEBUG N99csw - response.headers date: Tue, 05 Dec 2023 02:24:09 GMT
+content-type: text/html; charset=UTF-8
+vary: Accept-Encoding
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+pragma: no-cache
+x-frame-options: SAMEORIGIN
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=PlaJt5%2BqjEIlBUWkpInzBxkjoPEffmaJpgldXo36sgjEuPL5%2FYBG2%2BWUoxaF%2BdV27Ot26dpPJhAH0Uy8n2I5UbSrD6J6M5qJo7X520UWxHkdctxo3%2FDw%2FkMMQUg%3D&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d4c90b29db76-LAX
+alt-svc: h3=&quot;:443&quot;; ma=86400
+
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 5.6.4</a> at Dec 5, 2023, 10:25:31 AM</p>
+</div>
+</div>
+</body>
+</html>

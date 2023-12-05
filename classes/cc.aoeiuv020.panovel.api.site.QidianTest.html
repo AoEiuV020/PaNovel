@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class cc.aoeiuv020.panovel.api.site.QidianTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class cc.aoeiuv020.panovel.api.site.QidianTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/cc.aoeiuv020.panovel.api.site.html">cc.aoeiuv020.panovel.api.site</a> &gt; QidianTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">2</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">6.039s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox failures" id="successRate">
+<div class="percent">50%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Failed tests</a>
+</li>
+<li>
+<a href="#tab1">Tests</a>
+</li>
+<li>
+<a href="#tab2">Standard output</a>
+</li>
+<li>
+<a href="#tab3">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Failed tests</h2>
+<div class="test">
+<a name="chapters"></a>
+<h3 class="failures">chapters</h3>
+<span class="code">
+<pre>java.util.NoSuchElementException: List is empty.
+	at kotlin.collections.CollectionsKt___CollectionsKt.single(_Collections.kt:518)
+	at cc.aoeiuv020.panovel.api.site.Qidian$4$1.invoke(qidian.kt:70)
+	at cc.aoeiuv020.panovel.api.site.Qidian$4$1.invoke(qidian.kt:25)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext$_Chapters.document(DslJsoupNovelContext.kt:477)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext$_Chapters.document$default(DslJsoupNovelContext.kt:473)
+	at cc.aoeiuv020.panovel.api.site.Qidian$4.invoke(qidian.kt:68)
+	at cc.aoeiuv020.panovel.api.site.Qidian$4.invoke(qidian.kt:25)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext.getNovelChaptersAsc(DslJsoupNovelContext.kt:464)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.chapters(base.kt:102)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.chapters$default(base.kt:100)
+	at cc.aoeiuv020.panovel.api.site.QidianTest.chapters(QidianTest.kt:37)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:110)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:38)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:62)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:118)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:182)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:164)
+	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:412)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+</pre>
+</span>
+</div>
+<div class="test">
+<a name="content"></a>
+<h3 class="failures">content</h3>
+<span class="code">
+<pre>java.lang.NullPointerException
+	at cc.aoeiuv020.panovel.api.site.Qidian$5$2.invoke(qidian.kt:107)
+	at cc.aoeiuv020.panovel.api.site.Qidian$5$2.invoke(qidian.kt:25)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext$_Requester$response$1.invoke(DslJsoupNovelContext.kt:750)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext$_Requester$response$1.invoke(DslJsoupNovelContext.kt:721)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext$_Requester$inputStream$1.invoke(DslJsoupNovelContext.kt:758)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext$_Requester$inputStream$1.invoke(DslJsoupNovelContext.kt:721)
+	at cc.aoeiuv020.panovel.api.base.OkHttpNovelContext.inputStream(OkHttpNovelContext.kt:100)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext$_Requester.inputStream(DslJsoupNovelContext.kt:757)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext$_Requester.response(DslJsoupNovelContext.kt:747)
+	at cc.aoeiuv020.panovel.api.site.Qidian$5.invoke(qidian.kt:104)
+	at cc.aoeiuv020.panovel.api.site.Qidian$5.invoke(qidian.kt:25)
+	at cc.aoeiuv020.panovel.api.base.DslJsoupNovelContext.getNovelContent(DslJsoupNovelContext.kt:610)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.content(base.kt:149)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.content(base.kt:133)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.content$default(base.kt:131)
+	at cc.aoeiuv020.panovel.api.site.QidianTest.content(QidianTest.kt:50)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:110)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:38)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:62)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:118)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:182)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:164)
+	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:412)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+</pre>
+</span>
+</div>
+</div>
+<div id="tab1" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="failures">chapters</td>
+<td class="failures">1.616s</td>
+<td class="failures">failed</td>
+</tr>
+<tr>
+<td class="failures">content</td>
+<td class="failures">0.279s</td>
+<td class="failures">failed</td>
+</tr>
+<tr>
+<td class="success">detail</td>
+<td class="success">1.408s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">search</td>
+<td class="success">2.736s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>NovelDetail(novel=NovelItem(site=起点中文, name=修真聊天群（聊天群的日常生活）, author=圣骑士的传说, extra=3602691), image=https://bookcover.yuewen.com/qdbimg/349573/3602691/300, update=null, introduction=某天，宋书航意外加入了一个仙侠中二病资深患者的交流群，里面的群友们都以‘道友’相称，群名片都是各种府主、洞主、真人、天师。连群主走失的宠物犬都称为大妖犬离家出走。整天聊的是炼丹、闯秘境、炼功经验啥的。
+突然有一天，潜水良久的他突然发现……群里每一个群员，竟然全部是修真者，能移山倒海、长生千年的那种！
+啊啊啊啊，世界观在一夜间彻底崩碎啦！
+书友群：九洲1号群:207572656
+九洲２号群:168114177
+九洲３号群:165210665（新）
+九洲一号群（VIP书友群，需验证）63769632, extra=3602691)
+10
+NovelItem(site=起点中文, name=都市的变形德鲁伊, author=易伤秋者, extra=1016591421)
+NovelItem(site=起点中文, name=都市悠闲生活, author=淡定章鱼, extra=1034742961)
+NovelItem(site=起点中文, name=异相都市, author=黄黑之王, extra=1037021477)
+10
+NovelItem(site=起点中文, name=从前有座灵剑山, author=国王陛下, extra=3347574)
+NovelItem(site=起点中文, name=我的宝可梦玩家, author=从前有个大橘猫, extra=1037011726)
+NovelItem(site=起点中文, name=从前有座方寸山, author=长安西樵, extra=1036314259)
+10
+NovelItem(site=起点中文, name=斗破苍穹, author=天蚕土豆, extra=1209977)
+NovelItem(site=起点中文, name=斗破苍穹之至高真神, author=落日精灵, extra=1033623125)
+NovelItem(site=起点中文, name=斗破苍穹从韩枫开始, author=小小麻辣辣椒, extra=1038222501)
+10
+NovelItem(site=起点中文, name=修真聊天群（聊天群的日常生活）, author=圣骑士的传说, extra=3602691)
+NovelItem(site=起点中文, name=西海岸美式居合, author=聊天群, extra=1037640650)
+NovelItem(site=起点中文, name=聊天群的女奥特曼, author=手断dog, extra=1037596416)
+10
+NovelItem(site=起点中文, name=蓝白社, author=魔性沧月, extra=1011924365)
+NovelItem(site=起点中文, name=地下城玩家, author=蓝白的天, extra=1014988608)
+NovelItem(site=起点中文, name=分手后我在娱乐圈爆红了, author=蓝白格子, extra=1022964084)
+0/49
+49/49
+</pre>
+</span>
+</div>
+<div id="tab3" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>[Test worker] INFO Qidian - connect https://m.qidian.com/book/3602691.html
+[Test worker] DEBUG Qidian - body 
+[Test worker] DEBUG Qidian - load cookies []
+[Test worker] DEBUG Qidian - after filter cookies []
+[Test worker] DEBUG Qidian - save cookies [_csrfToken=z322YJ9plVQ3lfM8deTzS2bsnn3yhWZa21kkFdk9; expires=Wed, 04 Dec 2024 02:22:22 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - setCookies {_csrfToken=_csrfToken=z322YJ9plVQ3lfM8deTzS2bsnn3yhWZa21kkFdk9; expires=Wed, 04 Dec 2024 02:22:22 GMT; domain=qidian.com; path=/, newstatisticUUID=newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/}
+[Test worker] DEBUG Qidian - response https://m.qidian.com/book/3602691.html
+[Test worker] DEBUG Qidian - request.headers Referer: https://www.qidian.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: m.qidian.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Qidian - response.headers Date: Tue, 05 Dec 2023 02:22:22 GMT
+Content-Type: text/html; charset=utf-8
+set-cookie: _csrfToken=z322YJ9plVQ3lfM8deTzS2bsnn3yhWZa21kkFdk9; expires=Wed, 04-Dec-2024 02:22:22 GMT; path=/; domain=.qidian.com
+set-cookie: newstatisticUUID=1701742942_1301191136; expires=Thu, 04-Dec-2025 02:22:22 GMT; path=/; domain=.qidian.com
+set-cookie: fu=699677443; expires=Thu, 04-Dec-2025 02:22:22 GMT; path=/; domain=.qidian.com
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Security-Policy: frame-ancestors  'self' *.qidian.com  *.hongxiu.com  *.yuewen.com  *.qq.com  *.qdmm.com  *.readnovel.com  *.xs8.cn  *.xxsy.net  *.tingbook.com  *.lrts.me  *.ywurl.cn  *.qdwenxue.com  *.if.qidian.com  www.gameloop.com
+Transfer-Encoding: chunked
+X-NWS-LOG-UUID: 13951239855556397710
+Connection: keep-alive
+Server: Lego Server
+X-Cache-Lookup: Cache Miss
+Strict-Transport-Security: max-age=15769000;
+
+[Test worker] INFO Qidian - connect https://www.qidian.com/so/%E9%83%BD%E5%B8%82.html
+[Test worker] DEBUG Qidian - body 
+[Test worker] DEBUG Qidian - load cookies [_csrfToken=z322YJ9plVQ3lfM8deTzS2bsnn3yhWZa21kkFdk9; expires=Wed, 04 Dec 2024 02:22:22 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - after filter cookies [_csrfToken=z322YJ9plVQ3lfM8deTzS2bsnn3yhWZa21kkFdk9; expires=Wed, 04 Dec 2024 02:22:22 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - save cookies [_csrfToken=174d5eb4-06fe-436e-94da-bca5bb64390c; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - setCookies {_csrfToken=_csrfToken=174d5eb4-06fe-436e-94da-bca5bb64390c; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/}
+[Test worker] DEBUG Qidian - response https://www.qidian.com/so/%E9%83%BD%E5%B8%82.html
+[Test worker] DEBUG Qidian - request.headers Referer: https://www.qidian.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: www.qidian.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: _csrfToken=z322YJ9plVQ3lfM8deTzS2bsnn3yhWZa21kkFdk9; newstatisticUUID=1701742942_1301191136; fu=699677443
+
+[Test worker] DEBUG Qidian - response.headers Date: Tue, 05 Dec 2023 02:22:23 GMT
+Content-Type: text/html; charset=utf-8
+set-cookie: _csrfToken=174d5eb4-06fe-436e-94da-bca5bb64390c; Max-Age=31536000; Expires=Wed, 04-Dec-2024 02:22:23 GMT; Domain=qidian.com; Path=/
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Security-Policy: frame-ancestors  'self' *.qidian.com  *.hongxiu.com  *.yuewen.com  *.qq.com  *.qdmm.com  *.readnovel.com  *.xs8.cn  *.xxsy.net  *.tingbook.com  *.lrts.me  *.ywurl.cn  *.qdwenxue.com  *.if.qidian.com  www.gameloop.com
+Transfer-Encoding: chunked
+X-NWS-LOG-UUID: 3590852692130091819
+Connection: keep-alive
+Server: Lego Server
+X-Cache-Lookup: Cache Miss
+Strict-Transport-Security: max-age=31536000;
+
+[Test worker] INFO Qidian - connect https://www.qidian.com/so/%E4%BB%8E%E5%89%8D%E6%9C%89%E5%BA%A7%E7%81%B5%E5%89%91%E5%B1%B1.html
+[Test worker] DEBUG Qidian - body 
+[Test worker] DEBUG Qidian - load cookies [_csrfToken=174d5eb4-06fe-436e-94da-bca5bb64390c; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - after filter cookies [_csrfToken=174d5eb4-06fe-436e-94da-bca5bb64390c; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - save cookies [_csrfToken=5dea6535-676d-4b66-b061-92e4c0158232; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - setCookies {_csrfToken=_csrfToken=5dea6535-676d-4b66-b061-92e4c0158232; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/}
+[Test worker] DEBUG Qidian - response https://www.qidian.com/so/%E4%BB%8E%E5%89%8D%E6%9C%89%E5%BA%A7%E7%81%B5%E5%89%91%E5%B1%B1.html
+[Test worker] DEBUG Qidian - request.headers Referer: https://www.qidian.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: www.qidian.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: _csrfToken=174d5eb4-06fe-436e-94da-bca5bb64390c; newstatisticUUID=1701742942_1301191136; fu=699677443
+
+[Test worker] DEBUG Qidian - response.headers Date: Tue, 05 Dec 2023 02:22:24 GMT
+Content-Type: text/html; charset=utf-8
+set-cookie: _csrfToken=5dea6535-676d-4b66-b061-92e4c0158232; Max-Age=31536000; Expires=Wed, 04-Dec-2024 02:22:24 GMT; Domain=qidian.com; Path=/
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Security-Policy: frame-ancestors  'self' *.qidian.com  *.hongxiu.com  *.yuewen.com  *.qq.com  *.qdmm.com  *.readnovel.com  *.xs8.cn  *.xxsy.net  *.tingbook.com  *.lrts.me  *.ywurl.cn  *.qdwenxue.com  *.if.qidian.com  www.gameloop.com
+Transfer-Encoding: chunked
+X-NWS-LOG-UUID: 594688190546890733
+Connection: keep-alive
+Server: Lego Server
+X-Cache-Lookup: Cache Miss
+Strict-Transport-Security: max-age=31536000;
+
+[Test worker] INFO Qidian - connect https://www.qidian.com/so/%E6%96%97%E7%A0%B4%E8%8B%8D%E7%A9%B9.html
+[Test worker] DEBUG Qidian - body 
+[Test worker] DEBUG Qidian - load cookies [_csrfToken=5dea6535-676d-4b66-b061-92e4c0158232; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - after filter cookies [_csrfToken=5dea6535-676d-4b66-b061-92e4c0158232; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - save cookies [_csrfToken=1bd06716-7f1d-4814-9a8e-91494ceab1d8; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - setCookies {_csrfToken=_csrfToken=1bd06716-7f1d-4814-9a8e-91494ceab1d8; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/}
+[Test worker] DEBUG Qidian - response https://www.qidian.com/so/%E6%96%97%E7%A0%B4%E8%8B%8D%E7%A9%B9.html
+[Test worker] DEBUG Qidian - request.headers Referer: https://www.qidian.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: www.qidian.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: _csrfToken=5dea6535-676d-4b66-b061-92e4c0158232; newstatisticUUID=1701742942_1301191136; fu=699677443
+
+[Test worker] DEBUG Qidian - response.headers Date: Tue, 05 Dec 2023 02:22:24 GMT
+Content-Type: text/html; charset=utf-8
+set-cookie: _csrfToken=1bd06716-7f1d-4814-9a8e-91494ceab1d8; Max-Age=31536000; Expires=Wed, 04-Dec-2024 02:22:24 GMT; Domain=qidian.com; Path=/
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Security-Policy: frame-ancestors  'self' *.qidian.com  *.hongxiu.com  *.yuewen.com  *.qq.com  *.qdmm.com  *.readnovel.com  *.xs8.cn  *.xxsy.net  *.tingbook.com  *.lrts.me  *.ywurl.cn  *.qdwenxue.com  *.if.qidian.com  www.gameloop.com
+Transfer-Encoding: chunked
+X-NWS-LOG-UUID: 10819780715429386585
+Connection: keep-alive
+Server: Lego Server
+X-Cache-Lookup: Cache Miss
+Strict-Transport-Security: max-age=31536000;
+
+[Test worker] INFO Qidian - connect https://www.qidian.com/so/%E4%BF%AE%E7%9C%9F%E8%81%8A%E5%A4%A9%E7%BE%A4%EF%BC%88%E8%81%8A%E5%A4%A9%E7%BE%A4%E7%9A%84%E6%97%A5%E5%B8%B8%E7%94%9F%E6%B4%BB%EF%BC%89.html
+[Test worker] DEBUG Qidian - body 
+[Test worker] DEBUG Qidian - load cookies [_csrfToken=1bd06716-7f1d-4814-9a8e-91494ceab1d8; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - after filter cookies [_csrfToken=1bd06716-7f1d-4814-9a8e-91494ceab1d8; expires=Wed, 04 Dec 2024 02:22:24 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - save cookies [_csrfToken=313744df-8457-4aa5-85b3-7fb29a9acd10; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - setCookies {_csrfToken=_csrfToken=313744df-8457-4aa5-85b3-7fb29a9acd10; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/}
+[Test worker] DEBUG Qidian - response https://www.qidian.com/so/%E4%BF%AE%E7%9C%9F%E8%81%8A%E5%A4%A9%E7%BE%A4%EF%BC%88%E8%81%8A%E5%A4%A9%E7%BE%A4%E7%9A%84%E6%97%A5%E5%B8%B8%E7%94%9F%E6%B4%BB%EF%BC%89.html
+[Test worker] DEBUG Qidian - request.headers Referer: https://www.qidian.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: www.qidian.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: _csrfToken=1bd06716-7f1d-4814-9a8e-91494ceab1d8; newstatisticUUID=1701742942_1301191136; fu=699677443
+
+[Test worker] DEBUG Qidian - response.headers Date: Tue, 05 Dec 2023 02:22:25 GMT
+Content-Type: text/html; charset=utf-8
+set-cookie: _csrfToken=313744df-8457-4aa5-85b3-7fb29a9acd10; Max-Age=31536000; Expires=Wed, 04-Dec-2024 02:22:25 GMT; Domain=qidian.com; Path=/
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Security-Policy: frame-ancestors  'self' *.qidian.com  *.hongxiu.com  *.yuewen.com  *.qq.com  *.qdmm.com  *.readnovel.com  *.xs8.cn  *.xxsy.net  *.tingbook.com  *.lrts.me  *.ywurl.cn  *.qdwenxue.com  *.if.qidian.com  www.gameloop.com
+Transfer-Encoding: chunked
+X-NWS-LOG-UUID: 2166322519752229738
+Connection: keep-alive
+Server: Lego Server
+X-Cache-Lookup: Cache Miss
+Strict-Transport-Security: max-age=31536000;
+
+[Test worker] INFO Qidian - connect https://www.qidian.com/so/%E8%93%9D%E7%99%BD%E7%A4%BE.html
+[Test worker] DEBUG Qidian - body 
+[Test worker] DEBUG Qidian - load cookies [_csrfToken=313744df-8457-4aa5-85b3-7fb29a9acd10; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - after filter cookies [_csrfToken=313744df-8457-4aa5-85b3-7fb29a9acd10; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - save cookies [_csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - setCookies {_csrfToken=_csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/}
+[Test worker] DEBUG Qidian - response https://www.qidian.com/so/%E8%93%9D%E7%99%BD%E7%A4%BE.html
+[Test worker] DEBUG Qidian - request.headers Referer: https://www.qidian.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: www.qidian.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: _csrfToken=313744df-8457-4aa5-85b3-7fb29a9acd10; newstatisticUUID=1701742942_1301191136; fu=699677443
+
+[Test worker] DEBUG Qidian - response.headers Date: Tue, 05 Dec 2023 02:22:25 GMT
+Content-Type: text/html; charset=utf-8
+set-cookie: _csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; Max-Age=31536000; Expires=Wed, 04-Dec-2024 02:22:25 GMT; Domain=qidian.com; Path=/
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Security-Policy: frame-ancestors  'self' *.qidian.com  *.hongxiu.com  *.yuewen.com  *.qq.com  *.qdmm.com  *.readnovel.com  *.xs8.cn  *.xxsy.net  *.tingbook.com  *.lrts.me  *.ywurl.cn  *.qdwenxue.com  *.if.qidian.com  www.gameloop.com
+Transfer-Encoding: chunked
+X-NWS-LOG-UUID: 14664521297066555233
+Connection: keep-alive
+Server: Lego Server
+X-Cache-Lookup: Cache Miss
+Strict-Transport-Security: max-age=31536000;
+
+[Test worker] INFO Qidian - connect https://m.qidian.com/majax/chapter/getChapterInfo?bookId=3602691&amp;chapterId=87926246
+[Test worker] DEBUG Qidian - body 
+[Test worker] DEBUG Qidian - load cookies [_csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - after filter cookies [newstatisticUUID=1701742942_1301191136; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/, fu=699677443; expires=Thu, 04 Dec 2025 02:22:22 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - save cookies [newstatisticUUID=1701742945_1920436406; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/, fu=197501156; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - setCookies {_csrfToken=_csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=newstatisticUUID=1701742945_1920436406; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/, fu=fu=197501156; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/}
+[Test worker] DEBUG Qidian - response https://m.qidian.com/majax/chapter/getChapterInfo?bookId=3602691&amp;chapterId=87926246
+[Test worker] DEBUG Qidian - request.headers Referer: https://www.qidian.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: m.qidian.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: newstatisticUUID=1701742942_1301191136; fu=699677443
+
+[Test worker] DEBUG Qidian - response.headers Date: Tue, 05 Dec 2023 02:22:25 GMT
+Content-Type: application/json
+Set-Cookie: newstatisticUUID=1701742945_1920436406; expires=Thu, 04-Dec-2025 02:22:25 GMT; path=/; domain=.qidian.com
+Set-Cookie: fu=197501156; expires=Thu, 04-Dec-2025 02:22:25 GMT; path=/; domain=.qidian.com
+Request-Type: ajax
+Content-Length: 49
+X-NWS-LOG-UUID: 18060833738830278549
+Connection: keep-alive
+Server: Lego Server
+X-Cache-Lookup: Cache Miss
+Strict-Transport-Security: max-age=15769000;
+
+[Test worker] INFO Qidian - connect https://m.qidian.com/book/3602691/catalog/
+[Test worker] DEBUG Qidian - body 
+[Test worker] DEBUG Qidian - load cookies [_csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742945_1920436406; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/, fu=197501156; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - after filter cookies [_csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=1701742945_1920436406; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/, fu=197501156; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - save cookies [tgw_l7_route=2ccc8fdd2e0282fa1ee2565c1f0de7b3; expires=Tue, 05 Dec 2023 02:52:26 GMT; path=/, supportWebp=false; expires=Wed, 04 Dec 2024 02:22:27 GMT; domain=qidian.com; path=/]
+[Test worker] DEBUG Qidian - setCookies {_csrfToken=_csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; expires=Wed, 04 Dec 2024 02:22:25 GMT; domain=qidian.com; path=/, newstatisticUUID=newstatisticUUID=1701742945_1920436406; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/, fu=fu=197501156; expires=Thu, 04 Dec 2025 02:22:25 GMT; domain=qidian.com; path=/, tgw_l7_route=tgw_l7_route=2ccc8fdd2e0282fa1ee2565c1f0de7b3; expires=Tue, 05 Dec 2023 02:52:26 GMT; path=/, supportWebp=supportWebp=false; expires=Wed, 04 Dec 2024 02:22:27 GMT; domain=qidian.com; path=/}
+[Test worker] DEBUG Qidian - response https://m.qidian.com/book/3602691/catalog/
+[Test worker] DEBUG Qidian - request.headers Referer: https://www.qidian.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: m.qidian.com
+Connection: Keep-Alive
+Accept-Encoding: gzip
+Cookie: _csrfToken=b6bea222-6614-4dfb-bf96-e5aa97d0c297; newstatisticUUID=1701742945_1920436406; fu=197501156
+
+[Test worker] DEBUG Qidian - response.headers Date: Tue, 05 Dec 2023 02:22:26 GMT
+Content-Type: text/html; charset=utf-8
+Set-Cookie: tgw_l7_route=2ccc8fdd2e0282fa1ee2565c1f0de7b3; Expires=Tue, 05-Dec-2023 02:52:26 GMT; Path=/
+X-Powered-By: Express
+Set-Cookie: supportWebp=false; Max-Age=31536000; Domain=.qidian.com; Path=/; Expires=Wed, 04 Dec 2024 02:22:26 GMT
+Vary: Accept-Encoding
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Security-Policy: frame-ancestors  'self' *.qidian.com  *.hongxiu.com  *.yuewen.com  *.qq.com  *.qdmm.com  *.readnovel.com  *.xs8.cn  *.xxsy.net  *.tingbook.com  *.lrts.me  *.ywurl.cn  *.qdwenxue.com  *.if.qidian.com  www.gameloop.com
+Transfer-Encoding: chunked
+X-NWS-LOG-UUID: 11682260847273526826
+Connection: keep-alive
+Server: Lego Server
+X-Cache-Lookup: Cache Miss
+Strict-Transport-Security: max-age=15769000;
+
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 5.6.4</a> at Dec 5, 2023, 10:25:31 AM</p>
+</div>
+</div>
+</body>
+</html>

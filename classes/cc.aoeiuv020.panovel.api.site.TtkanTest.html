@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class cc.aoeiuv020.panovel.api.site.TtkanTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class cc.aoeiuv020.panovel.api.site.TtkanTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/cc.aoeiuv020.panovel.api.site.html">cc.aoeiuv020.panovel.api.site</a> &gt; TtkanTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">1</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">6.249s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox failures" id="successRate">
+<div class="percent">75%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Failed tests</a>
+</li>
+<li>
+<a href="#tab1">Tests</a>
+</li>
+<li>
+<a href="#tab2">Standard output</a>
+</li>
+<li>
+<a href="#tab3">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Failed tests</h2>
+<div class="test">
+<a name="content"></a>
+<h3 class="failures">content</h3>
+<span class="code">
+<pre>org.junit.ComparisonFailure: expected:&lt;最[傾城時尚大樓，也是最新的最傾城時尚大樓，高達十八層，比原來的最傾城時尚大樓好了太多，只是裡面的很多人都已經換]了。&gt; but was:&lt;最[倾城时尚大楼，也是最新的最倾城时尚大楼，高达十八层，比原来的最倾城时尚大楼好了太多，只是里面的很多人都已经换]了。&gt;
+	at org.junit.Assert.assertEquals(Assert.java:115)
+	at org.junit.Assert.assertEquals(Assert.java:144)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.content(base.kt:141)
+	at cc.aoeiuv020.panovel.api.site.BaseNovelContextText.content$default(base.kt:131)
+	at cc.aoeiuv020.panovel.api.site.TtkanTest.content(TtkanTest.kt:45)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:110)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:38)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:62)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)
+	at jdk.internal.reflect.GeneratedMethodAccessor6.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:118)
+	at jdk.internal.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:182)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:164)
+	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:412)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+</pre>
+</span>
+</div>
+</div>
+<div id="tab1" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">chapters</td>
+<td class="success">2.074s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="failures">content</td>
+<td class="failures">2.026s</td>
+<td class="failures">failed</td>
+</tr>
+<tr>
+<td class="success">detail</td>
+<td class="success">1.008s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">search</td>
+<td class="success">1.141s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>NovelDetail(novel=NovelItem(site=天天看小说, name=都市疯神榜, author=都市言情, extra=dushifengshenbang-dushiyanqing), image=https://static.ttkan.co/cover/dushifengshenbang.jpg?w=120&amp;h=160&amp;q=100, update=null, introduction=《都市疯神榜》介绍(连载中):
+不作死就不会死,不抽风却一定会死.
+一个贫困窘迫的乡村小子,在御世神器疯神榜的逼迫下,开始了一段疯狂奇妙的成神之旅.
+在教室里向美女老师表白,在女生宿舍调戏大学校花…
+带着全国十大警花去抢劫,带着索里马海盗去扶老奶奶过马路…
+买一百条商业街种萝卜土豆,买十支当红女组合养鸡喂猪…
+陆经纬:自从被一幅疯神榜上了身,感觉整个人都疯疯哒.
+疯神榜:如果你有什么想做却又不敢做,或者做不到的事情,请以抽风任务的形式发布在书评区,也许明天俺就会把它发布给陆经纬.
+《都市疯神榜》情节跌宕起伏、扣人心弦,都市疯神榜是一本情节与文笔俱佳的浪漫言情,各位书友要是觉得都市疯神榜最新章节还不错的话请不要忘记向您qq群和微博里的朋友推荐哦!, extra=dushifengshenbang-dushiyanqing)
+NovelDetail(novel=NovelItem(site=天天看小说, name=视死如归魏君子, author=平层, extra=shisiruguiweijunzi-pingceng), image=https://static.ttkan.co/cover/shisiruguiweijunzi-pingceng.jpg?w=120&amp;h=160&amp;q=100, update=null, introduction=魏君确认自己被杀死后就能直接无敌，于是他开始疯狂的作死。然后，他发现这个世界有毒。“当初仙门凌驾于朝堂之上作威作福，满朝文武包括朕皆对仙人卑躬屈膝，只有魏君一身是胆，视死如归，在众目睽睽之下大骂朕有辱帝王尊严，更是直言仙人不死，大盗不止。当时朕就下定决心，如此忠臣，朕一定要护他周全。”“仙人说我是天煞孤星，能克死身边一切亲近的人。所以我父母抛弃我，世人害怕我，我感受不到这个世界对我丝毫的善意。直到魏君的出现，他对我说，我没有错，他不怕死，他愿意和我一直做朋友。其实我很想对他说，我们能把革命友谊再升华一下吗？”“我认识魏君的时候，魏君还很弱小，而我是被正魔两道追杀的盖世魔君。我告诉他，救了我就等于和全世界为敌，会死的。魏君笑着对我说，生亦何欢，死亦何苦。我一生纵横无敌，看透了魔门的残酷与正道的虚伪。直到遇到了魏君，我方知这世间当真有视死如归的真英雄。”……魏君：“我只是想死，怎么就这么难呢？”, extra=shisiruguiweijunzi-pingceng)
+90
+NovelItem(site=天天看小说, name=都市疯神榜, author=都市言情, extra=dushifengshenbang-dushiyanqing)
+NovelItem(site=天天看小说, name=都市没有恋爱, author=都市风景线, extra=dushimeiyoulianai-dushifengjingxian)
+NovelItem(site=天天看小说, name=都市猛鬼, author=成都杨, extra=dushimenggui-chengduyang)
+90
+NovelItem(site=天天看小说, name=都市疯神榜, author=都市言情, extra=dushifengshenbang-dushiyanqing)
+NovelItem(site=天天看小说, name=都市疯神榜, author=一起数月亮, extra=dushifengshenbang-yiqishuyueliang)
+NovelItem(site=天天看小说, name=都市没有恋爱, author=都市风景线, extra=dushimeiyoulianai-dushifengjingxian)
+90
+NovelItem(site=天天看小说, name=视死如归魏君子, author=平层, extra=shisiruguiweijunzi-pingceng)
+NovelItem(site=天天看小说, name=红楼如玉君子, author=蓝莲君子, extra=honglouruyujunzi-lanlianjunzi)
+NovelItem(site=天天看小说, name=与君殊途不同归, author=君子猫, extra=yujunshutubutonggui-junzimao)
+0/-1
+8192/-1
+16384/-1
+24576/-1
+32768/-1
+36833/-1
+45025/-1
+53217/-1
+61409/-1
+61887/-1
+70079/-1
+73428/-1
+37
+最倾城时尚大楼，也是最新的最倾城时尚大楼，高达十八层，比原来的最倾城时尚大楼好了太多，只是里面的很多人都已经换了。
+林靓甜再次得到了属于自己的公司，这是陆经纬得到另一半世界之心后对她的补偿，比原来的公司更好，只是她并没有觉得开心。
+似乎是预感到了陆经纬的离开，站在高高的楼dǐng，看着远处望月小区的方向，脑海中一片片划过曾经和那个傻乎乎的韦经路在一起的日子，以及现在天各一方的两人，即使以林靓甜的坚强，也忍不住落下了眼泪。
+【这本书写到这里，已经结束了，并没有去详述关于万象大灵界的事情，以及陆经纬在万象大灵界的故事，大纲就到这里，是一个开放的结局，圆圆满满地结束了。只是虽然这本书结束了，但是陆经纬的传说还没有结束，有了万古难见的妖孽天赋，有了疯神榜的相助，他在万象大灵界会走的更加顺利，当然也会走的更远。最后，谢谢所有正版订阅了这本书的书友们，是你们让这本书走到了现在，是你们让月亮没有半途放弃，新书《吃掉地球》已经上传，比老书更加的精彩，请书友们去收藏一下，支持一下，帮助月亮走的更远，我们在《吃掉地球》见！】(。)
+章节报错
+分享给朋友：
+1017
+NovelChapter(name=第1章 抽风的星星, extra=dushifengshenbang-dushiyanqing_1, update=null)
+NovelChapter(name=第2章 你敢亲我吗, extra=dushifengshenbang-dushiyanqing_2, update=null)
+NovelChapter(name=第3章 放羊娃vs明月女神, extra=dushifengshenbang-dushiyanqing_3, update=null)
+NovelChapter(name=第1018章 妻儿满堂, extra=dushifengshenbang-dushiyanqing_1017, update=null)
+451
+NovelChapter(name=第1章 死后立马就能变大佬, extra=shisiruguiweijunzi-pingceng_1, update=null)
+NovelChapter(name=第2章 我与罪恶不共戴天, extra=shisiruguiweijunzi-pingceng_2, update=null)
+NovelChapter(name=第3章 视死如归, extra=shisiruguiweijunzi-pingceng_3, update=null)
+NovelChapter(name=新书《反套路重生》发了, extra=shisiruguiweijunzi-pingceng_451, update=null)
+NovelChapter(name=后记, extra=shisiruguiweijunzi-pingceng_450, update=null)
+NovelChapter(name=第447章 魏君之死, extra=shisiruguiweijunzi-pingceng_449, update=null)
+NovelChapter(name=第446章 血不流干，死不休战, extra=shisiruguiweijunzi-pingceng_448, update=null)
+NovelChapter(name=第445章 逆伐漫天神佛，战略大转移, extra=shisiruguiweijunzi-pingceng_447, update=null)
+NovelChapter(name=第444章 魏君必须死, extra=shisiruguiweijunzi-pingceng_446, update=null)
+NovelChapter(name=第443章 此子非池中之物, extra=shisiruguiweijunzi-pingceng_445, update=null)
+NovelChapter(name=第442章 我们都有光明的未来【求订阅】, extra=shisiruguiweijunzi-pingceng_444, update=null)
+NovelChapter(name=第441章 卧龙凤雏，棋逢对手, extra=shisiruguiweijunzi-pingceng_443, update=null)
+NovelChapter(name=第440章 乾帝“苏醒”，众正盈朝, extra=shisiruguiweijunzi-pingceng_442, update=null)
+NovelChapter(name=第439章 《记游西》, extra=shisiruguiweijunzi-pingceng_441, update=null)
+NovelChapter(name=第438章 后继有人，痛苦面具, extra=shisiruguiweijunzi-pingceng_440, update=null)
+NovelChapter(name=第437章 自作孽，不可活, extra=shisiruguiweijunzi-pingceng_439, update=null)
+NovelChapter(name=第436章 杀夫证道，不胜传说【万字求订阅】, extra=shisiruguiweijunzi-pingceng_438, update=null)
+NovelChapter(name=第435章 天子望气，气吞天下, extra=shisiruguiweijunzi-pingceng_437, update=null)
+NovelChapter(name=第434章 神通不敌天数，欧皇赌命永远不输, extra=shisiruguiweijunzi-pingceng_436, update=null)
+NovelChapter(name=第433章 糟糕，是心动的感觉, extra=shisiruguiweijunzi-pingceng_435, update=null)
+NovelChapter(name=第432章 被天帝退过婚的女人, extra=shisiruguiweijunzi-pingceng_434, update=null)
+NovelChapter(name=第431章 造化钟神秀, extra=shisiruguiweijunzi-pingceng_433, update=null)
+NovelChapter(name=第430章 封心锁爱，为国捐躯, extra=shisiruguiweijunzi-pingceng_432, update=null)
+NovelChapter(name=第430章 封心锁爱，为国捐躯, extra=shisiruguiweijunzi-pingceng_431, update=null)
+NovelChapter(name=第429章 杀疯了，前方高能, extra=shisiruguiweijunzi-pingceng_430, update=null)
+NovelChapter(name=第428章 天帝的毒奶，快进的局势, extra=shisiruguiweijunzi-pingceng_429, update=null)
+NovelChapter(name=第427章 行路难，行路难, extra=shisiruguiweijunzi-pingceng_428, update=null)
+NovelChapter(name=第426章 大梦沉沦不计年，今日方知我是我, extra=shisiruguiweijunzi-pingceng_427, update=null)
+NovelChapter(name=第425章 西天传经, extra=shisiruguiweijunzi-pingceng_426, update=null)
+NovelChapter(name=第424章 金蝉脱壳，功德佛归位, extra=shisiruguiweijunzi-pingceng_425, update=null)
+NovelChapter(name=第423章 梭哈是一种智慧, extra=shisiruguiweijunzi-pingceng_424, update=null)
+NovelChapter(name=第422章 魏党赢麻了，党魁痛麻了, extra=shisiruguiweijunzi-pingceng_423, update=null)
+NovelChapter(name=第421章 奉先挥泪斩义父, extra=shisiruguiweijunzi-pingceng_422, update=null)
+NovelChapter(name=第181章 魏党势力大拓展, extra=shisiruguiweijunzi-pingceng_421, update=null)
+NovelChapter(name=第180章 魏君：好像有亿点点不对劲, extra=shisiruguiweijunzi-pingceng_420, update=null)
+NovelChapter(name=第179章 至高无上的天帝陛下来到了他的凉山, extra=shisiruguiweijunzi-pingceng_419, update=null)
+NovelChapter(name=第178章 是时候准备新的天帝回归发言稿了【万字求订阅】, extra=shisiruguiweijunzi-pingceng_418, update=null)
+NovelChapter(name=第177章 走敌人的路，让敌人无路可走, extra=shisiruguiweijunzi-pingceng_417, update=null)
+NovelChapter(name=第176章 三十六路反王, extra=shisiruguiweijunzi-pingceng_416, update=null)
+NovelChapter(name=第175章 双月同天，必有大乱, extra=shisiruguiweijunzi-pingceng_415, update=null)
+NovelChapter(name=第174章 后浪, extra=shisiruguiweijunzi-pingceng_414, update=null)
+NovelChapter(name=第173章 所有人都感觉这波稳了, extra=shisiruguiweijunzi-pingceng_413, update=null)
+NovelChapter(name=第172章 女装，从入门到精通, extra=shisiruguiweijunzi-pingceng_412, update=null)
+NovelChapter(name=第171章 怎么证明你妈是你妈, extra=shisiruguiweijunzi-pingceng_411, update=null)
+NovelChapter(name=第170章 内库烧为锦绣灰，天街踏尽公卿骨, extra=shisiruguiweijunzi-pingceng_410, update=null)
+NovelChapter(name=第169章 诸佛之中，斗战第一【万字求月票】, extra=shisiruguiweijunzi-pingceng_409, update=null)
+NovelChapter(name=第168章 魏君手撕剧本，星少女遍地开花, extra=shisiruguiweijunzi-pingceng_408, update=null)
+NovelChapter(name=第167章 斩妹达人，蒂花之秀【求订阅】, extra=shisiruguiweijunzi-pingceng_407, update=null)
+NovelChapter(name=第166章 杀天王【万字求订阅】, extra=shisiruguiweijunzi-pingceng_406, update=null)
+NovelChapter(name=第165章 九千岁（求月票）, extra=shisiruguiweijunzi-pingceng_405, update=null)
+NovelChapter(name=第164章 人在家中坐，义父天上来（求月票）, extra=shisiruguiweijunzi-pingceng_404, update=null)
+</pre>
+</span>
+</div>
+<div id="tab3" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>[Test worker] INFO Ttkan - connect https://cn.ttkan.co/novel/chapters/dushifengshenbang-dushiyanqing
+[Test worker] DEBUG Ttkan - body 
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - response https://cn.ttkan.co/novel/chapters/dushifengshenbang-dushiyanqing
+[Test worker] DEBUG Ttkan - request.headers Referer: https://cn.ttkan.co
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: cn.ttkan.co
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Ttkan - response.headers date: Tue, 05 Dec 2023 02:25:25 GMT
+content-type: text/html; charset=utf-8
+vary: Accept-Encoding
+expires: Tue, 05 Dec 2023 02:25:40 GMT
+cache-control: max-age=15
+cache-control: max-age=300
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=fYF8mjKRIAiK3o%2BPxBsyqQJw4ZmqU%2FY%2FAEbhYgHL925ZR37Bg3wTRIa3WuOdrYGQRgsMYrKYZqtX65raq7caE1OH15JnneNJqfaidEQTIShYoxTtdN53YbPADUmX&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d6a4ca832b8a-LAX
+
+[Test worker] INFO Ttkan - connect https://cn.ttkan.co/novel/chapters/shisiruguiweijunzi-pingceng
+[Test worker] DEBUG Ttkan - body 
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - response https://cn.ttkan.co/novel/chapters/shisiruguiweijunzi-pingceng
+[Test worker] DEBUG Ttkan - request.headers Referer: https://cn.ttkan.co
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: cn.ttkan.co
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Ttkan - response.headers date: Tue, 05 Dec 2023 02:25:26 GMT
+content-type: text/html; charset=utf-8
+vary: Accept-Encoding
+expires: Tue, 05 Dec 2023 02:25:40 GMT
+cache-control: max-age=15
+cache-control: max-age=300
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=27UZrttCHFfvoIJ9OmHp0VqVYyAEu3fMef7y3gLL%2FFaHXT3ut5EvuPK80tcu0C70JzjRGUQdekZQ20St71jRIuaeRdwAjzlWcMXELWuUD%2BQNPpnx9KweTq3RhXGK&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d6a7be812b8a-LAX
+
+[Test worker] INFO Ttkan - connect https://cn.ttkan.co/novel/search?q=%E9%83%BD%E5%B8%82
+[Test worker] DEBUG Ttkan - body 
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - response https://cn.ttkan.co/novel/search?q=%E9%83%BD%E5%B8%82
+[Test worker] DEBUG Ttkan - request.headers Referer: https://cn.ttkan.co
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: cn.ttkan.co
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Ttkan - response.headers date: Tue, 05 Dec 2023 02:25:26 GMT
+content-type: text/html; charset=utf-8
+vary: Accept-Encoding
+expires: Tue, 05 Dec 2023 02:35:26 GMT
+cache-control: max-age=600
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=OdSEWRAOt5WAIYuVkof4GOfCDKBD6FOjfKhMnd7RQYAoBPkZHsdiRKmS0TmuOiyZ3VcyeW8y1tIeFgn0uq%2Fr8X5%2BCN06axcobYIIszkQvGTFznR7yNPuHVgXv67s&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d6aae8642ad7-LAX
+
+[Test worker] INFO Ttkan - connect https://cn.ttkan.co/novel/search?q=%E9%83%BD%E5%B8%82%E7%96%AF%E7%A5%9E%E6%A6%9C
+[Test worker] DEBUG Ttkan - body 
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - response https://cn.ttkan.co/novel/search?q=%E9%83%BD%E5%B8%82%E7%96%AF%E7%A5%9E%E6%A6%9C
+[Test worker] DEBUG Ttkan - request.headers Referer: https://cn.ttkan.co
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: cn.ttkan.co
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Ttkan - response.headers date: Tue, 05 Dec 2023 02:25:26 GMT
+content-type: text/html; charset=utf-8
+vary: Accept-Encoding
+expires: Tue, 05 Dec 2023 02:35:26 GMT
+cache-control: max-age=600
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=8yD9rByYV9qUbDPoNOg7wvL%2FQv6ZNlIuyMFzoDkmT4NvwAf8hM2mx1U6wgozfRcS5%2F4EMGOaWBcCDKIf6HkgZy%2Fqb0FEY%2BX9qW6IumY4Jz%2BcVPVlU4oBemPr3Yk1&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d6aceb092ad7-LAX
+
+[Test worker] INFO Ttkan - connect https://cn.ttkan.co/novel/search?q=%E8%A7%86%E6%AD%BB%E5%A6%82%E5%BD%92%E9%AD%8F%E5%90%9B%E5%AD%90
+[Test worker] DEBUG Ttkan - body 
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - response https://cn.ttkan.co/novel/search?q=%E8%A7%86%E6%AD%BB%E5%A6%82%E5%BD%92%E9%AD%8F%E5%90%9B%E5%AD%90
+[Test worker] DEBUG Ttkan - request.headers Referer: https://cn.ttkan.co
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: cn.ttkan.co
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Ttkan - response.headers date: Tue, 05 Dec 2023 02:25:27 GMT
+content-type: text/html; charset=utf-8
+vary: Accept-Encoding
+expires: Tue, 05 Dec 2023 02:35:26 GMT
+cache-control: max-age=600
+cf-cache-status: DYNAMIC
+report-to: {&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https:\/\/a.nel.cloudflare.com\/report\/v3?s=4Izub6N3cSTR4EMlXoAxZFWAWbw6oSu8fzdyFisGPAt8cTu36yKCVrFKpl%2FtgEassx%2BLeFFmRAqpPsSOpKMrYsJbzOgdxSbGc4%2B7mF7XPxJ5e9gAxayCp39%2B9nFe&quot;}],&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+nel: {&quot;success_fraction&quot;:0,&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800}
+server: cloudflare
+cf-ray: 8308d6aefdda2ad7-LAX
+
+[Test worker] INFO Ttkan - connect https://cn.ttkan.co/novel/user/page_direct?novel_id=dushifengshenbang-dushiyanqing&amp;page=1017
+[Test worker] DEBUG Ttkan - body 
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - response https://cn.bg3.co/novel/pagea/dushifengshenbang-dushiyanqing_1017.html
+[Test worker] DEBUG Ttkan - request.headers Referer: https://cn.ttkan.co
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: cn.bg3.co
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Ttkan - response.headers server: nginx/1.18.0 (Ubuntu)
+date: Tue, 05 Dec 2023 02:25:29 GMT
+content-type: text/html; charset=utf-8
+etag: &quot;11ed4-XByZIAenunp50W680YLGaQIXu24&quot;
+vary: Accept-Encoding
+expires: Tue, 05 Dec 2023 02:26:29 GMT
+cache-control: max-age=60
+
+[Test worker] ERROR Ttkan - 网络被重定向，&lt;https://cn.ttkan.co/novel/user/page_direct?novel_id=dushifengshenbang-dushiyanqing&amp;page=1017&gt; -&gt; &lt;https://cn.bg3.co/novel/pagea/dushifengshenbang-dushiyanqing_1017.html&gt;
+[Test worker] INFO Ttkan - connect https://www.ttkan.co/api/nq/amp_novel_chapters?language=cn&amp;novel_id=dushifengshenbang-dushiyanqing&amp;__amp_source_origin=https%3A%2F%2Fwww.ttkan.co
+[Test worker] DEBUG Ttkan - body 
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - response https://www.ttkan.co/api/nq/amp_novel_chapters?language=cn&amp;novel_id=dushifengshenbang-dushiyanqing&amp;__amp_source_origin=https%3A%2F%2Fwww.ttkan.co
+[Test worker] DEBUG Ttkan - request.headers Referer: https://cn.ttkan.co
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: www.ttkan.co
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Ttkan - response.headers server: nginx/1.18.0 (Ubuntu)
+date: Tue, 05 Dec 2023 02:25:30 GMT
+content-type: application/json;charset=UTF-8
+expires: Tue, 05 Dec 2023 02:28:30 GMT
+cache-control: max-age=180
+vary: Accept-Encoding
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-allow-headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-allow-headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+
+[Test worker] INFO Ttkan - connect https://www.ttkan.co/api/nq/amp_novel_chapters?language=cn&amp;novel_id=shisiruguiweijunzi-pingceng&amp;__amp_source_origin=https%3A%2F%2Fwww.ttkan.co
+[Test worker] DEBUG Ttkan - body 
+[Test worker] DEBUG Ttkan - load cookies []
+[Test worker] DEBUG Ttkan - after filter cookies []
+[Test worker] DEBUG Ttkan - response https://www.ttkan.co/api/nq/amp_novel_chapters?language=cn&amp;novel_id=shisiruguiweijunzi-pingceng&amp;__amp_source_origin=https%3A%2F%2Fwww.ttkan.co
+[Test worker] DEBUG Ttkan - request.headers Referer: https://cn.ttkan.co
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Host: www.ttkan.co
+Connection: Keep-Alive
+Accept-Encoding: gzip
+
+[Test worker] DEBUG Ttkan - response.headers server: nginx/1.18.0 (Ubuntu)
+date: Tue, 05 Dec 2023 02:25:31 GMT
+content-type: application/json;charset=UTF-8
+expires: Tue, 05 Dec 2023 02:28:31 GMT
+cache-control: max-age=180
+vary: Accept-Encoding
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-allow-headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-allow-headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 5.6.4</a> at Dec 5, 2023, 10:25:31 AM</p>
+</div>
+</div>
+</body>
+</html>
